@@ -8,6 +8,7 @@
 
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow } from "@/lib/aed/notify-owner";
@@ -62,8 +63,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  // Process each event asynchronously (don't await — LINE expects 200 fast)
-  processEvents(events).catch((err) => console.error("[AED] processEvents error:", err));
+  // waitUntil keeps the Vercel function alive after response is sent
+  waitUntil(processEvents(events).catch((err) => console.error("[AED] processEvents error:", err)));
 
   return NextResponse.json({ ok: true });
 }
