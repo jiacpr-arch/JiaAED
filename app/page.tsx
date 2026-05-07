@@ -208,6 +208,57 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Why JiaAED — trust section */}
+      <section className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">ทำไมเลือก JiaAED</h2>
+          <p className="text-center text-gray-500 text-sm mb-10">เจี่ยรักษา — ผู้นำเข้าและจัดจำหน่ายเครื่องมือแพทย์</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                icon: "🏥",
+                title: "นำเข้าโดยผู้เชี่ยวชาญ",
+                desc: "เจี่ยรักษา จำหน่ายเครื่องมือแพทย์โดยตรง ไม่ผ่านคนกลาง ราคาตรงจากผู้นำเข้า",
+              },
+              {
+                icon: "📜",
+                title: "อย. รับรอง · ใบโฆษณาถูกต้อง",
+                desc: "ทะเบียน อย. 68-2-2-2-0005243 และใบอนุญาตโฆษณา ฆพ.743/2569 ตรวจสอบได้",
+              },
+              {
+                icon: "🛠️",
+                title: "บริการหลังการขาย",
+                desc: "รับประกัน 1 ปีเต็ม พร้อมทีมเทคนิคให้คำปรึกษาตลอดอายุการใช้งาน 7+ ปี",
+              },
+              {
+                icon: "🇹🇭",
+                title: "เสียงแนะนำภาษาไทย",
+                desc: "ปุ่มกดและเสียงนำทางเป็นภาษาไทยทั้งหมด ทุกคนในองค์กรใช้ได้ทันที",
+              },
+              {
+                icon: "💳",
+                title: "ออกใบกำกับภาษี/ใบเสนอราคาได้",
+                desc: "รองรับการจัดซื้อภาครัฐ โรงพยาบาล และองค์กร พร้อมเอกสารครบ",
+              },
+              {
+                icon: "🚚",
+                title: "จัดส่งทั่วประเทศ",
+                desc: "พร้อมติดตั้งและสาธิตการใช้งาน — สอบถามทาง LINE ได้ทันที",
+              },
+            ].map((t) => (
+              <div
+                key={t.title}
+                className="bg-gray-900 border border-gray-800 rounded-2xl p-5 hover:border-yellow-400/40 transition-colors"
+              >
+                <div className="text-3xl mb-2">{t.icon}</div>
+                <div className="font-bold text-white mb-1">{t.title}</div>
+                <div className="text-gray-400 text-sm leading-relaxed">{t.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Products */}
       <section id="products" className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto">
