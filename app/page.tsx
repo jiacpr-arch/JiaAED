@@ -213,6 +213,39 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
           <p className="text-center text-gray-500 mb-10">สอบถามราคาพิเศษองค์กรได้ทาง LINE</p>
+
+          {/* Package showcase banners */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
+            >
+              <Image
+                src="/images/aed-floorstand.png"
+                alt="AED Amoul i7 + แท่นตั้งพื้น"
+                width={1536}
+                height={1024}
+                className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+              />
+            </a>
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
+            >
+              <Image
+                src="/images/aed-wallcabinet.png"
+                alt="AED Amoul i7 + ตู้ติดผนัง"
+                width={1536}
+                height={1024}
+                className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+              />
+            </a>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((p) => (
               <div
