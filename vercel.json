@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/aed/cron/followups",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
