@@ -1,0 +1,248 @@
+/**
+ * Tool Handlers — ฟังก์ชันที่ AI เรียกผ่าน Function Calling
+ * แต่ละ handler รับ input JSON และ return ผลลัพธ์เป็น string (Claude อ่านได้)
+ */
+
+import Stripe from "stripe";
+import { calculatePrice, getProduct, evaluateNegotiation, formatThaiPrice } from "./pricing";
+import { createQuotation } from "./flowaccount";
+import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
+import {
+  updateCustomer,
+  createDeal,
+  updateDeal,
+  getDealById,
+  scheduleFollowup,
+} from "./db-queries";
+import type {
+  AedCustomer,
+  AedConversation,
+  CalculatePriceInput,
+  CreateQuotationInput,
+  CreatePaymentLinkInput,
+  EscalateToHumanInput,
+  ScheduleFollowupInput,
+  UpdateCustomerInfoInput,
+} from "./types";
+
+// ─── Context passed in from orchestrator ─────────────────────────────────────
+
+export interface ToolContext {
+  customer: AedCustomer;
+  conversation: AedConversation;
+}
+
+// ─── get_customer_info ────────────────────────────────────────────────────────
+
+export async function handleGetCustomerInfo(ctx: ToolContext): Promise<string> {
+  const c = ctx.customer;
+  const fields: string[] = [];
+  if (c.full_name) fields.push(`ชื่อ: ${c.full_name}`);
+  if (c.phone) fields.push(`เบอร์: ${c.phone}`);
+  if (c.email) fields.push(`อีเมล: ${c.email}`);
+  if (c.company_name) fields.push(`บริษัท: ${c.company_name}`);
+  if (c.tax_id) fields.push(`เลขผู้เสียภาษี: ${c.tax_id}`);
+  if (c.customer_type !== "individual") fields.push(`ประเภท: ${c.customer_type}`);
+  if (c.total_orders > 0) fields.push(`เคยสั่งซื้อ: ${c.total_orders} ครั้ง`);
+
+  return fields.length > 0
+    ? `ข้อมูลลูกค้า: ${fields.join(" | ")}`
+    : "ยังไม่มีข้อมูลลูกค้า (ลูกค้าใหม่)";
+}
+
+// ─── update_customer_info ─────────────────────────────────────────────────────
+
+export async function handleUpdateCustomerInfo(
+  ctx: ToolContext,
+  input: UpdateCustomerInfoInput,
+): Promise<string> {
+  await updateCustomer(ctx.customer.id, {
+    ...(input.full_name && { full_name: input.full_name }),
+    ...(input.phone && { phone: input.phone }),
+    ...(input.email && { email: input.email }),
+    ...(input.company_name && { company_name: input.company_name }),
+    ...(input.tax_id && { tax_id: input.tax_id }),
+    ...(input.address && { address: input.address }),
+    ...(input.customer_type && { customer_type: input.customer_type, is_company: input.customer_type !== "individual" }),
+  });
+  return `บันทึกข้อมูลลูกค้าแล้ว: ${JSON.stringify(input)}`;
+}
+
+// ─── calculate_price ──────────────────────────────────────────────────────────
+
+export async function handleCalculatePrice(input: CalculatePriceInput): Promise<string> {
+  const result = calculatePrice(input.product_id, input.quantity, input.customer_type ?? "individual");
+  if (!result) return `ไม่พบสินค้า id: ${input.product_id}`;
+
+  const product = getProduct(input.product_id)!;
+  const lines = [
+    `สินค้า: ${product.nameTh}`,
+    `จำนวน: ${input.quantity} เครื่อง`,
+    `ราคาต่อเครื่อง: ${formatThaiPrice(result.unitPrice)} (ยังไม่รวม VAT)`,
+    `รวม: ${formatThaiPrice(result.subtotal)}`,
+    `VAT 7%: ${formatThaiPrice(result.vatAmount)}`,
+    `รวมทั้งสิ้น: ${formatThaiPrice(result.grandTotal)}`,
+    `ระดับราคา: ${result.priceLevel}`,
+    `ลดราคาเพิ่มได้: ${result.canDiscount ? "ได้ (ถึง bestPrice)" : "ไม่ได้ — ต้อง escalate"}`,
+  ];
+
+  // Check if qty triggers escalation
+  if (input.quantity >= 5) {
+    lines.push(`⚠️ จำนวน ≥5 เครื่อง → ต้อง escalate_to_human ก่อนเสนอราคา`);
+  }
+
+  return lines.join("\n");
+}
+
+// ─── create_quotation ─────────────────────────────────────────────────────────
+
+export async function handleCreateQuotation(
+  ctx: ToolContext,
+  input: CreateQuotationInput,
+): Promise<string> {
+  const product = getProduct(input.product_id);
+  if (!product) return `ไม่พบสินค้า: ${input.product_id}`;
+
+  // Create deal in DB first
+  const deal = await createDeal(
+    ctx.customer.id,
+    ctx.conversation.id,
+    input.product_id,
+    input.quantity,
+    input.unit_price,
+  );
+
+  // Create quotation in FlowAccount
+  const result = await createQuotation({
+    productCode: product.faProductCode,
+    productName: product.nameTh,
+    quantity: input.quantity,
+    unitPriceExVat: input.unit_price,
+    contactName: input.customer_name,
+    contactPhone: input.customer_phone,
+    contactEmail: input.customer_email,
+    companyName: input.company_name,
+    contactTaxId: input.tax_id,
+    notes: input.notes,
+  });
+
+  if (!result.ok) {
+    return `สร้างใบเสนอราคาล้มเหลว: ${result.error}`;
+  }
+
+  // Save FA document IDs to deal
+  await updateDeal(deal.id, {
+    stage: "quoted",
+    flowaccount_quotation_id: result.documentId,
+    flowaccount_quotation_number: result.documentNumber,
+  });
+
+  const subtotal = input.unit_price * input.quantity;
+  const vatAmount = Math.round(subtotal * 0.07 * 100) / 100;
+  const grandTotal = subtotal + vatAmount;
+
+  return [
+    `สร้างใบเสนอราคาสำเร็จ`,
+    `เลขที่: ${result.documentNumber ?? result.documentId}`,
+    `deal_id: ${deal.id}`,
+    `ยอดรวม: ${formatThaiPrice(grandTotal)}`,
+    `ขั้นตอนต่อไป: สร้าง payment link ด้วย deal_id ด้านบน`,
+  ].join("\n");
+}
+
+// ─── create_payment_link ──────────────────────────────────────────────────────
+
+export async function handleCreatePaymentLink(
+  ctx: ToolContext,
+  input: CreatePaymentLinkInput,
+): Promise<string> {
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) return "Stripe key not configured";
+
+  const deal = await getDealById(input.deal_id);
+  if (!deal) return `ไม่พบ deal: ${input.deal_id}`;
+
+  const product = getProduct(deal.product_id);
+  const stripe = new Stripe(stripeKey);
+
+  try {
+    // Create a Stripe Payment Link
+    const price = await stripe.prices.create({
+      currency: "thb",
+      unit_amount: Math.round(input.amount_thb * 100), // satangs
+      product_data: {
+        name: input.description ?? product?.nameTh ?? "AED Amoul i7",
+      },
+    });
+
+    const link = await stripe.paymentLinks.create({
+      line_items: [{ price: price.id, quantity: 1 }],
+      metadata: { deal_id: input.deal_id, customer_id: ctx.customer.id },
+      after_completion: { type: "redirect", redirect: { url: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://jiaaed.com"}/payment/success?deal_id=${input.deal_id}` } },
+    });
+
+    await updateDeal(input.deal_id, { stripe_payment_link_url: link.url, stage: "negotiating" });
+
+    // Notify owner
+    if (deal.flowaccount_quotation_number) {
+      await notifyNewQuotation({
+        customerName: ctx.customer.full_name,
+        productName: product?.nameTh ?? deal.product_id,
+        quantity: deal.quantity,
+        grandTotal: input.amount_thb,
+        quotationNumber: deal.flowaccount_quotation_number,
+        paymentLinkUrl: link.url,
+      });
+    }
+
+    return [
+      `สร้าง payment link สำเร็จ`,
+      `URL: ${link.url}`,
+      `ส่งลิงก์นี้ให้ลูกค้าเพื่อชำระเงินได้เลยครับ`,
+    ].join("\n");
+  } catch (err) {
+    return `สร้าง payment link ล้มเหลว: ${String(err)}`;
+  }
+}
+
+// ─── escalate_to_human ────────────────────────────────────────────────────────
+
+export async function handleEscalateToHuman(
+  ctx: ToolContext,
+  input: EscalateToHumanInput,
+): Promise<string> {
+  await notifyEscalation({
+    reason: input.reason,
+    urgency: input.urgency,
+    summary: input.summary,
+    customerName: ctx.customer.full_name,
+    lineUserId: ctx.customer.line_user_id ?? "unknown",
+  });
+
+  const urgencyMsg = {
+    high: "ทีมงานจะติดต่อกลับโดยเร็วที่สุดครับ 🔴",
+    medium: "ทีมงานจะติดต่อกลับภายในวันนี้ครับ 🟡",
+    low: "ทีมงานจะติดต่อกลับภายใน 1-2 วันทำการครับ 🟢",
+  }[input.urgency];
+
+  return `escalated_to_human | ${urgencyMsg}`;
+}
+
+// ─── schedule_followup ────────────────────────────────────────────────────────
+
+export async function handleScheduleFollowup(
+  ctx: ToolContext,
+  input: ScheduleFollowupInput,
+  dealId?: string,
+): Promise<string> {
+  const followup = await scheduleFollowup(
+    ctx.customer.id,
+    ctx.conversation.id,
+    input.days_later,
+    input.message_template,
+    dealId,
+  );
+
+  const scheduledDate = new Date(followup.scheduled_for).toLocaleDateString("th-TH", { timeZone: "Asia/Bangkok" });
+  return `ตั้ง follow-up สำเร็จ — จะส่งข้อความในวันที่ ${scheduledDate}`;
+}
