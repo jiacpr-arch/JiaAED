@@ -56,19 +56,19 @@ const specs = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
+    <div className="min-h-screen bg-gray-950 text-white font-sans">
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl">❤️</span>
-            <span className="font-bold text-xl text-red-600">JiaAED</span>
+            <span className="font-bold text-xl text-yellow-400">JiaAED</span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="#features" className="text-sm text-gray-500 hover:text-gray-800 hidden sm:block">คุณสมบัติ</a>
-            <a href="#products" className="text-sm text-gray-500 hover:text-gray-800 hidden sm:block">สินค้า</a>
-            <a href="#specs" className="text-sm text-gray-500 hover:text-gray-800 hidden sm:block">สเปค</a>
+            <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
+            <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
+            <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
             <a
               href={LINE_OA}
               target="_blank"
@@ -82,10 +82,10 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-yellow-900 text-white py-16 px-4 overflow-hidden relative">
+      <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-16 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <div className="inline-block bg-yellow-400/20 text-yellow-300 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/30">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
               🏅 ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569
             </div>
             <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
@@ -93,7 +93,7 @@ export default function Home() {
               <span className="text-yellow-400">เครื่องกระตุก</span><br />
               หัวใจไฟฟ้า
             </h1>
-            <p className="text-gray-300 text-lg mb-6">
+            <p className="text-gray-400 text-lg mb-6">
               Shock พร้อมใน <strong className="text-white">7 วินาที</strong> · เสียงแนะนำภาษาไทย<br />
               IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
@@ -108,12 +108,12 @@ export default function Home() {
               </a>
               <a
                 href="#products"
-                className="bg-white/10 text-white font-semibold text-lg px-8 py-4 rounded-full border border-white/20 hover:bg-white/20 transition-colors text-center"
+                className="bg-yellow-400/10 text-yellow-400 font-semibold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors text-center"
               >
                 ดูราคา →
               </a>
             </div>
-            <p className="text-gray-400 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคาได้เลย</p>
+            <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคาได้เลย</p>
           </div>
           <div className="flex justify-center">
             <div className="relative w-80 h-80">
@@ -131,32 +131,22 @@ export default function Home() {
 
       {/* Lifestyle banner */}
       <section className="relative h-64 md:h-80 overflow-hidden">
-        <Image
-          src="/images/lifestyle-cpr.png"
-          alt="AED ในสถานการณ์จริง"
-          fill
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+        <Image src="/images/lifestyle-cpr.png" alt="AED ในสถานการณ์จริง" fill className="object-cover object-center" />
+        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <div className="text-center text-white px-4">
             <p className="text-2xl md:text-4xl font-black">ทุกวินาทีคือชีวิต</p>
-            <p className="text-gray-300 mt-2 text-lg">AED Amoul i7 พร้อม Shock ใน 7 วินาที ลดการเสียชีวิตได้ 70%</p>
+            <p className="text-gray-300 mt-2 text-lg">Shock พร้อมใน 7 วินาที ลดการเสียชีวิตได้ 70%</p>
           </div>
         </div>
       </section>
 
       {/* Feature graphic */}
-      <section id="features" className="py-14 px-4 bg-gray-50">
+      <section id="features" className="py-14 px-4 bg-gray-900">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">เทคโนโลยีครบทุกมิติ</h2>
-          <div className="rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="/images/feature-grid.jpg"
-              alt="i-SHOCK i-SAVE i-LOOK i-CARE"
-              width={1080}
-              height={1080}
-              className="w-full h-auto"
-            />
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">เทคโนโลยีครบทุกมิติ</h2>
+          <p className="text-center text-gray-500 text-sm mb-8">ออกแบบมาเพื่อช่วยชีวิตในทุกสถานการณ์</p>
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
+            <Image src="/images/feature-grid.jpg" alt="i-SHOCK i-SAVE i-LOOK i-CARE" width={1080} height={1080} className="w-full h-auto" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center text-sm">
             {[
@@ -165,36 +155,30 @@ export default function Home() {
               { icon: "🖥️", name: "i-LOOK", desc: "จอแสดงขั้นตอนการใช้งาน" },
               { icon: "📡", name: "i-CARE", desc: "บันทึก ECG ส่งข้อมูลผ่าน WiFi" },
             ].map((f) => (
-              <div key={f.name} className="bg-white rounded-xl p-4 shadow-sm">
+              <div key={f.name} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl mb-1">{f.icon}</div>
-                <div className="font-bold text-yellow-600">{f.name}</div>
-                <div className="text-gray-500 text-xs mt-1">{f.desc}</div>
+                <div className="font-bold text-yellow-400">{f.name}</div>
+                <div className="text-gray-400 text-xs mt-1">{f.desc}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Waterproof highlight */}
-      <section className="py-14 px-4">
+      {/* Waterproof */}
+      <section className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-          <div className="rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="/images/waterproof.jpeg"
-              alt="AED IP65 กันน้ำ"
-              width={600}
-              height={400}
-              className="w-full h-auto"
-            />
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+            <Image src="/images/waterproof.jpeg" alt="AED IP65 กันน้ำ" width={600} height={400} className="w-full h-auto" />
           </div>
           <div>
-            <div className="inline-block bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full mb-3">🛡️ IP65 CERTIFIED</div>
-            <h2 className="text-3xl font-black mb-4">กันน้ำ กันฝุ่น<br/>พร้อมทุกสภาพแวดล้อม</h2>
-            <p className="text-gray-600 mb-4">ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C</p>
-            <ul className="space-y-2">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">🛡️ IP65 CERTIFIED</div>
+            <h2 className="text-3xl font-black mb-4 text-white">กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</h2>
+            <p className="text-gray-400 mb-5">ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C</p>
+            <ul className="space-y-3">
               {["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"].map(f => (
-                <li key={f} className="flex items-center gap-2 text-gray-700">
-                  <span className="text-green-500 font-bold">✓</span> {f}
+                <li key={f} className="flex items-center gap-3 text-gray-300">
+                  <span className="text-yellow-400 font-bold text-lg">✓</span>{f}
                 </li>
               ))}
             </ul>
@@ -203,12 +187,12 @@ export default function Home() {
       </section>
 
       {/* Easy to use */}
-      <section className="py-14 px-4 bg-yellow-50">
+      <section className="py-14 px-4 bg-gray-900">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           <div className="order-2 md:order-1">
-            <div className="inline-block bg-yellow-200 text-yellow-800 text-xs font-bold px-3 py-1 rounded-full mb-3">👥 ใช้งานง่าย</div>
-            <h2 className="text-3xl font-black mb-4">ไม่ต้องฝึก<br/>ก็ใช้ได้ทันที</h2>
-            <p className="text-gray-600 mb-4">เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน</p>
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">👥 ใช้งานง่าย</div>
+            <h2 className="text-3xl font-black mb-4 text-white">ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</h2>
+            <p className="text-gray-400 mb-6">เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน</p>
             <a
               href={LINE_OA}
               target="_blank"
@@ -218,29 +202,23 @@ export default function Home() {
               💬 สอบถามราคา
             </a>
           </div>
-          <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-lg">
-            <Image
-              src="/images/lifestyle-man.jpeg"
-              alt="ใช้งาน AED ง่าย"
-              width={600}
-              height={400}
-              className="w-full h-auto"
-            />
+          <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
+            <Image src="/images/lifestyle-man.jpeg" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
           </div>
         </div>
       </section>
 
       {/* Products */}
-      <section id="products" className="py-14 px-4">
+      <section id="products" className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-2">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
           <p className="text-center text-gray-500 mb-10">สอบถามราคาพิเศษองค์กรได้ทาง LINE</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((p) => (
               <div
                 key={p.id}
-                className={`relative rounded-2xl border-2 p-6 flex flex-col bg-white ${
-                  p.badge ? "border-yellow-400 shadow-lg shadow-yellow-50" : "border-gray-100"
+                className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
+                  p.badge ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10" : "border-gray-700"
                 }`}
               >
                 {p.badge && (
@@ -248,26 +226,21 @@ export default function Home() {
                     {p.badge}
                   </div>
                 )}
-                <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-gray-50">
-                  <Image
-                    src="/images/product-main.png"
-                    alt={p.name}
-                    fill
-                    className="object-contain p-3"
-                  />
+                <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-gray-800">
+                  <Image src="/images/product-main.png" alt={p.name} fill className="object-contain p-3" />
                 </div>
-                <div className="text-xs text-gray-400 font-medium uppercase tracking-wide">{p.subtitle}</div>
-                <h3 className="font-bold text-lg text-gray-900 mt-1 mb-3">{p.name}</h3>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{p.subtitle}</div>
+                <h3 className="font-bold text-lg text-white mt-1 mb-3">{p.name}</h3>
                 <div className="mb-3">
-                  <div className="text-gray-400 text-sm line-through">฿{p.msrp.toLocaleString()}</div>
-                  <div className="text-3xl font-bold text-red-600">฿{p.price.toLocaleString()}</div>
-                  <div className="text-gray-400 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
+                  <div className="text-gray-600 text-sm line-through">฿{p.msrp.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-yellow-400">฿{p.price.toLocaleString()}</div>
+                  <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
                 </div>
-                <p className="text-gray-500 text-sm mb-4">{p.description}</p>
+                <p className="text-gray-400 text-sm mb-4">{p.description}</p>
                 <ul className="space-y-1 mb-6 flex-1">
                   {p.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
-                      <span className="text-green-500 flex-shrink-0">✓</span>{f}
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
                     </li>
                   ))}
                 </ul>
@@ -277,8 +250,8 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className={`text-center font-semibold py-3 rounded-full transition-colors ${
                     p.badge
-                      ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-500"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
+                      : "bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
                   }`}
                 >
                   สั่งซื้อ / ถามราคา
@@ -286,60 +259,59 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <p className="text-center text-gray-400 text-sm mt-6">
+          <p className="text-center text-gray-600 text-sm mt-6">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
           </p>
         </div>
       </section>
 
       {/* Specs */}
-      <section id="specs" className="py-14 px-4 bg-gray-50">
+      <section id="specs" className="py-14 px-4 bg-gray-900">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-2">คุณลักษณะเฉพาะ AED Amoul i7</h2>
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">คุณลักษณะเฉพาะ AED Amoul i7</h2>
           <p className="text-center text-gray-500 text-sm mb-8">Automated External Defibrillator รุ่น i7</p>
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div className="rounded-2xl overflow-hidden border border-gray-700">
             {specs.map((s, i) => (
-              <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
+              <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
                 <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
-                <div className="text-sm text-gray-800">{s.value}</div>
+                <div className="text-sm text-gray-200">{s.value}</div>
               </div>
             ))}
           </div>
           <div className="flex flex-wrap gap-2 justify-center mt-6">
             {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "AHA 2015"].map((cert) => (
-              <span key={cert} className="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+              <span key={cert} className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
                 ✓ {cert}
               </span>
             ))}
           </div>
           <div className="mt-4 flex flex-wrap gap-3 justify-center">
-            <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-center">
-              <div className="text-xs text-green-600 font-semibold">เลขที่ใบรับแจ้ง อย.</div>
-              <div className="text-sm font-bold text-green-800">68-2-2-2-0005243</div>
+            <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+              <div className="text-xs text-gray-400 font-semibold">เลขที่ใบรับแจ้ง อย.</div>
+              <div className="text-sm font-bold text-yellow-400">68-2-2-2-0005243</div>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-center">
-              <div className="text-xs text-amber-600 font-semibold">ใบอนุญาตโฆษณา</div>
-              <div className="text-sm font-bold text-amber-800">ฆพ. 743/2569</div>
+            <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+              <div className="text-xs text-gray-400 font-semibold">ใบอนุญาตโฆษณา</div>
+              <div className="text-sm font-bold text-yellow-400">ฆพ. 743/2569</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-16 px-4 bg-gray-900 text-white text-center relative overflow-hidden">
+      <section className="py-20 px-4 bg-gray-950 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <Image src="/images/lifestyle-cpr.png" alt="" fill className="object-cover" />
         </div>
         <div className="relative max-w-xl mx-auto">
-          <h2 className="text-3xl font-black mb-3">พร้อมปกป้องชีวิตแล้วใช่ไหม?</h2>
-          <p className="text-gray-400 mb-8">
-            คุยกับ AI เจี่ยทาง LINE — ตอบทันที ออกใบเสนอราคาได้เลย
-          </p>
+          <div className="text-yellow-400 text-4xl mb-4">❤️</div>
+          <h2 className="text-3xl font-black mb-3 text-white">พร้อมปกป้องชีวิตแล้วใช่ไหม?</h2>
+          <p className="text-gray-500 mb-8">คุยกับ AI เจี่ยทาง LINE — ตอบทันที ออกใบเสนอราคาได้เลย</p>
           <a
             href={LINE_OA}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-xl"
+            className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
             💬 เพิ่มเพื่อน LINE @273fzpzs
           </a>
@@ -347,10 +319,10 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black text-gray-500 text-sm py-8 px-4 text-center">
-        <p className="font-semibold text-white mb-1">JiaAED by เจี่ยรักษา</p>
+      <footer className="bg-black border-t border-gray-800 text-gray-600 text-sm py-8 px-4 text-center">
+        <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>
         <p>จำหน่าย AED Amoul i7 · ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569</p>
-        <p className="mt-3 text-xs text-gray-600">© {new Date().getFullYear()} JiaAED. All rights reserved.</p>
+        <p className="mt-3 text-xs text-gray-700">© {new Date().getFullYear()} JiaAED. All rights reserved.</p>
       </footer>
 
     </div>
