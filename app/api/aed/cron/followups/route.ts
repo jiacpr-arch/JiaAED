@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getPendingFollowups, markFollowupSent, getOrCreateCustomerByLine } from "@/lib/aed/db-queries";
+import { getPendingFollowups, markFollowupSent } from "@/lib/aed/db-queries";
 import { pushLineMessage } from "@/lib/aed/line-push";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AedCustomer } from "@/lib/aed/types";
