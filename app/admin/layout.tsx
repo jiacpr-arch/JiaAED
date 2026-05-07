@@ -24,6 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <Link href="/admin/customers" className="text-neutral-300 hover:text-yellow-400 transition-colors">
                 ลูกค้า
               </Link>
+              <Link href="/admin/analytics" className="text-neutral-300 hover:text-yellow-400 transition-colors">
+                Analytics
+              </Link>
             </nav>
           </div>
           <a
