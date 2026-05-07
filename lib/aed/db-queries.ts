@@ -178,6 +178,21 @@ export async function getDealById(dealId: string): Promise<AedDeal | null> {
   return data as AedDeal | null;
 }
 
+export async function getDealWithCustomer(
+  dealId: string,
+): Promise<{ deal: AedDeal; customer: AedCustomer } | null> {
+  const supabase = db();
+  const { data: deal } = await supabase.from("aed_deals").select("*").eq("id", dealId).maybeSingle();
+  if (!deal) return null;
+  const { data: customer } = await supabase
+    .from("aed_customers")
+    .select("*")
+    .eq("id", (deal as AedDeal).customer_id ?? "")
+    .maybeSingle();
+  if (!customer) return null;
+  return { deal: deal as AedDeal, customer: customer as AedCustomer };
+}
+
 // ─── Follow-ups ───────────────────────────────────────────────────────────────
 
 export async function scheduleFollowup(
