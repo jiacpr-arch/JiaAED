@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
 const products = [
@@ -99,6 +101,17 @@ export default function Home() {
             น้ำหนักเบา 2 กก. · Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย<br/>
             มาตรฐาน CE · IP65 · ISO 13485
           </p>
+          {/* Hero product image */}
+          <div className="relative w-full max-w-lg mx-auto mb-8 rounded-2xl overflow-hidden shadow-xl">
+            <Image
+              src="/images/aed-poster.jpg"
+              alt="AED Amoul i7/i9"
+              width={800}
+              height={1000}
+              className="w-full h-auto"
+              priority
+            />
+          </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href={LINE_OA}
@@ -154,7 +167,14 @@ export default function Home() {
                   </div>
                 )}
                 <div className="text-center mb-4">
-                  <div className="text-5xl mb-3">🫀</div>
+                  <div className="relative w-full h-48 mb-3 rounded-xl overflow-hidden bg-gray-50">
+                    <Image
+                      src="/images/aed-i7-2.jpg"
+                      alt={p.name}
+                      fill
+                      className="object-contain p-2"
+                    />
+                  </div>
                   <div className="text-xs text-gray-400 font-medium uppercase tracking-wide">{p.subtitle}</div>
                   <h3 className="font-bold text-lg text-gray-900 mt-1">{p.name}</h3>
                 </div>
