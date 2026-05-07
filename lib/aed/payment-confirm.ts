@@ -3,6 +3,7 @@ import { getProduct, formatThaiPrice } from "./pricing";
 import { issueReceipt } from "./flowaccount";
 import { notifyPaymentReceived } from "./notify-owner";
 import { pushLineMessage } from "./line-push";
+import { sendMetaCapiEvent } from "@/lib/marketing/meta-capi";
 
 export interface ConfirmResult {
   ok: boolean;
@@ -64,6 +65,24 @@ export async function confirmDealPaid(
     grandTotal,
     dealId: deal.id,
   }).catch((err) => console.error("[AED] notifyPaymentReceived failed:", err));
+
+  // Track Purchase in Meta Conversion API (uses customer info for matching)
+  sendMetaCapiEvent({
+    eventName: "Purchase",
+    eventId: `purchase_${deal.id}`,
+    actionSource: "system_generated",
+    email: customer.email,
+    phone: customer.phone,
+    fullName: customer.full_name,
+    externalId: customer.line_user_id ?? customer.id,
+    value: grandTotal,
+    currency: "THB",
+    customData: {
+      content_ids: [deal.product_id],
+      content_type: "product",
+      num_items: deal.quantity,
+    },
+  }).catch((err) => console.error("[AED] Meta CAPI Purchase failed:", err));
 
   if (customer.line_user_id) {
     const receiptLine = receipt.ok && receipt.documentNumber

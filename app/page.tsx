@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { LineCta } from "./_components/line-cta";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -69,14 +70,13 @@ export default function Home() {
             <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
             <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
-            <a
+            <LineCta
               href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
+              source="navbar"
               className="bg-[#06C755] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-[#05a847] transition-colors"
             >
               💬 ถามราคา
-            </a>
+            </LineCta>
           </div>
         </div>
       </nav>
@@ -98,14 +98,13 @@ export default function Home() {
               IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <a
+              <LineCta
                 href={LINE_OA}
-                target="_blank"
-                rel="noopener noreferrer"
+                source="hero"
                 className="bg-[#06C755] text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-[#05a847] transition-colors text-center shadow-lg"
               >
                 💬 คุยกับ AI เจี่ย — ฟรี!
-              </a>
+              </LineCta>
               <a
                 href="#products"
                 className="bg-yellow-400/10 text-yellow-400 font-semibold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors text-center"
@@ -193,14 +192,13 @@ export default function Home() {
             <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">👥 ใช้งานง่าย</div>
             <h2 className="text-3xl font-black mb-4 text-white">ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</h2>
             <p className="text-gray-400 mb-6">เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน</p>
-            <a
+            <LineCta
               href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
+              source="ease_of_use"
               className="inline-block bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors"
             >
               💬 สอบถามราคา
-            </a>
+            </LineCta>
           </div>
           <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
             <Image src="/images/lifestyle-man.jpeg" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
@@ -244,10 +242,11 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <a
+                <LineCta
                   href={LINE_OA}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  source={`product_${p.id}`}
+                  productId={p.id}
+                  value={p.price}
                   className={`text-center font-semibold py-3 rounded-full transition-colors ${
                     p.badge
                       ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
@@ -255,7 +254,7 @@ export default function Home() {
                   }`}
                 >
                   สั่งซื้อ / ถามราคา
-                </a>
+                </LineCta>
               </div>
             ))}
           </div>
@@ -307,14 +306,13 @@ export default function Home() {
           <div className="text-yellow-400 text-4xl mb-4">❤️</div>
           <h2 className="text-3xl font-black mb-3 text-white">พร้อมปกป้องชีวิตแล้วใช่ไหม?</h2>
           <p className="text-gray-500 mb-8">คุยกับ AI เจี่ยทาง LINE — ตอบทันที ออกใบเสนอราคาได้เลย</p>
-          <a
+          <LineCta
             href={LINE_OA}
-            target="_blank"
-            rel="noopener noreferrer"
+            source="footer_cta"
             className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
             💬 เพิ่มเพื่อน LINE @273fzpzs
-          </a>
+          </LineCta>
         </div>
       </section>
 

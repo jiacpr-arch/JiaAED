@@ -12,6 +12,7 @@ import { waitUntil } from "@vercel/functions";
 import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow } from "@/lib/aed/notify-owner";
+import { sendMetaCapiEvent } from "@/lib/marketing/meta-capi";
 import type { LineEvent } from "@/lib/aed/types";
 
 export const runtime = "nodejs";
@@ -79,6 +80,15 @@ async function processEvents(events: LineEvent[]): Promise<void> {
     // ── Follow (ลูกค้าเพิ่มเพื่อน) ──────────────────────────────────────────
     if (event.type === "follow") {
       await notifyNewFollow(lineUserId).catch(() => null);
+
+      // Track Lead in Meta Conversion API for ad attribution
+      sendMetaCapiEvent({
+        eventName: "Lead",
+        eventId: `line_follow_${lineUserId}`,
+        actionSource: "chat",
+        externalId: lineUserId,
+        customData: { source: "line_follow" },
+      }).catch((err) => console.error("[AED] Meta CAPI Lead failed:", err));
 
       const welcomeMsg = [
         "สวัสดีครับ! 🙏 ผมเจี่ย ผู้ช่วยขาย AED จาก เจี่ยรักษา ครับ",
