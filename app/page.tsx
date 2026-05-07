@@ -8,7 +8,7 @@ const products = [
     price: 39999,
     msrp: 41900,
     description: "เหมาะสำหรับสำนักงาน โรงเรียน และสถานที่ทั่วไป",
-    features: ["น้ำหนักเบา 1.5 กก.", "เสียงแนะนำ 2 ภาษา", "พร้อมใช้งานทันที", "รับประกัน 5 ปี"],
+    features: ["น้ำหนัก 2 กก. (รวมแบตเตอรี่)", "เสียงแนะนำภาษาไทย", "ใช้ได้ทั้งผู้ใหญ่และเด็ก", "รับประกัน 1 ปี"],
     badge: null,
   },
   {
@@ -18,7 +18,7 @@ const products = [
     price: 44999,
     msrp: 46900,
     description: "ครบชุด พร้อมตู้ติดผนังและสัญญาณเตือน",
-    features: ["ครบชุดพร้อมติดตั้ง", "ตู้กันฝุ่นกันน้ำ", "สัญญาณเตือนเปิดตู้", "รับประกัน 5 ปี"],
+    features: ["ครบชุดพร้อมติดตั้ง", "ตู้กันฝุ่นกันน้ำ IP65", "สัญญาณเตือนเปิดตู้", "รับประกัน 1 ปี"],
     badge: "ยอดนิยม",
   },
   {
@@ -28,16 +28,35 @@ const products = [
     price: 49000,
     msrp: 51900,
     description: "เคลื่อนย้ายได้ เหมาะสำหรับสถานที่ขนาดใหญ่",
-    features: ["เคลื่อนย้ายได้", "แท่นตั้งพื้นมั่นคง", "มองเห็นได้ชัด", "รับประกัน 5 ปี"],
+    features: ["เคลื่อนย้ายได้", "แท่นตั้งพื้นมั่นคง", "มองเห็นได้ชัด", "รับประกัน 1 ปี"],
     badge: null,
   },
 ];
 
+const specs = [
+  { label: "น้ำหนัก", value: "2 กิโลกรัม (รวมแบตเตอรี่)" },
+  { label: "ผู้ใช้งาน", value: "ผู้ใหญ่และเด็ก" },
+  { label: "ภาษาเสียงแนะนำ", value: "ภาษาไทย (พร้อมภาพนิ่งบนเครื่อง)" },
+  { label: "พลังงานสูงสุด", value: "360 Joules (BTE Waveform)" },
+  { label: "พลังงาน Shock ผู้ใหญ่", value: "200J (ปรับได้ 100–360J)" },
+  { label: "พลังงาน Shock เด็ก", value: "50J (ปรับได้ 10–100J)" },
+  { label: "เวลาชาร์จพร้อม Shock", value: "< 7 วินาที" },
+  { label: "แบตเตอรี่", value: "Lithium 4,500 mAh อายุ ≥ 7 ปี" },
+  { label: "จำนวน Shock ต่อชาร์จ", value: "≥ 420 ครั้ง ที่ 200J" },
+  { label: "บันทึก ECG", value: "8 ชั่วโมง + เสียง 72 นาที (USB/WiFi)" },
+  { label: "Self-test", value: "Daily / Weekly / Monthly / Runtime" },
+  { label: "อุณหภูมิใช้งาน", value: "-25°C ถึง 60°C / เก็บรักษา -30°C ถึง 70°C" },
+  { label: "การเชื่อมต่อ", value: "USB / SIM Card / WiFi" },
+  { label: "มาตรฐาน", value: "CE Mark · IP65 · ISO 13485 · EN 1789:2020" },
+  { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือ" },
+  { label: "รับประกัน", value: "1 ปี" },
+];
+
 const reasons = [
-  { icon: "⚡", title: "ช็อกหัวใจภายใน 3 นาที", desc: "ลดอัตราการเสียชีวิตได้ถึง 70% เมื่อใช้งานภายใน 3 นาทีแรก" },
-  { icon: "👥", title: "ใช้งานง่าย ไม่ต้องฝึก", desc: "เสียงแนะนำขั้นตอนทีละสเต็ป ทุกคนใช้ได้ทันที" },
+  { icon: "⚡", title: "Shock ภายใน 7 วินาที", desc: "ชาร์จพร้อม Shock ใน <7 วินาที ลดอัตราการเสียชีวิตได้ถึง 70%" },
+  { icon: "👥", title: "ใช้งานง่าย ไม่ต้องฝึก", desc: "เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนเครื่อง" },
   { icon: "🏛️", title: "กฎหมายกำหนด", desc: "สถานที่สาธารณะ อาคารสูง และสถานประกอบการต้องติดตั้ง AED" },
-  { icon: "🛡️", title: "รับประกัน 5 ปี", desc: "มั่นใจในคุณภาพ พร้อมบริการหลังการขายตลอดอายุการใช้งาน" },
+  { icon: "🛡️", title: "มาตรฐานสากล", desc: "CE Mark · IP65 · ISO 13485 · AHA CPR Guideline 2015" },
 ];
 
 export default function Home() {
@@ -51,14 +70,17 @@ export default function Home() {
             <span className="text-2xl">❤️</span>
             <span className="font-bold text-lg text-red-600">JiaAED</span>
           </div>
-          <a
-            href={LINE_OA}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-[#06C755] text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-[#05a847] transition-colors"
-          >
-            💬 ถามราคา LINE
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="#specs" className="text-sm text-gray-500 hover:text-gray-800 hidden sm:block">สเปคสินค้า</a>
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#06C755] text-white text-sm font-semibold px-4 py-2 rounded-full hover:bg-[#05a847] transition-colors"
+            >
+              💬 ถามราคา LINE
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -73,8 +95,9 @@ export default function Home() {
             <span className="text-red-600">เพื่อนรักที่อยู่เคียงข้าง</span><br />
             ในยามฉุกเฉิน
           </h1>
-          <p className="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
-            เครื่อง AED ที่ใช้งานง่าย ราคาเข้าถึงได้ พร้อมบริการหลังการขายจากทีมผู้เชี่ยวชาญ
+          <p className="text-gray-600 text-lg mb-6 max-w-xl mx-auto">
+            น้ำหนักเบา 2 กก. · Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย<br/>
+            มาตรฐาน CE · IP65 · ISO 13485
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
@@ -116,7 +139,7 @@ export default function Home() {
       <section id="products" className="py-14 px-4">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
-          <p className="text-center text-gray-500 mb-10">สอบถามราคาพิเศษได้ทาง LINE</p>
+          <p className="text-center text-gray-500 mb-10">สอบถามราคาพิเศษองค์กรได้ทาง LINE</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((p) => (
               <div
@@ -167,6 +190,32 @@ export default function Home() {
           <p className="text-center text-gray-400 text-sm mt-6">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
           </p>
+        </div>
+      </section>
+
+      {/* Specs */}
+      <section id="specs" className="py-14 px-4 bg-gray-50">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2">คุณลักษณะเฉพาะ AED Amoul i7</h2>
+          <p className="text-center text-gray-500 text-sm mb-8">Automated External Defibrillator รุ่น i7</p>
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            {specs.map((s, i) => (
+              <div
+                key={s.label}
+                className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
+              >
+                <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
+                <div className="text-sm text-gray-800">{s.value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2 justify-center mt-6">
+            {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "AHA 2015"].map((cert) => (
+              <span key={cert} className="bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full border border-blue-100">
+                ✓ {cert}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
