@@ -89,7 +89,7 @@ async function processEvents(events: LineEvent[]): Promise<void> {
       ].join("\n");
 
       await pushMessage(lineUserId, welcomeMsg);
-      return;
+      continue;
     }
 
     // ── Text message ─────────────────────────────────────────────────────────
