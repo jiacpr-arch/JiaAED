@@ -15,7 +15,16 @@ async function getToken(): Promise<string> {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ grant_type: "client_credentials", client_id: CLIENT_ID, client_secret: CLIENT_SECRET, scope: "flowaccount-api" }),
   });
-  if (!res.ok) throw new Error(`FA token ${res.status}`);
+  if (!res.ok) {
+    const body = await res.text().catch(() => "<no body>");
+    console.error("[FA token] failed", {
+      status: res.status,
+      url: TOKEN_URL,
+      clientIdPrefix: CLIENT_ID.slice(0, 6),
+      body: body.slice(0, 500),
+    });
+    throw new Error(`FA token ${res.status}: ${body.slice(0, 200)}`);
+  }
   const d = await res.json() as { access_token: string; expires_in: number };
   _token = d.access_token;
   _tokenExp = Date.now() + d.expires_in * 1_000;
@@ -29,9 +38,12 @@ async function faPost<T>(path: string, body: unknown): Promise<T> {
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),
   });
-  const json = await res.json() as T;
-  if (!res.ok) throw new Error(`FA POST ${path} → ${res.status}: ${JSON.stringify(json)}`);
-  return json;
+  const text = await res.text();
+  if (!res.ok) {
+    console.error("[FA POST] failed", { path, status: res.status, body: text.slice(0, 800) });
+    throw new Error(`FA POST ${path} → ${res.status}: ${text.slice(0, 300)}`);
+  }
+  return JSON.parse(text) as T;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
