@@ -1,19 +1,20 @@
-const TOKEN_URL = process.env.FLOWACCOUNT_TOKEN_URL ?? "https://openapi.flowaccount.com/test/token";
-const BASE_URL = process.env.FLOWACCOUNT_BASE_URL ?? "https://openapi.flowaccount.com/test";
-const CLIENT_ID = process.env.FLOWACCOUNT_CLIENT_ID ?? "";
-const CLIENT_SECRET = process.env.FLOWACCOUNT_CLIENT_SECRET ?? "";
+import { optionalEnv, requireEnv } from "@/lib/env";
+
+const TOKEN_URL = optionalEnv("FLOWACCOUNT_TOKEN_URL", "https://openapi.flowaccount.com/test/token");
+const BASE_URL = optionalEnv("FLOWACCOUNT_BASE_URL", "https://openapi.flowaccount.com/test");
 
 let _token = "";
 let _tokenExp = 0;
 
 async function getToken(): Promise<string> {
   if (_token && Date.now() < _tokenExp - 60_000) return _token;
-  if (!CLIENT_ID || !CLIENT_SECRET) throw new Error("FlowAccount env vars not set");
+  const clientId = requireEnv("FLOWACCOUNT_CLIENT_ID");
+  const clientSecret = requireEnv("FLOWACCOUNT_CLIENT_SECRET");
 
   const res = await fetch(TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({ grant_type: "client_credentials", client_id: CLIENT_ID, client_secret: CLIENT_SECRET, scope: "flowaccount-api" }),
+    body: new URLSearchParams({ grant_type: "client_credentials", client_id: clientId, client_secret: clientSecret, scope: "flowaccount-api" }),
   });
   if (!res.ok) throw new Error(`FA token ${res.status}`);
   const d = await res.json() as { access_token: string; expires_in: number };
