@@ -1,39 +1,8 @@
 import Image from "next/image";
+import { products } from "@/lib/aed/products";
+import { faqs } from "@/lib/aed/faqs";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
-
-const products = [
-  {
-    id: "i7",
-    name: "AED Amoul i7",
-    subtitle: "รุ่นมาตรฐาน",
-    price: 39999,
-    msrp: 41900,
-    description: "เหมาะสำหรับสำนักงาน โรงเรียน และสถานที่ทั่วไป",
-    features: ["น้ำหนัก 2 กก. (รวมแบตเตอรี่)", "เสียงแนะนำภาษาไทย", "ใช้ได้ทั้งผู้ใหญ่และเด็ก", "รับประกัน 1 ปี"],
-    badge: null,
-  },
-  {
-    id: "i7-cabinet",
-    name: "AED Amoul i7 + ตู้",
-    subtitle: "รุ่นพร้อมตู้ติดผนัง",
-    price: 44999,
-    msrp: 46900,
-    description: "ครบชุด พร้อมตู้ติดผนังและสัญญาณเตือน",
-    features: ["ครบชุดพร้อมติดตั้ง", "ตู้กันฝุ่นกันน้ำ IP65", "สัญญาณเตือนเปิดตู้", "รับประกัน 1 ปี"],
-    badge: "ยอดนิยม",
-  },
-  {
-    id: "i7-floor",
-    name: "AED Amoul i7 + แท่นตั้งพื้น",
-    subtitle: "รุ่นแท่นตั้งพื้น",
-    price: 49000,
-    msrp: 51900,
-    description: "เคลื่อนย้ายได้ เหมาะสำหรับสถานที่ขนาดใหญ่",
-    features: ["เคลื่อนย้ายได้สะดวก", "แท่นตั้งพื้นมั่นคง", "มองเห็นได้ชัด", "รับประกัน 1 ปี"],
-    badge: null,
-  },
-];
 
 const specs = [
   { label: "น้ำหนัก", value: "2 กิโลกรัม (รวมแบตเตอรี่)" },
@@ -69,10 +38,12 @@ export default function Home() {
             <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
             <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
+            <a href="#faq" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">FAQ</a>
             <a
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
+              data-line-cta="navbar"
               className="bg-[#06C755] text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-[#05a847] transition-colors"
             >
               💬 ถามราคา
@@ -102,6 +73,7 @@ export default function Home() {
                 href={LINE_OA}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-line-cta="hero"
                 className="bg-[#06C755] text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-[#05a847] transition-colors text-center shadow-lg"
               >
                 💬 คุยกับ AI เจี่ย — ฟรี!
@@ -197,6 +169,7 @@ export default function Home() {
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
+              data-line-cta="easy_use"
               className="inline-block bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors"
             >
               💬 สอบถามราคา
@@ -271,6 +244,8 @@ export default function Home() {
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
+              data-line-cta="banner_floorstand"
+              data-product="i7-floor"
               className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
             >
               <Image
@@ -285,6 +260,8 @@ export default function Home() {
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
+              data-line-cta="banner_wallcabinet"
+              data-product="i7-cabinet"
               className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
             >
               <Image
@@ -332,6 +309,8 @@ export default function Home() {
                   href={LINE_OA}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-line-cta="product_card"
+                  data-product={p.id}
                   className={`text-center font-semibold py-3 rounded-full transition-colors ${
                     p.badge
                       ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
@@ -395,10 +374,35 @@ export default function Home() {
             href={LINE_OA}
             target="_blank"
             rel="noopener noreferrer"
+            data-line-cta="footer_cta"
             className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
             💬 เพิ่มเพื่อน LINE @273fzpzs
           </a>
+        </div>
+      </section>
+
+      {/* FAQ — for SEO/AEO */}
+      <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">คำถามที่พบบ่อย</h2>
+          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Amoul i7</p>
+          <div className="space-y-3">
+            {faqs.map((f) => (
+              <details
+                key={f.question}
+                className="group rounded-xl border border-gray-800 bg-gray-950 overflow-hidden"
+              >
+                <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
+                  <span className="font-semibold text-white">{f.question}</span>
+                  <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-5 pb-5 text-gray-300 text-sm leading-relaxed border-t border-gray-800 pt-4">
+                  {f.answer}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
