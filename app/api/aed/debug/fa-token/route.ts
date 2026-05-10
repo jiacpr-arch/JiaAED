@@ -5,8 +5,13 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
-  const expected = process.env.ADMIN_HMAC_SECRET ?? process.env.DEBUG_KEY ?? "";
-  if (!expected || key !== expected) {
+  const candidates = [
+    process.env.ADMIN_HMAC_SECRET,
+    process.env.ADMIN_COOKIE_SECRET,
+    process.env.ADMIN_PASSWORD,
+    process.env.DEBUG_KEY,
+  ].filter((v): v is string => !!v);
+  if (candidates.length === 0 || !key || !candidates.includes(key)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
