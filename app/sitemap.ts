@@ -4,7 +4,7 @@ const SITE = "https://jiaaed.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const sections = ["", "#features", "#products", "#specs", "#faq"];
+  const sections = ["", "#features", "#products", "#specs", "#contact", "#faq"];
   return sections.map((s) => ({
     url: `${SITE}/${s}`,
     lastModified: now,
