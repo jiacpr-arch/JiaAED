@@ -17,8 +17,9 @@
 | `RESEND_FROM_EMAIL` | `JiaAED <noreply@jiaaed.com>` | ต้อง verify domain ใน Resend |
 | `RESEND_REPLY_TO` | `sales@jiaaed.com` | optional, default ใน code |
 | `LEAD_IP_SALT` | `(สุ่ม 32 ตัวอักษร)` | salt สำหรับ hash IP ใน aed_leads |
+| `ANTHROPIC_API_KEY` | `sk-ant-...` | สำหรับ web chat widget (เจี่ย AI บน landing) |
 
-ถ้ายังไม่ใส่ค่า — gtag จะไม่โหลด ไม่กระทบ landing page
+ถ้ายังไม่ใส่ค่า — gtag จะไม่โหลด ไม่กระทบ landing page (web chat จะ disabled ถ้าไม่มี ANTHROPIC_API_KEY แต่ไม่พังหน้าเว็บ)
 
 ## 2. สร้างบัญชีและของพื้นฐาน
 
@@ -194,6 +195,26 @@ https://jiaaed.vercel.app/feed/products.xml
 - รับ LINE push เป็น `🎯 Lead ใหม่`
 - รับ email ตอบกลับ (ถ้าตั้ง Resend)
 - DevTools Network เห็น request ไป `googleads.g.doubleclick.net` (สำหรับ Lead Form Submit conversion)
+
+## 7.6 Web chat widget (เจี่ย AI บน landing page)
+
+Floating chat bubble มุมขวาล่างของทุกหน้า — ใช้ Claude (claude-sonnet-4-6) ตอบคำถามแบบเดียวกับ LINE bot แต่ scope แคบกว่า:
+
+- **ทำได้**: ตอบคำถามสเปค ราคาเริ่มต้น การติดตั้ง การรับประกัน FAQ
+- **ทำไม่ได้** (จงใจ): ตกลงราคาสุดท้าย / ต่อรอง / สร้างใบเสนอราคา / ออกใบกำกับภาษี — ทั้งหมดให้ส่งไป LINE bot หรือ contact form
+
+ก่อนเปิดใช้งาน:
+- Vercel env: `ANTHROPIC_API_KEY` (จาก console.anthropic.com)
+- ถ้าไม่ตั้ง → API ตอบ 503 และ widget แสดง error message สวยงาม (ไม่ทำให้หน้าเว็บพัง)
+
+Tracking events ที่ติดมา (ส่งไป GA4):
+- `web_chat_open` — user กดเปิด chat
+- `web_chat_message_sent` — user ส่งข้อความ (พร้อม `turn` count)
+- `web_chat_contact_click` — user กด "ขอใบเสนอราคา" จาก quick action ใน chat → scroll ไป #contact
+- `web_chat_reset` — user กด "↻ ใหม่"
+- `data-line-cta="web_chat_quick"` / `"web_chat_link"` — กดปุ่ม/ลิงก์ LINE จาก chat → ยิง LINE Click conversion ตามปกติ
+
+State เก็บใน localStorage key `jiaaed_web_chat_v1` (เก็บล่าสุด 30 ข้อความ)
 
 ## 8. SEO + AEO (Answer Engine Optimization)
 
