@@ -18,8 +18,17 @@
 | `RESEND_REPLY_TO` | `sales@jiaaed.com` | optional, default ใน code |
 | `LEAD_IP_SALT` | `(สุ่ม 32 ตัวอักษร)` | salt สำหรับ hash IP ใน aed_leads |
 | `ANTHROPIC_API_KEY` | `sk-ant-...` | สำหรับ web chat widget (เจี่ย AI บน landing) |
+| `AED_INTERNAL_API_KEY` | `(สุ่ม 32+ ตัวอักษร)` | bearer token สำหรับเรียก `/api/aed/google-ads/conversion` จาก server-to-server |
+| `GOOGLE_ADS_DEVELOPER_TOKEN` | `XXXXXXXXXXXXXXXX` | จาก ads.google.com → Tools → API Center (ขอ approval ครั้งแรก) |
+| `GOOGLE_ADS_CUSTOMER_ID` | `1234567890` | customer ID (ไม่ต้องมีขีด) |
+| `GOOGLE_ADS_LOGIN_CUSTOMER_ID` | `1234567890` | (optional) MCC manager account ID |
+| `GOOGLE_ADS_CLIENT_ID` | `xxx.apps.googleusercontent.com` | OAuth2 client (Google Cloud → Credentials) |
+| `GOOGLE_ADS_CLIENT_SECRET` | `GOCSPX-...` | OAuth2 client secret |
+| `GOOGLE_ADS_REFRESH_TOKEN` | `1//...` | OAuth2 refresh token (ใช้ scope `https://www.googleapis.com/auth/adwords`) |
+| `GOOGLE_ADS_CONVERSION_ACTION_ID` | `987654321` | numeric ID ของ "Sale Closed" conversion action (จาก URL) |
 
-ถ้ายังไม่ใส่ค่า — gtag จะไม่โหลด ไม่กระทบ landing page (web chat จะ disabled ถ้าไม่มี ANTHROPIC_API_KEY แต่ไม่พังหน้าเว็บ)
+ถ้ายังไม่ใส่ค่า — gtag จะไม่โหลด ไม่กระทบ landing page  
+หาก `GOOGLE_ADS_*` ไม่ครบ → `/api/aed/google-ads/conversion` จะ log ลง `aed_conversion_log` ด้วย status `skipped_no_creds` (ไม่ส่งจริง)
 
 ## 2. สร้างบัญชีและของพื้นฐาน
 
@@ -215,6 +224,70 @@ Tracking events ที่ติดมา (ส่งไป GA4):
 - `data-line-cta="web_chat_quick"` / `"web_chat_link"` — กดปุ่ม/ลิงก์ LINE จาก chat → ยิง LINE Click conversion ตามปกติ
 
 State เก็บใน localStorage key `jiaaed_web_chat_v1` (เก็บล่าสุด 30 ข้อความ)
+
+## 7.7 Offline Conversion API (ส่ง "ปิดดีลจริง" → Google Ads)
+
+ใช้ส่ง conversion event ตอนลูกค้าจ่ายเงินจริง (จาก LINE/Stripe webhook) → Google Ads ผ่าน `gclid` หรือ Enhanced Conversions for Leads (hash email/phone) เพื่อให้ algorithm optimize ตาม conversion จริง ไม่ใช่แค่ "click LINE"
+
+### Components
+
+- `supabase/aed_ad_visits.sql` — ตาราง `aed_ad_visits` (เก็บ gclid/utm/fingerprint จาก ad arrival) + `aed_conversion_log` (audit trail ของ conversion ที่ส่งหรือ skip)
+- `app/components/GoogleTags.tsx` — beacon ยิง `POST /api/aed/track-visit` ครั้งแรกของ session (เก็บ gclid + utm + fingerprint UUID)
+- `app/api/aed/track-visit/route.ts` — รับ beacon, เก็บลง `aed_ad_visits` (เฉพาะที่มี gclid/gbraid/wbraid/fingerprint)
+- `app/api/aed/google-ads/conversion/route.ts` — server-to-server endpoint ส่ง click conversion ไป Google Ads API v17; ต้อง bearer token `AED_INTERNAL_API_KEY`
+- `lib/aed/google-ads.ts` — OAuth2 (refresh_token → access_token) + `uploadClickConversions` REST call; รองรับทั้ง gclid/gbraid/wbraid และ Enhanced Conversions (hashed email/phone)
+
+### สร้าง Google Ads OAuth credentials
+
+1. Google Cloud Console → APIs & Services → Credentials → Create OAuth client ID (Desktop application)
+2. คัดลอก client_id + client_secret
+3. ใช้ [OAuth Playground](https://developers.google.com/oauthplayground/) → ตั้ง custom credentials → scope `https://www.googleapis.com/auth/adwords` → Authorize → Exchange → คัดลอก refresh_token
+4. Google Ads → Tools → API Center → ขอ developer_token (Basic access ก็พอ ถ้ายังไม่ทำเชิง production)
+
+### สร้าง conversion action ตัวที่ 3 — `Sale Closed`
+
+ใน Google Ads → Goals → Conversions → New conversion action → **Import** → Other:
+- Conversion name: `Sale Closed`
+- Category: **Purchase**
+- Value: ใช้ค่า dynamic จาก request
+- Count: **One**
+- Click-through window: 90 days
+- Attribution: Data-driven
+
+เปิด **Use enhanced conversions for leads** ถ้าจะใช้ email/phone matching
+
+หลังสร้าง → ดู URL จะเห็น `ctId=987654321` — เลขนั้นคือ `GOOGLE_ADS_CONVERSION_ACTION_ID`
+
+### ตัวอย่างการเรียกใช้
+
+จาก server (เช่น LINE webhook handler ตอน `notifyPaymentReceived` หรือ Stripe webhook):
+
+\`\`\`ts
+await fetch(\`\${process.env.SITE_URL}/api/aed/google-ads/conversion\`, {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+    authorization: \`Bearer \${process.env.AED_INTERNAL_API_KEY}\`,
+  },
+  body: JSON.stringify({
+    orderId: deal.id,
+    valueThb: deal.total_amount,
+    // ทางเลือก attribution (ลำดับความสำคัญ: gclid > gbraid > wbraid > enhanced)
+    gclid: adVisit?.gclid,           // ถ้า join ad_visit ได้
+    email: customer.email,           // หรือใช้ enhanced conversions
+    phone: customer.phone,
+  }),
+});
+\`\`\`
+
+### Stub mode
+
+ถ้ายังไม่มี Google Ads credentials → endpoint จะ log ลง `aed_conversion_log` ด้วย status `skipped_no_creds` และคืน `{ ok: true, sent: false }` — ปลอดภัยที่จะเรียกได้เลยแม้ยังไม่มี Google Ads account จริง
+
+### TODO (ยังไม่ทำใน PR นี้)
+
+- Hook อัตโนมัติใน LINE webhook (`tool-handlers.ts → create_payment_link` หรือ `aed_deals.payment_status='paid'` trigger) → เรียก endpoint นี้
+- Resolve gclid จาก `aed_ad_visits` ผ่าน `fingerprint` หรือ `ip_hash` lookup ก่อนจะ fallback เป็น enhanced conversions
 
 ## 8. SEO + AEO (Answer Engine Optimization)
 
