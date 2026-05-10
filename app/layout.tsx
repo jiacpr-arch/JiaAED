@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { GoogleTags } from "./components/GoogleTags";
+import { LineClickTracker } from "./components/LineClickTracker";
+import { StructuredData } from "./components/StructuredData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,9 +68,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
+      <head>
+        <GoogleTags />
+        <StructuredData />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <LineClickTracker />
         {children}
       </body>
     </html>

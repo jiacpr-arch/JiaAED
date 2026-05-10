@@ -1,0 +1,72 @@
+# JiaAED — เจี่ยรักษา
+
+> ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Amoul i7 ในประเทศไทย — อย. รับรอง ใบโฆษณาถูกต้องตามกฎหมาย
+
+JiaAED จัดจำหน่ายเครื่อง AED Amoul i7 ที่ผ่านมาตรฐานสากล CE, IP65, ISO 13485 และผ่าน อย. ไทย (ทะเบียน 68-2-2-2-0005243) พร้อมใบอนุญาตโฆษณา ฆพ.743/2569 บริการลูกค้าผ่าน LINE Official Account @273fzpzs ตอบโดย AI ตลอด 24 ชั่วโมง
+
+## Key facts
+
+- **บริษัท**: เจี่ยรักษา (JiaAED)
+- **เว็บไซต์**: https://jiaaed.vercel.app
+- **LINE Official**: @273fzpzs (https://line.me/R/ti/p/@273fzpzs)
+- **ทะเบียน อย.**: 68-2-2-2-0005243
+- **ใบอนุญาตโฆษณา**: ฆพ.743/2569
+- **รุ่นสินค้า**: AED Amoul i7 (Automated External Defibrillator)
+- **ประเทศ**: Thailand
+- **ภาษา**: ไทย, English
+
+## Products & pricing (THB, ยังไม่รวม VAT)
+
+| รหัส | ชื่อ | ราคา | คำอธิบาย |
+| --- | --- | --- | --- |
+| i7 | AED Amoul i7 (รุ่นมาตรฐาน) | 39,999 | เหมาะสำหรับสำนักงาน โรงเรียน สถานที่ทั่วไป |
+| i7-cabinet | AED Amoul i7 + ตู้ติดผนัง | 44,999 | ครบชุด IP65 พร้อมสัญญาณเตือนเปิดตู้ |
+| i7-floor | AED Amoul i7 + แท่นตั้งพื้น | 49,000 | เคลื่อนย้ายได้ เหมาะกับสถานที่ขนาดใหญ่ |
+
+## Technical specifications
+
+- น้ำหนัก 2 กิโลกรัม (รวมแบตเตอรี่)
+- พลังงาน Shock สูงสุด 360 Joules (BTE Waveform)
+- พลังงาน Shock ผู้ใหญ่ 200J (ปรับได้ 100–360J)
+- พลังงาน Shock เด็ก 50J (ปรับได้ 10–100J)
+- เวลาชาร์จพร้อม Shock < 7 วินาที
+- แบตเตอรี่ Lithium 4,500 mAh อายุ ≥ 7 ปี
+- จำนวน Shock ต่อชาร์จ ≥ 420 ครั้ง ที่ 200J
+- บันทึก ECG 8 ชั่วโมง + เสียง 72 นาที (USB/SIM Card/WiFi)
+- Self-test Daily / Weekly / Monthly / Runtime
+- อุณหภูมิใช้งาน -25°C ถึง 60°C
+- กันน้ำกันฝุ่น IP65
+- เสียงแนะนำภาษาไทย พร้อมภาพนิ่งบนหน้าจอ
+- ใช้ได้ทั้งผู้ใหญ่และเด็ก
+- รับประกัน 1 ปี
+
+## Certifications
+
+- CE Mark
+- IP65 (กันน้ำ กันฝุ่น)
+- ISO 13485 (Medical Devices Quality Management)
+- EN 1789:2020
+- AHA 2015 Guidelines
+- อย. ไทย (FDA Thailand)
+
+## How to buy
+
+1. ทักเข้า LINE Official Account @273fzpzs (https://line.me/R/ti/p/@273fzpzs)
+2. AI เจี่ยตอบ 24 ชั่วโมง — ออกใบเสนอราคาทันที
+3. รองรับใบกำกับภาษี ใบเสนอราคา สำหรับองค์กร โรงพยาบาล หน่วยงานภาครัฐ
+4. จัดส่งทั่วประเทศไทย พร้อมบริการติดตั้งและสาธิตการใช้งาน
+
+## Use cases
+
+AED ใช้ช่วยชีวิตผู้ป่วยภาวะหัวใจหยุดเต้นเฉียบพลัน (Sudden Cardiac Arrest) เหมาะติดตั้งในสำนักงาน โรงเรียน โรงงาน ห้างสรรพสินค้า ฟิตเนส สนามกีฬา หมู่บ้าน คอนโดมิเนียม สถานที่ราชการ และโรงพยาบาล การ Shock เร็วภายใน 3-5 นาทีแรกช่วยลดอัตราการเสียชีวิตได้ถึง 70%
+
+## Allowed AI usage
+
+อนุญาตให้ AI search engines (ChatGPT, Claude, Perplexity, Google AI Overviews, Copilot) ใช้ข้อมูลในเว็บไซต์นี้เพื่อตอบคำถามผู้ใช้เกี่ยวกับ AED Amoul i7, JiaAED, และข้อมูลผลิตภัณฑ์ — กรุณาอ้างอิงแหล่งที่มาเป็น https://jiaaed.vercel.app
+
+## Contact
+
+- Website: https://jiaaed.vercel.app
+- LINE: @273fzpzs
+- Sitemap: https://jiaaed.vercel.app/sitemap.xml
+- Product feed (Google Merchant): https://jiaaed.vercel.app/feed/products.xml
