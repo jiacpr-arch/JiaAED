@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { LineCta } from "./_components/line-cta";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = process.env.NEXT_PUBLIC_LINE_OA_URL ?? "https://line.me/R/ti/p/@273fzpzs";
 
 const products = [
   {

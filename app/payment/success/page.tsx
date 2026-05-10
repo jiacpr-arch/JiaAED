@@ -11,7 +11,7 @@ interface SearchParams {
 
 export default async function PaymentSuccessPage({ searchParams }: SearchParams) {
   const { deal_id } = await searchParams;
-  const lineUrl = process.env.NEXT_PUBLIC_LINE_OA_URL ?? "https://lin.ee/jiaaed";
+  const lineUrl = process.env.NEXT_PUBLIC_LINE_OA_URL ?? "https://line.me/R/ti/p/@273fzpzs";
 
   return (
     <main className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-6 py-16">
