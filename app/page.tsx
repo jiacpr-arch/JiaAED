@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
+import { LeadForm } from "./components/LeadForm";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -38,6 +39,7 @@ export default function Home() {
             <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
             <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
+            <a href="#contact" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ติดต่อ</a>
             <a href="#faq" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">FAQ</a>
             <a
               href={LINE_OA}
@@ -379,6 +381,29 @@ export default function Home() {
           >
             💬 เพิ่มเพื่อน LINE @273fzpzs
           </a>
+        </div>
+      </section>
+
+      {/* Lead form — alternative to LINE for ad traffic */}
+      <section id="contact" className="py-14 px-4 bg-gray-950 border-t border-gray-800">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">ขอใบเสนอราคา / ติดต่อกลับ</h2>
+          <p className="text-center text-gray-500 text-sm mb-2">
+            ไม่สะดวกใช้ LINE? ฝากข้อมูลไว้ — ทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง
+          </p>
+          <p className="text-center text-gray-500 text-sm mb-8">
+            หรือ{" "}
+            <a
+              href="https://line.me/R/ti/p/@273fzpzs"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-line-cta="contact_section_link"
+              className="text-yellow-400 hover:text-yellow-300 underline"
+            >
+              คุยทาง LINE ได้ทันที 24 ชั่วโมง →
+            </a>
+          </p>
+          <LeadForm />
         </div>
       </section>
 

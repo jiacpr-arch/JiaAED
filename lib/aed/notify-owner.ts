@@ -75,6 +75,42 @@ export async function notifyPaymentReceived(p: {
   );
 }
 
+export async function notifyNewLead(p: {
+  source: string;
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
+  company: string | null;
+  productId: string | null;
+  message: string | null;
+  gclid: string | null;
+  utmSource: string | null;
+  utmCampaign: string | null;
+}): Promise<void> {
+  const adSource = p.gclid
+    ? `Google Ads (gclid: ${p.gclid.slice(0, 12)}…)`
+    : p.utmSource
+    ? `${p.utmSource}${p.utmCampaign ? ` / ${p.utmCampaign}` : ""}`
+    : "organic / direct";
+
+  await pushToOwner(
+    [
+      `🎯 Lead ใหม่ (${p.source})`,
+      ``,
+      `👤 ${p.fullName ?? "ไม่ระบุชื่อ"}`,
+      `📞 ${p.phone ?? "-"}`,
+      `✉️ ${p.email ?? "-"}`,
+      p.company ? `🏢 ${p.company}` : null,
+      p.productId ? `📦 ${p.productId}` : null,
+      p.message ? `💬 ${p.message}` : null,
+      `🌐 ${adSource}`,
+      `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`,
+    ]
+      .filter((x): x is string => !!x)
+      .join("\n"),
+  );
+}
+
 export async function notifyNewFollow(lineUserId: string): Promise<void> {
   await pushToOwner(
     [`👋 ลูกค้าใหม่ทัก LINE`, `ID: ${lineUserId}`, `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`].join("\n"),

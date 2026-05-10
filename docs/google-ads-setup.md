@@ -10,8 +10,13 @@
 | --- | --- | --- |
 | `NEXT_PUBLIC_GA4_ID` | `G-XXXXXXXXXX` | สำหรับ GA4 analytics |
 | `NEXT_PUBLIC_GADS_ID` | `AW-1234567890` | สำหรับ Google Ads conversion |
-| `NEXT_PUBLIC_GADS_CONVERSION_LABEL` | `AbC-D_efGhIjKlMn` | label จาก conversion action |
+| `NEXT_PUBLIC_GADS_CONVERSION_LABEL` | `AbC-D_efGhIjKlMn` | label `LINE Click` conversion |
+| `NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL` | `XyZ-W_uVwXyZaBc` | label `Lead Form Submit` conversion |
 | `NEXT_PUBLIC_SITE_URL` | `https://jiaaed.vercel.app` | ใช้ใน Merchant Center feed |
+| `RESEND_API_KEY` | `re_...` | ส่งอีเมลตอบกลับลูกค้า (จาก resend.com) |
+| `RESEND_FROM_EMAIL` | `JiaAED <noreply@jiaaed.com>` | ต้อง verify domain ใน Resend |
+| `RESEND_REPLY_TO` | `sales@jiaaed.com` | optional, default ใน code |
+| `LEAD_IP_SALT` | `(สุ่ม 32 ตัวอักษร)` | salt สำหรับ hash IP ใน aed_leads |
 
 ถ้ายังไม่ใส่ค่า — gtag จะไม่โหลด ไม่กระทบ landing page
 
@@ -38,6 +43,20 @@
 - Conversion label เช่น `AbC-D_efGhIjKlMn` → ใส่ `NEXT_PUBLIC_GADS_CONVERSION_LABEL`
 
 โค้ดใน `app/components/LineClickTracker.tsx` จะยิง `gtag('event', 'conversion', { send_to: 'AW-XXX/LABEL' })` ทุกครั้งที่กดปุ่มที่มี `data-line-cta`
+
+### สร้าง conversion action ตัวที่ 2 — `Lead Form Submit`
+
+สร้างซ้ำขั้นเดียวกับด้านบน แต่:
+- Conversion name: `Lead Form Submit`
+- Category: **Submit lead form**
+- Count: **One**
+- คัดลอก label ใส่ `NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL`
+
+ตัว `app/components/LeadForm.tsx` จะยิง conversion event นี้เมื่อ user submit form สำเร็จ — ใช้ Conversion ID เดียวกัน (`NEXT_PUBLIC_GADS_ID`) แต่ label ต่างกัน
+
+ทั้ง 2 conversion actions ใช้ใน:
+- **Maximize conversions / Target CPA** bidding ของ Search/PMax
+- ใน Search campaign สามารถ "include in Conversions" เฉพาะอันที่อยากให้ optimize (แนะนำให้เปิด Lead Form Submit เป็น primary และ LINE Click เป็น secondary เพราะ lead form มี contact info ส่งเข้าระบบจริง)
 
 ทดสอบ: เปิดหน้าเว็บ → DevTools Network → กรอง `collect` หรือ `googleads.g.doubleclick.net` → คลิกปุ่ม LINE → ต้องเห็น request ส่งออก
 
@@ -154,6 +173,27 @@ https://jiaaed.vercel.app/feed/products.xml
 3. คลิกปุ่ม LINE ใดๆ
 4. F12 → Network → ต้องเห็น request ไป `googleads.g.doubleclick.net/pagead/conversion/...`
 5. Google Ads → Goals → Conversions → status ของ "LINE Click" จะเปลี่ยนเป็น **Recording conversions** ภายใน 24 ชม.
+
+## 7.5 Lead form (alternative conversion path)
+
+นอกจากปุ่ม LINE แล้ว landing page มี form ที่ `/#contact` ให้ user กรอก ชื่อ/เบอร์/อีเมล ส่งเข้า:
+
+- `aed_leads` table ใน Supabase (ต้อง run migration `supabase/aed_leads.sql` ก่อน)
+- LINE push notify owner ทันที (ผ่าน `AED_LINE_CHANNEL_ACCESS_TOKEN` + `AED_OWNER_LINE_USER_ID`)
+- Resend auto-reply email ไปยัง user (ถ้าตั้ง `RESEND_API_KEY` และ user กรอก email)
+
+ก่อนเปิดใช้งาน:
+1. ใน Supabase Dashboard → SQL Editor → run `supabase/aed_leads.sql`
+2. ถ้าใช้ Resend: สมัครที่ resend.com → verify domain → เอา API key มาใส่ `RESEND_API_KEY`
+3. (ถ้ายังไม่ได้ตั้ง) `AED_LINE_CHANNEL_ACCESS_TOKEN` + `AED_OWNER_LINE_USER_ID` เพื่อรับ notify ทาง LINE
+4. ตั้ง `LEAD_IP_SALT` (สุ่ม) เพื่อ hash IP
+
+ทดสอบ:
+- ไปที่ `/#contact` → กรอกชื่อ + เบอร์ + email → ส่ง
+- ดู `aed_leads` table → row ใหม่
+- รับ LINE push เป็น `🎯 Lead ใหม่`
+- รับ email ตอบกลับ (ถ้าตั้ง Resend)
+- DevTools Network เห็น request ไป `googleads.g.doubleclick.net` (สำหรับ Lead Form Submit conversion)
 
 ## 8. SEO + AEO (Answer Engine Optimization)
 
