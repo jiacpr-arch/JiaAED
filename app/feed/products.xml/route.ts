@@ -1,6 +1,6 @@
 import { products } from "@/lib/aed/products";
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.vercel.app";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 const BRAND = "JiaAED";
 
 function escape(s: string) {

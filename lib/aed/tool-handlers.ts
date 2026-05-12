@@ -178,7 +178,7 @@ export async function handleCreatePaymentLink(
     const link = await stripe.paymentLinks.create({
       line_items: [{ price: price.id, quantity: 1 }],
       metadata: { deal_id: input.deal_id, customer_id: ctx.customer.id },
-      after_completion: { type: "redirect", redirect: { url: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://jiaaed.com"}/payment/success?deal_id=${input.deal_id}` } },
+      after_completion: { type: "redirect", redirect: { url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://jiaaed.com"}/payment/success?deal_id=${input.deal_id}` } },
     });
 
     await updateDeal(input.deal_id, { stripe_payment_link_url: link.url, stage: "negotiating" });

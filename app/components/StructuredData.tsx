@@ -1,7 +1,7 @@
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 
-const SITE = "https://jiaaed.vercel.app";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 const BRAND = "JiaAED";
 const ORG_NAME = "เจี่ยรักษา (JiaAED)";
 
