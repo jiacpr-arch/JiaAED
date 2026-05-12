@@ -16,8 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://jiaaed.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "JiaAED — AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า อย. รับรอง",
     template: "%s · JiaAED",
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "th_TH",
-    url: "https://jiaaed.vercel.app",
+    url: SITE_URL,
     siteName: "JiaAED",
     title: "JiaAED — AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
     description:
