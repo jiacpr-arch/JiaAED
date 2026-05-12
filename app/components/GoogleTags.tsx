@@ -1,7 +1,7 @@
 import Script from "next/script";
 
 export function GoogleTags() {
-  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID;
+  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || "G-4PZZC620E2";
   const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
 
   const tagId = ga4Id || gAdsId;
