@@ -312,3 +312,26 @@ await fetch(\`\${process.env.SITE_URL}/api/aed/google-ads/conversion\`, {
 - **Offline Conversion API**: ส่ง event "ลูกค้าซื้อจริง" จาก LINE webhook → Google Ads ผ่าน gclid ที่เก็บใน localStorage (ต้องเพิ่ม flow ฝั่ง LINE bot ถามให้ user ส่ง gclid หรือผูก LINE userId กับ session ผ่าน LIFF)
 - **Customer Match**: upload เบอร์โทร/อีเมลของลูกค้าที่ปิดดีลแล้ว ใช้เป็น signal ใน PMax
 - **Dynamic remarketing**: ผูก feed นี้กับ remarketing tag เพื่อยิงคนที่เข้าเว็บแต่ยังไม่ทัก LINE
+
+## 10. Timeline checkpoint (ตั้งใน Google Calendar แล้ว)
+
+แคมเปญแรก launch: **16 พ.ค. 2569**
+
+| Checkpoint | วันที่ | สิ่งที่ต้องทำ |
+| --- | --- | --- |
+| Day 3 | 19 พ.ค. | เช็ค approval, เพิ่ม sitelinks/callouts ระดับแคมเปญ (override ของ jia1669), Search Terms รอบแรก |
+| Week 1 | 23 พ.ค. | Negative keywords รอบแรก, CTR check, first conversion? |
+| Week 2 | 30 พ.ค. | Pause keywords ต่ำ, expand ที่ดี, พิจารณา Brand campaign |
+| เดือน 1 | 15 มิ.ย. | ถ้ามี 30+ conv → switch เป็น Target CPA, ตัดสินใจเพิ่มงบ |
+| เดือน 2 | 15 ก.ค. | พิจารณาเปิด **Performance Max** (ถ้า Search profitable) |
+| เดือน 3 | 14 ส.ค. | Quarterly review, scale up campaigns ที่กำไร |
+
+### เงื่อนไข switch bidding strategy
+- Maximize Conversions → **Target CPA** เมื่อมี **30+ conversions ใน 30 วัน**
+- ตั้ง tCPA = avg CPA × 0.9
+
+### เงื่อนไขเปิด Performance Max
+- Search campaign ROAS > 1 และมี conversion 50+
+- ทราบ audience signal ที่ดีแล้ว
+- พร้อมเพิ่มงบรวม ฿700+/วัน
+- (Optional) Merchant Center สำหรับ Shopping ads — feed พร้อมที่ `/feed/products.xml`
