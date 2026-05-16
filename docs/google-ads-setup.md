@@ -137,7 +137,7 @@ Descriptions (4 ชิ้น, ≤ 90):
 - ราคาเริ่ม 39,999 บาท พร้อมส่ง · มีตู้ติดผนัง/แท่นตั้งพื้น · ออกใบเสนอราคาทันที
 - เหมาะสำหรับสำนักงาน โรงเรียน โรงงาน ฟิตเนส และหน่วยงานภาครัฐ
 
-Final URL: `https://jiaaed.vercel.app/?utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&utm_content={creative}`
+Final URL: `https://jiaaed.com/?utm_source=google&utm_medium=cpc&utm_campaign={campaignname}&utm_term={keyword}&utm_content={creative}`
 
 ### Sitelinks/Callouts/Structured snippets
 - Sitelinks: "ดูราคา 3 แพ็กเกจ" → `#products`, "สเปคเครื่อง" → `#specs`, "ทำไมเลือกเรา" → trust section, "คุยกับ AI ฟรี" → LINE
