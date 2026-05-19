@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { track } from "@vercel/analytics";
+import { trackEvent } from "@/lib/aed/analytics-client";
 import { readHeroVariant } from "@/lib/aed/ab-variant";
 
 declare global {
@@ -26,7 +26,7 @@ export function LineClickTracker() {
         const productId = lineAnchor.dataset.product || null;
         const heroVariant = readHeroVariant();
 
-        track("line_click", {
+        trackEvent("line_click", {
           location,
           product_id: productId ?? "none",
           hero_variant: heroVariant ?? "none",
@@ -54,7 +54,7 @@ export function LineClickTracker() {
         const docId = docAnchor.dataset.docDownload || "unknown";
         const docCategory = docAnchor.dataset.docCategory || "unknown";
 
-        track("doc_download", {
+        trackEvent("doc_download", {
           doc_id: docId,
           category: docCategory,
         });
@@ -71,7 +71,7 @@ export function LineClickTracker() {
 
       const ctaAnchor = target.closest("a[data-cta]") as HTMLAnchorElement | null;
       if (ctaAnchor) {
-        track("cta_click", { name: ctaAnchor.dataset.cta || "unknown" });
+        trackEvent("cta_click", { name: ctaAnchor.dataset.cta || "unknown" });
       }
     };
 

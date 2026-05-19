@@ -111,6 +111,14 @@ export async function notifyNewLead(p: {
   );
 }
 
+export async function notifyAnalyticsDigest(text: string): Promise<void> {
+  await pushToOwner(text);
+}
+
+export async function notifyAnalyticsAlert(text: string): Promise<void> {
+  await pushToOwner(text);
+}
+
 export async function notifyNewFollow(lineUserId: string): Promise<void> {
   await pushToOwner(
     [`👋 ลูกค้าใหม่ทัก LINE`, `ID: ${lineUserId}`, `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`].join("\n"),

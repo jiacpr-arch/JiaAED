@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getOrAssignHeroVariant, type HeroVariant } from "@/lib/aed/ab-variant";
-import { track } from "@vercel/analytics";
+import { trackEvent } from "@/lib/aed/analytics-client";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -19,7 +19,7 @@ export function HeroCta() {
     const v = getOrAssignHeroVariant();
     setVariant(v);
     setMounted(true);
-    track("hero_cta_view", { variant: v });
+    trackEvent("hero_cta_view", { variant: v });
   }, []);
 
   return (

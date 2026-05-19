@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { track } from "@vercel/analytics";
+import { trackEvent } from "@/lib/aed/analytics-client";
 
 const SESSION_KEY = "jiaaed_price_viewed";
 
@@ -21,7 +21,7 @@ export function PriceViewTracker({ targetId = "products" }: { targetId?: string 
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            track("price_view");
+            trackEvent("price_view");
             try {
               window.sessionStorage.setItem(SESSION_KEY, "1");
             } catch {
