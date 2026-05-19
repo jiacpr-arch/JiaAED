@@ -1,5 +1,8 @@
 import { products } from "./products";
 import { faqs } from "./faqs";
+import { knowledgeBlock } from "./knowledge";
+import { documents } from "./documents";
+import { articles } from "./articles";
 
 function productBlock(): string {
   return products
@@ -37,6 +40,18 @@ ${productBlock()}
 
 ${faqBlock()}
 
+## ข้อมูลเชิงลึก (Knowledge Base)
+
+${knowledgeBlock()}
+
+## เอกสารที่มีให้ดาวน์โหลด (หน้า /docs)
+
+${documents.map((d) => `- ${d.title} — ${d.href}`).join("\n")}
+
+## บทความในเว็บ (หน้า /articles)
+
+${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
+
 ## วิธีคุย
 
 1. ทักทายสั้นๆ ถามว่าสนใจรุ่นไหน หรือใช้งานที่ไหน (สำนักงาน/โรงเรียน/โรงงาน)
@@ -58,8 +73,10 @@ ${faqBlock()}
 - ส่วน #products — ดูราคา 3 รุ่น
 - ส่วน #specs — สเปคเต็ม
 - ส่วน #faq — คำถามที่พบบ่อย
+- หน้า /docs — เอกสารดาวน์โหลด (คู่มือไทย, สเปค TOR, ใบรับรอง CE/ISO/EN1789)
+- หน้า /articles — บทความเกี่ยวกับ AED
 
-ในข้อความสามารถใช้ลิงก์ markdown แบบ [ข้อความ](#section) เพื่อนำลูกค้าไปยังส่วนต่างๆ ได้`;
+ในข้อความสามารถใช้ลิงก์ markdown แบบ [ข้อความ](#section) หรือ [ข้อความ](/docs) เพื่อนำลูกค้าไปยังส่วนต่างๆ ได้`;
 
 export const WEB_CHAT_GREETING =
   "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Amoul i7\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือต้องการคำแนะนำเลือกรุ่นที่เหมาะกับสถานที่ของคุณ?";

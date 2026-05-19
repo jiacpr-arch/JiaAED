@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 import { LeadForm } from "./components/LeadForm";
@@ -41,6 +42,8 @@ export default function Home() {
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
             <a href="#contact" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ติดต่อ</a>
             <a href="#faq" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">FAQ</a>
+            <Link href="/docs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เอกสาร</Link>
+            <Link href="/articles" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">บทความ</Link>
             <a
               href={LINE_OA}
               target="_blank"
