@@ -6,6 +6,7 @@ import {
   documentCategoryIcon,
   type DocumentItem,
 } from "@/lib/aed/documents";
+import { fetchUploadedDocuments } from "@/lib/aed/db-documents";
 
 export const metadata: Metadata = {
   title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
@@ -13,6 +14,10 @@ export const metadata: Metadata = {
     "ดาวน์โหลดคู่มือการใช้งาน AED Amoul i7 ภาษาไทย, สเปคทางเทคนิคสำหรับ TOR/ใบเสนอราคา, ใบรับรอง CE Mark, ISO 13485 และ EN 1789:2020",
   alternates: { canonical: "/docs" },
 };
+
+// Re-fetch uploaded documents at most every 60s so admin uploads appear
+// without a redeploy. Static built-in documents are always shown.
+export const revalidate = 60;
 
 const ORDER: DocumentItem["category"][] = [
   "manual",
@@ -22,20 +27,25 @@ const ORDER: DocumentItem["category"][] = [
   "other",
 ];
 
-function group(): Record<DocumentItem["category"], DocumentItem[]> {
+function group(items: DocumentItem[]): Record<DocumentItem["category"], DocumentItem[]> {
   const out = {} as Record<DocumentItem["category"], DocumentItem[]>;
   for (const c of ORDER) out[c] = [];
-  for (const d of documents) out[d.category].push(d);
+  for (const d of items) out[d.category].push(d);
   return out;
 }
 
-function fileTypeLabel(mime: DocumentItem["mime"]): string {
+function fileTypeLabel(mime: string): string {
   if (mime === "application/pdf") return "PDF";
-  return "DOCX";
+  if (mime.endsWith("wordprocessingml.document") || mime === "application/msword") return "DOCX";
+  if (mime === "image/png") return "PNG";
+  if (mime === "image/jpeg") return "JPG";
+  return mime.split("/")[1]?.toUpperCase().slice(0, 6) || "FILE";
 }
 
-export default function DocsPage() {
-  const grouped = group();
+export default async function DocsPage() {
+  const uploaded = await fetchUploadedDocuments();
+  const all = [...documents, ...uploaded];
+  const grouped = group(all);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
