@@ -6,7 +6,6 @@ import { GoogleTags } from "./components/GoogleTags";
 import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
-import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
