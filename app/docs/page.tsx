@@ -80,6 +80,8 @@ export default function DocsPage() {
                     href={d.href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    data-doc-download={d.id}
+                    data-doc-category={d.category}
                     className="block bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-yellow-400/40 rounded-xl p-5 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
