@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { track } from "@vercel/analytics";
+import { trackEvent } from "@/lib/aed/analytics-client";
 import { products } from "@/lib/aed/products";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -33,13 +33,13 @@ export function LeadForm() {
   function handleFirstFocus() {
     if (startedRef.current) return;
     startedRef.current = true;
-    track("lead_form_start");
+    trackEvent("lead_form_start");
   }
 
   useEffect(() => {
     function onBeforeUnload() {
       if (startedRef.current && !submittedRef.current) {
-        track("lead_form_abandon");
+        trackEvent("lead_form_abandon", {}, { beacon: true });
       }
     }
     window.addEventListener("beforeunload", onBeforeUnload);
@@ -98,7 +98,7 @@ export function LeadForm() {
       }
 
       submittedRef.current = true;
-      track("lead_form_submit", { product_id: productId || "none" });
+      trackEvent("lead_form_submit", { product_id: productId || "none" });
 
       const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
       if (typeof gtag === "function") {
