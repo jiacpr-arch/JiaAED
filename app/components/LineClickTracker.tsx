@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { track } from "@vercel/analytics";
+import { readHeroVariant } from "@/lib/aed/ab-variant";
 
 declare global {
   interface Window {
@@ -23,10 +24,12 @@ export function LineClickTracker() {
       if (lineAnchor) {
         const location = lineAnchor.dataset.lineCta || "unknown";
         const productId = lineAnchor.dataset.product || null;
+        const heroVariant = readHeroVariant();
 
         track("line_click", {
           location,
           product_id: productId ?? "none",
+          hero_variant: heroVariant ?? "none",
         });
 
         const gtag = window.gtag;

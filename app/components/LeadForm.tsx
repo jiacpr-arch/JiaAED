@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import { products } from "@/lib/aed/products";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -26,6 +27,24 @@ function readTracking() {
 export function LeadForm() {
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const startedRef = useRef(false);
+  const submittedRef = useRef(false);
+
+  function handleFirstFocus() {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    track("lead_form_start");
+  }
+
+  useEffect(() => {
+    function onBeforeUnload() {
+      if (startedRef.current && !submittedRef.current) {
+        track("lead_form_abandon");
+      }
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -78,6 +97,9 @@ export function LeadForm() {
         return;
       }
 
+      submittedRef.current = true;
+      track("lead_form_submit", { product_id: productId || "none" });
+
       const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
       if (typeof gtag === "function") {
         gtag("event", "lead_form_submit", {
@@ -125,6 +147,7 @@ export function LeadForm() {
   return (
     <form
       onSubmit={onSubmit}
+      onFocus={handleFirstFocus}
       className="rounded-2xl border border-gray-800 bg-gray-900 p-6 md:p-8 space-y-4"
       noValidate
     >

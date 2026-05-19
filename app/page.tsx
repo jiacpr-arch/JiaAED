@@ -3,6 +3,8 @@ import Link from "next/link";
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 import { LeadForm } from "./components/LeadForm";
+import { HeroCta } from "./components/HeroCta";
+import { PriceViewTracker } from "./components/PriceViewTracker";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -74,15 +76,7 @@ export default function Home() {
               IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <a
-                href={LINE_OA}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-line-cta="hero"
-                className="bg-[#06C755] text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-[#05a847] transition-colors text-center shadow-lg"
-              >
-                💬 คุยกับ AI เจี่ย — ฟรี!
-              </a>
+              <HeroCta />
               <a
                 href="#products"
                 className="bg-yellow-400/10 text-yellow-400 font-semibold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors text-center"
@@ -238,6 +232,7 @@ export default function Home() {
       </section>
 
       {/* Products */}
+      <PriceViewTracker />
       <section id="products" className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
