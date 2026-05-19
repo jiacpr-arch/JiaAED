@@ -5,7 +5,7 @@ export type DocumentItem = {
   /** Path under /public — served directly by Next.js */
   href: string;
   category: "manual" | "specification" | "certificate" | "brochure" | "other";
-  mime: "application/pdf" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  mime: string;
   sizeLabel: string;
   language: "th" | "en" | "th-en";
   updatedAt: string;
