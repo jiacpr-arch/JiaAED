@@ -24,6 +24,7 @@ export type DigestPayload = {
     form_completion_rate: number;
     form_abandon_rate: number;
     line_ctr: number;
+    visit_to_submit_rate: number;
   };
   ab: {
     variant_a_views: number;
@@ -145,6 +146,7 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     form_completion_rate: pct(funnel.form_submits, funnel.form_starts),
     form_abandon_rate: pct(funnel.form_abandons, funnel.form_starts),
     line_ctr: pct(funnel.line_clicks, funnel.visits),
+    visit_to_submit_rate: pct(funnel.form_submits, funnel.visits),
   };
 
   const ab = {
@@ -202,14 +204,26 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
 }
 
 export function formatDigestForLine(d: DigestPayload): string {
+  const prevLineClicks = d.prev_counts["line_click"] || 0;
+  const prevFormSubmits = d.prev_counts["lead_form_submit"] || 0;
+  const hasFormActivity = d.funnel.form_starts > 0 || d.funnel.form_submits > 0;
+  const conversionDisplay = d.funnel.visits > 0 ? `${d.rates.visit_to_submit_rate}%` : "—";
+
   const lines: string[] = [
     `📊 สรุปประจำวัน ${d.date}`,
     ``,
     `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_visits)}`,
-    `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%)`,
-    `📋 Form: เริ่ม ${d.funnel.form_starts} → ส่ง ${d.funnel.form_submits} (ทิ้ง ${d.funnel.form_abandons})`,
-    `💰 Conversion rate: ${d.rates.form_completion_rate}%`,
+    `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%) ${diffPct(d.funnel.line_clicks, prevLineClicks)}`,
   ];
+
+  if (hasFormActivity) {
+    lines.push(
+      `📋 Form: เริ่ม ${d.funnel.form_starts} → ส่ง ${d.funnel.form_submits} (ทิ้ง ${d.funnel.form_abandons}) ${diffPct(d.funnel.form_submits, prevFormSubmits)}`,
+      `💰 Conversion (ส่งฟอร์ม/visitor): ${conversionDisplay}`,
+    );
+  } else {
+    lines.push(`💰 Conversion (ส่งฟอร์ม/visitor): —`);
+  }
 
   if (d.funnel.price_views > 0) {
     lines.push(`👁️  เห็นราคา: ${d.funnel.price_views} (${d.rates.price_view_rate}% ของ visitor)`);
