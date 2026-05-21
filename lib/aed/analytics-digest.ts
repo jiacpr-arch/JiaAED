@@ -159,11 +159,17 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   };
 
   const alerts: string[] = [];
-  if (funnel.visits >= 30) {
+  const totalEvents = funnel.line_clicks + funnel.price_views + funnel.form_starts;
+
+  if (funnel.visits === 0) {
+    alerts.push(`🚨 ไม่มี visitor เลย — ตรวจ ad / tracking ว่ายังยิงอยู่`);
+  } else if (funnel.visits >= 10 && totalEvents === 0) {
+    alerts.push(`🐛 มี visitor ${funnel.visits} แต่ไม่มี event เลย — น่าจะ tracking พัง`);
+  } else if (funnel.visits >= 10) {
     if (rates.line_ctr < 5 && (prev_counts["line_click"] || 0) > 0) {
       alerts.push(`⚠️ LINE CTR ต่ำผิดปกติ (${rates.line_ctr}% — ปกติ > 5%) ตรวจสอบปุ่ม`);
     }
-    if (rates.price_view_rate < 25) {
+    if (funnel.price_views >= 5 && rates.price_view_rate < 15) {
       alerts.push(`⚠️ คนเข้าเว็บไม่ค่อย scroll ถึงราคา (${rates.price_view_rate}%) ลองดัน CTA ขึ้น`);
     }
     if (funnel.form_starts > 5 && rates.form_abandon_rate > 60) {
