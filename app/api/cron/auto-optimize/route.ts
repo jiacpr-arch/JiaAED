@@ -1,0 +1,318 @@
+import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import {
+  readAbState,
+  proposeNewCta,
+  buildNewHeroCtaFile,
+  extractCopy,
+} from "@/lib/aed/auto-optimizer";
+import {
+  getFile,
+  getMainSha,
+  createBranch,
+  updateFile,
+  createPullRequest,
+  mergePullRequest,
+  listCheckRuns,
+} from "@/lib/aed/github-client";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 300;
+
+const FILE_PATH = "app/components/HeroCta.tsx";
+const SITE_URL = "https://www.jiaaed.com";
+const HEALTH_PATHS = ["/", "/docs", "/articles"];
+
+function isAuthorized(req: Request): boolean {
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return true;
+  return req.headers.get("authorization") === `Bearer ${secret}`;
+}
+
+async function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function notify(text: string) {
+  try {
+    await notifyAnalyticsDigest(text);
+  } catch (e) {
+    console.error("[auto-optimize] notify failed:", e);
+  }
+}
+
+async function notifyError(text: string) {
+  try {
+    await notifyAnalyticsAlert(text);
+  } catch (e) {
+    console.error("[auto-optimize] notifyError failed:", e);
+  }
+}
+
+async function logRun(payload: Record<string, unknown>): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    const today = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date());
+    await supabase.from("aed_analytics_digest_log").upsert(
+      { digest_date: today, kind: "auto_optimize", payload },
+      { onConflict: "digest_date,kind" },
+    );
+  } catch (e) {
+    console.error("[auto-optimize] logRun failed:", e);
+  }
+}
+
+async function waitForChecks(gh: { token: string; owner: string; repo: string }, sha: string): Promise<{
+  ok: boolean;
+  detail: string;
+}> {
+  const deadline = Date.now() + 4 * 60 * 1000;
+  let lastStatus = "no checks yet";
+  while (Date.now() < deadline) {
+    const runs = await listCheckRuns(gh, sha).catch(() => null);
+    if (runs && runs.check_runs.length > 0) {
+      const failed = runs.check_runs.find((r) => r.conclusion === "failure" || r.conclusion === "cancelled");
+      if (failed) return { ok: false, detail: `${failed.name}: ${failed.conclusion}` };
+      const allDone = runs.check_runs.every((r) => r.status === "completed");
+      if (allDone) {
+        const allPass = runs.check_runs.every((r) => r.conclusion === "success" || r.conclusion === "neutral" || r.conclusion === "skipped");
+        return allPass
+          ? { ok: true, detail: `${runs.check_runs.length} checks passed` }
+          : { ok: false, detail: `checks finished with non-success` };
+      }
+      lastStatus = `${runs.check_runs.length} checks, waiting…`;
+    }
+    await sleep(15000);
+  }
+  return { ok: false, detail: `timeout — last: ${lastStatus}` };
+}
+
+async function healthCheck(): Promise<{ ok: boolean; detail: string }> {
+  await sleep(45000); // give production deploy time to roll out
+  for (const path of HEALTH_PATHS) {
+    const url = `${SITE_URL}${path}`;
+    try {
+      const res = await fetch(url, { method: "GET", cache: "no-store" });
+      if (!res.ok) return { ok: false, detail: `${path} → ${res.status}` };
+    } catch (e) {
+      return { ok: false, detail: `${path} → ${String(e).slice(0, 100)}` };
+    }
+  }
+  return { ok: true, detail: `${HEALTH_PATHS.length} paths returned 2xx` };
+}
+
+export async function GET(req: Request) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+  }
+
+  const ghToken = process.env.GITHUB_TOKEN;
+  const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
+  if (!ghToken) {
+    await notifyError("🚨 Auto-optimizer ปิด: ไม่มี GITHUB_TOKEN env var");
+    return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
+  }
+  const [owner, repo] = ghRepo.split("/");
+  const gh = { token: ghToken, owner, repo };
+
+  const result: Record<string, unknown> = { steps: [] as string[] };
+  const steps = result.steps as string[];
+
+  try {
+    await notify("🤖 Auto-optimizer เริ่มทำงาน — กำลังวิเคราะห์ A/B test");
+    steps.push("start");
+
+    const ab = await readAbState(7);
+    result.ab = ab;
+
+    if (ab.sample_too_small) {
+      const msg = `⏸️ Skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 30 ต่อ variant`;
+      await notify(msg);
+      steps.push("skip_small_sample");
+      await logRun(result);
+      return NextResponse.json({ ok: true, skipped: "small_sample", ab });
+    }
+    if (Math.abs(ab.a_ctr - ab.b_ctr) < 0.5) {
+      const msg = `⏸️ Skip: CTR ใกล้กันมาก A=${ab.a_ctr}% B=${ab.b_ctr}% รอ data เพิ่ม`;
+      await notify(msg);
+      steps.push("skip_tie");
+      await logRun(result);
+      return NextResponse.json({ ok: true, skipped: "tie", ab });
+    }
+
+    steps.push("read_file");
+    const file = await getFile(gh, FILE_PATH, "main");
+    const loserCopy = extractCopy(file.content, ab.loser);
+    const winnerCopy = extractCopy(file.content, ab.winner);
+    result.loser_copy = loserCopy;
+    result.winner_copy = winnerCopy;
+
+    await notify(
+      `📊 Loser: ${ab.loser.toUpperCase()} "${loserCopy}" (CTR ${ab.loser_ctr.toFixed(1)}%)\n📊 Winner: ${ab.winner.toUpperCase()} "${winnerCopy}" (CTR ${ab.winner_ctr.toFixed(1)}%)\n\n🧠 กำลังถาม Claude เพื่อหา copy ใหม่...`,
+    );
+
+    steps.push("propose");
+    const proposed = await proposeNewCta({ ab, current_loser_copy: loserCopy, current_winner_copy: winnerCopy });
+    result.proposed = proposed;
+
+    if (proposed.copy === loserCopy || proposed.copy === winnerCopy) {
+      const msg = `⏸️ AI proposed copy เดิม ข้ามรอบนี้`;
+      await notify(msg);
+      steps.push("skip_duplicate");
+      await logRun(result);
+      return NextResponse.json({ ok: true, skipped: "duplicate" });
+    }
+
+    steps.push("build_diff");
+    const newContent = buildNewHeroCtaFile(file.content, {
+      loser: ab.loser,
+      oldCopy: loserCopy,
+      newCopy: proposed.copy,
+    });
+
+    const ts = Date.now().toString(36);
+    const branch = `claude/auto-cta-${ts}`;
+    const commitMessage = `auto: swap hero CTA variant ${ab.loser.toUpperCase()} to "${proposed.copy}"
+
+Variant ${ab.loser.toUpperCase()} CTR was ${ab.loser_ctr.toFixed(1)}% over the
+last 7 days (vs ${ab.winner_ctr.toFixed(1)}% for variant ${ab.winner.toUpperCase()}).
+Replacing the loser with a new candidate copy proposed by Claude.
+
+Rationale: ${proposed.rationale}
+
+[auto-optimizer]`;
+
+    steps.push("create_branch");
+    const baseSha = await getMainSha(gh);
+    await createBranch(gh, branch, baseSha);
+
+    steps.push("commit");
+    await updateFile(gh, {
+      path: FILE_PATH,
+      content: newContent,
+      sha: file.sha,
+      branch,
+      message: commitMessage,
+    });
+
+    steps.push("open_pr");
+    const pr = await createPullRequest(gh, {
+      title: `auto: swap hero CTA variant ${ab.loser.toUpperCase()}`,
+      body: [
+        `## Auto-generated by weekly auto-optimizer`,
+        ``,
+        `**Loser:** variant ${ab.loser.toUpperCase()}`,
+        `- copy: \`${loserCopy}\``,
+        `- views: ${ab.loser === "a" ? ab.a_views : ab.b_views}`,
+        `- clicks: ${ab.loser === "a" ? ab.a_clicks : ab.b_clicks}`,
+        `- CTR: **${ab.loser_ctr.toFixed(1)}%**`,
+        ``,
+        `**Winner:** variant ${ab.winner.toUpperCase()}`,
+        `- copy: \`${winnerCopy}\``,
+        `- CTR: **${ab.winner_ctr.toFixed(1)}%**`,
+        ``,
+        `**New copy** (replacing loser):`,
+        `\`${proposed.copy}\``,
+        ``,
+        `**AI rationale:** ${proposed.rationale}`,
+        ``,
+        `---`,
+        ``,
+        `This PR will be auto-merged after Vercel preview is ready and all checks pass.`,
+        `If something fails, the optimizer will report on LINE and skip the merge.`,
+      ].join("\n"),
+      head: branch,
+      base: "main",
+      draft: false,
+    });
+    result.pr_number = pr.number;
+    result.pr_url = pr.html_url;
+    result.branch = branch;
+
+    await notify(
+      `🔀 PR #${pr.number} เปิดแล้ว\nNew copy: "${proposed.copy}"\nรอ preview build (≤4 นาที)…\n${pr.html_url}`,
+    );
+
+    steps.push("wait_checks");
+    const checks = await waitForChecks(gh, pr.head.sha);
+    result.checks = checks;
+
+    if (!checks.ok) {
+      await notifyError(`🚨 Auto-optimizer พลาด: checks ไม่ผ่าน (${checks.detail})\nPR #${pr.number} ค้างไว้ไม่ merge — ไป review เองที่ ${pr.html_url}`);
+      steps.push("aborted_checks");
+      await logRun(result);
+      return NextResponse.json({ ok: false, stage: "checks_failed", ...result });
+    }
+
+    await notify(`✅ Checks ผ่าน (${checks.detail}) — กำลัง merge`);
+
+    steps.push("merge");
+    const mergeRes = await mergePullRequest(gh, pr.number, "squash");
+    result.merge = mergeRes;
+
+    await notify(`🚀 Merged: ${mergeRes.sha.slice(0, 7)} — รอ production deploy + health check…`);
+
+    steps.push("health_check");
+    const health = await healthCheck();
+    result.health = health;
+
+    if (!health.ok) {
+      steps.push("revert_attempt");
+      await notifyError(
+        `🚨🚨🚨 เว็บอาจเสีย! Health check ล้มเหลว: ${health.detail}\nกำลังพยายาม revert อัตโนมัติ...`,
+      );
+
+      try {
+        const latest = await getFile(gh, FILE_PATH, "main");
+        const revertContent = file.content;
+        const revertBranch = `claude/auto-revert-${ts}`;
+        const mainSha = await getMainSha(gh);
+        await createBranch(gh, revertBranch, mainSha);
+        await updateFile(gh, {
+          path: FILE_PATH,
+          content: revertContent,
+          sha: latest.sha,
+          branch: revertBranch,
+          message: `auto-revert: restore HeroCta variant ${ab.loser.toUpperCase()} after health check failure\n\nHealth check after auto-optimizer merge failed: ${health.detail}\nReverting to pre-merge content.\n\n[auto-optimizer-revert]`,
+        });
+        const revertPr = await createPullRequest(gh, {
+          title: `auto-revert: HeroCta after health check failure`,
+          body: `Health check failed after #${pr.number}: ${health.detail}\n\nAuto-reverting.`,
+          head: revertBranch,
+          base: "main",
+        });
+        const revertMerge = await mergePullRequest(gh, revertPr.number, "squash");
+        result.revert = { pr: revertPr.number, sha: revertMerge.sha };
+
+        await notify(`✅ Revert merged (PR #${revertPr.number}) — เว็บควรกลับมาทำงานปกติใน 1-2 นาที`);
+        steps.push("reverted");
+      } catch (revertErr) {
+        await notifyError(`💀 Revert ก็ล้มเหลว! ต้อง manual fix:\n${String(revertErr).slice(0, 200)}\n\nไป revert ที่ GitHub เลย: ${pr.html_url}`);
+        steps.push("revert_failed");
+      }
+      await logRun(result);
+      return NextResponse.json({ ok: false, stage: "health_failed", ...result });
+    }
+
+    await notify(
+      `🟢 เสร็จสมบูรณ์!\nVariant ${ab.loser.toUpperCase()} ตอนนี้คือ "${proposed.copy}"\nผลลัพธ์ดูใน /admin/analytics สัปดาห์หน้า`,
+    );
+    steps.push("done");
+    await logRun(result);
+    return NextResponse.json({ ok: true, ...result });
+  } catch (err) {
+    const msg = String(err).slice(0, 300);
+    console.error("[auto-optimize] failed:", err);
+    await notifyError(`🚨 Auto-optimizer เกิด error:\n${msg}\n\nSteps ที่ทำไป: ${steps.join(" → ")}`);
+    result.error = msg;
+    await logRun(result);
+    return NextResponse.json({ ok: false, error: msg, ...result }, { status: 500 });
+  }
+}
