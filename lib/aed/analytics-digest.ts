@@ -9,6 +9,7 @@ export type DigestPayload = {
   range: { from: string; to: string };
   counts: DigestCounts;
   prev_counts: DigestCounts;
+  prev_visits: number;
   funnel: {
     visits: number;
     price_views: number;
@@ -72,7 +73,7 @@ function pct(n: number, d: number): number {
 }
 
 function diffPct(curr: number, prev: number): string {
-  if (prev === 0) return curr === 0 ? "0%" : "+∞%";
+  if (prev === 0) return curr === 0 ? "0%" : "(ใหม่)";
   const d = ((curr - prev) / prev) * 100;
   const sign = d >= 0 ? "+" : "";
   return `${sign}${d.toFixed(0)}%`;
@@ -107,10 +108,11 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   const yesterday = bkkDateRange(1);
   const dayBefore = bkkDateRange(2);
 
-  const [rows, prev, visits] = await Promise.all([
+  const [rows, prev, visits, prev_visits] = await Promise.all([
     fetchRows(yesterday.from, yesterday.to),
     fetchRows(dayBefore.from, dayBefore.to),
     fetchVisitsCount(yesterday.from, yesterday.to),
+    fetchVisitsCount(dayBefore.from, dayBefore.to),
   ]);
 
   const counts = countByEvent(rows);
@@ -191,6 +193,7 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     range: { from: yesterday.from, to: yesterday.to },
     counts,
     prev_counts,
+    prev_visits,
     funnel,
     rates,
     ab,
@@ -202,7 +205,7 @@ export function formatDigestForLine(d: DigestPayload): string {
   const lines: string[] = [
     `📊 สรุปประจำวัน ${d.date}`,
     ``,
-    `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_counts["page_view"] || 0)}`,
+    `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_visits)}`,
     `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%)`,
     `📋 Form: เริ่ม ${d.funnel.form_starts} → ส่ง ${d.funnel.form_submits} (ทิ้ง ${d.funnel.form_abandons})`,
     `💰 Conversion rate: ${d.rates.form_completion_rate}%`,
