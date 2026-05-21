@@ -1,4 +1,6 @@
-async function pushToOwner(text: string): Promise<void> {
+type LineMessage = Record<string, unknown>;
+
+async function pushMessages(messages: LineMessage[]): Promise<void> {
   const token = process.env.AED_LINE_CHANNEL_ACCESS_TOKEN ?? "";
   const ownerId = process.env.AED_OWNER_LINE_USER_ID ?? "";
 
@@ -10,11 +12,42 @@ async function pushToOwner(text: string): Promise<void> {
   const res = await fetch("https://api.line.me/v2/bot/message/push", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ to: ownerId, messages: [{ type: "text", text }] }),
+    body: JSON.stringify({ to: ownerId, messages: messages.slice(0, 5) }),
   });
 
   if (!res.ok) console.error("[AED] owner push failed:", res.status, await res.text());
 }
+
+async function pushToOwner(text: string): Promise<void> {
+  await pushMessages([{ type: "text", text }]);
+}
+
+function bkkNow(): string {
+  return new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
+}
+
+function normalizeThaiPhone(phone: string | null): string | null {
+  if (!phone) return null;
+  let digits = phone.replace(/\D/g, "");
+  if (!digits) return null;
+  if (digits.startsWith("66") && digits.length >= 10) digits = "0" + digits.slice(2);
+  if (digits.length < 9 || digits.length > 11) return null;
+  return digits;
+}
+
+function infoRow(label: string, value: string): LineMessage {
+  return {
+    type: "box",
+    layout: "baseline",
+    spacing: "sm",
+    contents: [
+      { type: "text", text: label, color: "#888888", size: "sm", flex: 2 },
+      { type: "text", text: value, color: "#111111", size: "sm", flex: 5, wrap: true },
+    ],
+  };
+}
+
+// ─── Escalation (existing — keep plain text) ───────────────────────────────────
 
 export async function notifyEscalation(p: {
   reason: string;
@@ -32,10 +65,12 @@ export async function notifyEscalation(p: {
       `📋 เหตุผล: ${p.reason}`,
       `📝 สรุป: ${p.summary}`,
       `🔗 LINE ID: ${p.lineUserId}`,
-      `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`,
+      `⏰ ${bkkNow()}`,
     ].join("\n"),
   );
 }
+
+// ─── New Quotation (upgrade to Flex with Pay button) ───────────────────────────
 
 export async function notifyNewQuotation(p: {
   customerName: string | null;
@@ -45,17 +80,51 @@ export async function notifyNewQuotation(p: {
   quotationNumber: string;
   paymentLinkUrl: string;
 }): Promise<void> {
-  await pushToOwner(
-    [
-      `🎉 ใบเสนอราคาใหม่!`,
-      `👤 ${p.customerName ?? "ลูกค้าใหม่"}`,
-      `📦 ${p.productName} × ${p.quantity} เครื่อง`,
-      `💰 ${p.grandTotal.toLocaleString("th-TH")} บาท (รวม VAT)`,
-      `📋 ${p.quotationNumber}`,
-      `💳 ${p.paymentLinkUrl}`,
-    ].join("\n"),
-  );
+  const total = `฿${p.grandTotal.toLocaleString("th-TH")}`;
+
+  const bubble = {
+    type: "bubble",
+    size: "kilo",
+    header: {
+      type: "box",
+      layout: "vertical",
+      backgroundColor: "#06C755",
+      paddingAll: "md",
+      contents: [
+        { type: "text", text: "🎉 ใบเสนอราคาใหม่", weight: "bold", size: "lg", color: "#FFFFFF" },
+        { type: "text", text: p.quotationNumber, size: "xs", color: "#FFFFFFCC" },
+      ],
+    },
+    body: {
+      type: "box",
+      layout: "vertical",
+      spacing: "sm",
+      contents: [
+        infoRow("👤 ลูกค้า", p.customerName ?? "ลูกค้าใหม่"),
+        infoRow("📦 สินค้า", `${p.productName} × ${p.quantity} เครื่อง`),
+        infoRow("💰 รวม", `${total} (รวม VAT)`),
+      ],
+    },
+    footer: {
+      type: "box",
+      layout: "vertical",
+      spacing: "sm",
+      contents: [
+        {
+          type: "button",
+          style: "primary",
+          color: "#06C755",
+          height: "sm",
+          action: { type: "uri", label: "💳 เปิดลิงก์ชำระเงิน", uri: p.paymentLinkUrl },
+        },
+      ],
+    },
+  };
+
+  await pushMessages([{ type: "flex", altText: `🎉 ใบเสนอราคาใหม่ ${total}`, contents: bubble }]);
 }
+
+// ─── Payment Received (keep plain text) ────────────────────────────────────────
 
 export async function notifyPaymentReceived(p: {
   customerName: string | null;
@@ -75,6 +144,8 @@ export async function notifyPaymentReceived(p: {
   );
 }
 
+// ─── New Lead (upgrade to Flex with Call/Email buttons) ────────────────────────
+
 export async function notifyNewLead(p: {
   source: string;
   fullName: string | null;
@@ -93,23 +164,74 @@ export async function notifyNewLead(p: {
     ? `${p.utmSource}${p.utmCampaign ? ` / ${p.utmCampaign}` : ""}`
     : "organic / direct";
 
+  const cleanPhone = normalizeThaiPhone(p.phone);
+
+  const rows: LineMessage[] = [
+    infoRow("👤 ชื่อ", p.fullName ?? "ไม่ระบุ"),
+    infoRow("📞 โทร", p.phone ?? "-"),
+    infoRow("✉️ Email", p.email ?? "-"),
+  ];
+  if (p.company) rows.push(infoRow("🏢 บริษัท", p.company));
+  if (p.productId) rows.push(infoRow("📦 รุ่น", p.productId));
+  if (p.message) rows.push(infoRow("💬 ข้อความ", p.message));
+  rows.push(infoRow("🌐 ที่มา", adSource));
+  rows.push(infoRow("⏰ เวลา", bkkNow()));
+
+  const actions: LineMessage[] = [];
+  if (cleanPhone) {
+    actions.push({
+      type: "button",
+      style: "primary",
+      color: "#06C755",
+      height: "sm",
+      action: { type: "uri", label: `📞 โทร ${p.phone}`, uri: `tel:${cleanPhone}` },
+    });
+  }
+  if (p.email) {
+    const subj = encodeURIComponent("เรื่องสอบถาม AED Amoul i7 จาก JiaAED");
+    const greeting = p.fullName ? `เรียน คุณ${p.fullName}` : "เรียน ลูกค้า";
+    const body = encodeURIComponent(`${greeting},\n\nขอบคุณที่สนใจ AED Amoul i7 ครับ\n\n— เจี่ยรักษา (JiaAED)`);
+    actions.push({
+      type: "button",
+      style: "secondary",
+      height: "sm",
+      action: { type: "uri", label: `✉️ ตอบกลับทาง email`, uri: `mailto:${p.email}?subject=${subj}&body=${body}` },
+    });
+  }
+
+  const bubble = {
+    type: "bubble",
+    size: "kilo",
+    header: {
+      type: "box",
+      layout: "vertical",
+      backgroundColor: "#FFC107",
+      paddingAll: "md",
+      contents: [
+        { type: "text", text: "🎯 Lead ใหม่", weight: "bold", size: "lg", color: "#111111" },
+        { type: "text", text: p.source, size: "xs", color: "#333333" },
+      ],
+    },
+    body: { type: "box", layout: "vertical", spacing: "sm", contents: rows },
+    ...(actions.length > 0
+      ? { footer: { type: "box", layout: "vertical", spacing: "sm", contents: actions } }
+      : {}),
+  };
+
+  await pushMessages([
+    { type: "flex", altText: `🎯 Lead ใหม่: ${p.fullName ?? "ลูกค้า"}`, contents: bubble },
+  ]);
+}
+
+// ─── New LINE Follow (keep plain text) ─────────────────────────────────────────
+
+export async function notifyNewFollow(lineUserId: string): Promise<void> {
   await pushToOwner(
-    [
-      `🎯 Lead ใหม่ (${p.source})`,
-      ``,
-      `👤 ${p.fullName ?? "ไม่ระบุชื่อ"}`,
-      `📞 ${p.phone ?? "-"}`,
-      `✉️ ${p.email ?? "-"}`,
-      p.company ? `🏢 ${p.company}` : null,
-      p.productId ? `📦 ${p.productId}` : null,
-      p.message ? `💬 ${p.message}` : null,
-      `🌐 ${adSource}`,
-      `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`,
-    ]
-      .filter((x): x is string => !!x)
-      .join("\n"),
+    [`👋 ลูกค้าใหม่ทัก LINE`, `ID: ${lineUserId}`, `⏰ ${bkkNow()}`].join("\n"),
   );
 }
+
+// ─── Analytics digest + alert (plain text) ─────────────────────────────────────
 
 export async function notifyAnalyticsDigest(text: string): Promise<void> {
   await pushToOwner(text);
@@ -117,10 +239,4 @@ export async function notifyAnalyticsDigest(text: string): Promise<void> {
 
 export async function notifyAnalyticsAlert(text: string): Promise<void> {
   await pushToOwner(text);
-}
-
-export async function notifyNewFollow(lineUserId: string): Promise<void> {
-  await pushToOwner(
-    [`👋 ลูกค้าใหม่ทัก LINE`, `ID: ${lineUserId}`, `⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`].join("\n"),
-  );
 }
