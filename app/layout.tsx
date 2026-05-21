@@ -7,6 +7,7 @@ import { GoogleTags } from "./components/GoogleTags";
 import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
+import { FloatingLineButton } from "./components/FloatingLineButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -83,6 +84,7 @@ export default function RootLayout({
         <LineClickTracker />
         {children}
         <WebChat />
+        <FloatingLineButton />
         <Analytics />
         <SpeedInsights />
       </body>
