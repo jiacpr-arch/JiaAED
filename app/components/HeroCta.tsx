@@ -8,7 +8,7 @@ const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
 const COPY: Record<HeroVariant, string> = {
   a: "💬 คุยกับ AI เจี่ย — ฟรี!",
-  b: "📋 ขอใบเสนอราคา ฟรี!",
+  b: "🎁 รับส่วนลดวันนี้ ทาง LINE",
 };
 
 export function HeroCta() {
