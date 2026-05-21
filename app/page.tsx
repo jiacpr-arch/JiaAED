@@ -3,6 +3,7 @@ import Link from "next/link";
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 import { LeadForm } from "./components/LeadForm";
+import { MiniLeadForm } from "./components/MiniLeadForm";
 import { HeroCta } from "./components/HeroCta";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 
@@ -71,32 +72,55 @@ export default function Home() {
               <span className="text-yellow-400">เครื่องกระตุก</span><br />
               หัวใจไฟฟ้า
             </h1>
-            <p className="text-gray-400 text-lg mb-6">
+            <p className="text-gray-400 text-lg mb-4">
               Shock พร้อมใน <strong className="text-white">7 วินาที</strong> · เสียงแนะนำภาษาไทย<br />
               IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
+              <span className="text-xs text-gray-400">เริ่มต้น</span>
+              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿39,999</span>
+              <span className="text-gray-500 line-through text-base">฿41,900</span>
+              <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · ออกใบเสนอราคาได้</span>
+            </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <HeroCta />
               <a
                 href="#products"
                 className="bg-yellow-400/10 text-yellow-400 font-semibold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors text-center"
               >
-                ดูราคา →
+                ดูทั้ง 3 รุ่น →
               </a>
             </div>
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคาได้เลย</p>
           </div>
           <div className="flex justify-center">
-            <div className="relative w-80 h-80">
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-line-cta="hero_product_image"
+              className="relative w-80 h-80 group cursor-pointer"
+              aria-label="คลิกเพื่อสอบถามทาง LINE"
+            >
               <Image
                 src="/images/product-main.png"
                 alt="AED Amoul i7"
                 fill
-                className="object-contain drop-shadow-2xl"
+                className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
                 priority
               />
-            </div>
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#06C755] text-white text-xs font-bold px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
+                💬 คลิกเพื่อสอบถาม
+              </div>
+            </a>
           </div>
+        </div>
+      </section>
+
+      {/* Quick contact bar — for ad traffic that wants direct callback */}
+      <section className="bg-gray-900 border-y border-gray-800 py-6 px-4">
+        <div className="max-w-3xl mx-auto">
+          <MiniLeadForm />
         </div>
       </section>
 
