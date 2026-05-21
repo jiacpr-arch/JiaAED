@@ -9,6 +9,7 @@ export type DigestPayload = {
   range: { from: string; to: string };
   counts: DigestCounts;
   prev_counts: DigestCounts;
+  prev_visits: number;
   funnel: {
     visits: number;
     price_views: number;
@@ -23,6 +24,7 @@ export type DigestPayload = {
     form_completion_rate: number;
     form_abandon_rate: number;
     line_ctr: number;
+    visit_to_submit_rate: number;
   };
   ab: {
     variant_a_views: number;
@@ -72,7 +74,7 @@ function pct(n: number, d: number): number {
 }
 
 function diffPct(curr: number, prev: number): string {
-  if (prev === 0) return curr === 0 ? "0%" : "+∞%";
+  if (prev === 0) return curr === 0 ? "0%" : "(ใหม่)";
   const d = ((curr - prev) / prev) * 100;
   const sign = d >= 0 ? "+" : "";
   return `${sign}${d.toFixed(0)}%`;
@@ -107,10 +109,11 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   const yesterday = bkkDateRange(1);
   const dayBefore = bkkDateRange(2);
 
-  const [rows, prev, visits] = await Promise.all([
+  const [rows, prev, visits, prev_visits] = await Promise.all([
     fetchRows(yesterday.from, yesterday.to),
     fetchRows(dayBefore.from, dayBefore.to),
     fetchVisitsCount(yesterday.from, yesterday.to),
+    fetchVisitsCount(dayBefore.from, dayBefore.to),
   ]);
 
   const counts = countByEvent(rows);
@@ -143,6 +146,7 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     form_completion_rate: pct(funnel.form_submits, funnel.form_starts),
     form_abandon_rate: pct(funnel.form_abandons, funnel.form_starts),
     line_ctr: pct(funnel.line_clicks, funnel.visits),
+    visit_to_submit_rate: pct(funnel.form_submits, funnel.visits),
   };
 
   const ab = {
@@ -155,11 +159,17 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   };
 
   const alerts: string[] = [];
-  if (funnel.visits >= 30) {
+  const totalEvents = funnel.line_clicks + funnel.price_views + funnel.form_starts;
+
+  if (funnel.visits === 0) {
+    alerts.push(`🚨 ไม่มี visitor เลย — ตรวจ ad / tracking ว่ายังยิงอยู่`);
+  } else if (funnel.visits >= 10 && totalEvents === 0) {
+    alerts.push(`🐛 มี visitor ${funnel.visits} แต่ไม่มี event เลย — น่าจะ tracking พัง`);
+  } else if (funnel.visits >= 10) {
     if (rates.line_ctr < 5 && (prev_counts["line_click"] || 0) > 0) {
       alerts.push(`⚠️ LINE CTR ต่ำผิดปกติ (${rates.line_ctr}% — ปกติ > 5%) ตรวจสอบปุ่ม`);
     }
-    if (rates.price_view_rate < 25) {
+    if (funnel.price_views >= 5 && rates.price_view_rate < 15) {
       alerts.push(`⚠️ คนเข้าเว็บไม่ค่อย scroll ถึงราคา (${rates.price_view_rate}%) ลองดัน CTA ขึ้น`);
     }
     if (funnel.form_starts > 5 && rates.form_abandon_rate > 60) {
@@ -191,6 +201,7 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     range: { from: yesterday.from, to: yesterday.to },
     counts,
     prev_counts,
+    prev_visits,
     funnel,
     rates,
     ab,
@@ -199,14 +210,26 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
 }
 
 export function formatDigestForLine(d: DigestPayload): string {
+  const prevLineClicks = d.prev_counts["line_click"] || 0;
+  const prevFormSubmits = d.prev_counts["lead_form_submit"] || 0;
+  const hasFormActivity = d.funnel.form_starts > 0 || d.funnel.form_submits > 0;
+  const conversionDisplay = d.funnel.visits > 0 ? `${d.rates.visit_to_submit_rate}%` : "—";
+
   const lines: string[] = [
     `📊 สรุปประจำวัน ${d.date}`,
     ``,
-    `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_counts["page_view"] || 0)}`,
-    `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%)`,
-    `📋 Form: เริ่ม ${d.funnel.form_starts} → ส่ง ${d.funnel.form_submits} (ทิ้ง ${d.funnel.form_abandons})`,
-    `💰 Conversion rate: ${d.rates.form_completion_rate}%`,
+    `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_visits)}`,
+    `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%) ${diffPct(d.funnel.line_clicks, prevLineClicks)}`,
   ];
+
+  if (hasFormActivity) {
+    lines.push(
+      `📋 Form: เริ่ม ${d.funnel.form_starts} → ส่ง ${d.funnel.form_submits} (ทิ้ง ${d.funnel.form_abandons}) ${diffPct(d.funnel.form_submits, prevFormSubmits)}`,
+      `💰 Conversion (ส่งฟอร์ม/visitor): ${conversionDisplay}`,
+    );
+  } else {
+    lines.push(`💰 Conversion (ส่งฟอร์ม/visitor): —`);
+  }
 
   if (d.funnel.price_views > 0) {
     lines.push(`👁️  เห็นราคา: ${d.funnel.price_views} (${d.rates.price_view_rate}% ของ visitor)`);
