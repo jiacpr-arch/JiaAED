@@ -50,8 +50,37 @@ export function LeadForm() {
 
   useEffect(() => {
     function onBeforeUnload() {
-      if (startedRef.current && !submittedRef.current) {
-        trackEvent("lead_form_abandon", { variant: "full" }, { beacon: true });
+      if (!startedRef.current || submittedRef.current) return;
+      trackEvent("lead_form_abandon", { variant: "full" }, { beacon: true });
+
+      const form = formRef.current;
+      if (!form || typeof navigator.sendBeacon !== "function") return;
+      const fd = new FormData(form);
+      const fullName = String(fd.get("fullName") || "").trim();
+      const phone = String(fd.get("phone") || "").trim();
+      const email = String(fd.get("email") || "").trim();
+      if (!phone && !email) return;
+
+      const { gclid, utm } = readTracking();
+      const payload = JSON.stringify({
+        variant: "full",
+        fullName,
+        phone,
+        email,
+        company: String(fd.get("company") || "").trim(),
+        productId: String(fd.get("productId") || "").trim(),
+        message: String(fd.get("message") || "").trim(),
+        gclid,
+        utm,
+        pageUrl: window.location.href,
+      });
+      try {
+        navigator.sendBeacon(
+          "/api/aed/lead-partial",
+          new Blob([payload], { type: "application/json" }),
+        );
+      } catch {
+        // swallow — best-effort
       }
     }
     window.addEventListener("beforeunload", onBeforeUnload);

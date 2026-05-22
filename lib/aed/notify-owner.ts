@@ -240,3 +240,32 @@ export async function notifyAnalyticsDigest(text: string): Promise<void> {
 export async function notifyAnalyticsAlert(text: string): Promise<void> {
   await pushToOwner(text);
 }
+
+export async function notifyAbandonedForm(p: {
+  variant: string;
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
+  company: string | null;
+  productId: string | null;
+  message: string | null;
+  utmSource: string | null;
+  utmCampaign: string | null;
+  pageUrl: string | null;
+}): Promise<void> {
+  const lines: string[] = [`⚠️ Form ทิ้งกลางทาง (${p.variant})`];
+  if (p.fullName) lines.push(`ชื่อ: ${p.fullName}`);
+  const phone = normalizeThaiPhone(p.phone);
+  if (phone) lines.push(`โทร: ${phone}`);
+  if (p.email) lines.push(`อีเมล: ${p.email}`);
+  if (p.company) lines.push(`บริษัท: ${p.company}`);
+  if (p.productId) lines.push(`สนใจ: ${p.productId}`);
+  if (p.message) lines.push(`ข้อความ: ${p.message.slice(0, 120)}`);
+  if (p.utmSource) {
+    const src = p.utmCampaign ? `${p.utmSource} / ${p.utmCampaign}` : p.utmSource;
+    lines.push(`Source: ${src}`);
+  }
+  lines.push(`⏰ ${bkkNow()}`);
+  lines.push(`💡 ลองโทร/อีเมลตามดูภายใน 1 ชม.`);
+  await pushToOwner(lines.join("\n"));
+}
