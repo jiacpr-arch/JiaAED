@@ -8,6 +8,7 @@ const DISMISS_KEY = "jiaaed_floating_line_dismissed";
 export function FloatingLineButton() {
   const [visible, setVisible] = useState(false);
   const [inlineCtaVisible, setInlineCtaVisible] = useState(false);
+  const [webChatOpen, setWebChatOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -17,6 +18,21 @@ export function FloatingLineButton() {
     }
     const t = setTimeout(() => setVisible(true), 1500);
     return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    function onOpen() {
+      setWebChatOpen(true);
+    }
+    function onClose() {
+      setWebChatOpen(false);
+    }
+    window.addEventListener("webchat:open", onOpen);
+    window.addEventListener("webchat:close", onClose);
+    return () => {
+      window.removeEventListener("webchat:open", onOpen);
+      window.removeEventListener("webchat:close", onClose);
+    };
   }, []);
 
   useEffect(() => {
@@ -51,10 +67,10 @@ export function FloatingLineButton() {
     }
   }
 
-  if (!visible || inlineCtaVisible) return null;
+  if (!visible || inlineCtaVisible || webChatOpen) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-20 right-5 z-50 sm:bottom-24 sm:right-6">
       <a
         href={LINE_OA}
         target="_blank"
