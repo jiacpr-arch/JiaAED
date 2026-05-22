@@ -5,6 +5,7 @@ import { faqs } from "@/lib/aed/faqs";
 import { LeadForm } from "./components/LeadForm";
 import { MiniLeadForm } from "./components/MiniLeadForm";
 import { HeroCta } from "./components/HeroCta";
+import { HeroHeadline } from "./components/HeroHeadline";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -92,11 +93,7 @@ export default function Home() {
             <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
               🏅 ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569
             </div>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
-              AED Amoul i7<br />
-              <span className="text-yellow-400">เครื่องกระตุก</span><br />
-              หัวใจไฟฟ้า
-            </h1>
+            <HeroHeadline />
             <p className="text-gray-400 text-lg mb-4">
               Shock พร้อมใน <strong className="text-white">7 วินาที</strong> · เสียงแนะนำภาษาไทย<br />
               IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก

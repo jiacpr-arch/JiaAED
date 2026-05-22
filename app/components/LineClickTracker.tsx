@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
-import { readHeroVariant } from "@/lib/aed/ab-variant";
+import { readHeadlineVariant, readHeroVariant } from "@/lib/aed/ab-variant";
 
 declare global {
   interface Window {
@@ -25,11 +25,13 @@ export function LineClickTracker() {
         const location = lineAnchor.dataset.lineCta || "unknown";
         const productId = lineAnchor.dataset.product || null;
         const heroVariant = readHeroVariant();
+        const headlineVariant = readHeadlineVariant();
 
         trackEvent("line_click", {
           location,
           product_id: productId ?? "none",
           hero_variant: heroVariant ?? "none",
+          headline_variant: headlineVariant ?? "none",
         });
 
         const gtag = window.gtag;
