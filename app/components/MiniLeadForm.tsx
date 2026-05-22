@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 
 type State = "idle" | "submitting" | "success" | "error";
@@ -22,15 +22,37 @@ function readTracking() {
   }
 }
 
-export function MiniLeadForm() {
+export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const startedRef = useRef(false);
+  const viewedRef = useRef(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el || viewedRef.current) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && !viewedRef.current) {
+            viewedRef.current = true;
+            trackEvent("lead_form_view", { variant });
+            obs.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [variant]);
 
   function onFirstFocus() {
     if (startedRef.current) return;
     startedRef.current = true;
-    trackEvent("lead_form_start", { variant: "mini" });
+    trackEvent("lead_form_start", { variant });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -59,7 +81,7 @@ export function MiniLeadForm() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          source: "mini_form",
+          source: variant === "ads_mini" ? "ads_mini_form" : "mini_form",
           fullName,
           phone,
           gclid,
@@ -75,7 +97,7 @@ export function MiniLeadForm() {
         return;
       }
 
-      trackEvent("lead_form_submit", { variant: "mini", product_id: "none" });
+      trackEvent("lead_form_submit", { variant, product_id: "none" });
       setState("success");
       form.reset();
     } catch (err) {
@@ -95,6 +117,7 @@ export function MiniLeadForm() {
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       onFocus={onFirstFocus}
       className="rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-yellow-400/5 to-transparent p-5 md:p-6"

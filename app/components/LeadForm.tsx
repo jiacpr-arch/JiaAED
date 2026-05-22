@@ -29,21 +29,43 @@ export function LeadForm() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const startedRef = useRef(false);
   const submittedRef = useRef(false);
+  const viewedRef = useRef(false);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   function handleFirstFocus() {
     if (startedRef.current) return;
     startedRef.current = true;
-    trackEvent("lead_form_start");
+    trackEvent("lead_form_start", { variant: "full" });
   }
 
   useEffect(() => {
     function onBeforeUnload() {
       if (startedRef.current && !submittedRef.current) {
-        trackEvent("lead_form_abandon", {}, { beacon: true });
+        trackEvent("lead_form_abandon", { variant: "full" }, { beacon: true });
       }
     }
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, []);
+
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el || viewedRef.current) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting && !viewedRef.current) {
+            viewedRef.current = true;
+            trackEvent("lead_form_view", { variant: "full" });
+            obs.disconnect();
+            break;
+          }
+        }
+      },
+      { threshold: 0.3 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
   }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -98,7 +120,7 @@ export function LeadForm() {
       }
 
       submittedRef.current = true;
-      trackEvent("lead_form_submit", { product_id: productId || "none" });
+      trackEvent("lead_form_submit", { variant: "full", product_id: productId || "none" });
 
       const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
       if (typeof gtag === "function") {
@@ -146,6 +168,7 @@ export function LeadForm() {
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       onFocus={handleFirstFocus}
       className="rounded-2xl border border-gray-800 bg-gray-900 p-6 md:p-8 space-y-4"
