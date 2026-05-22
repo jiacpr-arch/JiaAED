@@ -7,6 +7,7 @@ const DISMISS_KEY = "jiaaed_floating_line_dismissed";
 
 export function FloatingLineButton() {
   const [visible, setVisible] = useState(false);
+  const [inlineCtaVisible, setInlineCtaVisible] = useState(false);
 
   useEffect(() => {
     try {
@@ -17,6 +18,27 @@ export function FloatingLineButton() {
     const t = setTimeout(() => setVisible(true), 1500);
     return () => clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    const targets = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-line-cta]")
+    ).filter((el) => el.getAttribute("data-line-cta") !== "floating_button");
+    if (targets.length === 0) return;
+
+    const visibleSet = new Set<Element>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visibleSet.add(entry.target);
+          else visibleSet.delete(entry.target);
+        }
+        setInlineCtaVisible(visibleSet.size > 0);
+      },
+      { threshold: 0.4 }
+    );
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [visible]);
 
   function dismiss(e: React.MouseEvent) {
     e.preventDefault();
@@ -29,7 +51,7 @@ export function FloatingLineButton() {
     }
   }
 
-  if (!visible) return null;
+  if (!visible || inlineCtaVisible) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 sm:bottom-6 sm:right-6">
