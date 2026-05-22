@@ -50,6 +50,41 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
   }, [variant]);
 
   const focusedFieldsRef = useRef<Set<string>>(new Set());
+  const submittedRef = useRef(false);
+
+  useEffect(() => {
+    function onBeforeUnload() {
+      if (!startedRef.current || submittedRef.current) return;
+      const form = formRef.current;
+      if (!form || typeof navigator.sendBeacon !== "function") return;
+      const fd = new FormData(form);
+      const phone = String(fd.get("phone") || "").trim();
+      const fullName = String(fd.get("fullName") || "").trim();
+      if (!phone) return;
+
+      trackEvent("lead_form_abandon", { variant }, { beacon: true });
+
+      const { gclid, utm } = readTracking();
+      const payload = JSON.stringify({
+        variant,
+        fullName,
+        phone,
+        gclid,
+        utm,
+        pageUrl: window.location.href,
+      });
+      try {
+        navigator.sendBeacon(
+          "/api/aed/lead-partial",
+          new Blob([payload], { type: "application/json" }),
+        );
+      } catch {
+        // swallow
+      }
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [variant]);
 
   function onFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
     if (!startedRef.current) {
@@ -107,6 +142,7 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
         return;
       }
 
+      submittedRef.current = true;
       trackEvent("lead_form_submit", { variant, product_id: "none" });
       setState("success");
       form.reset();
