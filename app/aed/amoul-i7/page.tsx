@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { YouTubeLite } from "@/app/components/YouTubeLite";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -120,6 +121,15 @@ export default function AdsLandingI7() {
               <div className="text-xs text-gray-300 font-semibold">{t.title}</div>
             </div>
           ))}
+        </div>
+
+        {/* Demo video */}
+        <div className="mb-8">
+          <div className="mb-3">
+            <h2 className="font-bold text-lg text-white">🎬 ดูวิธีการใช้งาน</h2>
+            <p className="text-xs text-gray-500">วิดีโอสาธิตทีละขั้นตอน</p>
+          </div>
+          <YouTubeLite videoId="ayov6IVgW7w" title="วิธีการใช้งาน AED Amoul i7" />
         </div>
 
         {/* Key specs */}

@@ -6,6 +6,7 @@ import { LeadForm } from "./components/LeadForm";
 import { MiniLeadForm } from "./components/MiniLeadForm";
 import { HeroCta } from "./components/HeroCta";
 import { HeroHeadline } from "./components/HeroHeadline";
+import { YouTubeLite } from "./components/YouTubeLite";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -229,6 +230,18 @@ export default function Home() {
           <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
             <Image src="/images/lifestyle-man.jpeg" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
           </div>
+        </div>
+      </section>
+
+      {/* Demo video */}
+      <section className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-6">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">🎬 วิดีโอสาธิต</div>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">ดูวิธีการใช้งานเครื่อง AED</h2>
+            <p className="text-gray-400 text-sm">ทีละขั้นตอน — ใช้ได้ทันที ไม่ต้องอบรม</p>
+          </div>
+          <YouTubeLite videoId="ayov6IVgW7w" title="วิธีการใช้งานเครื่อง AED" />
         </div>
       </section>
 
