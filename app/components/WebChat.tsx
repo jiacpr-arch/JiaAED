@@ -106,6 +106,9 @@ export function WebChat() {
   function toggle() {
     const next = !open;
     setOpen(next);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event(next ? "webchat:open" : "webchat:close"));
+    }
     if (next) {
       trackEvent("web_chat_open");
       setTimeout(() => inputRef.current?.focus(), 100);
