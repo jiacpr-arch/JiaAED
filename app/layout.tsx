@@ -8,6 +8,7 @@ import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
+import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +83,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <LineClickTracker />
+        <ScrollDepthTracker />
         {children}
         <WebChat />
         <FloatingLineButton />

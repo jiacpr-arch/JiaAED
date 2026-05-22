@@ -82,6 +82,12 @@ export default function Home() {
               <span className="text-gray-500 line-through text-base">฿41,900</span>
               <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · ออกใบเสนอราคาได้</span>
             </div>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-300 mb-5">
+              <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> อย. รับรอง</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ส่งทั่วประเทศ</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ออกใบกำกับภาษี</li>
+              <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> รับประกัน 1 ปี</li>
+            </ul>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <HeroCta />
               <a
