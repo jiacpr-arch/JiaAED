@@ -17,6 +17,7 @@ export type DigestPayload = {
     form_submits: number;
     form_abandons: number;
     line_clicks: number;
+    engaged: number;
   };
   rates: {
     price_view_rate: number;
@@ -25,6 +26,8 @@ export type DigestPayload = {
     form_abandon_rate: number;
     line_ctr: number;
     visit_to_submit_rate: number;
+    engagement_rate: number;
+    bounce_rate: number;
   };
   ab: {
     variant_a_views: number;
@@ -138,8 +141,10 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     form_submits: counts["lead_form_submit"] || 0,
     form_abandons: counts["lead_form_abandon"] || 0,
     line_clicks: counts["line_click"] || 0,
+    engaged: counts["engaged_session"] || 0,
   };
 
+  const engagement_rate = pct(funnel.engaged, funnel.visits);
   const rates = {
     price_view_rate: pct(funnel.price_views, funnel.visits),
     form_start_rate: pct(funnel.form_starts, funnel.visits),
@@ -147,6 +152,8 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     form_abandon_rate: pct(funnel.form_abandons, funnel.form_starts),
     line_ctr: pct(funnel.line_clicks, funnel.visits),
     visit_to_submit_rate: pct(funnel.form_submits, funnel.visits),
+    engagement_rate,
+    bounce_rate: funnel.visits > 0 ? Math.round((100 - engagement_rate) * 10) / 10 : 0,
   };
 
   const ab = {
@@ -171,6 +178,9 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     }
     if (funnel.price_views >= 5 && rates.price_view_rate < 15) {
       alerts.push(`⚠️ คนเข้าเว็บไม่ค่อย scroll ถึงราคา (${rates.price_view_rate}%) ลองดัน CTA ขึ้น`);
+    }
+    if (funnel.visits >= 20 && rates.bounce_rate >= 70) {
+      alerts.push(`⚠️ Bounce rate สูง ${rates.bounce_rate}% (engaged ${funnel.engaged}/${funnel.visits}) — hero copy/รูปอาจไม่ดึง`);
     }
     if (funnel.form_starts > 5 && rates.form_abandon_rate > 60) {
       alerts.push(
@@ -219,6 +229,7 @@ export function formatDigestForLine(d: DigestPayload): string {
     `📊 สรุปประจำวัน ${d.date}`,
     ``,
     `👥 Visitors: ${d.funnel.visits} ${diffPct(d.funnel.visits, d.prev_visits)}`,
+    `🪤 Bounce: ${d.rates.bounce_rate}% (engaged ${d.funnel.engaged})`,
     `💬 LINE clicks: ${d.funnel.line_clicks} (${d.rates.line_ctr}%) ${diffPct(d.funnel.line_clicks, prevLineClicks)}`,
   ];
 
