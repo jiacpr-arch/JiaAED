@@ -104,7 +104,7 @@ export default function AdsLandingI7() {
 
         {/* Quick form */}
         <div className="mb-8">
-          <MiniLeadForm />
+          <MiniLeadForm variant="ads_mini" />
         </div>
 
         {/* Trust strip */}

@@ -21,6 +21,7 @@ const ALLOWED_EVENTS = new Set([
   "cta_click",
   "price_view",
   "hero_cta_view",
+  "lead_form_view",
   "lead_form_start",
   "lead_form_submit",
   "lead_form_abandon",
