@@ -42,27 +42,30 @@ export const knowledgeArticles: KnowledgeArticle[] = [
     title: "สเปคทางเทคนิคหลัก (อ้างอิงเอกสาร TOR)",
     content: `**ภาควิเคราะห์คลื่นหัวใจ**
 - รับสัญญาณ ECG ผ่านแผ่นกระตุ้นหัวใจ
-- บันทึก ECG + CPR ได้ 8 ชั่วโมง · บันทึกเสียง 72 นาที
-- ดึงข้อมูลผ่าน USB และ WiFi ได้
+- บันทึก ECG ได้ ≥ 8 ชั่วโมง · เหตุการณ์ ≥ 1,500 รายการ
+- ดึงข้อมูลผ่าน USB · Wi-Fi · SIM 4G ได้ (ต้องเปิดใช้ AED Management Platform)
 
-**ภาคฟื้นคืนคลื่นหัวใจ**
+**ภาคฟื้นคืนคลื่นหัวใจ — Escalating Protocol (ตั้งค่าไม่ได้)**
 - รูปคลื่น: Biphasic Truncated Exponential (BTE) — auto-compensation ตาม patient impedance 20-300 โอห์ม
 - พลังงานสูงสุด: 360 Joules
-- **ผู้ใหญ่** — Shock 1: 200J (ปรับได้ 100/150/170/200/300/360) · Shock 2: 300J · Shock 3: 360J
-- **เด็ก** — Shock 1: 50J (ปรับได้ 10/15/20/30/50/70/100) · Shock 2: 70J · Shock 3: 100J
+- **ผู้ใหญ่ — 6 ระดับ:** Shock 1: 100J · 2: 150J · 3: 170J · 4: 200J · 5: 300J · 6: 360J · 7+: 360J (cap max)
+- **เด็ก — 7 ระดับ (อายุ < 8 ปี หรือ < 25 กก.):** 1: 10J · 2: 15J · 3: 20J · 4: 30J · 5: 50J · 6: 70J · 7: 100J · 8+: 100J (cap max)
+- ผู้ใช้ไม่สามารถ setting พลังงานเองได้ในรุ่น i7 — เครื่องเลือกตามลำดับช็อก และปรับเล็กน้อย (1-2 ขั้น) ตาม patient impedance
+- ใช้ escalating protocol ตาม international guidelines (เริ่มต่ำเพื่อลด myocardial damage แล้วเพิ่มเมื่อจำเป็น)
 - เวลาชาร์จจนพร้อม Shock: **< 7 วินาที**
-- จำนวน Shock ต่อชาร์จ: **≥ 420 ครั้ง** ที่ 200J
-- ใช้งานต่อเนื่อง: ≥ 16 ชั่วโมง
+- จำนวน Shock ต่อชาร์จ: **≥ 420 ครั้ง** ที่ 200J (ทดสอบมาตรฐาน)
 
 **ตัวเครื่อง**
-- น้ำหนัก: 2 กก. (รวมแบตเตอรี่)
-- แบตเตอรี่: Manganese Dioxide Lithium 4,500 mAh · อายุ **≥ 7 ปี**
-- Self-test: Daily / Weekly / Monthly / Runtime
+- น้ำหนัก: ประมาณ 2.0 กก. (รวมแบตเตอรี่)
+- แบตเตอรี่: Lithium 4,500 mAh · 12V · แบบใช้แล้วทิ้ง (ชาร์จใหม่ไม่ได้)
+- อายุแบตเตอรี่: ≥ 5 ปี (สแตนด์บายในเครื่อง) · ≥ 7 ปี (เก็บแยกในอุณหภูมิเหมาะสม)
+- Self-test: อัตโนมัติ รายวัน / รายสัปดาห์ / รายเดือน
 - มีหน้าต่างเฉพาะแสดงวันหมดอายุของแผ่นอิเล็กโทรด
-- การเชื่อมต่อ: USB · SIM card slot · WiFi
+- การเชื่อมต่อ: USB · Wi-Fi · SIM 4G (รุ่น i7 ยังไม่มี GPS tracking)
+- เสียงแนะนำ 5 ภาษา: ไทย · อังกฤษ · จีน · สเปน · อิตาลี
 - อุณหภูมิทำงาน: -25°C ถึง 60°C · เก็บรักษา -30°C ถึง 70°C · ความชื้น 0-95% RH
-- ใช้ได้ทั้งผู้ใหญ่และเด็ก
-- เป็นไปตาม AHA CPR Guideline 2015
+- ใช้ได้ทั้งผู้ใหญ่และเด็ก — สลับโหมดด้วยสวิตช์ที่ตัวเครื่อง
+- เป็นไปตาม ILCOR/AHA Guidelines 2020-2025
 
 **อุปกรณ์ในกล่อง** (Packing List ตาม Item Code โรงงาน)
 1. Main Unit (2.215.00085)
@@ -72,6 +75,53 @@ export const knowledgeArticles: KnowledgeArticle[] = [
 5. Warranty Card (1.605.00178)
 
 (ฉบับขายในไทยมีคู่มือภาษาไทยและกระเป๋าใส่เครื่องเพิ่ม)`,
+  },
+  {
+    id: "operation-modes",
+    title: "โหมดการทำงาน Standalone vs Connected",
+    content: `เครื่อง AED Amoul i7 ทำงานแบบ standalone (ไม่ส่งข้อมูลเข้าส่วนกลาง) เป็นค่าเริ่มต้น — Connectivity จะใช้งานก็ต่อเมื่อลูกค้าเปิดใช้ AED Management Platform เอง
+
+**โหมดที่ 1 — Standalone (ค่าเริ่มต้น)**
+- เครื่องทำงานเดี่ยว ไม่เชื่อมต่อระบบใดๆ
+- ลูกค้าไม่ต้องเข้า dashboard / ไม่ต้องสมัครอะไรเพิ่ม
+- ไม่มีการส่งข้อมูลเข้าส่วนกลาง
+- ใช้ช่วยชีวิตได้ปกติทุกอย่าง — Self-test รายวันก็ทำให้เอง
+- ดึง event log ผ่าน USB ออกได้เมื่อตรวจสอบเครื่อง
+
+**โหมดที่ 2 — Connected (เลือกเปิดเองเมื่อต้องการดู ECG แบบ real-time)**
+ลูกค้าต้องทำเอง 3 ขั้นตอน:
+1. เปิดใช้ AED Management Platform
+2. ลงทะเบียนข้อมูลเครื่อง
+3. เลือกช่องทาง: USB / Wi-Fi / SIM 4G
+→ จึงจะเข้าถึงข้อมูลผ่าน dashboard ได้
+
+**ช่องทางการเชื่อมต่อทั้ง 3**
+- **USB:** ดาวน์โหลด event log ผ่าน USB ไม่ส่งอัตโนมัติ — ใช้ดึงข้อมูลเมื่อตรวจสอบหลังเหตุการณ์
+- **Wi-Fi:** ส่งข้อมูลขึ้นแพลตฟอร์มแบบ real-time ในพื้นที่ที่ Wi-Fi ครอบคลุม
+- **SIM 4G:** เชื่อมต่อ 4G cellular ส่งข้อมูล real-time — ในพื้นที่ห่างไกลที่ไม่มี Wi-Fi
+
+**ข้อจำกัด:** รุ่น i7 ยังไม่มี GPS tracking (อยู่ระหว่างการพัฒนากับ supplier) · Wi-Fi/4G มีประโยชน์ก็ต่อเมื่อท่านเปิดใช้แพลตฟอร์ม`,
+  },
+  {
+    id: "medical-evidence",
+    title: "หลักฐานทางการแพทย์ — Escalating Energy",
+    content: `**Guidelines ที่อ้างอิง**
+- ILCOR/AHA Guidelines 2020-2025: ทั้ง escalating energy และ fixed high energy เป็น acceptable strategy — มี outcome ใกล้เคียงกัน
+- ILCOR 2025 Update: แนะนำ Initial 120-200J biphasic · Subsequent equal or higher · 360J เป็น max
+
+**Key Studies**
+1. **BIPHASIC Trial (2007):** Escalating energy ≈ fixed high energy — termination rates ใกล้เคียง
+2. **AHA 2020 Guidelines:** ทั้ง 2 strategies ถูก recommended อย่างเท่าเทียม ไม่มี clear superiority
+3. **ILCOR 2025 Update:** First shock 120-200J biphasic, subsequent เท่ากันหรือสูงกว่า, cap ที่ 360J
+
+**First Shock Success Rates (Biphasic)**
+- 100J biphasic: 70-80%
+- 150J biphasic: 80-90%
+- 200J biphasic: 85-90%
+
+**After 3 shocks:** cumulative success > 95% — ส่วนใหญ่ไม่ต้องถึง 360J
+
+ดังนั้น escalating protocol ที่เริ่มจาก 100J (ผู้ใหญ่) ไม่ได้ "อ่อนแอ" — แต่ปลอดภัยกว่าและมีประสิทธิภาพเทียบเท่า fixed high energy ตามหลักฐานเชิงประจักษ์`,
   },
   {
     id: "warranty-service",
