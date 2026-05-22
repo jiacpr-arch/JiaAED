@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { trackEvent as sharedTrack } from "@/lib/aed/analytics-client";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 const STORAGE_KEY = "jiaaed_web_chat_v1";
@@ -36,6 +37,12 @@ function trackEvent(name: string, params?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
   if (typeof gtag === "function") gtag("event", name, params ?? {});
+  const sharedProps: Record<string, string | number | boolean | null> = {};
+  for (const [k, v] of Object.entries(params ?? {})) {
+    if (v === null) sharedProps[k] = null;
+    else if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") sharedProps[k] = v;
+  }
+  void sharedTrack(name, sharedProps);
 }
 
 function renderMessage(text: string): React.ReactNode {
