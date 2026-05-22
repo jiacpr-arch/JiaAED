@@ -122,7 +122,10 @@ export function WebChat() {
     setInput("");
     setError(null);
     setLoading(true);
-    trackEvent("web_chat_message_sent", { turn: next.filter((m) => m.role === "user").length });
+    trackEvent("web_chat_message_sent", {
+      turn: next.filter((m) => m.role === "user").length,
+      text: text.slice(0, 400),
+    });
 
     try {
       const res = await fetch("/api/aed/web-chat", {

@@ -16,6 +16,10 @@
     {
       "path": "/api/cron/auto-optimize",
       "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/article-gap",
+      "schedule": "0 4 * * 1"
     }
   ]
 }
