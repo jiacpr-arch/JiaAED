@@ -32,10 +32,20 @@ export function LeadForm() {
   const viewedRef = useRef(false);
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  function handleFirstFocus() {
-    if (startedRef.current) return;
-    startedRef.current = true;
-    trackEvent("lead_form_start", { variant: "full" });
+  const focusedFieldsRef = useRef<Set<string>>(new Set());
+
+  function handleFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("lead_form_start", { variant: "full" });
+    }
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).name;
+    if (!fieldName || fieldName === "hp_field") return;
+    if (focusedFieldsRef.current.has(fieldName)) return;
+    focusedFieldsRef.current.add(fieldName);
+    trackEvent("lead_form_field_focus", { variant: "full", field: fieldName });
   }
 
   useEffect(() => {
@@ -170,7 +180,7 @@ export function LeadForm() {
     <form
       ref={formRef}
       onSubmit={onSubmit}
-      onFocus={handleFirstFocus}
+      onFocus={handleFieldFocus}
       className="rounded-2xl border border-gray-800 bg-gray-900 p-6 md:p-8 space-y-4"
       noValidate
     >

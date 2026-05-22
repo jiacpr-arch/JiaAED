@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  HOT_LEAD_TRIGGER_EVENTS,
+  alreadyAlerted,
+  formatHotLeadMessage,
+  isHot,
+  recordAlert,
+  scoreSession,
+} from "@/lib/aed/lead-scoring";
+import { notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
 
 export const runtime = "nodejs";
 
@@ -25,6 +34,13 @@ const ALLOWED_EVENTS = new Set([
   "lead_form_start",
   "lead_form_submit",
   "lead_form_abandon",
+  "lead_form_field_focus",
+  "scroll_depth",
+  "engaged_session",
+  "web_chat_open",
+  "web_chat_message_sent",
+  "web_chat_reset",
+  "web_chat_contact_click",
 ]);
 
 function clean(v: unknown, max = 500): string | null {
@@ -37,6 +53,26 @@ function hashIp(ip: string | null): string | null {
   if (!ip) return null;
   const salt = process.env.LEAD_IP_SALT || "jiaaed";
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
+}
+
+async function maybeNotifyHotLead(args: {
+  eventName: string;
+  sessionId: string | null;
+  pageUrl: string | null;
+}): Promise<void> {
+  if (!args.sessionId) return;
+  if (!HOT_LEAD_TRIGGER_EVENTS.has(args.eventName)) return;
+  try {
+    if (await alreadyAlerted(args.sessionId)) return;
+    const score = await scoreSession(args.sessionId);
+    if (!score || !isHot(score)) return;
+    await recordAlert(args.sessionId, score);
+    await notifyAnalyticsAlert(
+      formatHotLeadMessage({ score, pageUrl: args.pageUrl, triggerEvent: args.eventName }),
+    );
+  } catch (e) {
+    console.error("[event] hot lead check failed:", e);
+  }
 }
 
 export async function POST(req: Request) {
@@ -57,12 +93,15 @@ export async function POST(req: Request) {
     req.headers.get("x-real-ip") ||
     null;
 
+  const sessionId = clean(body.session_id, 64);
+  const pageUrl = clean(body.page_url, 500);
+
   const supabase = createAdminClient();
   const { error } = await supabase.from("aed_analytics_events").insert({
     event_name: eventName,
     properties: body.properties ?? {},
-    session_id: clean(body.session_id, 64),
-    page_url: clean(body.page_url, 500),
+    session_id: sessionId,
+    page_url: pageUrl,
     referrer: clean(body.referrer, 500),
     user_agent: clean(req.headers.get("user-agent"), 500),
     ip_hash: hashIp(ip),
@@ -75,6 +114,8 @@ export async function POST(req: Request) {
     console.error("[event] insert failed:", error);
     return NextResponse.json({ ok: false }, { status: 500 });
   }
+
+  await maybeNotifyHotLead({ eventName, sessionId, pageUrl });
 
   return NextResponse.json({ ok: true });
 }

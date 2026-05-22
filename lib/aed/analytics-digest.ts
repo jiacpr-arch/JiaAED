@@ -37,6 +37,13 @@ export type DigestPayload = {
     ctr_a: number;
     ctr_b: number;
   };
+  by_source: Array<{
+    source: string;
+    line_clicks: number;
+    form_submits: number;
+    hot_leads: number;
+  }>;
+  form_field_drop: Array<{ field: string; focuses: number }>;
   alerts: string[];
 };
 
@@ -45,6 +52,8 @@ type EventRow = {
   properties: Record<string, unknown> | null;
   gclid: string | null;
   page_url: string | null;
+  utm_source: string | null;
+  utm_campaign: string | null;
 };
 
 function bkkDateRange(daysAgo: number): { from: string; to: string; label: string } {
@@ -87,11 +96,43 @@ async function fetchRows(from: string, to: string): Promise<EventRow[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("aed_analytics_events")
-    .select("event_name, properties, gclid, page_url")
+    .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
     .gte("created_at", from)
     .lte("created_at", to);
   if (error) throw new Error(`fetch events failed: ${error.message}`);
   return (data ?? []) as EventRow[];
+}
+
+function buildBySource(rows: EventRow[]): DigestPayload["by_source"] {
+  const map = new Map<string, { line_clicks: number; form_submits: number; hot_leads: number }>();
+  for (const r of rows) {
+    const src = r.utm_source || "direct";
+    if (
+      r.event_name !== "line_click" &&
+      r.event_name !== "lead_form_submit" &&
+      r.event_name !== "hot_lead_alert_fired"
+    ) continue;
+    const cur = map.get(src) ?? { line_clicks: 0, form_submits: 0, hot_leads: 0 };
+    if (r.event_name === "line_click") cur.line_clicks++;
+    if (r.event_name === "lead_form_submit") cur.form_submits++;
+    if (r.event_name === "hot_lead_alert_fired") cur.hot_leads++;
+    map.set(src, cur);
+  }
+  return [...map.entries()]
+    .map(([source, v]) => ({ source, ...v }))
+    .sort((a, b) => b.form_submits - a.form_submits || b.line_clicks - a.line_clicks);
+}
+
+function buildFieldDrop(rows: EventRow[]): DigestPayload["form_field_drop"] {
+  const map = new Map<string, number>();
+  for (const r of rows) {
+    if (r.event_name !== "lead_form_field_focus") continue;
+    const field = (r.properties?.field as string) || "unknown";
+    map.set(field, (map.get(field) || 0) + 1);
+  }
+  return [...map.entries()]
+    .map(([field, focuses]) => ({ field, focuses }))
+    .sort((a, b) => b.focuses - a.focuses);
 }
 
 async function fetchVisitsCount(from: string, to: string): Promise<number> {
@@ -206,6 +247,9 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     }
   }
 
+  const by_source = buildBySource(rows);
+  const form_field_drop = buildFieldDrop(rows);
+
   return {
     date: yesterday.label,
     range: { from: yesterday.from, to: yesterday.to },
@@ -215,6 +259,8 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     funnel,
     rates,
     ab,
+    by_source,
+    form_field_drop,
     alerts,
   };
 }
@@ -253,6 +299,24 @@ export function formatDigestForLine(d: DigestPayload): string {
       `  A: ${d.ab.variant_a_clicks}/${d.ab.variant_a_views} (${d.ab.ctr_a}%)`,
       `  B: ${d.ab.variant_b_clicks}/${d.ab.variant_b_views} (${d.ab.ctr_b}%)`,
     );
+  }
+
+  if (d.by_source.length > 0) {
+    lines.push(``, `📡 By source (top 4):`);
+    for (const s of d.by_source.slice(0, 4)) {
+      lines.push(`  ${s.source}: 💬${s.line_clicks} 📋${s.form_submits} 🔥${s.hot_leads}`);
+    }
+  }
+
+  if (d.form_field_drop.length >= 2) {
+    const top = d.form_field_drop[0];
+    const last = d.form_field_drop[d.form_field_drop.length - 1];
+    if (top.focuses >= 5 && last.focuses < top.focuses * 0.4) {
+      lines.push(
+        ``,
+        `📉 Form drop: "${top.field}" ${top.focuses} → "${last.field}" ${last.focuses}`,
+      );
+    }
   }
 
   if (d.alerts.length > 0) {

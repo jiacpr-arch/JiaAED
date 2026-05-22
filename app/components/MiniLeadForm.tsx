@@ -49,10 +49,20 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
     return () => obs.disconnect();
   }, [variant]);
 
-  function onFirstFocus() {
-    if (startedRef.current) return;
-    startedRef.current = true;
-    trackEvent("lead_form_start", { variant });
+  const focusedFieldsRef = useRef<Set<string>>(new Set());
+
+  function onFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent("lead_form_start", { variant });
+    }
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement).name;
+    if (!fieldName || fieldName === "hp_field") return;
+    if (focusedFieldsRef.current.has(fieldName)) return;
+    focusedFieldsRef.current.add(fieldName);
+    trackEvent("lead_form_field_focus", { variant, field: fieldName });
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -119,7 +129,7 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
     <form
       ref={formRef}
       onSubmit={onSubmit}
-      onFocus={onFirstFocus}
+      onFocus={onFieldFocus}
       className="rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-yellow-400/5 to-transparent p-5 md:p-6"
       noValidate
     >
