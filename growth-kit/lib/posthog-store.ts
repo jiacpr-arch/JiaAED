@@ -8,47 +8,48 @@ export type PostHogSourceOptions = {
   limit?: number;
 };
 
-function asProps(v: unknown): Record<string, unknown> {
-  if (v && typeof v === "object") return v as Record<string, unknown>;
-  if (typeof v === "string") {
-    try {
-      return JSON.parse(v) as Record<string, unknown>;
-    } catch {
-      return {};
-    }
-  }
-  return {};
-}
-
 function str(v: unknown): string | null {
-  return typeof v === "string" ? v : null;
+  return typeof v === "string" && v !== "" ? v : null;
 }
 
-// PostHog rows arrive as [event, properties, timestamp]. Session/UTM/url live in
-// the properties JSON; key names below match PostHog's autocapture defaults and
-// may need tweaking to match how a given site captures events.
+// Rows arrive cherry-picked as
+// [event, $session_id, $current_url, utm_source, utm_campaign, gclid, timestamp].
 function toStoredEvent(row: unknown[]): StoredEvent {
-  const props = asProps(row[1]);
   return {
     event_name: str(row[0]) ?? "",
-    properties: props,
-    session_id: str(props["$session_id"]),
-    page_url: str(props["$current_url"]),
-    utm_source: str(props["utm_source"]) ?? str(props["$utm_source"]),
-    utm_campaign: str(props["utm_campaign"]) ?? str(props["$utm_campaign"]),
-    gclid: str(props["gclid"]) ?? str(props["$gclid"]),
-    created_at: str(row[2]) ?? new Date().toISOString(),
+    properties: null,
+    session_id: str(row[1]),
+    page_url: str(row[2]),
+    utm_source: str(row[3]),
+    utm_campaign: str(row[4]),
+    gclid: str(row[5]),
+    created_at: str(row[6]) ?? new Date().toISOString(),
   };
 }
 
-// A read-only DigestSource backed by PostHog's HogQL query API. Use this for the
+// A read-only DigestSource backed by PostHog's HogQL query API. Use it for the
 // central hub's scheduled digests/reviews when events live in PostHog rather
-// than a per-brand Supabase table. (from/to are server-generated ISO strings.)
+// than a per-brand Supabase table.
+//
+// Notes (validated against PostHog's query API):
+// - ISO timestamps must be wrapped in parseDateTimeBestEffort(); a bare string
+//   literal compared to `timestamp` errors. from/to are server-generated.
+// - Properties are cherry-picked (not the whole blob) to avoid huge payloads.
+//   The $-prefixed keys are PostHog autocapture defaults — adjust them to match
+//   how a given site actually captures session/UTM if different.
+// - For very high-volume tenants, paginate with LIMIT/OFFSET or pre-aggregate in
+//   HogQL instead of pulling raw rows.
 export function createPostHogDigestSource(opts: PostHogSourceOptions): DigestSource {
   return {
     async rangeEvents(fromISO, toISO) {
-      const limit = opts.limit ?? 100000;
-      const query = `SELECT event, properties, timestamp FROM events WHERE timestamp >= '${fromISO}' AND timestamp <= '${toISO}' LIMIT ${limit}`;
+      const limit = opts.limit ?? 50000;
+      const query =
+        `SELECT event, properties.$session_id, properties.$current_url, ` +
+        `properties.utm_source, properties.utm_campaign, properties.gclid, timestamp ` +
+        `FROM events ` +
+        `WHERE timestamp >= parseDateTimeBestEffort('${fromISO}') ` +
+        `AND timestamp <= parseDateTimeBestEffort('${toISO}') ` +
+        `LIMIT ${limit}`;
       const res = await fetch(`${opts.host}/api/projects/${opts.projectId}/query/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
