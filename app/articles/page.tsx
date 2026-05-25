@@ -22,6 +22,7 @@ export default function ArticlesIndex() {
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/" className="text-sm text-gray-400 hover:text-yellow-400">หน้าหลัก</Link>
+            <Link href="/news" className="text-sm text-gray-400 hover:text-yellow-400">ข่าว</Link>
             <Link href="/docs" className="text-sm text-gray-400 hover:text-yellow-400">เอกสาร</Link>
             <Link href="/#contact" className="text-sm text-gray-400 hover:text-yellow-400">ติดต่อ</Link>
           </div>
