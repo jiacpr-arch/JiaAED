@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isConfigured, sha256, uploadConversion } from "@/lib/aed/google-ads";
+import { recordConversion } from "@/lib/aed/conversion";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -58,32 +57,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const supabase = createAdminClient();
-
-  // Stub mode — log without sending
-  if (!isConfigured()) {
-    await supabase.from("aed_conversion_log").insert({
-      conversion_action: conversionActionId,
-      match_strategy: body.gclid ? "gclid" : body.gbraid ? "gbraid" : body.wbraid ? "wbraid" : "enhanced",
-      gclid: body.gclid ?? null,
-      email_hash: body.email ? sha256(body.email.trim().toLowerCase()) : null,
-      phone_hash: body.phone ? sha256(body.phone.trim()) : null,
-      order_id: body.orderId ?? null,
-      value_micros: typeof body.valueThb === "number" ? Math.round(body.valueThb * 1_000_000) : null,
-      currency: "THB",
-      conversion_date_time: body.conversionDateTime ?? null,
-      status: "skipped_no_creds",
-      response_summary: "GOOGLE_ADS_* env not configured",
-    });
-    return NextResponse.json({
-      ok: true,
-      sent: false,
-      reason: "google_ads_not_configured",
-      message: "Logged in aed_conversion_log; will be sent once GOOGLE_ADS_* env vars are set",
-    });
-  }
-
-  const result = await uploadConversion({
+  const result = await recordConversion({
     conversionActionId,
     conversionDateTime: body.conversionDateTime,
     orderId: body.orderId,
@@ -95,22 +69,13 @@ export async function POST(req: Request) {
     phone: body.phone ?? null,
   });
 
-  await supabase.from("aed_conversion_log").insert({
-    conversion_action: conversionActionId,
-    match_strategy: result.ok ? result.matchStrategy : "unknown",
-    gclid: body.gclid ?? null,
-    email_hash: body.email ? sha256(body.email.trim().toLowerCase()) : null,
-    phone_hash: body.phone ? sha256(body.phone.trim()) : null,
-    order_id: body.orderId ?? null,
-    value_micros: typeof body.valueThb === "number" ? Math.round(body.valueThb * 1_000_000) : null,
-    currency: "THB",
-    conversion_date_time: body.conversionDateTime ?? null,
-    status: result.ok ? "sent" : "failed",
-    response_summary: result.ok ? `match=${result.matchStrategy}` : result.reason.slice(0, 500),
-  });
-
   if (!result.ok) {
-    return NextResponse.json({ ok: false, sent: false, error: result.reason }, { status: 502 });
+    return NextResponse.json({ ok: false, sent: false, error: result.error }, { status: 502 });
   }
-  return NextResponse.json({ ok: true, sent: true, matchStrategy: result.matchStrategy });
+  return NextResponse.json({
+    ok: true,
+    sent: result.sent,
+    matchStrategy: result.matchStrategy,
+    reason: result.reason,
+  });
 }

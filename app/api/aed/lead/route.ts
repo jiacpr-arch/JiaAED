@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply } from "@/lib/aed/email";
+import { recordConversion } from "@/lib/aed/conversion";
 import { products } from "@/lib/aed/products";
 
 export const runtime = "nodejs";
@@ -142,6 +143,16 @@ export async function POST(req: Request) {
     utmSource,
     utmCampaign,
   }).catch((e) => console.error("[AED] notify failed:", e));
+
+  // Report the lead to Google Ads (gclid click-conversion, or enhanced match on
+  // phone/email). No-op-but-logged until GOOGLE_ADS_* env + conversion action id
+  // are configured. orderId = lead id so Google dedupes re-submissions.
+  void recordConversion({
+    gclid,
+    email,
+    phone,
+    orderId: data.id,
+  }).catch((e) => console.error("[AED] conversion record failed:", e));
 
   if (email) {
     void sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>
