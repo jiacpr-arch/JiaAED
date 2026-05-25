@@ -6,6 +6,10 @@ export type PostHogSourceOptions = {
   projectId: string;
   apiKey: string; // personal API key with query scope
   limit?: number;
+  // Optional: only pull these event names. Use when the PostHog project also
+  // holds unrelated events (e.g. a project shared with PostHog's own MCP
+  // analytics) so digests aren't polluted by noise. Omit to pull every event.
+  eventAllowlist?: string[];
 };
 
 function str(v: unknown): string | null {
@@ -44,13 +48,19 @@ export function createPostHogDigestSource(opts: PostHogSourceOptions): DigestSou
   return {
     async rangeEvents(fromISO, toISO) {
       const limit = opts.limit ?? 50000;
+      const allow = (opts.eventAllowlist ?? []).filter((e) => e.length > 0);
+      const allowClause =
+        allow.length > 0
+          ? ` AND event IN (${allow.map((e) => `'${e.replace(/'/g, "''")}'`).join(", ")})`
+          : "";
       const query =
         `SELECT event, properties.session_id, properties.page_url, ` +
         `properties.utm_source, properties.utm_campaign, properties.gclid, timestamp ` +
         `FROM events ` +
         `WHERE timestamp >= parseDateTimeBestEffort('${fromISO}') ` +
-        `AND timestamp <= parseDateTimeBestEffort('${toISO}') ` +
-        `LIMIT ${limit}`;
+        `AND timestamp <= parseDateTimeBestEffort('${toISO}')` +
+        allowClause +
+        ` LIMIT ${limit}`;
       const res = await fetch(`${opts.host}/api/projects/${opts.projectId}/query/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
