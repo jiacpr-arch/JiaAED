@@ -144,6 +144,19 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
 
       submittedRef.current = true;
       trackEvent("lead_form_submit", { variant, product_id: "none" });
+
+      const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+      if (typeof gtag === "function") {
+        gtag("event", "lead_form_submit", { variant });
+        const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
+        const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
+        if (gAdsId && leadLabel) {
+          gtag("event", "conversion", {
+            send_to: `${gAdsId}/${leadLabel}`,
+          });
+        }
+      }
+
       setState("success");
       form.reset();
     } catch (err) {
