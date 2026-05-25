@@ -1,0 +1,77 @@
+import type { DigestSource } from "./store";
+import type { StoredEvent } from "./types";
+
+export type PostHogSourceOptions = {
+  host: string; // e.g. https://us.posthog.com
+  projectId: string;
+  apiKey: string; // personal API key with query scope
+  limit?: number;
+  // Optional: only pull these event names. Use when the PostHog project also
+  // holds unrelated events (e.g. a project shared with PostHog's own MCP
+  // analytics) so digests aren't polluted by noise. Omit to pull every event.
+  eventAllowlist?: string[];
+};
+
+function str(v: unknown): string | null {
+  return typeof v === "string" && v !== "" ? v : null;
+}
+
+// Rows arrive cherry-picked as
+// [event, session_id, page_url, utm_source, utm_campaign, gclid, timestamp].
+function toStoredEvent(row: unknown[]): StoredEvent {
+  return {
+    event_name: str(row[0]) ?? "",
+    properties: null,
+    session_id: str(row[1]),
+    page_url: str(row[2]),
+    utm_source: str(row[3]),
+    utm_campaign: str(row[4]),
+    gclid: str(row[5]),
+    created_at: str(row[6]) ?? new Date().toISOString(),
+  };
+}
+
+// A read-only DigestSource backed by PostHog's HogQL query API. Use it for the
+// central hub's scheduled digests/reviews when events live in PostHog rather
+// than a per-brand Supabase table.
+//
+// Notes (validated against PostHog's query API):
+// - ISO timestamps must be wrapped in parseDateTimeBestEffort(); a bare string
+//   literal compared to `timestamp` errors. from/to are server-generated.
+// - Properties are cherry-picked (not the whole blob) to avoid huge payloads.
+//   These flat keys (session_id, page_url, utm_*) are what JiaAED's trackEvent()
+//   sends on every PostHog capture; a site using PostHog autocapture defaults
+//   instead would read $session_id / $current_url here.
+// - For very high-volume tenants, paginate with LIMIT/OFFSET or pre-aggregate in
+//   HogQL instead of pulling raw rows.
+export function createPostHogDigestSource(opts: PostHogSourceOptions): DigestSource {
+  return {
+    async rangeEvents(fromISO, toISO) {
+      const limit = opts.limit ?? 50000;
+      const allow = (opts.eventAllowlist ?? []).filter((e) => e.length > 0);
+      const allowClause =
+        allow.length > 0
+          ? ` AND event IN (${allow.map((e) => `'${e.replace(/'/g, "''")}'`).join(", ")})`
+          : "";
+      const query =
+        `SELECT event, properties.session_id, properties.page_url, ` +
+        `properties.utm_source, properties.utm_campaign, properties.gclid, timestamp ` +
+        `FROM events ` +
+        `WHERE timestamp >= parseDateTimeBestEffort('${fromISO}') ` +
+        `AND timestamp <= parseDateTimeBestEffort('${toISO}')` +
+        allowClause +
+        ` LIMIT ${limit}`;
+      const res = await fetch(`${opts.host}/api/projects/${opts.projectId}/query/`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ query: { kind: "HogQLQuery", query } }),
+      });
+      if (!res.ok) {
+        console.error("[growth-kit] PostHog query failed:", res.status, await res.text());
+        return [];
+      }
+      const json = (await res.json()) as { results?: unknown[][] };
+      return (json.results ?? []).map(toStoredEvent);
+    },
+  };
+}
