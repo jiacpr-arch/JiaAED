@@ -9,6 +9,7 @@ import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
+import { PostHogInit } from "./components/PostHogInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,6 +83,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <PostHogInit />
         <LineClickTracker />
         <ScrollDepthTracker />
         {children}

@@ -1,4 +1,5 @@
 import { track as vercelTrack } from "@vercel/analytics";
+import { capturePostHog } from "./posthog-client";
 
 const SESSION_KEY = "jiaaed_session_id";
 const UTM_KEYS = ["source", "medium", "campaign", "term", "content"] as const;
@@ -53,13 +54,28 @@ export function trackEvent(
 
   if (typeof window === "undefined") return;
 
+  const sessionId = getSessionId();
+  const pageUrl = window.location.href;
+  const referrer = document.referrer || null;
+  const attribution = readAttribution();
+
+  // Mirror to PostHog with the same flat shape the Supabase store uses, so the
+  // growth-kit PostHog DigestSource can read properties.session_id / utm_* etc.
+  capturePostHog(name, {
+    ...properties,
+    session_id: sessionId,
+    page_url: pageUrl,
+    referrer,
+    ...attribution,
+  });
+
   const payload = JSON.stringify({
     event_name: name,
     properties,
-    session_id: getSessionId(),
-    page_url: window.location.href,
-    referrer: document.referrer || null,
-    ...readAttribution(),
+    session_id: sessionId,
+    page_url: pageUrl,
+    referrer,
+    ...attribution,
   });
 
   const url = "/api/aed/event";

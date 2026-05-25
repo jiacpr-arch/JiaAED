@@ -13,7 +13,7 @@ function str(v: unknown): string | null {
 }
 
 // Rows arrive cherry-picked as
-// [event, $session_id, $current_url, utm_source, utm_campaign, gclid, timestamp].
+// [event, session_id, page_url, utm_source, utm_campaign, gclid, timestamp].
 function toStoredEvent(row: unknown[]): StoredEvent {
   return {
     event_name: str(row[0]) ?? "",
@@ -35,8 +35,9 @@ function toStoredEvent(row: unknown[]): StoredEvent {
 // - ISO timestamps must be wrapped in parseDateTimeBestEffort(); a bare string
 //   literal compared to `timestamp` errors. from/to are server-generated.
 // - Properties are cherry-picked (not the whole blob) to avoid huge payloads.
-//   The $-prefixed keys are PostHog autocapture defaults — adjust them to match
-//   how a given site actually captures session/UTM if different.
+//   These flat keys (session_id, page_url, utm_*) are what JiaAED's trackEvent()
+//   sends on every PostHog capture; a site using PostHog autocapture defaults
+//   instead would read $session_id / $current_url here.
 // - For very high-volume tenants, paginate with LIMIT/OFFSET or pre-aggregate in
 //   HogQL instead of pulling raw rows.
 export function createPostHogDigestSource(opts: PostHogSourceOptions): DigestSource {
@@ -44,7 +45,7 @@ export function createPostHogDigestSource(opts: PostHogSourceOptions): DigestSou
     async rangeEvents(fromISO, toISO) {
       const limit = opts.limit ?? 50000;
       const query =
-        `SELECT event, properties.$session_id, properties.$current_url, ` +
+        `SELECT event, properties.session_id, properties.page_url, ` +
         `properties.utm_source, properties.utm_campaign, properties.gclid, timestamp ` +
         `FROM events ` +
         `WHERE timestamp >= parseDateTimeBestEffort('${fromISO}') ` +
