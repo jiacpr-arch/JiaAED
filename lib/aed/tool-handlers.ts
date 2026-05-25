@@ -7,12 +7,14 @@ import Stripe from "stripe";
 import { calculatePrice, getProduct, evaluateNegotiation, formatThaiPrice } from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
+import { recordConversion } from "./conversion";
 import {
   updateCustomer,
   createDeal,
   updateDeal,
   getDealById,
   scheduleFollowup,
+  createChatLead,
 } from "./db-queries";
 import type {
   AedCustomer,
@@ -65,6 +67,32 @@ export async function handleUpdateCustomerInfo(
     ...(input.address && { address: input.address }),
     ...(input.customer_type && { customer_type: input.customer_type, is_company: input.customer_type !== "individual" }),
   });
+
+  // First time a contact is secured in this chat → log a real lead and report it
+  // to Google Ads. LINE carries no gclid, so this relies on enhanced-conversion
+  // matching of the hashed phone/email. recordConversion is a safe no-op (logged
+  // to aed_conversion_log) until the GOOGLE_ADS_* offline-import env is set.
+  const hadContact = Boolean(ctx.customer.phone || ctx.customer.email);
+  const phone = input.phone ?? ctx.customer.phone ?? null;
+  const email = input.email ?? ctx.customer.email ?? null;
+  if (!hadContact && (phone || email)) {
+    const leadId = await createChatLead({
+      customerId: ctx.customer.id,
+      conversationId: ctx.conversation.id,
+      channel: ctx.conversation.channel,
+      fullName: input.full_name ?? ctx.customer.full_name ?? null,
+      phone,
+      email,
+      companyName: input.company_name ?? ctx.customer.company_name ?? null,
+    });
+    void recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
+      console.error("[AED] chat conversion failed:", e),
+    );
+    // Reflect locally so repeated calls within the same turn don't double-fire.
+    ctx.customer.phone = phone;
+    ctx.customer.email = email;
+  }
+
   return `บันทึกข้อมูลลูกค้าแล้ว: ${JSON.stringify(input)}`;
 }
 
