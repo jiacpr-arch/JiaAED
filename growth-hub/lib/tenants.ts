@@ -12,6 +12,9 @@ export type TenantConfig = {
   channels: Array<{ kind: "line"; to: string } | { kind: "telegram"; chatId: string }>;
   // Where the hub reads metrics from for digests. Defaults to "supabase".
   source?: "supabase" | "posthog";
+  // PostHog-only: restrict the digest query to these event names. Set this when
+  // the PostHog project is shared with unrelated events so digests stay clean.
+  eventAllowlist?: string[];
   storeTable: string;
   scoring: GrowthConfig["scoring"];
   digest: GrowthConfig["digest"];
@@ -87,6 +90,7 @@ export function resolveDigestSource(t: Tenant): DigestSource {
       host: envKey(t.id, "POSTHOG_HOST"),
       projectId: envKey(t.id, "POSTHOG_PROJECT_ID"),
       apiKey: envKey(t.id, "POSTHOG_API_KEY"),
+      eventAllowlist: t.config.eventAllowlist,
     });
   }
   return createStore(resolveGrowthConfig(t));
