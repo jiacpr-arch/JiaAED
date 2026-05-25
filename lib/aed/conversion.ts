@@ -36,7 +36,7 @@ export async function recordConversion(
     input.conversionActionId || process.env.GOOGLE_ADS_CONVERSION_ACTION_ID || null;
 
   const baseLog = {
-    conversion_action: conversionActionId,
+    conversion_action: conversionActionId ?? "(unset)",
     match_strategy: matchStrategyFor(input),
     gclid: input.gclid ?? null,
     email_hash: input.email ? sha256(input.email.trim().toLowerCase()) : null,
