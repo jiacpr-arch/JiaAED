@@ -67,7 +67,8 @@ async function maybeNotifyHotLead(args: {
     if (await alreadyAlerted(args.sessionId)) return;
     const score = await scoreSession(args.sessionId);
     if (!score || !isHot(score)) return;
-    await recordAlert(args.sessionId, score);
+    const won = await recordAlert(args.sessionId, score);
+    if (!won) return; // lost the race or already alerted — don't double-send
     await notifyAnalyticsAlert(
       formatHotLeadMessage({ score, pageUrl: args.pageUrl, triggerEvent: args.eventName }),
     );
