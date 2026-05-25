@@ -648,6 +648,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Latest curated news — renders nothing until items exist */}
+      <LatestNews limit={6} />
+
       {/* Lead form — alternative to LINE for ad traffic */}
       <section id="contact" className="py-14 px-4 bg-gray-950 border-t border-gray-800">
         <div className="max-w-3xl mx-auto">
@@ -670,9 +673,6 @@ export default function Home() {
           <LeadForm />
         </div>
       </section>
-
-      {/* Latest curated news — renders nothing until items exist */}
-      <LatestNews limit={3} />
 
       {/* FAQ — for SEO/AEO */}
       <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
