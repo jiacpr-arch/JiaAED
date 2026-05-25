@@ -127,6 +127,36 @@ export async function getRecentMessages(conversationId: string, limit = 20): Pro
   return ((data ?? []) as AedMessage[]).reverse();
 }
 
+// ─── Leads ──────────────────────────────────────────────────────────────────
+
+export async function createChatLead(args: {
+  customerId: string;
+  conversationId: string;
+  channel: string;
+  fullName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  companyName?: string | null;
+}): Promise<string | null> {
+  const { data, error } = await db()
+    .from("aed_leads")
+    .insert({
+      source: `${args.channel}_chat`,
+      full_name: args.fullName ?? null,
+      phone: args.phone ?? null,
+      email: args.email ?? null,
+      company_name: args.companyName ?? null,
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("[AED] createChatLead failed:", error);
+    return null;
+  }
+  return data.id as string;
+}
+
 // ─── Deals ────────────────────────────────────────────────────────────────────
 
 export async function createDeal(
