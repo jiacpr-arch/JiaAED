@@ -18,10 +18,16 @@ export const NEWS_QUERIES = [
   "ปั๊มหัวใจ CPR ช่วยชีวิต",
   "เครื่อง AED กระตุกหัวใจ",
   "วูบหมดสติ หัวใจ ช่วยชีวิต",
+  "นักกีฬา หัวใจวาย ล้มกลางสนาม",
+  "วิ่งมาราธอน หมดสติ หัวใจหยุดเต้น",
+  "ติดตั้งเครื่อง AED โรงเรียน สนามกีฬา",
+  "ไหลตาย หัวใจหยุดเต้นเฉียบพลัน",
+  "เออีดี กู้ชีพ ช่วยชีวิต",
+  "หัวใจวายเฉียบพลัน เสียชีวิตกะทันหัน",
 ];
 
 // Keep token use and publish volume sane.
-const MAX_CANDIDATES = 40;
+const MAX_CANDIDATES = 50;
 const MAX_INSERT_PER_RUN = 12;
 
 const MODEL = "claude-sonnet-4-5";
@@ -147,14 +153,58 @@ const SYSTEM_PROMPT = `คุณคือบรรณาธิการเนื
 2) สำหรับข่าวที่เลือก ให้เขียน "โน้ตให้ความรู้ของเราเอง" (blurb) — ไม่ใช่คัดลอกพาดหัว
 
 กฎ strict (สำคัญมาก):
-- ตอบเป็น JSON array เท่านั้น ห้ามมี markdown code fence ห้ามมีข้อความอื่น
-- แต่ละ element: {"index": <int>, "relevant": <bool>, "topic": "<สั้นๆ ไทย>", "blurb": "<ไทย 1-2 ประโยค>"}
-- index ต้องตรงกับเลขข่าวที่ให้ไป ครบทุกข่าว
-- relevant=false เมื่อ: เป็นข่าวการเมือง/ดราม่าล้วน, พาดหัวคลิกเบตหรือยังไม่ยืนยัน, หรือไม่เกี่ยวกับการกู้ชีพ/หัวใจหยุดเต้นจริง
-- ถ้าไม่มั่นใจว่าข่าวจริงหรือไม่ ให้ relevant=false ไว้ก่อน
+- ตอบเป็น JSON array เท่านั้น ห้ามมีข้อความอื่นนอก array
+- ใส่เฉพาะข่าวที่ "เกี่ยวข้องจริง" เท่านั้น — ข่าวที่ไม่เกี่ยวข้อง ห้ามใส่ลงใน array (ไม่ต้องรายงาน)
+- แต่ละ element: {"index": <int>, "topic": "<สั้นๆ ไทย>", "blurb": "<ไทย 1-2 ประโยค>"}
+- index ต้องตรงกับเลขข่าวที่ให้ไป
+- ตัดทิ้ง (ไม่ใส่ใน array) เมื่อ: เป็นข่าวการเมือง/ดราม่าล้วน, พาดหัวคลิกเบตหรือยังไม่ยืนยัน, หรือไม่เกี่ยวกับการกู้ชีพ/หัวใจหยุดเต้นจริง
+- ถ้าไม่มั่นใจว่าข่าวจริงหรือไม่ ให้ตัดทิ้งไว้ก่อน
 - blurb: เขียนเป็นมุมให้ความรู้/สร้างความตระหนัก ห้ามเอ่ยชื่อบุคคลในข่าวเพื่อหาประโยชน์ ห้ามใส่ร้ายหรือตัดสินอาการของใคร
 - ห้ามอ้างการรักษาหรือรับประกันชีวิต (medical claim) ห้ามใช้คำว่า "อย." "ฆพ." หรือเลขทะเบียนใด ๆ
 - โทนสุภาพ ให้ข้อมูล ไม่ขายตรงจนเกินไป`;
+
+/**
+ * Pull complete top-level JSON objects out of a model response.
+ *
+ * Tolerant of markdown code fences and, crucially, of truncation: if the
+ * response is cut off mid-array (hit max_tokens), every object that *did*
+ * finish is still recovered and the dangling partial one is dropped.
+ */
+function extractJsonObjects(text: string): Array<Record<string, unknown>> {
+  const objects: Array<Record<string, unknown>> = [];
+  let depth = 0;
+  let start = -1;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === "{") {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === "}") {
+      if (depth > 0) {
+        depth--;
+        if (depth === 0 && start >= 0) {
+          try {
+            objects.push(JSON.parse(text.slice(start, i + 1)));
+          } catch {
+            // ignore a malformed object and keep scanning
+          }
+          start = -1;
+        }
+      }
+    }
+  }
+  return objects;
+}
 
 export async function curate(items: RawNewsItem[]): Promise<CuratedItem[]> {
   if (items.length === 0) return [];
@@ -177,12 +227,12 @@ export async function curate(items: RawNewsItem[]): Promise<CuratedItem[]> {
     `พาดหัวข่าว ${items.length} ข่าว:`,
     list,
     ``,
-    `คัดและเขียน blurb ตามกฎ ส่งกลับเป็น JSON array เท่านั้น`,
+    `คัดเฉพาะข่าวที่เกี่ยวข้องจริงและเขียน blurb ตามกฎ ส่งกลับเป็น JSON array (ใส่เฉพาะข่าวที่เกี่ยวข้อง)`,
   ].join("\n");
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 4096,
+    max_tokens: 8192,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],
   });
@@ -190,29 +240,20 @@ export async function curate(items: RawNewsItem[]): Promise<CuratedItem[]> {
   const text = response.content
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
-    .join("")
-    .trim();
-
-  const start = text.indexOf("[");
-  const end = text.lastIndexOf("]");
-  if (start < 0 || end < 0) {
-    throw new Error(`no JSON array in model output: ${text.slice(0, 200)}`);
-  }
-
-  const parsed = JSON.parse(text.slice(start, end + 1)) as Array<{
-    index: number;
-    relevant: boolean;
-    topic?: string;
-    blurb?: string;
-  }>;
+    .join("");
 
   const curated: CuratedItem[] = [];
-  for (const row of parsed) {
-    if (!row?.relevant) continue;
-    const item = items[row.index];
-    const blurb = (row.blurb ?? "").trim();
+  const seen = new Set<number>();
+  for (const row of extractJsonObjects(text)) {
+    if (row.relevant === false) continue;
+    const index = typeof row.index === "number" ? row.index : Number(row.index);
+    if (!Number.isInteger(index) || seen.has(index)) continue;
+    const item = items[index];
+    const blurb = typeof row.blurb === "string" ? row.blurb.trim() : "";
     if (!item || !blurb) continue;
-    curated.push({ ...item, topic: (row.topic ?? "").trim() || "การกู้ชีพ", blurb });
+    seen.add(index);
+    const topic = typeof row.topic === "string" && row.topic.trim() ? row.topic.trim() : "การกู้ชีพ";
+    curated.push({ ...item, topic, blurb });
   }
 
   return curated.slice(0, MAX_INSERT_PER_RUN);
