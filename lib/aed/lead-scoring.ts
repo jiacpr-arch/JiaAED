@@ -102,9 +102,13 @@ export async function alreadyAlerted(sessionId: string): Promise<boolean> {
   return !!data && data.length > 0;
 }
 
-export async function recordAlert(sessionId: string, score: SessionScore): Promise<void> {
+// Atomic dedup gate: returns true only if this call inserted the alert row.
+// A partial unique index on (session_id) WHERE event_name = 'hot_lead_alert_fired'
+// makes concurrent inserts for the same session collide — the loser gets 23505
+// and must not send a notification.
+export async function recordAlert(sessionId: string, score: SessionScore): Promise<boolean> {
   const supabase = createAdminClient();
-  await supabase.from("aed_analytics_events").insert({
+  const { error } = await supabase.from("aed_analytics_events").insert({
     event_name: "hot_lead_alert_fired",
     properties: {
       score: score.score,
@@ -115,6 +119,10 @@ export async function recordAlert(sessionId: string, score: SessionScore): Promi
     utm_source: score.utm_source,
     utm_campaign: score.utm_campaign,
   });
+  if (!error) return true;
+  if (error.code === "23505") return false; // already alerted / lost the race
+  console.error("[AED] recordAlert failed:", error);
+  return false;
 }
 
 export function formatHotLeadMessage(args: {

@@ -24,6 +24,13 @@ CREATE INDEX IF NOT EXISTS idx_aed_events_ts      ON aed_analytics_events(create
 CREATE INDEX IF NOT EXISTS idx_aed_events_gclid   ON aed_analytics_events(gclid) WHERE gclid IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_aed_events_session ON aed_analytics_events(session_id);
 
+-- At most one hot-lead alert per session. Also acts as an atomic dedup gate:
+-- concurrent alert inserts for the same session collide (23505) so only one wins
+-- and only one LINE notification is sent.
+CREATE UNIQUE INDEX IF NOT EXISTS uq_aed_hot_lead_alert_once_per_session
+  ON aed_analytics_events(session_id)
+  WHERE event_name = 'hot_lead_alert_fired';
+
 ALTER TABLE aed_analytics_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service_role_aed_analytics_events" ON aed_analytics_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
