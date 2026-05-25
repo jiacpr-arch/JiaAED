@@ -4,6 +4,9 @@ import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { YouTubeLite } from "@/app/components/YouTubeLite";
+import { LatestNews } from "@/app/components/LatestNews";
+
+export const revalidate = 3600;
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -154,6 +157,9 @@ export default function AdsLandingI7() {
             ))}
           </ul>
         </div>
+
+        {/* Latest curated news — renders nothing until items exist */}
+        <LatestNews limit={3} compact />
 
         {/* Final CTA */}
         <div className="text-center py-6">

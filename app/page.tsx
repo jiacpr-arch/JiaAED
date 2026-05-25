@@ -8,6 +8,9 @@ import { HeroCta } from "./components/HeroCta";
 import { HeroHeadline } from "./components/HeroHeadline";
 import { YouTubeLite } from "./components/YouTubeLite";
 import { PriceViewTracker } from "./components/PriceViewTracker";
+import { LatestNews } from "./components/LatestNews";
+
+export const revalidate = 3600;
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
@@ -667,6 +670,9 @@ export default function Home() {
           <LeadForm />
         </div>
       </section>
+
+      {/* Latest curated news — renders nothing until items exist */}
+      <LatestNews limit={3} />
 
       {/* FAQ — for SEO/AEO */}
       <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
