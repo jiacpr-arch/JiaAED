@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { createPostHogDigestSource, createStore, type DigestSource } from "../../growth-kit/lib";
 import type { GrowthConfig } from "../../growth-kit/lib/types";
 
 // Non-secret tenant config, stored as JSONB in the control-plane registry.
@@ -9,6 +10,8 @@ export type TenantConfig = {
   locale: string;
   timezone: string;
   channels: Array<{ kind: "line"; to: string } | { kind: "telegram"; chatId: string }>;
+  // Where the hub reads metrics from for digests. Defaults to "supabase".
+  source?: "supabase" | "posthog";
   storeTable: string;
   scoring: GrowthConfig["scoring"];
   digest: GrowthConfig["digest"];
@@ -74,4 +77,17 @@ export function resolveGrowthConfig(t: Tenant): GrowthConfig {
       systemPrompt: c.llm.systemPrompt,
     },
   };
+}
+
+// Pick the read source for a tenant's digests. PostHog needs HUB_<ID>_POSTHOG_*
+// env vars; Supabase reuses the tenant's full GrowthConfig store.
+export function resolveDigestSource(t: Tenant): DigestSource {
+  if (t.config.source === "posthog") {
+    return createPostHogDigestSource({
+      host: envKey(t.id, "POSTHOG_HOST"),
+      projectId: envKey(t.id, "POSTHOG_PROJECT_ID"),
+      apiKey: envKey(t.id, "POSTHOG_API_KEY"),
+    });
+  }
+  return createStore(resolveGrowthConfig(t));
 }

@@ -2,13 +2,15 @@ import { analyze } from "./analyze";
 import { buildDigest, formatDigest, type DigestData } from "./digest";
 import { notify } from "./notify";
 import { formatHotLeadMessage, isHot, scoreEvents } from "./scoring";
-import { createSupabaseStore, type Store } from "./store";
+import { createSupabaseStore, type DigestSource, type Store } from "./store";
 import type { EventInput, GrowthConfig } from "./types";
 
 export type { GrowthConfig, EventInput } from "./types";
-export type { Store } from "./store";
+export type { Store, DigestSource } from "./store";
 export type { DigestData } from "./digest";
+export type { PostHogSourceOptions } from "./posthog-store";
 export { createSupabaseStore } from "./store";
+export { createPostHogDigestSource } from "./posthog-store";
 
 export function createStore(cfg: GrowthConfig): Store {
   return createSupabaseStore(cfg);
@@ -60,23 +62,23 @@ function todayRangeISO(): { fromISO: string; toISO: string } {
 }
 
 // Build yesterday→now digest and push it to chat. Returns the structured data
-// so the caller can log it.
-export async function runDailyDigest(cfg: GrowthConfig, store: Store): Promise<DigestData> {
+// so the caller can log it. Accepts any DigestSource (Supabase or PostHog).
+export async function runDailyDigest(cfg: GrowthConfig, source: DigestSource): Promise<DigestData> {
   const range = todayRangeISO();
-  const events = await store.rangeEvents(range.fromISO, range.toISO);
+  const events = await source.rangeEvents(range.fromISO, range.toISO);
   const digest = buildDigest(events, range, cfg);
   await notify(cfg, formatDigest(digest));
   return digest;
 }
 
 // Build a 7-day digest, ask Claude to analyse it, and push the narrative review.
-export async function runWeeklyReview(cfg: GrowthConfig, store: Store): Promise<string> {
+export async function runWeeklyReview(cfg: GrowthConfig, source: DigestSource): Promise<string> {
   const now = Date.now();
   const range = {
     fromISO: new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString(),
     toISO: new Date(now).toISOString(),
   };
-  const events = await store.rangeEvents(range.fromISO, range.toISO);
+  const events = await source.rangeEvents(range.fromISO, range.toISO);
   const digest = buildDigest(events, range, cfg);
   const review = await analyze(digest, cfg);
   await notify(cfg, review);

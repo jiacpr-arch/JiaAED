@@ -10,10 +10,16 @@ import {
 const SELECT_COLS =
   "event_name, properties, session_id, page_url, utm_source, utm_campaign, gclid, created_at";
 
-// Data layer. Today this is Supabase (exactly what JiaAED uses). The interface
-// is intentionally small so a PostHog-backed implementation can be dropped in
-// later for the multi-tenant "central hub" model.
-export interface Store {
+// Read side needed for digests / weekly reviews. Both Supabase and PostHog can
+// implement this, so the central hub can read from either.
+export interface DigestSource {
+  rangeEvents(fromISO: string, toISO: string): Promise<StoredEvent[]>;
+}
+
+// Full store adds the real-time edge path (event ingest + atomic hot-lead gate).
+// This stays Supabase-backed on purpose: PostHog can't enforce the dedup
+// uniqueness, nor serve just-written events without ingestion lag.
+export interface Store extends DigestSource {
   insertEvent(e: EventInput): Promise<void>;
   sessionEvents(sessionId: string, sinceISO: string): Promise<StoredEvent[]>;
   alreadyAlerted(sessionId: string, sinceISO: string): Promise<boolean>;
@@ -22,7 +28,6 @@ export interface Store {
   // event_name = 'hot_lead_alert_fired' (see sql/schema.sql) so concurrent
   // requests for the same session collide and only one wins.
   recordAlert(sessionId: string, score: SessionScore): Promise<boolean>;
-  rangeEvents(fromISO: string, toISO: string): Promise<StoredEvent[]>;
 }
 
 export function createSupabaseStore(cfg: GrowthConfig): Store {

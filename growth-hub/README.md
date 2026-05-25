@@ -15,10 +15,10 @@ daily digest and weekly AI review for **every** brand, so adding a business is a
                          └─────────────────────────────────────┘    LINE/Telegram
 ```
 
-It **reuses Growth Kit unchanged** — `run.ts` just loops tenants and calls the
-kit's `runDailyDigest` / `runWeeklyReview`. The kit's `Store` interface is the
-seam: point a tenant at Supabase today, or add a PostHog-backed `Store` later
-without touching the hub.
+It **reuses Growth Kit** — `run.ts` just loops tenants and calls the kit's
+`runDailyDigest` / `runWeeklyReview`. The kit's `DigestSource` interface is the
+seam: set a tenant's `source` to `"supabase"` (default) or `"posthog"` and the
+hub reads from the right place without any other change.
 
 ## Files
 
@@ -41,6 +41,7 @@ chat IDs, persona). Per-tenant secrets are resolved from env by convention:
 | Need | Env var |
 |------|---------|
 | Tenant Supabase | `HUB_<ID>_SUPABASE_URL`, `HUB_<ID>_SUPABASE_SERVICE_ROLE_KEY` |
+| Tenant PostHog (if `source: "posthog"`) | `HUB_<ID>_POSTHOG_HOST`, `HUB_<ID>_POSTHOG_PROJECT_ID`, `HUB_<ID>_POSTHOG_API_KEY` |
 | LINE token | `HUB_<ID>_LINE_TOKEN` |
 | Telegram bot token | `HUB_<ID>_TELEGRAM_BOT_TOKEN` |
 | Claude (shared) | `ANTHROPIC_API_KEY` |
