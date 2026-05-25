@@ -74,6 +74,7 @@ export default function Home() {
             <a href="#faq" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">FAQ</a>
             <Link href="/docs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เอกสาร</Link>
             <Link href="/articles" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">บทความ</Link>
+            <Link href="/news" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ข่าว</Link>
             <a
               href={LINE_OA}
               target="_blank"
