@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { YouTubeLite } from "@/app/components/YouTubeLite";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -59,7 +60,8 @@ export default function AdsLandingI7() {
         </p>
 
         {/* Price */}
-        <div className="bg-gradient-to-r from-yellow-400/10 to-transparent border border-yellow-400/40 rounded-2xl p-5 mb-5">
+        <PriceViewTracker targetId="ads-price" />
+        <div id="ads-price" className="bg-gradient-to-r from-yellow-400/10 to-transparent border border-yellow-400/40 rounded-2xl p-5 mb-5">
           <div className="flex items-baseline gap-3 mb-1">
             <span className="text-xs text-gray-400">ราคาพิเศษวันนี้</span>
             <span className="text-gray-500 line-through text-base">฿41,900</span>

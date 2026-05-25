@@ -17,17 +17,30 @@ function isAuthorized(req: Request): boolean {
   return auth === `Bearer ${secret}`;
 }
 
-async function checkBidReadiness(): Promise<{ ready: boolean; count: number; alreadyAlerted: boolean }> {
+async function checkBidReadiness(): Promise<{
+  ready: boolean;
+  count: number;
+  lineClicks: number;
+  formSubmits: number;
+  alreadyAlerted: boolean;
+}> {
   const supabase = createAdminClient();
   const since = new Date(Date.now() - BID_READY_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-  const { count } = await supabase
-    .from("aed_analytics_events")
-    .select("*", { count: "exact", head: true })
-    .in("event_name", ["line_click", "lead_form_submit"])
-    .gte("created_at", since);
+  const countEvent = async (name: string) => {
+    const { count } = await supabase
+      .from("aed_analytics_events")
+      .select("*", { count: "exact", head: true })
+      .eq("event_name", name)
+      .gte("created_at", since);
+    return count ?? 0;
+  };
 
-  const conversions = count ?? 0;
+  const [lineClicks, formSubmits] = await Promise.all([
+    countEvent("line_click"),
+    countEvent("lead_form_submit"),
+  ]);
+  const conversions = lineClicks + formSubmits;
 
   const { data: prevAlerts } = await supabase
     .from("aed_analytics_digest_log")
@@ -38,6 +51,8 @@ async function checkBidReadiness(): Promise<{ ready: boolean; count: number; alr
   return {
     ready: conversions >= BID_READY_THRESHOLD,
     count: conversions,
+    lineClicks,
+    formSubmits,
     alreadyAlerted: (prevAlerts ?? []).length > 0,
   };
 }
@@ -68,26 +83,41 @@ export async function GET(req: Request) {
 
     const bid = await checkBidReadiness();
     if (bid.ready && !bid.alreadyAlerted) {
-      const msg = [
+      const lines = [
         `🎯 พร้อมสลับ Bid Strategy แล้ว!`,
         ``,
         `${BID_READY_DAYS} วันที่ผ่านมา มี conversion ${bid.count} ครั้ง`,
-        `(LINE clicks + lead form submits)`,
+        `• LINE clicks: ${bid.lineClicks}`,
+        `• ส่งฟอร์มจริง: ${bid.formSubmits}`,
         ``,
-        `แนะนำให้ทำใน Google Ads ตอนนี้:`,
+      ];
+      if (bid.formSubmits === 0) {
+        lines.push(
+          `⚠️ conversion เกือบทั้งหมดเป็น "LINE click" ไม่ใช่ลีดที่ส่งฟอร์ม`,
+          `ถ้าสลับเป็น Target CPA ตอนนี้ Google จะ optimize เพื่อหาคน "คลิก LINE"`,
+          `ไม่ใช่ลูกค้าจริง — เช็คก่อนว่า LINE click กลายเป็นการขายจริงแค่ไหน`,
+          ``,
+        );
+      }
+      lines.push(
+        `แนะนำให้ทำใน Google Ads:`,
         `1. Campaign Settings → Bidding`,
         `2. เปลี่ยน "จำนวนคลิก" → "Conversion"`,
         `3. ตั้ง Target CPA = ฿1,500`,
         `4. บันทึก`,
-        ``,
-        `Google มี data พอแล้ว — จะ optimize ดีขึ้นมาก`,
-      ].join("\n");
-      await notifyAnalyticsAlert(msg);
+      );
+      await notifyAnalyticsAlert(lines.join("\n"));
 
       await supabase.from("aed_analytics_digest_log").insert({
         digest_date: digest.date,
         kind: BID_READY_KIND,
-        payload: { count: bid.count, days: BID_READY_DAYS, threshold: BID_READY_THRESHOLD },
+        payload: {
+          count: bid.count,
+          line_clicks: bid.lineClicks,
+          form_submits: bid.formSubmits,
+          days: BID_READY_DAYS,
+          threshold: BID_READY_THRESHOLD,
+        },
       });
     }
 
