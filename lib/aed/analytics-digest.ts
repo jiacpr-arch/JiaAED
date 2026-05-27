@@ -44,6 +44,8 @@ export type DigestPayload = {
     hot_leads: number;
   }>;
   form_field_drop: Array<{ field: string; focuses: number }>;
+  hot_leads: number;
+  news: Array<{ topic: string; blurb: string }>;
   alerts: string[];
 };
 
@@ -135,6 +137,29 @@ function buildFieldDrop(rows: EventRow[]): DigestPayload["form_field_drop"] {
     .sort((a, b) => b.focuses - a.focuses);
 }
 
+// News is published by the news-feed cron (~08:00 BKK) shortly before this
+// digest runs (~09:00 BKK), so "today" reliably captures the morning batch.
+// Folding it in here means the owner gets one daily message instead of two.
+async function fetchTodayNews(): Promise<DigestPayload["news"]> {
+  const supabase = createAdminClient();
+  const today = bkkDateRange(0);
+  const { data, error } = await supabase
+    .from("aed_news_items")
+    .select("topic, our_blurb")
+    .eq("hidden", false)
+    .gte("created_at", today.from)
+    .lte("created_at", today.to)
+    .order("created_at", { ascending: false });
+  if (error) {
+    console.error("[digest] news fetch failed:", error);
+    return [];
+  }
+  return (data ?? []).map((r) => ({
+    topic: (r.topic as string | null)?.trim() || "ข่าว",
+    blurb: (r.our_blurb as string) ?? "",
+  }));
+}
+
 async function fetchVisitsCount(from: string, to: string): Promise<number> {
   const supabase = createAdminClient();
   const { count, error } = await supabase
@@ -153,11 +178,12 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   const yesterday = bkkDateRange(1);
   const dayBefore = bkkDateRange(2);
 
-  const [rows, prev, visits, prev_visits] = await Promise.all([
+  const [rows, prev, visits, prev_visits, news] = await Promise.all([
     fetchRows(yesterday.from, yesterday.to),
     fetchRows(dayBefore.from, dayBefore.to),
     fetchVisitsCount(yesterday.from, yesterday.to),
     fetchVisitsCount(dayBefore.from, dayBefore.to),
+    fetchTodayNews(),
   ]);
 
   const counts = countByEvent(rows);
@@ -249,6 +275,7 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
 
   const by_source = buildBySource(rows);
   const form_field_drop = buildFieldDrop(rows);
+  const hot_leads = counts["hot_lead_alert_fired"] || 0;
 
   return {
     date: yesterday.label,
@@ -261,6 +288,8 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     ab,
     by_source,
     form_field_drop,
+    hot_leads,
+    news,
     alerts,
   };
 }
@@ -286,6 +315,11 @@ export function formatDigestForLine(d: DigestPayload): string {
     );
   } else {
     lines.push(`💰 Conversion (ส่งฟอร์ม/visitor): —`);
+  }
+
+  const prevHotLeads = d.prev_counts["hot_lead_alert_fired"] || 0;
+  if (d.hot_leads > 0 || prevHotLeads > 0) {
+    lines.push(`🔥 Hot leads: ${d.hot_leads} ${diffPct(d.hot_leads, prevHotLeads)}`);
   }
 
   if (d.funnel.price_views > 0) {
@@ -322,6 +356,12 @@ export function formatDigestForLine(d: DigestPayload): string {
   if (d.alerts.length > 0) {
     lines.push(``, `🚨 Alerts:`);
     for (const a of d.alerts) lines.push(`  ${a}`);
+  }
+
+  if (d.news.length > 0) {
+    lines.push(``, `📰 ข่าวใหม่บนหน้าเว็บ ${d.news.length} ข่าว (เผยแพร่อัตโนมัติ)`);
+    for (const n of d.news.slice(0, 3)) lines.push(`• ${n.topic}: ${n.blurb}`);
+    lines.push(`ซ่อนได้ที่ /admin/news`);
   }
 
   return lines.join("\n");
