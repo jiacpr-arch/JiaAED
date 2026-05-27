@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
 import {
   curate,
   fetchAllCandidates,
@@ -61,16 +61,9 @@ export async function GET(req: Request) {
     const inserted = await insertCurated(curated);
     result.inserted = inserted;
 
-    if (inserted > 0) {
-      const preview = curated
-        .slice(0, 3)
-        .map((c) => `• ${c.topic}: ${c.blurb}`)
-        .join("\n");
-      await notifyAnalyticsDigest(
-        `📰 ข่าวใหม่บนหน้าเว็บ ${inserted} ข่าว (เผยแพร่อัตโนมัติ)\n${preview}\n\nซ่อนได้ที่ /admin/news`,
-      );
-    }
-
+    // No separate LINE push here: published items are folded into the 09:00
+    // daily digest (see fetchTodayNews in analytics-digest.ts) so the owner
+    // gets one consolidated daily report instead of two messages.
     await logRun(result);
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
