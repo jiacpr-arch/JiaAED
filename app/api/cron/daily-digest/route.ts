@@ -6,8 +6,8 @@ import { notifyAnalyticsDigest, notifyAnalyticsAlert } from "@/lib/aed/notify-ow
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const BID_READY_THRESHOLD = 30;
-const BID_READY_DAYS = 14;
+const BID_READY_THRESHOLD = 15; // real leads in the window — Google's floor for conversion-based bidding
+const BID_READY_DAYS = 30;
 const BID_READY_KIND = "bid_strategy_ready";
 
 function isAuthorized(req: Request): boolean {
@@ -20,27 +20,20 @@ function isAuthorized(req: Request): boolean {
 async function checkBidReadiness(): Promise<{
   ready: boolean;
   count: number;
-  lineClicks: number;
-  formSubmits: number;
   alreadyAlerted: boolean;
 }> {
   const supabase = createAdminClient();
   const since = new Date(Date.now() - BID_READY_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-  const countEvent = async (name: string) => {
-    const { count } = await supabase
-      .from("aed_analytics_events")
-      .select("*", { count: "exact", head: true })
-      .eq("event_name", name)
-      .gte("created_at", since);
-    return count ?? 0;
-  };
+  // Count REAL leads (form submits + chat captures), not raw LINE clicks. Abandoned
+  // forms are stored with a "partial_*" source and must not count.
+  const { count } = await supabase
+    .from("aed_leads")
+    .select("*", { count: "exact", head: true })
+    .gte("created_at", since)
+    .not("source", "ilike", "partial%");
 
-  const [lineClicks, formSubmits] = await Promise.all([
-    countEvent("line_click"),
-    countEvent("lead_form_submit"),
-  ]);
-  const conversions = lineClicks + formSubmits;
+  const leads = count ?? 0;
 
   const { data: prevAlerts } = await supabase
     .from("aed_analytics_digest_log")
@@ -49,10 +42,8 @@ async function checkBidReadiness(): Promise<{
     .limit(1);
 
   return {
-    ready: conversions >= BID_READY_THRESHOLD,
-    count: conversions,
-    lineClicks,
-    formSubmits,
+    ready: leads >= BID_READY_THRESHOLD,
+    count: leads,
     alreadyAlerted: (prevAlerts ?? []).length > 0,
   };
 }
@@ -83,38 +74,26 @@ export async function GET(req: Request) {
 
     const bid = await checkBidReadiness();
     if (bid.ready && !bid.alreadyAlerted) {
-      const lines = [
+      const msg = [
         `🎯 พร้อมสลับ Bid Strategy แล้ว!`,
         ``,
-        `${BID_READY_DAYS} วันที่ผ่านมา มี conversion ${bid.count} ครั้ง`,
-        `• LINE clicks: ${bid.lineClicks}`,
-        `• ส่งฟอร์มจริง: ${bid.formSubmits}`,
+        `${BID_READY_DAYS} วันที่ผ่านมา มี "ลีดจริง" ${bid.count} ราย`,
+        `(ฟอร์ม + LINE/แชทที่เก็บเบอร์ได้ — ไม่นับ LINE click ลอย ๆ)`,
         ``,
-      ];
-      if (bid.formSubmits === 0) {
-        lines.push(
-          `⚠️ conversion เกือบทั้งหมดเป็น "LINE click" ไม่ใช่ลีดที่ส่งฟอร์ม`,
-          `ถ้าสลับเป็น Target CPA ตอนนี้ Google จะ optimize เพื่อหาคน "คลิก LINE"`,
-          `ไม่ใช่ลูกค้าจริง — เช็คก่อนว่า LINE click กลายเป็นการขายจริงแค่ไหน`,
-          ``,
-        );
-      }
-      lines.push(
-        `แนะนำให้ทำใน Google Ads:`,
+        `Google มี conversion จริงพอให้เรียนรู้แล้ว แนะนำ:`,
         `1. Campaign Settings → Bidding`,
-        `2. เปลี่ยน "จำนวนคลิก" → "Conversion"`,
-        `3. ตั้ง Target CPA = ฿1,500`,
-        `4. บันทึก`,
-      );
-      await notifyAnalyticsAlert(lines.join("\n"));
+        `2. เปลี่ยน "เพิ่มจำนวนคลิกสูงสุด" → "Maximize Conversions"`,
+        `3. รัน 2-3 สัปดาห์ให้นิ่ง แล้วค่อยใส่ Target CPA`,
+        ``,
+        `(ยิ่งลีดเยอะยิ่งแม่น — 30+/เดือนดีสุด)`,
+      ].join("\n");
+      await notifyAnalyticsAlert(msg);
 
       await supabase.from("aed_analytics_digest_log").insert({
         digest_date: digest.date,
         kind: BID_READY_KIND,
         payload: {
-          count: bid.count,
-          line_clicks: bid.lineClicks,
-          form_submits: bid.formSubmits,
+          real_leads: bid.count,
           days: BID_READY_DAYS,
           threshold: BID_READY_THRESHOLD,
         },
