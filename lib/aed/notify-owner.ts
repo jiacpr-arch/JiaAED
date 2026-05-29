@@ -226,8 +226,17 @@ export async function notifyNewLead(p: {
 // ─── New LINE Follow (keep plain text) ─────────────────────────────────────────
 
 export async function notifyNewFollow(lineUserId: string): Promise<void> {
+  // This fires from the LINE follow webhook — a *confirmed* friend-add, the
+  // real conversion. Make it stand out from the "clicked the LINE button"
+  // hot-lead alerts so a genuine add is never lost in the noise.
   await pushToOwner(
-    [`👋 ลูกค้าใหม่ทัก LINE`, `ID: ${lineUserId}`, `⏰ ${bkkNow()}`].join("\n"),
+    [
+      `✅🎉 มีคนแอด LINE จริง!`,
+      `ลูกค้าเพิ่มเพื่อนเรียบร้อย — รีบทักก่อนเงียบ`,
+      ``,
+      `🔗 LINE ID: ${lineUserId}`,
+      `⏰ ${bkkNow()}`,
+    ].join("\n"),
   );
 }
 

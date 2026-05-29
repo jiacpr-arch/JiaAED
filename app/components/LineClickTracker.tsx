@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readHeadlineVariant, readHeroVariant } from "@/lib/aed/ab-variant";
+import { LineFallbackModal } from "./LineFallbackModal";
 
 declare global {
   interface Window {
@@ -11,11 +12,15 @@ declare global {
   }
 }
 
-export function LineClickTracker() {
-  useEffect(() => {
-    const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
-    const conversionLabel = process.env.NEXT_PUBLIC_GADS_CONVERSION_LABEL;
+function isMobile(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
 
+export function LineClickTracker() {
+  const [showLineHelp, setShowLineHelp] = useState(false);
+
+  useEffect(() => {
     const handler = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
@@ -34,19 +39,24 @@ export function LineClickTracker() {
           headline_variant: headlineVariant ?? "none",
         });
 
-        const gtag = window.gtag;
-        if (typeof gtag === "function") {
-          gtag("event", "click_to_line", {
+        // Fire an analytics-only event (NOT a Google Ads conversion). A button
+        // click is intent, not a confirmed friend-add — reporting it as a
+        // conversion trains Google Ads to chase clickers who never add. Real
+        // conversions are reported server-side from actual leads (lead form +
+        // gclid) and quotations (enhanced match), so no signal is lost here.
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "click_to_line", {
             cta_location: location,
             product_id: productId,
           });
+        }
 
-          if (gAdsId && conversionLabel) {
-            gtag("event", "conversion", {
-              send_to: `${gAdsId}/${conversionLabel}`,
-              cta_location: location,
-            });
-          }
+        // On desktop, line.me add-friend links open a dead page (they only work
+        // inside the LINE mobile app). Intercept and show a QR / copy-ID / form
+        // fallback instead of letting the click bounce. Mobile proceeds normally.
+        if (!isMobile()) {
+          e.preventDefault();
+          setShowLineHelp(true);
         }
         return;
       }
@@ -81,5 +91,5 @@ export function LineClickTracker() {
     return () => document.removeEventListener("click", handler);
   }, []);
 
-  return null;
+  return showLineHelp ? <LineFallbackModal onClose={() => setShowLineHelp(false)} /> : null;
 }
