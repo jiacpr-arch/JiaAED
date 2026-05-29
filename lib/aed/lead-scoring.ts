@@ -131,11 +131,23 @@ export function formatHotLeadMessage(args: {
   triggerEvent: string;
 }): string {
   const { score, pageUrl, triggerEvent } = args;
-  const lines = [
-    `🔥 Hot lead! (score ${score.score})`,
-    `Trigger: ${triggerEvent}`,
-    `Signals: ${score.reasons.slice(0, 6).join(", ")}`,
-  ];
+
+  // A line_click trigger means the visitor clicked a LINE button on the
+  // website — that is interest, NOT a confirmed friend-add. Make the headline
+  // say so, so a click is never mistaken for a real lead. The genuine "added"
+  // signal comes from the LINE follow webhook (notifyNewFollow).
+  const clickedOnly = triggerEvent === "line_click";
+  const headline = clickedOnly
+    ? `👀 สนใจมาก — กดปุ่ม LINE (score ${score.score})`
+    : `🔥 Hot lead! (score ${score.score})`;
+
+  const lines = [headline];
+  if (clickedOnly) {
+    lines.push(`⚠️ เพิ่งกดปุ่มบนเว็บ ยังไม่ยืนยันว่าแอดเพื่อนแล้ว`);
+  }
+  lines.push(`Trigger: ${triggerEvent}`);
+  lines.push(`Signals: ${score.reasons.slice(0, 6).join(", ")}`);
+
   if (score.utm_source) {
     const utm = score.utm_campaign ? `${score.utm_source} / ${score.utm_campaign}` : score.utm_source;
     lines.push(`Source: ${utm}`);
