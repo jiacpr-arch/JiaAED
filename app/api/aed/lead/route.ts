@@ -52,9 +52,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
-  // Honeypot — silent success to discourage bots
+  // Honeypot — return a silent success so bots think they got through, but flag
+  // it as not stored so the client skips the lead_form_submit event and the
+  // Google Ads conversion. Otherwise every bot that trips the hidden field fires
+  // a phantom conversion (no lead row), polluting the funnel + Ads optimization.
   if (body.hp && body.hp.trim() !== "") {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, skipped: "honeypot" });
   }
 
   const fullName = clean(body.fullName, 120);
