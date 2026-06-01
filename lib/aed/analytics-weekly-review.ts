@@ -27,6 +27,10 @@ export type WeeklyContext = {
   visits_prev: number;
   events: Record<string, number>;
   events_prev: Record<string, number>;
+  // Same events split by landing page. The home page (/) and the ads landing
+  // page (/aed/*) carry DIFFERENT instrumentation, so global event totals are
+  // apples-to-oranges — segmenting them stops false "surge"/"drop" alarms.
+  events_by_page: { home: Record<string, number>; ads_landing: Record<string, number>; other: Record<string, number> };
   top_pages: Array<{ path: string; n: number }>;
   top_doc_downloads: Array<{ doc_id: string; n: number }>;
   top_line_locations: Array<{ location: string; n: number }>;
@@ -68,6 +72,14 @@ function pathFromUrl(url: string | null): string | null {
   } catch {
     return null;
   }
+}
+
+function pageBucket(url: string | null): "home" | "ads_landing" | "other" {
+  const p = pathFromUrl(url);
+  if (!p) return "other";
+  if (p === "/") return "home";
+  if (p.startsWith("/aed/")) return "ads_landing";
+  return "other";
 }
 
 export async function buildWeeklyContext(): Promise<WeeklyContext> {
@@ -113,6 +125,12 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
   const events_prev: Record<string, number> = {};
   for (const r of prevRows) events_prev[r.event_name] = (events_prev[r.event_name] ?? 0) + 1;
 
+  const events_by_page: WeeklyContext["events_by_page"] = { home: {}, ads_landing: {}, other: {} };
+  for (const r of rows) {
+    const bucket = events_by_page[pageBucket(r.page_url)];
+    bucket[r.event_name] = (bucket[r.event_name] ?? 0) + 1;
+  }
+
   const heroViews = rows.filter((r) => r.event_name === "hero_cta_view");
   const lineClicks = rows.filter((r) => r.event_name === "line_click");
   const a_views = heroViews.filter((r) => (r.properties?.variant as string) === "a").length;
@@ -146,6 +164,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
     visits_prev: visitsPrev.count ?? 0,
     events,
     events_prev,
+    events_by_page,
     top_pages,
     top_doc_downloads,
     top_line_locations,
@@ -176,7 +195,13 @@ const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์ก
 - แต่ละข้อมี: ปัญหา + เหตุผลจาก data + วิธีแก้ที่ทำได้เลย
 - ห้ามใช้ markdown (LINE ไม่รองรับ) ใช้ emoji + ตัวเลข + เว้นบรรทัดแทน
 - ความยาวรวมไม่เกิน 1500 ตัวอักษร (ขนาดของ LINE message)
-- ถ้า data ยังน้อยเกินไป (visits < 50) ให้บอกตรงๆ ว่ายังประเมินไม่ได้ ต้องรอเก็บเพิ่ม`;
+- ถ้า data ยังน้อยเกินไป (visits < 50) ให้บอกตรงๆ ว่ายังประเมินไม่ได้ ต้องรอเก็บเพิ่ม
+
+⚠️ สำคัญมาก — วิธีอ่าน event ให้ถูก (กันสรุปผิด):
+- หน้าแรก (home, path "/") กับ หน้าโฆษณา (ads_landing, path "/aed/*") ฝัง event ไม่เหมือนกัน ห้ามเอายอดรวม (field "events") มาเทียบ % แล้วตีความตรงๆ ให้ดู "events_by_page" เพื่อเทียบแยกหน้า
+- "hero_cta_view" ยิงเฉพาะหน้าแรกเท่านั้น หน้าโฆษณาไม่มี event นี้ → ถ้า traffic ย้ายไปหน้าโฆษณามากขึ้น ตัวเลขนี้จะลดเองโดยที่ปุ่มไม่ได้หาย/ไม่ได้พัง อย่าด่วนสรุปว่า CTA โดนซ่อนหรือให้ rollback
+- "price_view" บนหน้าโฆษณายิงตั้งแต่โหลด เพราะราคาอยู่บนสุดของหน้า → ค่านี้เกือบเท่าจำนวนคนเข้าหน้าโฆษณา ไม่ใช่สัญญาณว่าสนใจราคาเป็นพิเศษ ส่วน price_view บนหน้าแรกต้องเลื่อนลงไปถึงจะยิง = เป็น signal ความสนใจจริง ให้ดูแยกหน้า
+- เวลาเจอตัวเลขพุ่ง/ตกแรงๆ ให้เช็คก่อนว่าเป็นเพราะ "สัดส่วน traffic ระหว่างหน้าเปลี่ยน" หรือ "พฤติกรรมเปลี่ยนจริง" ก่อนเสนอ action`;
 
 export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;

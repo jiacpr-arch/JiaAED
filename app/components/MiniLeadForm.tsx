@@ -135,7 +135,11 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
           hp,
         }),
       });
-      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string };
+      const json = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        message?: string;
+        skipped?: string;
+      };
       if (!res.ok || !json.ok) {
         setErrorMsg(json.message || "ส่งไม่สำเร็จ ลองใหม่หรือทักทาง LINE");
         setState("error");
@@ -143,17 +147,22 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
       }
 
       submittedRef.current = true;
-      trackEvent("lead_form_submit", { variant, product_id: "none" });
 
-      const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
-      if (typeof gtag === "function") {
-        gtag("event", "lead_form_submit", { variant });
-        const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
-        const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
-        if (gAdsId && leadLabel) {
-          gtag("event", "conversion", {
-            send_to: `${gAdsId}/${leadLabel}`,
-          });
+      // Only count submissions that actually stored a lead. Honeypot/bot trips
+      // return ok:true with `skipped`, and must not fire a phantom conversion.
+      if (!json.skipped) {
+        trackEvent("lead_form_submit", { variant, product_id: "none" });
+
+        const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+        if (typeof gtag === "function") {
+          gtag("event", "lead_form_submit", { variant });
+          const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
+          const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
+          if (gAdsId && leadLabel) {
+            gtag("event", "conversion", {
+              send_to: `${gAdsId}/${leadLabel}`,
+            });
+          }
         }
       }
 

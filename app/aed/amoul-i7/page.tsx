@@ -74,6 +74,12 @@ export default function AdsLandingI7() {
             <span className="text-sm text-gray-500">+ ส่งฟรี</span>
           </div>
           <p className="text-xs text-gray-500 mt-1">ก่อน VAT · ออกใบกำกับภาษีได้</p>
+          {/* Trust signals directly under the price — reassurance right where the price anxiety is */}
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 mt-3 pt-3 border-t border-yellow-400/20 text-xs text-gray-300">
+            <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ส่งฟรีทั่วประเทศ</li>
+            <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ออกใบเสนอราคา / ใบกำกับภาษีได้</li>
+            <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> อบรม / สาธิตการใช้งานฟรีถึงที่</li>
+          </ul>
         </div>
 
         {/* Product image */}
@@ -106,10 +112,17 @@ export default function AdsLandingI7() {
           >
             💬 แชท LINE รับส่วนลดเลย!
           </a>
+          {/* Low-friction alternative — request a quote without having to chat first */}
+          <a
+            href="#ads-quote"
+            className="block bg-yellow-400/10 text-yellow-400 font-bold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-center transition-colors"
+          >
+            📋 ขอใบเสนอราคา (ไม่ต้องแชต)
+          </a>
         </div>
 
         {/* Quick form */}
-        <div className="mb-8">
+        <div id="ads-quote" className="mb-8 scroll-mt-20">
           <MiniLeadForm variant="ads_mini" />
         </div>
 
