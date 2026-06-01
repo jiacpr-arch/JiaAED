@@ -7,7 +7,7 @@ import { trackEvent } from "@/lib/aed/analytics-client";
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
 const COPY: Record<HeroVariant, string> = {
-  a: "💬 คุยกับ AI เจี่ย — ฟรี!",
+  a: "📋 ขอใบเสนอราคา AED ใน 5 นาที",
   b: "🎁 รับส่วนลดวันนี้ ทาง LINE",
 };
 
