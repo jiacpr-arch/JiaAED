@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply } from "@/lib/aed/email";
@@ -133,33 +134,43 @@ export async function POST(req: Request) {
     ? products.find((p) => p.id === productId)?.name ?? null
     : null;
 
-  // Fire-and-forget side effects — don't block response
-  void notifyNewLead({
-    source,
-    fullName,
-    phone,
-    email,
-    company,
-    productId,
-    message,
-    gclid,
-    utmSource,
-    utmCampaign,
-  }).catch((e) => console.error("[AED] notify failed:", e));
+  // Side effects don't block the response, but they MUST be registered with
+  // waitUntil — on Vercel the serverless instance is frozen the moment we return,
+  // so a bare `void fetch(...)` (the LINE owner push, the Ads upload, the email)
+  // gets torn down mid-flight and silently dropped. waitUntil keeps the function
+  // alive until they settle. (The LINE webhook route uses the same pattern.)
+  waitUntil(
+    notifyNewLead({
+      source,
+      fullName,
+      phone,
+      email,
+      company,
+      productId,
+      message,
+      gclid,
+      utmSource,
+      utmCampaign,
+    }).catch((e) => console.error("[AED] notify failed:", e)),
+  );
 
   // Report the lead to Google Ads (gclid click-conversion, or enhanced match on
   // phone/email). No-op-but-logged until GOOGLE_ADS_* env + conversion action id
   // are configured. orderId = lead id so Google dedupes re-submissions.
-  void recordConversion({
-    gclid,
-    email,
-    phone,
-    orderId: data.id,
-  }).catch((e) => console.error("[AED] conversion record failed:", e));
+  waitUntil(
+    recordConversion({
+      gclid,
+      email,
+      phone,
+      orderId: data.id,
+    }).catch((e) => console.error("[AED] conversion record failed:", e)),
+  );
 
   if (email) {
-    void sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>
-      console.error("[AED] auto-reply failed:", e),
+    waitUntil(
+      sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>
+        console.error("[AED] auto-reply failed:", e),
+      ),
     );
   }
 

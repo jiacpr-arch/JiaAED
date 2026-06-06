@@ -215,17 +215,10 @@ export async function notifyNewLead(p: {
       action: { type: "uri", label: `📞 โทร ${p.phone}`, uri: `tel:${cleanPhone}` },
     });
   }
-  if (p.email) {
-    const subj = encodeURIComponent("เรื่องสอบถาม AED Amoul i7 จาก JiaAED");
-    const greeting = p.fullName ? `เรียน คุณ${p.fullName}` : "เรียน ลูกค้า";
-    const body = encodeURIComponent(`${greeting},\n\nขอบคุณที่สนใจ AED Amoul i7 ครับ\n\n— เจี่ยรักษา (JiaAED)`);
-    actions.push({
-      type: "button",
-      style: "secondary",
-      height: "sm",
-      action: { type: "uri", label: `✉️ ตอบกลับทาง email`, uri: `mailto:${p.email}?subject=${subj}&body=${body}` },
-    });
-  }
+  // No email button: LINE Flex URI actions only accept http/https/tel/line
+  // schemes — a `mailto:` uri makes LINE reject the whole push with 400, so the
+  // owner gets nothing. The email is shown in the body row above; the admin can
+  // long-press to copy it. (Keep this in mind before adding any uri action here.)
 
   const bubble = {
     type: "bubble",
