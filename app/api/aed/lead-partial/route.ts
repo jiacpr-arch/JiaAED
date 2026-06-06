@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAbandonedForm } from "@/lib/aed/notify-owner";
 
@@ -98,18 +99,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 
-  void notifyAbandonedForm({
-    variant,
-    fullName,
-    phone,
-    email,
-    company,
-    productId,
-    message,
-    utmSource,
-    utmCampaign,
-    pageUrl,
-  }).catch((e) => console.error("[lead-partial] notify failed:", e));
+  // waitUntil, not a bare `void` — this route is hit via sendBeacon on page
+  // unload, so the instance is especially likely to be frozen the instant we
+  // respond. Without waitUntil the LINE abandon-alert fetch is dropped mid-flight.
+  waitUntil(
+    notifyAbandonedForm({
+      variant,
+      fullName,
+      phone,
+      email,
+      company,
+      productId,
+      message,
+      utmSource,
+      utmCampaign,
+      pageUrl,
+    }).catch((e) => console.error("[lead-partial] notify failed:", e)),
+  );
 
   return NextResponse.json({ ok: true });
 }
