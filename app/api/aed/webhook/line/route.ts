@@ -99,6 +99,17 @@ async function processEvents(events: LineEvent[]): Promise<void> {
 
     const userText = textEvent.message.text.trim();
 
+    // ── "myid" helper (สำหรับเพิ่มแอดมินรับ notify) ──────────────────────────
+    // แอดมินคนใหม่พิมพ์ "myid" เพื่อขอ LINE User ID ของตัวเอง แล้วเอาไปใส่ env
+    // AED_ADMIN_LINE_USER_IDS ดูวิธีที่ docs/google-ads-setup.md
+    if (/^\/?(myid|my\s*id|ไอดี|user\s*id)$/i.test(userText)) {
+      await pushMessage(
+        lineUserId,
+        ["🆔 LINE User ID ของคุณคือ:", lineUserId, "", "ส่ง ID นี้ให้แอดมินเพื่อเพิ่มสิทธิ์รับแจ้งเตือนครับ"].join("\n"),
+      );
+      continue;
+    }
+
     try {
       // Get or create customer + conversation
       const customer = await getOrCreateCustomerByLine(lineUserId);
