@@ -1,21 +1,49 @@
 type LineMessage = Record<string, unknown>;
 
+/**
+ * Resolve the full set of admin LINE user IDs that should receive notifications.
+ *
+ * Recipients come from two env vars, merged and de-duplicated:
+ *  - AED_OWNER_LINE_USER_ID    — the primary owner (single ID, kept for back-compat)
+ *  - AED_ADMIN_LINE_USER_IDS   — extra admins (comma/space/newline separated list)
+ *
+ * To add another admin: grab their LINE userId (from the follow-webhook log or
+ * the "✅🎉 มีคนแอด LINE จริง!" alert) and append it to AED_ADMIN_LINE_USER_IDS.
+ */
+function getRecipients(): string[] {
+  const owner = process.env.AED_OWNER_LINE_USER_ID ?? "";
+  const extra = process.env.AED_ADMIN_LINE_USER_IDS ?? "";
+
+  const ids = [owner, ...extra.split(/[,\s]+/)]
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  return [...new Set(ids)];
+}
+
 async function pushMessages(messages: LineMessage[]): Promise<void> {
   const token = process.env.AED_LINE_CHANNEL_ACCESS_TOKEN ?? "";
-  const ownerId = process.env.AED_OWNER_LINE_USER_ID ?? "";
+  const recipients = getRecipients();
 
-  if (!token || !ownerId) {
-    console.warn("[AED] owner notify skipped — env vars not set");
+  if (!token || recipients.length === 0) {
+    console.warn("[AED] admin notify skipped — env vars not set");
     return;
   }
 
-  const res = await fetch("https://api.line.me/v2/bot/message/push", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ to: ownerId, messages: messages.slice(0, 5) }),
-  });
+  const messagesToSend = messages.slice(0, 5);
 
-  if (!res.ok) console.error("[AED] owner push failed:", res.status, await res.text());
+  // One push per recipient so a single bad/blocked ID can't drop the whole batch.
+  await Promise.all(
+    recipients.map(async (to) => {
+      const res = await fetch("https://api.line.me/v2/bot/message/push", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ to, messages: messagesToSend }),
+      });
+
+      if (!res.ok) console.error(`[AED] admin push failed (${to.slice(0, 8)}…):`, res.status, await res.text());
+    }),
+  );
 }
 
 async function pushToOwner(text: string): Promise<void> {

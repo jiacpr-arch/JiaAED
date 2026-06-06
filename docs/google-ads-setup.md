@@ -198,6 +198,19 @@ https://jiaaed.vercel.app/feed/products.xml
 3. (ถ้ายังไม่ได้ตั้ง) `AED_LINE_CHANNEL_ACCESS_TOKEN` + `AED_OWNER_LINE_USER_ID` เพื่อรับ notify ทาง LINE
 4. ตั้ง `LEAD_IP_SALT` (สุ่ม) เพื่อ hash IP
 
+### เพิ่มแอดมินรับ notify ทาง LINE หลายคน
+
+notify ทุกชนิด (lead ใหม่, ใบเสนอราคา, ชำระเงิน, คนแอด LINE, รายงาน) จะส่งหา
+`AED_OWNER_LINE_USER_ID` เสมอ ถ้าต้องการให้แอดมินคนอื่นได้รับด้วย ให้เพิ่ม env:
+
+- `AED_ADMIN_LINE_USER_IDS` — LINE userId ของแอดมินคนอื่น ใส่หลายคนได้ คั่นด้วย
+  คอมมา เช่น `Uaaaa...,Ubbbb...` (ระบบจะ merge กับ owner และตัด ID ซ้ำให้อัตโนมัติ)
+
+**วิธีหา LINE userId ของแอดมินคนใหม่:** ให้แอดมินคนนั้นแอด LINE OA เป็นเพื่อน →
+owner จะได้ notify `✅🎉 มีคนแอด LINE จริง!` ที่มีบรรทัด `🔗 LINE ID: U....` →
+เอา ID นั้นไปใส่ `AED_ADMIN_LINE_USER_IDS` (ถ้าไม่เห็น notify ดูได้จาก log ของ
+webhook `/api/aed/webhook/line` ตอน event `follow`) แล้ว redeploy
+
 ทดสอบ:
 - ไปที่ `/#contact` → กรอกชื่อ + เบอร์ + email → ส่ง
 - ดู `aed_leads` table → row ใหม่
