@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
+import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 
 type State = "idle" | "submitting" | "success" | "error";
 
@@ -120,6 +121,8 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
     setErrorMsg(null);
 
     const { gclid, utm } = readTracking();
+    const fb = readFbTracking();
+    const eventId = newEventId();
 
     try {
       const res = await fetch("/api/aed/lead", {
@@ -131,6 +134,10 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
           phone,
           gclid,
           utm,
+          fbclid: fb.fbclid,
+          fbc: fb.fbc,
+          fbp: fb.fbp,
+          eventId,
           pageUrl: typeof window !== "undefined" ? window.location.href : null,
           hp,
         }),
@@ -164,6 +171,9 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
             });
           }
         }
+
+        // Meta Pixel Lead — shares eventId with the server CAPI call for dedup.
+        fireMetaLead(eventId);
       }
 
       setState("success");

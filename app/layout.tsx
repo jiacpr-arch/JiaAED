@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { GoogleTags } from "./components/GoogleTags";
+import { MetaPixel } from "./components/MetaPixel";
 import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
@@ -78,6 +79,7 @@ export default function RootLayout({
     <html lang="th">
       <head>
         <GoogleTags />
+        <MetaPixel />
         <StructuredData />
       </head>
       <body
