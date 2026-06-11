@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS aed_leads (
   product_id    TEXT,
   message       TEXT,
   gclid         TEXT,
+  fbclid        TEXT,
   utm_source    TEXT,
   utm_medium    TEXT,
   utm_campaign  TEXT,

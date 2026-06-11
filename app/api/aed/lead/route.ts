@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply } from "@/lib/aed/email";
 import { recordConversion } from "@/lib/aed/conversion";
+import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
 import { products } from "@/lib/aed/products";
 
 export const runtime = "nodejs";
@@ -25,6 +26,10 @@ type LeadBody = {
     term?: string;
     content?: string;
   };
+  fbclid?: string;
+  fbc?: string;
+  fbp?: string;
+  eventId?: string;
   pageUrl?: string;
   hp?: string;
 };
@@ -68,6 +73,10 @@ export async function POST(req: Request) {
   const productId = clean(body.productId, 30);
   const message = clean(body.message, 2000);
   const gclid = clean(body.gclid, 200);
+  const fbclid = clean(body.fbclid, 255);
+  const fbc = clean(body.fbc, 255);
+  const fbp = clean(body.fbp, 255);
+  const eventId = clean(body.eventId, 64);
   const pageUrl = clean(body.pageUrl, 500);
   const source = clean(body.source, 30) || "lead_form";
 
@@ -113,6 +122,7 @@ export async function POST(req: Request) {
       product_id: productId,
       message,
       gclid,
+      fbclid,
       utm_source: utmSource,
       utm_medium: utmMedium,
       utm_campaign: utmCampaign,
@@ -165,6 +175,22 @@ export async function POST(req: Request) {
       orderId: data.id,
     }).catch((e) => console.error("[AED] conversion record failed:", e)),
   );
+
+  // Report the lead to Meta via Conversions API (server-side), sharing eventId
+  // with the browser pixel for dedup. Safe no-op until META_CAPI_TOKEN +
+  // NEXT_PUBLIC_META_PIXEL_ID are set. Falls back to the lead id as eventId so a
+  // server-only event still dedupes against any retried browser fire.
+  void sendMetaLeadEvent({
+    eventId: eventId || data.id,
+    email,
+    phone,
+    fbc,
+    fbp,
+    clientIp: ip,
+    userAgent,
+    eventSourceUrl: pageUrl,
+    contentName: productName,
+  }).catch((e) => console.error("[AED] meta capi failed:", e));
 
   if (email) {
     waitUntil(

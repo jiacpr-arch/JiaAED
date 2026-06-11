@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
+import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { products } from "@/lib/aed/products";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
@@ -131,6 +132,8 @@ export function LeadForm() {
     setErrorMsg(null);
 
     const { gclid, utm } = readTracking();
+    const fb = readFbTracking();
+    const eventId = newEventId();
 
     try {
       const res = await fetch("/api/aed/lead", {
@@ -146,6 +149,10 @@ export function LeadForm() {
           message,
           gclid,
           utm,
+          fbclid: fb.fbclid,
+          fbc: fb.fbc,
+          fbp: fb.fbp,
+          eventId,
           pageUrl: typeof window !== "undefined" ? window.location.href : null,
           hp,
         }),
@@ -182,6 +189,9 @@ export function LeadForm() {
             });
           }
         }
+
+        // Meta Pixel Lead — shares eventId with the server CAPI call for dedup.
+        fireMetaLead(eventId);
       }
 
       setState("success");
