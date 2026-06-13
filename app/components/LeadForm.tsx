@@ -28,6 +28,7 @@ function readTracking() {
 export function LeadForm() {
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showMore, setShowMore] = useState(false);
   const startedRef = useRef(false);
   const submittedRef = useRef(false);
   const viewedRef = useRef(false);
@@ -240,11 +241,9 @@ export function LeadForm() {
         </label>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="ชื่อ-นามสกุล" name="fullName" placeholder="คุณ..." />
-        <Field label="บริษัท / องค์กร (ถ้ามี)" name="company" placeholder="บริษัท..." />
-      </div>
-
+      {/* Phone-first: 97% of traffic is mobile and the only field we truly need
+          to call back is the phone. Everything else is progressive-disclosure so
+          the form reads as a 5-second ask, not a corporate intake sheet. */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field
           label="เบอร์โทร"
@@ -254,40 +253,57 @@ export function LeadForm() {
           inputMode="tel"
           autoComplete="tel"
         />
-        <Field
-          label="อีเมล"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-        />
+        <Field label="ชื่อ (ไม่บังคับ)" name="fullName" placeholder="คุณ..." />
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">รุ่นที่สนใจ</label>
-        <select
-          name="productId"
-          defaultValue=""
-          className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+      {showMore ? (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="บริษัท / องค์กร (ถ้ามี)" name="company" placeholder="บริษัท..." />
+            <Field
+              label="อีเมล (ถ้ามี)"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">รุ่นที่สนใจ</label>
+            <select
+              name="productId"
+              defaultValue=""
+              className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+            >
+              <option value="">— ยังไม่ระบุ —</option>
+              {products.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.subtitle}) — ฿{p.price.toLocaleString()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-2">ข้อความ (ถ้ามี)</label>
+            <textarea
+              name="message"
+              rows={3}
+              placeholder="อยากทราบราคาพิเศษสำหรับองค์กร, ต้องการนัดสาธิต, ฯลฯ"
+              className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none resize-y"
+            />
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setShowMore(true)}
+          className="text-sm text-yellow-400/80 hover:text-yellow-300 font-medium"
         >
-          <option value="">— ยังไม่ระบุ —</option>
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} ({p.subtitle}) — ฿{p.price.toLocaleString()}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">ข้อความ (ถ้ามี)</label>
-        <textarea
-          name="message"
-          rows={3}
-          placeholder="อยากทราบราคาพิเศษสำหรับองค์กร, ต้องการนัดสาธิต, ฯลฯ"
-          className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none resize-y"
-        />
-      </div>
+          ➕ เพิ่มรายละเอียด (บริษัท · อีเมล · รุ่นที่สนใจ)
+        </button>
+      )}
 
       {state === "error" && errorMsg && (
         <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
@@ -300,11 +316,11 @@ export function LeadForm() {
         disabled={state === "submitting"}
         className="w-full bg-yellow-400 text-yellow-900 font-bold text-lg py-4 rounded-full hover:bg-yellow-300 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {state === "submitting" ? "กำลังส่ง..." : "📨 ส่งข้อมูลให้เจี่ยติดต่อกลับ"}
+        {state === "submitting" ? "กำลังส่ง..." : "📨 ฝากเบอร์ — รับใบเสนอราคาใน 24 ชม."}
       </button>
 
-      <p className="text-xs text-gray-500 text-center">
-        เราใช้ข้อมูลของคุณเพื่อติดต่อกลับเรื่องสินค้า AED Amoul i7 เท่านั้น
+      <p className="text-xs text-gray-400 text-center">
+        ⚡ ทีมงานเจี่ยรักษาโทรกลับพร้อมใบเสนอราคา + ราคาพิเศษองค์กร · ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น
       </p>
     </form>
   );

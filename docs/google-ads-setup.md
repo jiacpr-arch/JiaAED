@@ -302,6 +302,42 @@ await fetch(\`\${process.env.SITE_URL}/api/aed/google-ads/conversion\`, {
 - Hook อัตโนมัติใน LINE webhook (`tool-handlers.ts → create_payment_link` หรือ `aed_deals.payment_status='paid'` trigger) → เรียก endpoint นี้
 - Resolve gclid จาก `aed_ad_visits` ผ่าน `fingerprint` หรือ `ip_hash` lookup ก่อนจะ fallback เป็น enhanced conversions
 
+## 7.8 Week-2 optimization report (CPL / search terms)
+
+หลัง Learning Phase จบ (14 วัน) ใช้สคริปต์นี้ดึงผลจริงแทนการเดา:
+
+```bash
+node --env-file=.env.local scripts/google-ads-report.mjs        # 14 วัน
+node --env-file=.env.local scripts/google-ads-report.mjs --days 30
+# หรือ
+npm run report:ads
+```
+
+พิมพ์ออกมา: spend / conversions / **CPL** ต่อ campaign, top search terms (พร้อม flag
+อันที่จ่ายงบแต่ 0 conversion → ตัวเลือก negative keyword) และ **คำตัดสินรอบ 2 อัตโนมัติ**
+ตามกติกา CPL ≤ ฿200 (ดี → Target CPA + เพิ่มงบ) / > ฿300 (แย่ → ห้ามเพิ่มงบ).
+
+มี endpoint เทียบเท่าด้วย (bearer `AED_INTERNAL_API_KEY`):
+
+```bash
+curl -H "authorization: Bearer $AED_INTERNAL_API_KEY" \
+  "https://www.jiaaed.com/api/aed/google-ads/report?days=14"
+```
+
+ทั้งสคริปต์และ endpoint ใช้ GAQL ผ่าน OAuth ชุดเดียวกับ Offline Conversion API (§7.7)
+ถ้า `GOOGLE_ADS_*` ไม่ครบ → ตอบ `not_configured` (ไม่ error).
+
+### ✅ Verify ว่า "Conversions" optimize ตามลีดจริง ไม่ใช่คลิก LINE
+
+คลิกปุ่ม LINE **ไม่เท่ากับ** ลีดจริง (คนคลิกแล้วไม่ได้แอด/ทักก็มี) ถ้าให้ bid strategy
+optimize ตาม LINE Click มันจะ scale traffic ที่คลิกเยอะแต่ไม่ปิดการขาย ตั้งค่าให้ถูก:
+
+- **Lead Form Submit** = **Primary** ("Use for bidding" ✅) — ลีดที่มี contact จริงเข้า `aed_leads`
+- **LINE Click** = **Secondary** ("Use for bidding" ❌, ดูเป็น observe อย่างเดียว)
+- **Sale Closed** (offline, §7.7) = Primary เมื่อเริ่มส่งดีลปิดจริง
+
+เช็คที่ Google Ads → Goals → Conversions → คอลัมน์ "Optimization" ของแต่ละ action
+
 ## 8. SEO + AEO (Answer Engine Optimization)
 
 ติดมาให้แล้วในชุดนี้ — ไม่ต้องตั้งค่าเพิ่ม:
