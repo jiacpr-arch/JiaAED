@@ -36,6 +36,39 @@ const specs = [
   { label: "รับประกัน", value: "1 ปี" },
 ];
 
+const rentalPlans = [
+  {
+    id: "rent-daily",
+    subtitle: "รายวัน / อีเวนต์",
+    name: "เช่ารายวัน",
+    price: 1500,
+    unit: "/ วันแรก",
+    deposit: "ตามมูลค่าเครื่อง หรือบัตรเครดิตค้ำ",
+    features: ["วันถัดไป ฿900/วัน", "ส่ง-รับถึงงาน (คิดตามระยะทาง)", "เหมาะกับมาราธอน คอนเสิร์ต งานกีฬา กองถ่าย", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่"],
+    badge: "",
+  },
+  {
+    id: "rent-yearly",
+    subtitle: "รายปี — คุ้มที่สุด",
+    name: "เช่ารายปี",
+    price: 22000,
+    unit: "/ ปี",
+    deposit: "฿5,000 (ยกเว้นได้ถ้ามี PO)",
+    features: ["เฉลี่ยเพียง ~฿1,830/เดือน", "รวมส่ง+ติดตั้ง + อบรมใช้งาน 1 ครั้ง", "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย", "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง"],
+    badge: "คุ้มที่สุด",
+  },
+  {
+    id: "rent-monthly",
+    subtitle: "รายเดือน",
+    name: "เช่ารายเดือน",
+    price: 2800,
+    unit: "/ เดือน",
+    deposit: "฿5,000–10,000",
+    features: ["ขั้นต่ำ 3 เดือน", "เหมาะกับออฟฟิศชั่วคราว ไซต์งาน ทดลองใช้", "ค่าเช่าที่จ่ายแล้วหักเป็นส่วนลดเมื่อแปลงเป็นรายปี", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่"],
+    badge: "",
+  },
+];
+
 const adultShocks = [
   { n: "Shock 1", j: "100 J" },
   { n: "Shock 2", j: "150 J" },
@@ -71,6 +104,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
             <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
+            <a href="#rental" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</a>
             <a href="#shock-protocol" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">โปรแกรมช็อก</a>
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
             <a href="#contact" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ติดต่อ</a>
@@ -393,6 +427,72 @@ export default function Home() {
           </div>
           <p className="text-center text-gray-600 text-sm mt-6">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
+          </p>
+        </div>
+      </section>
+
+      {/* Rental */}
+      <section id="rental" className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-3">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
+              💼 เช่า / เช่ายืม AED
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">ไม่อยากซื้อขาด? เช่าใช้ได้ทันที</h2>
+          </div>
+          <p className="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
+            AED Amoul i7 พร้อมใช้งาน — รวมส่ง+ติดตั้ง อบรมใช้งาน และเปลี่ยนเครื่องสำรองถ้าเครื่องมีปัญหา เหมาะกับงานอีเวนต์ ออฟฟิศ โรงงาน ฟิตเนส และหน่วยงานชั่วคราว
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {rentalPlans.map((p) => (
+              <div
+                key={p.id}
+                className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
+                  p.badge ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10" : "border-gray-700"
+                }`}
+              >
+                {p.badge && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">
+                    {p.badge}
+                  </div>
+                )}
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{p.subtitle}</div>
+                <h3 className="font-bold text-lg text-white mt-1 mb-3">{p.name}</h3>
+                <div className="mb-3">
+                  <div className="flex items-end gap-1">
+                    <span className="text-3xl font-bold text-yellow-400">฿{p.price.toLocaleString()}</span>
+                    <span className="text-gray-500 text-sm mb-1">{p.unit}</span>
+                  </div>
+                  <div className="text-gray-600 text-xs">ราคายังไม่รวม VAT</div>
+                </div>
+                <div className="text-gray-400 text-xs mb-4">มัดจำ {p.deposit}</div>
+                <ul className="space-y-1 mb-6 flex-1">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="rental_card"
+                  data-product={p.id}
+                  className={`text-center font-semibold py-3 rounded-full transition-colors ${
+                    p.badge
+                      ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
+                      : "bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
+                  }`}
+                >
+                  สอบถาม / จองเช่า
+                </a>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-gray-600 text-sm mt-6">
+            * มัดจำคืนเต็มเมื่อคืนเครื่องครบสภาพ · ราคาพิเศษสำหรับสัญญาระยะยาว/หลายเครื่อง — สอบถามทาง LINE ได้เลย
           </p>
         </div>
       </section>
