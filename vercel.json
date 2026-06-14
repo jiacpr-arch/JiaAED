@@ -28,6 +28,10 @@
     {
       "path": "/api/cron/news-feed",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/ads-round2",
+      "schedule": "0 3 * * 1"
     }
   ]
 }
