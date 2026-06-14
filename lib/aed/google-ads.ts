@@ -171,6 +171,14 @@ export { thbToMicros };
 // week-2 budget decision can be made on numbers instead of guesses.
 // ---------------------------------------------------------------------------
 
+// Google Ads device enum → readable label
+function deviceLabel(d: string): string {
+  if (d === "MOBILE") return "Mobile";
+  if (d === "DESKTOP") return "Desktop";
+  if (d === "TABLET") return "Tablet";
+  return d ?? "Unknown";
+}
+
 function reportHeaders(token: string): Record<string, string> {
   const headers: Record<string, string> = {
     Authorization: `Bearer ${token}`,
@@ -308,4 +316,185 @@ export async function fetchAdsReport(rangeDays = 14): Promise<AdsReport> {
     campaigns,
     topSearchTerms,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Extended Round-2 reports
+// ---------------------------------------------------------------------------
+
+export type DeviceRow = {
+  device: string;
+  costThb: number;
+  conversions: number;
+  clicks: number;
+  cplThb: number | null;
+};
+
+/** Device performance breakdown (Mobile / Desktop / Tablet). */
+export async function fetchDeviceReport(rangeDays = 14): Promise<DeviceRow[]> {
+  const during = rangeDays === 14 ? "LAST_14_DAYS" : rangeDays === 30 ? "LAST_30_DAYS" : "LAST_7_DAYS";
+  const rows = await searchGaql(
+    `SELECT segments.device, metrics.cost_micros, metrics.conversions, metrics.clicks ` +
+      `FROM campaign WHERE segments.date DURING ${during} AND metrics.impressions > 0`,
+  );
+  const byDevice = new Map<string, DeviceRow>();
+  for (const r of rows) {
+    const seg = r.segments as { device?: string } | undefined;
+    const m = r.metrics as Record<string, unknown> | undefined;
+    const device = deviceLabel(seg?.device ?? "");
+    const row = byDevice.get(device) ?? { device, costThb: 0, conversions: 0, clicks: 0, cplThb: null };
+    row.costThb += micros(m?.costMicros);
+    row.conversions += num(m?.conversions);
+    row.clicks += num(m?.clicks);
+    byDevice.set(device, row);
+  }
+  return [...byDevice.values()]
+    .map((r) => ({ ...r, cplThb: r.conversions > 0 ? r.costThb / r.conversions : null }))
+    .sort((a, b) => b.clicks - a.clicks);
+}
+
+export type HourRow = {
+  hour: number;
+  clicks: number;
+  conversions: number;
+  costThb: number;
+};
+
+/** Hour-of-day breakdown (Bangkok time via UTC+7 offset applied server-side). */
+export async function fetchHourlyReport(rangeDays = 14): Promise<HourRow[]> {
+  const during = rangeDays === 14 ? "LAST_14_DAYS" : rangeDays === 30 ? "LAST_30_DAYS" : "LAST_7_DAYS";
+  const rows = await searchGaql(
+    `SELECT segments.hour, metrics.clicks, metrics.conversions, metrics.cost_micros ` +
+      `FROM campaign WHERE segments.date DURING ${during} AND metrics.impressions > 0`,
+  );
+  const byHour = new Map<number, HourRow>();
+  for (const r of rows) {
+    const seg = r.segments as { hour?: number } | undefined;
+    const m = r.metrics as Record<string, unknown> | undefined;
+    // Google Ads hour is in account timezone (set to Asia/Bangkok)
+    const hour = num(seg?.hour);
+    const row = byHour.get(hour) ?? { hour, clicks: 0, conversions: 0, costThb: 0 };
+    row.clicks += num(m?.clicks);
+    row.conversions += num(m?.conversions);
+    row.costThb += micros(m?.costMicros);
+    byHour.set(hour, row);
+  }
+  return [...byHour.values()].sort((a, b) => a.hour - b.hour);
+}
+
+export type AdGroupRow = {
+  campaign: string;
+  adGroup: string;
+  costThb: number;
+  conversions: number;
+  clicks: number;
+  cplThb: number | null;
+};
+
+/** Ad-group level performance for budget re-allocation decisions. */
+export async function fetchAdGroupReport(rangeDays = 14): Promise<AdGroupRow[]> {
+  const during = rangeDays === 14 ? "LAST_14_DAYS" : rangeDays === 30 ? "LAST_30_DAYS" : "LAST_7_DAYS";
+  const rows = await searchGaql(
+    `SELECT campaign.name, ad_group.name, metrics.cost_micros, metrics.conversions, metrics.clicks ` +
+      `FROM ad_group WHERE segments.date DURING ${during} AND metrics.impressions > 0`,
+  );
+  return rows
+    .map((r) => {
+      const c = r.campaign as { name?: string } | undefined;
+      const ag = r.adGroup as { name?: string } | undefined;
+      const m = r.metrics as Record<string, unknown> | undefined;
+      const costThb = micros(m?.costMicros);
+      const conversions = num(m?.conversions);
+      return {
+        campaign: c?.name ?? "(unknown)",
+        adGroup: ag?.name ?? "(unknown)",
+        costThb,
+        conversions,
+        clicks: num(m?.clicks),
+        cplThb: conversions > 0 ? costThb / conversions : null,
+      };
+    })
+    .sort((a, b) => b.costThb - a.costThb);
+}
+
+export type KeywordQualityRow = {
+  keyword: string;
+  adGroup: string;
+  campaign: string;
+  qualityScore: number | null;
+  status: string;
+  costThb: number;
+  clicks: number;
+};
+
+/** Keyword quality scores + 14-day spend (to find low-QS keywords burning budget). */
+export async function fetchKeywordQualityReport(rangeDays = 14): Promise<KeywordQualityRow[]> {
+  const during = rangeDays === 14 ? "LAST_14_DAYS" : rangeDays === 30 ? "LAST_30_DAYS" : "LAST_7_DAYS";
+  let rows: Array<Record<string, unknown>> = [];
+  try {
+    rows = await searchGaql(
+      `SELECT ad_group_criterion.keyword.text, ad_group.name, campaign.name, ` +
+        `ad_group_criterion.quality_info.quality_score, ad_group_criterion.status, ` +
+        `metrics.cost_micros, metrics.clicks ` +
+        `FROM keyword_view ` +
+        `WHERE segments.date DURING ${during} ` +
+        `AND campaign.status = 'ENABLED' ` +
+        `AND ad_group_criterion.status != 'REMOVED' ` +
+        `ORDER BY metrics.cost_micros DESC LIMIT 30`,
+    );
+  } catch {
+    return [];
+  }
+  return rows.map((r) => {
+    const crit = r.adGroupCriterion as { keyword?: { text?: string }; qualityInfo?: { qualityScore?: number }; status?: string } | undefined;
+    const ag = r.adGroup as { name?: string } | undefined;
+    const c = r.campaign as { name?: string } | undefined;
+    const m = r.metrics as Record<string, unknown> | undefined;
+    const qs = crit?.qualityInfo?.qualityScore;
+    return {
+      keyword: crit?.keyword?.text ?? "(unknown)",
+      adGroup: ag?.name ?? "(unknown)",
+      campaign: c?.name ?? "(unknown)",
+      qualityScore: typeof qs === "number" ? qs : null,
+      status: crit?.status ?? "UNKNOWN",
+      costThb: micros(m?.costMicros),
+      clicks: num(m?.clicks),
+    };
+  });
+}
+
+export type NetworkRow = {
+  network: string;
+  costThb: number;
+  conversions: number;
+  clicks: number;
+  cplThb: number | null;
+};
+
+/** Search vs Search Partners vs Display network performance. */
+export async function fetchNetworkReport(rangeDays = 14): Promise<NetworkRow[]> {
+  const during = rangeDays === 14 ? "LAST_14_DAYS" : rangeDays === 30 ? "LAST_30_DAYS" : "LAST_7_DAYS";
+  let rows: Array<Record<string, unknown>> = [];
+  try {
+    rows = await searchGaql(
+      `SELECT segments.ad_network_type, metrics.cost_micros, metrics.conversions, metrics.clicks ` +
+        `FROM campaign WHERE segments.date DURING ${during} AND metrics.impressions > 0`,
+    );
+  } catch {
+    return [];
+  }
+  const byNet = new Map<string, NetworkRow>();
+  for (const r of rows) {
+    const seg = r.segments as { adNetworkType?: string } | undefined;
+    const m = r.metrics as Record<string, unknown> | undefined;
+    const network = seg?.adNetworkType ?? "UNKNOWN";
+    const row = byNet.get(network) ?? { network, costThb: 0, conversions: 0, clicks: 0, cplThb: null };
+    row.costThb += micros(m?.costMicros);
+    row.conversions += num(m?.conversions);
+    row.clicks += num(m?.clicks);
+    byNet.set(network, row);
+  }
+  return [...byNet.values()]
+    .map((r) => ({ ...r, cplThb: r.conversions > 0 ? r.costThb / r.conversions : null }))
+    .sort((a, b) => b.costThb - a.costThb);
 }
