@@ -5,13 +5,43 @@
 // device breakdown, hour-of-day, keyword quality scores, and network split.
 // Applies the week-2 decision rule (CPL <= 200 good / > 300 bad).
 //
-// Usage (Node 20+, no extra deps):
-//   node --env-file=.env.local scripts/google-ads-report.mjs
-//   node --env-file=.env.local scripts/google-ads-report.mjs --days 30
+// Usage (Node 20+, no extra deps) — รันจากที่ไหนก็ได้:
+//   node ~/JiaAED/scripts/google-ads-report.mjs
+//   node ~/JiaAED/scripts/google-ads-report.mjs --days 30
 //
+// Script จะหา .env.local จาก project root อัตโนมัติ
 // Requires env: GOOGLE_ADS_DEVELOPER_TOKEN, GOOGLE_ADS_CUSTOMER_ID,
 //   GOOGLE_ADS_CLIENT_ID, GOOGLE_ADS_CLIENT_SECRET, GOOGLE_ADS_REFRESH_TOKEN
 //   (optional) GOOGLE_ADS_LOGIN_CUSTOMER_ID
+
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+// Load .env.local from project root relative to this script's location.
+// This lets the script run from any working directory.
+(function loadEnv() {
+  const scriptDir = dirname(fileURLToPath(import.meta.url));
+  const envPath = resolve(scriptDir, "..", ".env.local");
+  let content;
+  try {
+    content = readFileSync(envPath, "utf8");
+  } catch {
+    return; // no .env.local — env vars must already be set
+  }
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq < 0) continue;
+    const key = trimmed.slice(0, eq).trim();
+    let val = trimmed.slice(eq + 1).trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    if (!process.env[key]) process.env[key] = val;
+  }
+})();
 
 const ADS_BASE = "https://googleads.googleapis.com/v17";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
