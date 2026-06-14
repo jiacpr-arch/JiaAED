@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { products } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
+import { rentalPlans } from "@/lib/aed/rental";
 import { LeadForm } from "./components/LeadForm";
 import { MiniLeadForm } from "./components/MiniLeadForm";
 import { HeroCta } from "./components/HeroCta";
@@ -34,39 +35,6 @@ const specs = [
   { label: "มาตรฐาน", value: "CE Mark · ISO 13485 · IP65 · EN 1789:2020 · ILCOR/AHA 2020-2025" },
   { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือไทย" },
   { label: "รับประกัน", value: "1 ปี" },
-];
-
-const rentalPlans = [
-  {
-    id: "rent-daily",
-    subtitle: "รายวัน / อีเวนต์",
-    name: "เช่ารายวัน",
-    price: 1500,
-    unit: "/ วันแรก",
-    deposit: "ตามมูลค่าเครื่อง หรือบัตรเครดิตค้ำ",
-    features: ["วันถัดไป ฿900/วัน", "ส่ง-รับถึงงาน (คิดตามระยะทาง)", "เหมาะกับมาราธอน คอนเสิร์ต งานกีฬา กองถ่าย", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่"],
-    badge: "",
-  },
-  {
-    id: "rent-yearly",
-    subtitle: "รายปี — คุ้มที่สุด",
-    name: "เช่ารายปี",
-    price: 22000,
-    unit: "/ ปี",
-    deposit: "฿5,000 (ยกเว้นได้ถ้ามี PO)",
-    features: ["เฉลี่ยเพียง ~฿1,830/เดือน", "รวมส่ง+ติดตั้ง + อบรมใช้งาน 1 ครั้ง", "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย", "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง"],
-    badge: "คุ้มที่สุด",
-  },
-  {
-    id: "rent-monthly",
-    subtitle: "รายเดือน",
-    name: "เช่ารายเดือน",
-    price: 2800,
-    unit: "/ เดือน",
-    deposit: "฿5,000–10,000",
-    features: ["ขั้นต่ำ 3 เดือน", "เหมาะกับออฟฟิศชั่วคราว ไซต์งาน ทดลองใช้", "ค่าเช่าที่จ่ายแล้วหักเป็นส่วนลดเมื่อแปลงเป็นรายปี", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่"],
-    badge: "",
-  },
 ];
 
 const adultShocks = [
