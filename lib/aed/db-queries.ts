@@ -39,6 +39,21 @@ export async function updateCustomer(
   await db().from("aed_customers").update(updates).eq("id", customerId);
 }
 
+// ─── LINE follows (confirmed friend-adds) ──────────────────────────────────────
+
+// A LINE "follow" webhook is the real paid-ad conversion — a confirmed friend-add,
+// not just a button click. Until now it only pushed an owner alert and was never
+// stored, so the weekly review could only see inbound chats (aed_conversations)
+// and read LINE as dead. Record it as a server-side analytics event so the
+// click → follow → chat → lead funnel is actually measurable. No PII in the row:
+// the lineUserId already lives in aed_customers once they message.
+export async function recordLineFollow(): Promise<void> {
+  const { error } = await db()
+    .from("aed_analytics_events")
+    .insert({ event_name: "line_follow", properties: { source: "line_webhook" } });
+  if (error) console.error("[AED] recordLineFollow failed:", error);
+}
+
 // ─── Conversations ────────────────────────────────────────────────────────────
 
 export async function getOrCreateConversation(
