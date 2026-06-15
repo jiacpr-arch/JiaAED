@@ -34,11 +34,12 @@ export type WeeklyContext = {
   top_pages: Array<{ path: string; n: number }>;
   top_doc_downloads: Array<{ doc_id: string; n: number }>;
   top_line_locations: Array<{ location: string; n: number }>;
-  // Did LINE clicks actually become chats? line_click counts INTENT (a button
-  // tap), not a real conversation. Without the chat/message counts a review reads
-  // a high click number as success when most clicks may never land in the OA —
-  // the single biggest blind spot in past reviews.
-  line_outcome: { clicks: number; chats: number; messages: number };
+  // The real LINE funnel: clicks (button intent) → follows (confirmed friend-add,
+  // the actual paid-ad conversion) → chats/messages (inbound). line_click alone is
+  // misleading — most clicks never land in the OA. "follows" comes from the
+  // line_follow webhook event; without it a review reads LINE as dead when people
+  // may be adding as friends and simply not messaging yet.
+  line_outcome: { clicks: number; follows: number; chats: number; messages: number };
   ad_attribution: { gclid_visits: number; utm_visits: number; organic_visits: number };
   ab_test: {
     a_views: number;
@@ -185,6 +186,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
     top_line_locations,
     line_outcome: {
       clicks: lineClicks.length,
+      follows: rows.filter((r) => r.event_name === "line_follow").length,
       chats: chats.count ?? 0,
       messages: messages.count ?? 0,
     },
@@ -223,9 +225,12 @@ const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์ก
 - "price_view" บนหน้าโฆษณายิงตั้งแต่โหลด เพราะราคาอยู่บนสุดของหน้า → ค่านี้เกือบเท่าจำนวนคนเข้าหน้าโฆษณา ไม่ใช่สัญญาณว่าสนใจราคาเป็นพิเศษ ส่วน price_view บนหน้าแรกต้องเลื่อนลงไปถึงจะยิง = เป็น signal ความสนใจจริง ให้ดูแยกหน้า
 - เวลาเจอตัวเลขพุ่ง/ตกแรงๆ ให้เช็คก่อนว่าเป็นเพราะ "สัดส่วน traffic ระหว่างหน้าเปลี่ยน" หรือ "พฤติกรรมเปลี่ยนจริง" ก่อนเสนอ action
 
-⚠️ LINE click ≠ LINE chat — อย่านับ "line_click" เป็นความสำเร็จ:
-- "line_click" คือคนกดปุ่ม (intent) เท่านั้น ไม่ใช่คนทักจริง ให้เทียบกับ "line_outcome": clicks vs chats (= aed_conversations) และ messages ที่เข้ามาจริง
-- ถ้า clicks สูงแต่ chats/messages ต่ำมาก (เช่น คลิก 100+ แต่แชทใหม่ 0-1) = funnel รั่ว คนกดแล้วไม่ทักจริง อย่าเชียร์ให้เพิ่มปุ่ม LINE — ให้ผลักคนไป lead form (ที่ track ได้) แทน และตรวจว่าจุดที่ถูกกดเป็น "ปุ่มจริง" หรือ "การกดโดยไม่ตั้งใจ"
+⚠️ funnel LINE จริงคือ clicks → follows → chats — อย่าด่วนสรุปจาก "line_click" อย่างเดียว:
+- "line_outcome" มี 4 ชั้น: clicks (กดปุ่ม = intent) → follows (แอดเพื่อนจริง = conversion จริงของแอด) → chats (= aed_conversations) → messages (ข้อความที่เข้ามา)
+- ตัวชี้วัดความสำเร็จของ LINE คือ "follows" (คนแอดเพื่อนจริง) ไม่ใช่ clicks และไม่ใช่แค่ chats — คนแอดแล้วยังไม่ทักก็ยังเป็นลูกค้าที่ยิง broadcast/ตามต่อได้
+- ถ้า clicks สูงแต่ follows ต่ำมาก (เช่น คลิก 100+ แต่ follow 0-1) = funnel รั่วระหว่าง "กดปุ่ม → แอดเพื่อน" → ลิงก์/ขั้นตอนแอดมีปัญหา (ลิงก์ผิด, เด้ง fallback บน desktop, รูปสินค้าโดนกดโดยไม่ตั้งใจ) ให้แก้ลิงก์/ขั้นตอน ไม่ใช่เพิ่มปุ่ม
+- ถ้า follows โอเคแต่ chats ต่ำ = คนแอดแล้วเงียบ → ปัญหาคือ welcome message / การตามต่อ ไม่ใช่ตัวลิงก์
+- ดู "top_line_locations": ถ้า location ที่ครองยอดคลิกไม่ใช่ปุ่ม CTA โดยตรง (เช่น "ads_product" = รูปสินค้า) ส่วนใหญ่คือคนแตะรูปเพื่อดูสินค้า ไม่ใช่ตั้งใจแชท — อย่าตีความว่า "คนอยากคุย LINE เยอะ"
 - ดู "top_line_locations": ถ้า location ที่ครองยอดคลิกไม่ใช่ปุ่ม CTA โดยตรง (เช่น "ads_product" = รูปสินค้า) ส่วนใหญ่คือคนแตะรูปเพื่อดูสินค้า ไม่ใช่ตั้งใจแชท — อย่าตีความว่า "คนอยากคุย LINE เยอะ"`;
 
 export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> {

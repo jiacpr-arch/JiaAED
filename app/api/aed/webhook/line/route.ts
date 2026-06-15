@@ -9,7 +9,7 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
-import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation } from "@/lib/aed/db-queries";
+import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow } from "@/lib/aed/notify-owner";
 import type { LineEvent } from "@/lib/aed/types";
@@ -78,6 +78,9 @@ async function processEvents(events: LineEvent[]): Promise<void> {
 
     // ── Follow (ลูกค้าเพิ่มเพื่อน) ──────────────────────────────────────────
     if (event.type === "follow") {
+      // Record the friend-add so it's countable in the weekly review — this is
+      // the real LINE conversion, distinct from a line_click (button intent).
+      await recordLineFollow().catch(() => null);
       await notifyNewFollow(lineUserId).catch(() => null);
 
       const welcomeMsg = [
