@@ -82,13 +82,16 @@ export default function AdsLandingI7() {
           </ul>
         </div>
 
-        {/* Product image */}
+        {/* Product image — taps go to the quote form, NOT LINE. The image used to
+            be a LINE link and quietly became the #1 click source (77% of all LINE
+            clicks were product-photo taps), yet those clicks almost never turned
+            into a chat — people tap the photo to inspect the product, not to chat.
+            Routing the tap to the on-page quote form turns that inspection intent
+            into a trackable lead instead of a bounced LINE click. */}
         <a
-          href={LINE_OA}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-line-cta="ads_product"
-          data-product="i7-standard"
+          href="#ads-quote"
+          data-cta="ads_product_image"
+          aria-label="ดูรายละเอียด / ขอใบเสนอราคา AED Amoul i7"
           className="block relative w-full h-64 sm:h-80 mb-5"
         >
           <Image
