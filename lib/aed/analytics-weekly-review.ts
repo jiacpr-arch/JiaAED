@@ -34,6 +34,11 @@ export type WeeklyContext = {
   top_pages: Array<{ path: string; n: number }>;
   top_doc_downloads: Array<{ doc_id: string; n: number }>;
   top_line_locations: Array<{ location: string; n: number }>;
+  // Did LINE clicks actually become chats? line_click counts INTENT (a button
+  // tap), not a real conversation. Without the chat/message counts a review reads
+  // a high click number as success when most clicks may never land in the OA —
+  // the single biggest blind spot in past reviews.
+  line_outcome: { clicks: number; chats: number; messages: number };
   ad_attribution: { gclid_visits: number; utm_visits: number; organic_visits: number };
   ab_test: {
     a_views: number;
@@ -89,7 +94,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
 
   const supabase = createAdminClient();
 
-  const [thisWeek, lastWeek, visitsThis, visitsPrev, leads] = await Promise.all([
+  const [thisWeek, lastWeek, visitsThis, visitsPrev, leads, chats, messages] = await Promise.all([
     supabase
       .from("aed_analytics_events")
       .select("event_name, properties, page_url")
@@ -113,6 +118,16 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
     supabase
       .from("aed_leads")
       .select("gclid, utm_source")
+      .gte("created_at", week.from)
+      .lte("created_at", week.to),
+    supabase
+      .from("aed_conversations")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", week.from)
+      .lte("created_at", week.to),
+    supabase
+      .from("aed_messages")
+      .select("*", { count: "exact", head: true })
       .gte("created_at", week.from)
       .lte("created_at", week.to),
   ]);
@@ -168,6 +183,11 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
     top_pages,
     top_doc_downloads,
     top_line_locations,
+    line_outcome: {
+      clicks: lineClicks.length,
+      chats: chats.count ?? 0,
+      messages: messages.count ?? 0,
+    },
     ad_attribution: { gclid_visits, utm_visits, organic_visits },
     ab_test: {
       a_views,
@@ -201,7 +221,12 @@ const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์ก
 - หน้าแรก (home, path "/") กับ หน้าโฆษณา (ads_landing, path "/aed/*") ฝัง event ไม่เหมือนกัน ห้ามเอายอดรวม (field "events") มาเทียบ % แล้วตีความตรงๆ ให้ดู "events_by_page" เพื่อเทียบแยกหน้า
 - "hero_cta_view" ยิงเฉพาะหน้าแรกเท่านั้น หน้าโฆษณาไม่มี event นี้ → ถ้า traffic ย้ายไปหน้าโฆษณามากขึ้น ตัวเลขนี้จะลดเองโดยที่ปุ่มไม่ได้หาย/ไม่ได้พัง อย่าด่วนสรุปว่า CTA โดนซ่อนหรือให้ rollback
 - "price_view" บนหน้าโฆษณายิงตั้งแต่โหลด เพราะราคาอยู่บนสุดของหน้า → ค่านี้เกือบเท่าจำนวนคนเข้าหน้าโฆษณา ไม่ใช่สัญญาณว่าสนใจราคาเป็นพิเศษ ส่วน price_view บนหน้าแรกต้องเลื่อนลงไปถึงจะยิง = เป็น signal ความสนใจจริง ให้ดูแยกหน้า
-- เวลาเจอตัวเลขพุ่ง/ตกแรงๆ ให้เช็คก่อนว่าเป็นเพราะ "สัดส่วน traffic ระหว่างหน้าเปลี่ยน" หรือ "พฤติกรรมเปลี่ยนจริง" ก่อนเสนอ action`;
+- เวลาเจอตัวเลขพุ่ง/ตกแรงๆ ให้เช็คก่อนว่าเป็นเพราะ "สัดส่วน traffic ระหว่างหน้าเปลี่ยน" หรือ "พฤติกรรมเปลี่ยนจริง" ก่อนเสนอ action
+
+⚠️ LINE click ≠ LINE chat — อย่านับ "line_click" เป็นความสำเร็จ:
+- "line_click" คือคนกดปุ่ม (intent) เท่านั้น ไม่ใช่คนทักจริง ให้เทียบกับ "line_outcome": clicks vs chats (= aed_conversations) และ messages ที่เข้ามาจริง
+- ถ้า clicks สูงแต่ chats/messages ต่ำมาก (เช่น คลิก 100+ แต่แชทใหม่ 0-1) = funnel รั่ว คนกดแล้วไม่ทักจริง อย่าเชียร์ให้เพิ่มปุ่ม LINE — ให้ผลักคนไป lead form (ที่ track ได้) แทน และตรวจว่าจุดที่ถูกกดเป็น "ปุ่มจริง" หรือ "การกดโดยไม่ตั้งใจ"
+- ดู "top_line_locations": ถ้า location ที่ครองยอดคลิกไม่ใช่ปุ่ม CTA โดยตรง (เช่น "ads_product" = รูปสินค้า) ส่วนใหญ่คือคนแตะรูปเพื่อดูสินค้า ไม่ใช่ตั้งใจแชท — อย่าตีความว่า "คนอยากคุย LINE เยอะ"`;
 
 export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
