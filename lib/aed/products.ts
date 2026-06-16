@@ -31,7 +31,7 @@ export const products: Product[] = [
     name: "AED Amoul i7 + ตู้",
     subtitle: "รุ่นพร้อมตู้ติดผนัง",
     price: 44999,
-    msrp: 46900,
+    msrp: 80000,
     description: "ครบชุด พร้อมตู้ติดผนังและสัญญาณเตือน",
     features: [
       "ครบชุดพร้อมติดตั้ง",
@@ -46,7 +46,7 @@ export const products: Product[] = [
     name: "AED Amoul i7 + แท่นตั้งพื้น",
     subtitle: "รุ่นแท่นตั้งพื้น",
     price: 49000,
-    msrp: 51900,
+    msrp: 90000,
     description: "เคลื่อนย้ายได้ เหมาะสำหรับสถานที่ขนาดใหญ่",
     features: [
       "เคลื่อนย้ายได้สะดวก",
