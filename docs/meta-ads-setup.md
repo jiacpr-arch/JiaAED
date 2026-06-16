@@ -8,10 +8,17 @@
 | ขา | ยิงจาก | ไฟล์ | กัน event หาย |
 | --- | --- | --- | --- |
 | **Browser Pixel** | `fbq('track','Lead', …, {eventID})` | `app/components/MetaPixel.tsx` + `lib/aed/fb-tracking.ts` | — |
-| **Conversions API (server)** | `POST graph.facebook.com/<pixel>/events` | `lib/aed/meta-capi.ts` (เรียกจาก `app/api/aed/lead/route.ts`) | ✅ รอด iOS/ad-blocker |
+| **Conversions API (server)** | `POST graph.facebook.com/<pixel>/events` | `lib/aed/meta-capi.ts` (เรียกจาก `app/api/aed/lead/route.ts` และ `app/api/aed/meta-lead/route.ts`) | ✅ รอด iOS/ad-blocker |
 
 ทั้งสองขาส่ง **`event_id` เดียวกัน** → Meta dedupe นับเป็น 1 lead (ไม่นับซ้ำ)
-คลิกปุ่ม LINE **ไม่ถูกนับเป็น conversion** โดยตั้งใจ (เหมือนฝั่ง Google) — นับเฉพาะ lead form submit จริง
+
+### `Lead` ยิงจาก 2 จุด (ต่างจากฝั่ง Google โดยตั้งใจ)
+1. **กรอก lead form สำเร็จ** — มี email/phone hash (match quality สูง)
+2. **คลิกปุ่ม LINE** (`LineClickTracker` → browser pixel + `app/api/aed/meta-lead`) — match ด้วย fbc/fbp/IP
+
+> ทำไมถึงนับ LINE click (ต่างจาก Google ที่ไม่นับ): ข้อมูลจริงพบคนไทยทัก LINE ต่อกรอกฟอร์ม ~15:1
+> ฟอร์มอย่างเดียวให้ conversion น้อยเกินไป (~1/สัปดาห์) Meta จึง optimize ไม่ได้ — LINE click คือ
+> contact action จริงของ funnel นี้ จึงรายงานเป็น `Lead` เพื่อให้ Meta มี signal พอสำหรับ optimize
 
 ## 1. Environment variables (Vercel)
 
