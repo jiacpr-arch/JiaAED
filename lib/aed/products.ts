@@ -54,3 +54,44 @@ export const products: Product[] = [
     badge: null,
   },
 ];
+
+// ─── อุปกรณ์เสริม / อะไหล่ ──────────────────────────────────────────────────────
+
+export type Accessory = {
+  id: string;
+  name: string;
+  subtitle: string;
+  price: number; // ราคาก่อน VAT
+  image: string; // path ใต้ /public
+  description: string;
+  features: string[];
+};
+
+export const accessories: Accessory[] = [
+  {
+    id: "pad-adult",
+    name: "แผ่นนำไฟฟ้า (Pad) สำหรับผู้ใหญ่",
+    subtitle: "อะไหล่ / วัสดุสิ้นเปลือง",
+    price: 5000,
+    image: "/images/accessory-pad.jpg",
+    description: "แผ่นแปะนำไฟฟ้าสำหรับผู้ใหญ่ ใช้กับเครื่อง AED Amoul i7",
+    features: [
+      "ของแท้ Ambul (REF 1.129.00201)",
+      "สำหรับผู้ใหญ่",
+      "แนะนำเปลี่ยนตามวันหมดอายุที่ระบุบนซอง",
+    ],
+  },
+  {
+    id: "battery",
+    name: "แบตเตอรี่ AED Amoul i7",
+    subtitle: "อะไหล่",
+    price: 7500,
+    image: "/images/accessory-battery.jpg",
+    description: "แบตเตอรี่สำรอง / เปลี่ยนทดแทน สำหรับเครื่อง AED Amoul i7",
+    features: [
+      "ของแท้ Ambul",
+      "ลิเธียม อายุการใช้งานยาวนาน",
+      "พร้อมใช้งานทันที",
+    ],
+  },
+];

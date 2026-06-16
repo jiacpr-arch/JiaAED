@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/lib/aed/products";
+import { products, accessories } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 import { rentalPlans } from "@/lib/aed/rental";
 import { LeadForm } from "./components/LeadForm";
@@ -394,6 +394,58 @@ export default function Home() {
           <p className="text-center text-gray-600 text-sm mt-6">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
           </p>
+        </div>
+      </section>
+
+      {/* Accessories / Spare parts */}
+      <section id="accessories" className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-3">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
+              🔋 อุปกรณ์เสริม &amp; อะไหล่
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">แผ่นแปะ (Pad) &amp; แบตเตอรี่</h2>
+          </div>
+          <p className="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
+            แผ่นนำไฟฟ้า (Pad) และแบตเตอรี่ของแท้ Ambul สำหรับเครื่อง AED Amoul i7 — สั่งซื้อหรือสอบถามราคาพิเศษได้ทาง LINE
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {accessories.map((a) => (
+              <div
+                key={a.id}
+                className="relative rounded-2xl border border-gray-700 p-6 flex flex-col bg-gray-900"
+              >
+                <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-white">
+                  <Image src={a.image} alt={a.name} fill className="object-contain p-3" />
+                </div>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{a.subtitle}</div>
+                <h3 className="font-bold text-lg text-white mt-1 mb-3">{a.name}</h3>
+                <div className="mb-3">
+                  <div className="text-3xl font-bold text-yellow-400">฿{a.price.toLocaleString()}</div>
+                  <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
+                </div>
+                <p className="text-gray-400 text-sm mb-4">{a.description}</p>
+                <ul className="space-y-1 mb-6 flex-1">
+                  {a.features.map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                      <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="accessory_card"
+                  data-product={a.id}
+                  className="text-center font-semibold py-3 rounded-full transition-colors bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
+                >
+                  สั่งซื้อ / ถามราคา
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
