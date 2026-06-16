@@ -96,10 +96,10 @@ const svg = `
     "Shock 7 วินาที",
     "เสียงไทย",
     "IP65 กันน้ำ",
-    "รับประกัน 1 ปี",
+    "อย. รับรอง",
   ]
     .map((t, i) => {
-      const widths = [232, 150, 210, 210];
+      const widths = [232, 150, 210, 178];
       const gap = 18;
       const total = widths.reduce((a, b) => a + b, 0) + gap * (widths.length - 1);
       let x = (W - total) / 2;

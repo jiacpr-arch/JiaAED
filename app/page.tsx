@@ -34,7 +34,6 @@ const specs = [
   { label: "โหมดการทำงาน", value: "Standalone (ค่าเริ่มต้น) — ใช้ช่วยชีวิตได้โดยไม่ต้องเชื่อมต่อ" },
   { label: "มาตรฐาน", value: "CE Mark · ISO 13485 · IP65 · EN 1789:2020 · ILCOR/AHA 2020-2025" },
   { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือไทย" },
-  { label: "รับประกัน", value: "1 ปี" },
 ];
 
 const adultShocks = [
@@ -115,7 +114,6 @@ export default function Home() {
               <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> อย. รับรอง</li>
               <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ส่งทั่วประเทศ</li>
               <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> ออกใบกำกับภาษี</li>
-              <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> รับประกัน 1 ปี</li>
             </ul>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <HeroCta />
@@ -271,7 +269,7 @@ export default function Home() {
               {
                 icon: "🛠️",
                 title: "บริการหลังการขาย",
-                desc: "รับประกัน 1 ปีเต็ม พร้อมทีมเทคนิคให้คำปรึกษาตลอดอายุการใช้งาน 7+ ปี",
+                desc: "ทีมเทคนิคไทยพร้อมให้คำปรึกษาและดูแลตลอดอายุการใช้งาน 7+ ปี",
               },
               {
                 icon: "🇹🇭",

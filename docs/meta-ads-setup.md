@@ -53,7 +53,7 @@
 
 - **Objective**: Leads (Sales/Conversions) → optimize for `Lead`
 - **Ad Set**: location ไทย · งบเริ่ม 200–300 บาท/วัน · กลุ่ม in-market medical / safety / HR / เจ้าของกิจการ · placement Advantage+
-- **Creative**: รูปจาก `/public/images/` (aed-floorstand, aed-wallcabinet, product-main, lifestyle-cpr) + headline/copy รีไซเคิลจาก RSA ใน `google-ads-setup.md` (อย. / ฆพ.743/2569 / รับประกัน / ราคาเริ่ม 39,999)
+- **Creative**: รูปจาก `/public/images/` (aed-floorstand, aed-wallcabinet, product-main, lifestyle-cpr) + headline/copy รีไซเคิลจาก RSA ใน `google-ads-setup.md` (อย. / ฆพ.743/2569 / บริการหลังการขาย / ราคาเริ่ม 39,999)
 - **Ad URL**: `https://jiaaed.com/?utm_source=facebook&utm_medium=cpc&utm_campaign=<name>`
 
 > ⚠️ AED = เครื่องมือแพทย์ — เตรียม อย. `68-2-2-2-0005243` + ใบโฆษณา `ฆพ.743/2569` ไว้ เผื่อ ad review ขอ
