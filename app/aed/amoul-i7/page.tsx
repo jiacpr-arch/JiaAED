@@ -43,7 +43,7 @@ export default function AdsLandingI7() {
 
       {/* Promo banner */}
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        🎁 ลดราคามากกว่า 30% + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
+        🎁 ลดราคามากกว่า 40% + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
       </div>
 
       {/* Hero — single column, mobile first */}

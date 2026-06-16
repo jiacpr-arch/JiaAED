@@ -69,7 +69,7 @@ const svg = `
   <g transform="translate(1080,0) rotate(45)">
     <rect x="-250" y="104" width="500" height="74" fill="url(#gold)" filter="url(#softsm)"/>
     <rect x="-250" y="104" width="500" height="74" fill="none" stroke="#7A0710" stroke-width="3" opacity="0.45"/>
-    <text x="0" y="155" text-anchor="middle" font-family="Kanit ExtraBold" font-size="38" fill="#7A0710">ลดมากกว่า 30%</text>
+    <text x="0" y="155" text-anchor="middle" font-family="Kanit ExtraBold" font-size="38" fill="#7A0710">ลดมากกว่า 40%</text>
   </g>
 
   <!-- ===== PRICE PANEL ===== -->
