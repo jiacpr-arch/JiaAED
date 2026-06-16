@@ -43,7 +43,7 @@ export default function AdsLandingI7() {
 
       {/* Promo banner */}
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        🎁 ลด 2,000 บาท + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
+        🎁 ลดกว่า 30,000 บาท + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
       </div>
 
       {/* Hero — single column, mobile first */}
