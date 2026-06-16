@@ -39,6 +39,30 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     vatRate: 0.07,
     faProductCode: "AED-I7-FLR",
   },
+  "pad-adult": {
+    id: "pad-adult",
+    name: "AED Pad (Adult)",
+    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (Ambul) สำหรับ AED Amoul i7",
+    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ ของแท้ Ambul REF 1.129.00201 ใช้กับ AED Amoul i7",
+    msrp: 5_000,
+    startingPrice: 5_000,
+    bestPrice: 5_000,
+    minPrice: 5_000,
+    vatRate: 0.07,
+    faProductCode: "AED-PAD-ADT",
+  },
+  battery: {
+    id: "battery",
+    name: "AED Battery (Amoul i7)",
+    nameTh: "แบตเตอรี่ AED Amoul i7 (Ambul)",
+    description: "แบตเตอรี่สำรอง/ทดแทน ของแท้ Ambul สำหรับ AED Amoul i7",
+    msrp: 7_500,
+    startingPrice: 7_500,
+    bestPrice: 7_500,
+    minPrice: 7_500,
+    vatRate: 0.07,
+    faProductCode: "AED-BATT",
+  },
 };
 
 export function getProduct(productId: string): AedProduct | null {
