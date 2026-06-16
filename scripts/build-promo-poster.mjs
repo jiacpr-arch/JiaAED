@@ -65,6 +65,13 @@ const svg = `
   <text x="540" y="284" text-anchor="middle" font-family="Kanit Black" font-size="74" fill="#FFC72C">อัตโนมัติ (AED)</text>
   <text x="540" y="344" text-anchor="middle" font-family="Kanit SemiBold" font-size="42" fill="#ffffff">รุ่น AED Amoul i7</text>
 
+  <!-- corner discount ribbon -->
+  <g transform="translate(1080,0) rotate(45)">
+    <rect x="-250" y="104" width="500" height="74" fill="url(#gold)" filter="url(#softsm)"/>
+    <rect x="-250" y="104" width="500" height="74" fill="none" stroke="#7A0710" stroke-width="3" opacity="0.45"/>
+    <text x="0" y="155" text-anchor="middle" font-family="Kanit ExtraBold" font-size="38" fill="#7A0710">ลดมากกว่า 30%</text>
+  </g>
+
   <!-- ===== PRICE PANEL ===== -->
   <g filter="url(#soft)">
     <rect x="96" y="392" width="888" height="286" rx="32" fill="url(#gold)"/>
