@@ -108,7 +108,7 @@ export default function Home() {
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
               <span className="text-xs text-gray-400">เริ่มต้น</span>
               <span className="text-4xl md:text-5xl font-black text-yellow-400">฿39,999</span>
-              <span className="text-gray-500 line-through text-base">฿41,900</span>
+              <span className="text-gray-500 line-through text-base">฿70,000</span>
               <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · ออกใบเสนอราคาได้</span>
             </div>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-300 mb-5">

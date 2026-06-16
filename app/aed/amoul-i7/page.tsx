@@ -43,7 +43,7 @@ export default function AdsLandingI7() {
 
       {/* Promo banner */}
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        🎁 ลด 2,000 บาท + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
+        🎁 ลดราคามากกว่า 40% + ส่งฟรีทั่วประเทศ — เฉพาะลูกค้าจาก Google
       </div>
 
       {/* Hero — single column, mobile first */}
@@ -67,7 +67,7 @@ export default function AdsLandingI7() {
         <div id="ads-price" className="bg-gradient-to-r from-yellow-400/10 to-transparent border border-yellow-400/40 rounded-2xl p-5 mb-5">
           <div className="flex items-baseline gap-3 mb-1">
             <span className="text-xs text-gray-400">ราคาพิเศษวันนี้</span>
-            <span className="text-gray-500 line-through text-base">฿41,900</span>
+            <span className="text-gray-500 line-through text-base">฿70,000</span>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-5xl font-black text-yellow-400">฿39,999</span>

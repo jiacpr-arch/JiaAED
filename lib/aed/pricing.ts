@@ -8,7 +8,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     name: "AED Amoul i7",
     nameTh: "เครื่อง AED Amoul i7",
     description: "เครื่อง AED Amoul i7 พร้อมแผ่น Pad + แบตเตอรี่",
-    msrp: 41_900,
+    msrp: 70_000,
     startingPrice: 39_999,
     bestPrice: 38_500,
     minPrice: 37_000,

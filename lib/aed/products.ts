@@ -15,7 +15,7 @@ export const products: Product[] = [
     name: "AED Amoul i7",
     subtitle: "รุ่นมาตรฐาน",
     price: 39999,
-    msrp: 41900,
+    msrp: 70000,
     description: "เหมาะสำหรับสำนักงาน โรงเรียน และสถานที่ทั่วไป",
     features: [
       "น้ำหนัก ~ 2 กก. (รวมแบตเตอรี่)",
