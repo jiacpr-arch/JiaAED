@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock พร้อมใน 7 วินาที เสียงแนะนำภาษาไทย IP65 กันน้ำ ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569 · รับประกัน 1 ปี",
+    "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock พร้อมใน 7 วินาที เสียงแนะนำภาษาไทย IP65 กันน้ำ ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569",
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     siteName: "JiaAED",
     title: "JiaAED — AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
     description:
-      "Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย · IP65 กันน้ำ · อย. รับรอง · รับประกัน 1 ปี",
+      "Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย · IP65 กันน้ำ · อย. รับรอง",
     images: [
       {
         url: "/images/aed-i7-poster.jpg",
