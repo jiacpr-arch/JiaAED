@@ -53,10 +53,10 @@ export const metadata: Metadata = {
       "Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย · IP65 กันน้ำ · อย. รับรอง · รับประกัน 1 ปี",
     images: [
       {
-        url: "/images/aed-poster.jpg",
-        width: 1200,
-        height: 630,
-        alt: "AED Amoul i7",
+        url: "/images/aed-i7-poster.jpg",
+        width: 1179,
+        height: 1651,
+        alt: "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
       },
     ],
   },
@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     title: "JiaAED — AED Amoul i7",
     description:
       "เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock 7 วินาที · เสียงไทย · IP65",
-    images: ["/images/aed-poster.jpg"],
+    images: ["/images/aed-i7-poster.jpg"],
   },
   robots: { index: true, follow: true },
 };

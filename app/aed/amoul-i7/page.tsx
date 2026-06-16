@@ -16,6 +16,16 @@ export const metadata: Metadata = {
     "เครื่องกระตุกหัวใจไฟฟ้า AED Amoul i7 — Shock 7 วินาที · เสียงไทย · IP65 · อย. รับรอง · รับประกัน 1 ปี · ฟรีค่าจัดส่ง",
   robots: { index: false, follow: false },
   alternates: { canonical: "/ads/aed-i7" },
+  openGraph: {
+    title: "AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า · อย. รับรอง",
+    description:
+      "Shock 7 วินาที · เสียงแนะนำภาษาไทย · IP65 · อย. รับรอง · เริ่ม 39,999฿",
+    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/aed-i7-poster.jpg"],
+  },
 };
 
 export default function AdsLandingI7() {
@@ -172,6 +182,17 @@ export default function AdsLandingI7() {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Full product poster — the marketing creative used across ads */}
+        <div className="mb-8 rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+          <Image
+            src="/images/aed-i7-poster.jpg"
+            alt="AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า รายละเอียดสินค้า"
+            width={1179}
+            height={1651}
+            className="w-full h-auto"
+          />
         </div>
 
         {/* Latest curated news — renders nothing until items exist */}
