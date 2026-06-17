@@ -6,9 +6,30 @@ import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply } from "@/lib/aed/email";
 import { recordConversion } from "@/lib/aed/conversion";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
-import { products } from "@/lib/aed/products";
+import { products, accessories } from "@/lib/aed/products";
 
 export const runtime = "nodejs";
+
+// Sellable ids the quote/lead forms may reference. Beyond the homepage product
+// grid (`products`) this also accepts accessories and the package/subscription
+// pseudo-products + PRIMEDIC models so corporate quote submissions don't 400.
+const EXTRA_PRODUCT_IDS = [
+  "pkg-premium",
+  "pkg-start",
+  "pkg-care",
+  "care-basic",
+  "care-premium",
+  "care-ultimate",
+  "primedic-y0",
+  "primedic-y8",
+  "primedic-ya0",
+  "primedic-ya8",
+];
+const VALID_PRODUCT_IDS = new Set<string>([
+  ...products.map((p) => p.id),
+  ...accessories.map((a) => a.id),
+  ...EXTRA_PRODUCT_IDS,
+]);
 
 type LeadBody = {
   source?: string;
@@ -17,6 +38,7 @@ type LeadBody = {
   email?: string;
   company?: string;
   productId?: string;
+  unitCount?: string;
   message?: string;
   gclid?: string;
   utm?: {
@@ -71,6 +93,7 @@ export async function POST(req: Request) {
   const email = clean(body.email, 120);
   const company = clean(body.company, 200);
   const productId = clean(body.productId, 30);
+  const unitCount = clean(body.unitCount, 40);
   const message = clean(body.message, 2000);
   const gclid = clean(body.gclid, 200);
   const fbclid = clean(body.fbclid, 255);
@@ -92,7 +115,7 @@ export async function POST(req: Request) {
   if (email && !EMAIL_RE.test(email)) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }
-  if (productId && !products.some((p) => p.id === productId)) {
+  if (productId && !VALID_PRODUCT_IDS.has(productId)) {
     return NextResponse.json({ ok: false, error: "invalid_product" }, { status: 400 });
   }
 
@@ -120,6 +143,7 @@ export async function POST(req: Request) {
       email,
       company_name: company,
       product_id: productId,
+      unit_count: unitCount,
       message,
       gclid,
       fbclid,
@@ -157,6 +181,7 @@ export async function POST(req: Request) {
       email,
       company,
       productId,
+      unitCount,
       message,
       gclid,
       utmSource,

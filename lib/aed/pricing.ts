@@ -137,3 +137,31 @@ function buildResult(
 export function formatThaiPrice(amount: number): string {
   return amount.toLocaleString("th-TH") + " บาท";
 }
+
+// ─── Pricing policy: never the cheapest in the market ─────────────────────────
+// Owner directive: do NOT undercut the market on anything — INCLUDING electrode
+// pads and batteries. `minPrice` is the hard floor the AI/sales must never cross;
+// `marketFloor` documents the lowest competitor price we've observed, and our
+// minPrice must stay STRICTLY ABOVE it. Update these as wholesale is finalized.
+export const PRICING_POLICY = {
+  rule: "ห้ามตั้งราคาต่ำที่สุดในตลาด รวมถึงแผ่นแปะและแบตเตอรี่",
+  // TODO(owner): verify observed market-floor prices for consumables.
+  marketFloor: {
+    "pad-adult": 4_000,
+    battery: 6_000,
+  } as Record<string, number>,
+} as const;
+
+// Dev/CI guard — call from a unit check or a build script, NOT per request.
+// Returns a list of violations (empty = compliant) so future edits can't silently
+// drop a price to or below the market floor.
+export function assertAboveMarketFloor(): string[] {
+  const violations: string[] = [];
+  for (const [id, floor] of Object.entries(PRICING_POLICY.marketFloor)) {
+    const p = AED_PRODUCTS[id];
+    if (p && p.minPrice <= floor) {
+      violations.push(`${id}: minPrice ${p.minPrice} ≤ market floor ${floor}`);
+    }
+  }
+  return violations;
+}

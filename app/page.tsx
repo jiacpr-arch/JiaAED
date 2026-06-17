@@ -10,6 +10,9 @@ import { HeroHeadline } from "./components/HeroHeadline";
 import { YouTubeLite } from "./components/YouTubeLite";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 import { LatestNews } from "./components/LatestNews";
+import { PackageCard } from "./components/PackageCard";
+import { TrustStats } from "./components/TrustStats";
+import { acquisitionPackages } from "@/lib/aed/packages";
 
 export const revalidate = 3600;
 
@@ -71,7 +74,9 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <a href="#features" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">คุณสมบัติ</a>
             <a href="#products" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สินค้า</a>
-            <a href="#rental" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</a>
+            <Link href="/aed/packages" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">แพ็กเกจ</Link>
+            <Link href="/aed/subscription" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</Link>
+            <Link href="/aed/primedic" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">PRIMEDIC</Link>
             <a href="#shock-protocol" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">โปรแกรมช็อก</a>
             <a href="#specs" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">สเปค</a>
             <a href="#contact" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ติดต่อ</a>
@@ -297,6 +302,11 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* Trust stats */}
+          <div className="mt-12">
+            <TrustStats />
+          </div>
         </div>
       </section>
 
@@ -446,6 +456,52 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Acquisition packages band — buy / rent-to-own / managed rental */}
+      <section id="packages" className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
+              🛟 แพ็กเกจ AED + GPS
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-white">3 วิธีได้ AED มาใช้</h2>
+            <p className="text-gray-400 mt-2">ซื้อขาด · เช่าแล้วได้ซื้อ · เช่าบริการครบวงจร พร้อมระบบ GPS</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {acquisitionPackages.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} />
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link
+              href="/aed/packages"
+              className="inline-block bg-yellow-400 text-yellow-900 font-bold px-8 py-3 rounded-full hover:bg-yellow-300"
+            >
+              ดูรายละเอียดแพ็กเกจทั้งหมด →
+            </Link>
+          </div>
+
+          {/* PRIMEDIC premium line teaser */}
+          <Link
+            href="/aed/primedic"
+            className="mt-10 flex flex-col sm:flex-row items-center gap-5 rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-gray-900 to-yellow-950/30 p-6 hover:border-yellow-400/60 transition-colors"
+          >
+            <div className="relative w-32 h-32 flex-shrink-0 rounded-xl overflow-hidden bg-white">
+              <Image src="/images/primedic-heartsave.png" alt="PRIMEDIC HeartSave" fill className="object-contain p-2" sizes="128px" />
+            </div>
+            <div className="text-center sm:text-left">
+              <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-2 border border-yellow-400/20">
+                ✨ ใหม่ · ไลน์พรีเมียม
+              </div>
+              <h3 className="text-xl font-bold text-white">PRIMEDIC HeartSave — Y0 / Y8 / YA0 / YA8</h3>
+              <p className="text-sm text-gray-400 mt-1">
+                รุ่นกึ่งอัตโนมัติและอัตโนมัติเต็มระบบ พร้อมเซ็นเซอร์ CPR feedback — เปรียบเทียบสเปกทั้ง 4 รุ่น
+              </p>
+              <span className="inline-block text-yellow-400 font-semibold text-sm mt-2">ดูรายละเอียด →</span>
+            </div>
+          </Link>
         </div>
       </section>
 

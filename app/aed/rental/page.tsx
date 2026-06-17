@@ -195,9 +195,28 @@ export default function AedRentalLanding() {
             </div>
           ))}
         </div>
-        <p className="text-center text-gray-600 text-sm mb-10">
+        <p className="text-center text-gray-600 text-sm mb-4">
           * มัดจำคืนเต็มเมื่อคืนเครื่องครบสภาพ · ราคาพิเศษสำหรับสัญญาระยะยาว/หลายเครื่อง
         </p>
+        <div className="text-center mb-10 rounded-2xl border border-gray-800 bg-gray-900 p-5">
+          <p className="text-sm text-gray-300 mb-3">
+            ต้องการใช้ระยะยาวพร้อมทีมดูแลครบวงจร (GPS · Dashboard · เปลี่ยนเครื่องสำรอง)?
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+            <Link
+              href="/aed/subscription"
+              className="inline-block bg-yellow-400/10 text-yellow-400 font-bold px-5 py-2.5 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-sm"
+            >
+              ดูแพ็กเกจเช่ารายเดือน (BASIC/PREMIUM/ULTIMATE) →
+            </Link>
+            <Link
+              href="/aed/packages"
+              className="inline-block bg-gray-800 text-gray-200 font-bold px-5 py-2.5 rounded-full border border-gray-700 hover:bg-gray-700 text-sm"
+            >
+              เปรียบเทียบ ซื้อขาด / เช่าได้ซื้อ →
+            </Link>
+          </div>
+        </div>
 
         {/* What's included */}
         <h2 className="text-xl font-bold text-white mb-4">เช่ากับเราได้อะไรบ้าง</h2>
