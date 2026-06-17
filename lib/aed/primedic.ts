@@ -15,19 +15,15 @@ export const PRIMEDIC_REGULATORY = {
     "รุ่น PRIMEDIC HeartSave อยู่ระหว่างดำเนินการขึ้นทะเบียน อย. และใบอนุญาตโฆษณาสำหรับประเทศไทย — สอบถามสถานะล่าสุดและกำหนดวางจำหน่ายได้ทาง LINE",
 } as const;
 
-export type PrimedicModelId =
-  | "primedic-y0"
-  | "primedic-y8"
-  | "primedic-ya0"
-  | "primedic-ya8";
+export type PrimedicModelId = "primedic-y0" | "primedic-y8";
 
 export type PrimedicModel = {
   id: PrimedicModelId;
   name: string;
-  // Y0/Y8 keep a manual Shock button (semi-automatic); YA0/YA8 deliver the shock
-  // automatically (no Shock button).
-  shockMode: "semi-auto" | "auto";
-  // Y8/YA8 ship with the CPR feedback sensor as standard; Y0/YA0 make it optional.
+  price: number; // sell price (THB, before VAT)
+  // Y0/Y8 keep a manual Shock button (semi-automatic). The auto YA0/YA8 are not sold.
+  shockMode: "semi-auto";
+  // Y8 ships with the CPR feedback sensor as standard; Y0 makes it optional.
   cprFeedback: "standard" | "optional";
   summary: string;
   image: string; // TODO(owner): real PRIMEDIC product photos
@@ -38,46 +34,47 @@ export const primedicModels: PrimedicModel[] = [
   {
     id: "primedic-y0",
     name: "HeartSave Y0",
+    price: 39_900,
     shockMode: "semi-auto",
     cprFeedback: "optional",
-    summary: "รุ่นกึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
-    image: "/images/primedic-heartsave.png",
+    summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
+    image: "/images/primedic-open.png",
     badge: null,
   },
   {
     id: "primedic-y8",
     name: "HeartSave Y8",
+    price: 49_999,
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "กึ่งอัตโนมัติ + เซ็นเซอร์ CPR feedback มาตรฐาน",
-    image: "/images/primedic-heartsave.png",
+    image: "/images/primedic-open.png",
     badge: "แนะนำ",
   },
-  {
-    id: "primedic-ya0",
-    name: "HeartSave YA0",
-    shockMode: "auto",
-    cprFeedback: "optional",
-    summary: "อัตโนมัติเต็มระบบ (ไม่มีปุ่ม Shock)",
-    image: "/images/primedic-open.png",
-    badge: null,
-  },
-  {
-    id: "primedic-ya8",
-    name: "HeartSave YA8",
-    shockMode: "auto",
-    cprFeedback: "standard",
-    summary: "อัตโนมัติเต็มระบบ + เซ็นเซอร์ CPR feedback มาตรฐาน",
-    image: "/images/primedic-open.png",
-    badge: "ออโต้เต็มระบบ",
-  },
 ];
+
+// Yuwell AED with GPS built in (the red unit) — sold as its own product.
+export const yuwellGpsAed = {
+  id: "yuwell-gps",
+  name: "Yuwell AED — GPS ในตัว",
+  price: 60_000, // before VAT
+  image: "/images/primedic-heartsave.png",
+  description:
+    "เครื่อง AED พร้อมระบบ GPS ในตัว — ติดตามตำแหน่งและสถานะเครื่องแบบเรียลไทม์ เหมาะกับองค์กรหลายสาขา",
+  features: [
+    "GPS ติดตามตำแหน่งในตัวเครื่อง",
+    "เชื่อมระบบแจ้งเตือน/ติดตามสถานะ",
+    "เสียงนำทางการกู้ชีพ",
+  ],
+};
 
 // Specs shared by all four models — rendered as a simple label/value list.
 export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "ภาษาเสียงนำทาง CPR", value: "4 ภาษา (ไทย / อังกฤษ / จีน / เยอรมัน)" },
   { label: "หน้าจอแสดงสถานะ", value: "มี" },
   { label: "เสียงนำจังหวะกด CPR", value: "มี" },
+  { label: "ปุ่ม Shock (กึ่งอัตโนมัติ)", value: "มี ทั้ง Y0 และ Y8" },
+  { label: "ปุ่มเลือกโหมดเด็ก (Child)", value: "มี" },
   { label: "พลังงานผู้ใหญ่ (ค่าเริ่มต้น)", value: "200 → 300 → 360 J (escalating)" },
   { label: "พลังงานเด็ก (ค่าเริ่มต้น)", value: "50 → 70 → 100 J" },
   { label: "วิเคราะห์ถึงชาร์จ 200J พร้อม", value: "≤ 5 วินาที" },
@@ -108,39 +105,17 @@ export type PrimedicSpecRow = {
 
 export const primedicDiffSpecs: PrimedicSpecRow[] = [
   {
-    label: "ปุ่ม Shock (กึ่งอัตโนมัติ)",
-    values: {
-      "primedic-y0": true,
-      "primedic-y8": true,
-      "primedic-ya0": false,
-      "primedic-ya8": false,
-    },
-  },
-  {
-    label: "ช็อกอัตโนมัติ (ไม่มีปุ่ม Shock)",
-    values: {
-      "primedic-y0": false,
-      "primedic-y8": false,
-      "primedic-ya0": true,
-      "primedic-ya8": true,
-    },
-  },
-  {
     label: "เซ็นเซอร์ CPR feedback",
     values: {
       "primedic-y0": "optional",
       "primedic-y8": true,
-      "primedic-ya0": "optional",
-      "primedic-ya8": true,
     },
   },
   {
-    label: "ปุ่มเลือกโหมดเด็ก (Child)",
+    label: "ราคา (ก่อน VAT)",
     values: {
-      "primedic-y0": true,
-      "primedic-y8": true,
-      "primedic-ya0": true,
-      "primedic-ya8": true,
+      "primedic-y0": "฿39,900",
+      "primedic-y8": "฿49,999",
     },
   },
 ];

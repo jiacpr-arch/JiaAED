@@ -63,6 +63,45 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     vatRate: 0.07,
     faProductCode: "AED-BATT",
   },
+  // ── PRIMEDIC HeartSave (premium line — same supplier cost tier as i7 for Y0) ──
+  // NOTE: PRIMEDIC อย./ฆพ. pending → not in the public products[] grid / Merchant
+  // feed yet (see lib/aed/products.ts). Priced here so the AI sales bot can quote.
+  "primedic-y0": {
+    id: "primedic-y0",
+    name: "PRIMEDIC HeartSave Y0",
+    nameTh: "เครื่อง AED PRIMEDIC HeartSave Y0",
+    description: "AED กึ่งอัตโนมัติ (มีปุ่ม Shock) เซ็นเซอร์ CPR feedback เป็นตัวเลือก",
+    msrp: 70_000,
+    startingPrice: 39_900,
+    bestPrice: 39_900,
+    minPrice: 38_500,
+    vatRate: 0.07,
+    faProductCode: "AED-PMD-Y0",
+  },
+  "primedic-y8": {
+    id: "primedic-y8",
+    name: "PRIMEDIC HeartSave Y8",
+    nameTh: "เครื่อง AED PRIMEDIC HeartSave Y8",
+    description: "AED กึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback มาตรฐาน",
+    msrp: 70_000,
+    startingPrice: 49_999,
+    bestPrice: 49_999,
+    minPrice: 49_999, // ราคาต่ำสุดที่ขายได้ (owner) — ห้ามต่ำกว่านี้
+    vatRate: 0.07,
+    faProductCode: "AED-PMD-Y8",
+  },
+  "yuwell-gps": {
+    id: "yuwell-gps",
+    name: "Yuwell AED (GPS built-in)",
+    nameTh: "เครื่อง AED Yuwell พร้อม GPS ในตัว",
+    description: "เครื่อง AED ที่มีระบบ GPS ในตัว ติดตามตำแหน่งและสถานะแบบเรียลไทม์",
+    msrp: 60_000,
+    startingPrice: 60_000,
+    bestPrice: 60_000,
+    minPrice: 58_000,
+    vatRate: 0.07,
+    faProductCode: "AED-YW-GPS",
+  },
 };
 
 export function getProduct(productId: string): AedProduct | null {

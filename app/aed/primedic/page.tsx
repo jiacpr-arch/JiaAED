@@ -7,7 +7,7 @@ import { SectionHeading } from "@/app/components/SectionHeading";
 import { SpecComparisonTable } from "@/app/components/SpecComparisonTable";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
-import { primedicModels, PRIMEDIC_REGULATORY } from "@/lib/aed/primedic";
+import { primedicModels, yuwellGpsAed, PRIMEDIC_REGULATORY } from "@/lib/aed/primedic";
 
 export const revalidate = 3600;
 
@@ -16,9 +16,9 @@ const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 // noindex until PRIMEDIC has its own อย./ฆพ. — see PRIMEDIC_REGULATORY.
 // TODO(owner): set index:true once real registration numbers are published.
 export const metadata: Metadata = {
-  title: "PRIMEDIC HeartSave Y0 / Y8 / YA0 / YA8 — AED รุ่นพรีเมียม | JiaAED",
+  title: "PRIMEDIC HeartSave Y0 / Y8 — AED รุ่นพรีเมียม | JiaAED",
   description:
-    "PRIMEDIC HeartSave ไลน์ AED พรีเมียม — รุ่นกึ่งอัตโนมัติและอัตโนมัติเต็มระบบ พร้อมเซ็นเซอร์ CPR feedback เปรียบเทียบสเปกทั้ง 4 รุ่น",
+    "PRIMEDIC HeartSave ไลน์ AED พรีเมียม รุ่นกึ่งอัตโนมัติ Y0 (฿39,900) และ Y8 (฿49,999) พร้อมเซ็นเซอร์ CPR feedback และ Yuwell AED รุ่นมี GPS ในตัว",
   alternates: { canonical: "/aed/primedic" },
   robots: { index: false, follow: true },
 };
@@ -31,14 +31,14 @@ export default function PrimedicPage() {
       <section className="max-w-6xl mx-auto px-4 py-10">
         <SectionHeading
           badge="✨ ไลน์พรีเมียม"
-          title="PRIMEDIC HeartSave — Y0 / Y8 / YA0 / YA8"
-          subtitle="เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ ออกแบบใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback"
+          title="PRIMEDIC HeartSave — Y0 / Y8"
+          subtitle="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback"
         />
 
         <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
           <div className="relative w-full h-72 rounded-2xl overflow-hidden border border-gray-800 bg-white">
             <Image
-              src="/images/primedic-heartsave.png"
+              src="/images/primedic-open.png"
               alt="PRIMEDIC HeartSave AED"
               fill
               className="object-contain p-6"
@@ -48,11 +48,11 @@ export default function PrimedicPage() {
           </div>
           <div className="space-y-4">
             <p className="text-gray-300">
-              เลือกได้ตามการใช้งาน — รุ่น <span className="text-yellow-400 font-semibold">Y0/Y8</span>{" "}
-              กึ่งอัตโนมัติ (มีปุ่ม Shock) และรุ่น{" "}
-              <span className="text-yellow-400 font-semibold">YA0/YA8</span> อัตโนมัติเต็มระบบ
-              ส่วนรุ่น <span className="text-yellow-400 font-semibold">Y8/YA8</span> มาพร้อมเซ็นเซอร์
-              CPR feedback มาตรฐาน
+              ทั้งสองรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span>{" "}
+              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,900</span>{" "}
+              เซ็นเซอร์ CPR feedback เป็นตัวเลือก ส่วนรุ่น{" "}
+              <span className="text-yellow-400 font-semibold">Y8 ฿49,999</span> มาพร้อมเซ็นเซอร์ CPR
+              feedback มาตรฐาน
             </p>
             <a
               href={LINE_OA}
@@ -84,16 +84,28 @@ export default function PrimedicPage() {
         </div>
       </section>
 
-      {/* Model quick cards */}
+      {/* Model quick cards + Yuwell GPS */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {primedicModels.map((m) => (
-            <div key={m.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <div key={m.id} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="font-bold text-white">{m.name}</div>
+              <div className="text-2xl font-black text-yellow-400 mt-1">
+                ฿{m.price.toLocaleString()}
+              </div>
               <div className="text-xs text-gray-400 mt-1">{m.summary}</div>
             </div>
           ))}
+          {/* Yuwell AED with GPS built in */}
+          <div className="bg-gray-900 border border-yellow-400/40 rounded-xl p-5">
+            <div className="font-bold text-white">{yuwellGpsAed.name}</div>
+            <div className="text-2xl font-black text-yellow-400 mt-1">
+              ฿{yuwellGpsAed.price.toLocaleString()}
+            </div>
+            <div className="text-xs text-gray-400 mt-1">{yuwellGpsAed.description}</div>
+          </div>
         </div>
+        <p className="text-center text-gray-600 text-xs mt-4">ราคายังไม่รวม VAT</p>
       </section>
 
       {/* Lead form */}

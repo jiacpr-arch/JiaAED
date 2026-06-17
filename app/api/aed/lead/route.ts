@@ -22,8 +22,7 @@ const EXTRA_PRODUCT_IDS = [
   "care-ultimate",
   "primedic-y0",
   "primedic-y8",
-  "primedic-ya0",
-  "primedic-ya8",
+  "yuwell-gps",
 ];
 const VALID_PRODUCT_IDS = new Set<string>([
   ...products.map((p) => p.id),

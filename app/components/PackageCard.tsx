@@ -29,8 +29,11 @@ export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
       <div className="text-sm text-yellow-400/90 mb-3">{pkg.nameTh}</div>
       <p className="text-sm text-gray-400 mb-4">{pkg.tagline}</p>
 
-      <div className="mb-1">
+      <div className="mb-1 flex items-end gap-2">
         <span className="text-3xl font-black text-yellow-400">{pkg.priceLabel}</span>
+        {pkg.listPriceLabel && (
+          <span className="text-gray-500 line-through text-base mb-1">{pkg.listPriceLabel}</span>
+        )}
       </div>
       <div className="text-gray-500 text-xs mb-4">{pkg.priceNote}</div>
 

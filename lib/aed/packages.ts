@@ -12,6 +12,7 @@ export type AcquisitionPackage = {
   nameTh: string; // Thai label, e.g. "ซื้อขาด"
   tagline: string;
   priceLabel: string; // headline price string (packages aren't single-number SKUs)
+  listPriceLabel: string | null; // struck-through list/credit price, if any
   priceNote: string; // structure under the headline
   deposit: string | null;
   features: string[];
@@ -30,9 +31,9 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Premium",
     nameTh: "ซื้อขาด",
     tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
-    // TODO(owner): source also states ฿69,000 — confirm 69,900 vs 69,000.
-    priceLabel: "฿69,900",
-    priceNote: "จ่ายครั้งเดียว · เป็นทรัพย์สินขององค์กรทันที · ออกใบกำกับภาษีได้",
+    priceLabel: "เงินสด ฿39,900",
+    listPriceLabel: "฿69,000",
+    priceNote: "เงินสด ฿39,900 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · ออกใบกำกับภาษีได้",
     deposit: null,
     features: [
       "เครื่อง AED + GPS เป็นกรรมสิทธิ์ขององค์กร",
@@ -52,6 +53,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     nameTh: "เช่าแล้วได้ซื้อ",
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง",
     priceLabel: "฿2,500/เดือน",
+    listPriceLabel: null,
     // TODO(owner): 15,000 + 2,500 × 18 = 60,000 < Premium 69,900 — rent-to-own
     // currently totals LESS than buying outright. Confirm intended pricing.
     priceNote: "มัดจำ ฿15,000 + ผ่อน ฿2,500/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
@@ -72,6 +74,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Care",
     nameTh: "เช่าบริการครบวงจร",
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
+    listPriceLabel: null,
     // We treat the subscription tiers (BASIC/PREMIUM/ULTIMATE) as the canonical
     // monthly price of Safety Care.
     // TODO(owner): legacy material also says "฿1,500/เดือน" — reconcile with the
