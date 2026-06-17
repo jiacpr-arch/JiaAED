@@ -14,6 +14,7 @@ type Body = {
   email?: string;
   company?: string;
   productId?: string;
+  unitCount?: string;
   message?: string;
   pageUrl?: string;
   utm?: Record<string, string | undefined>;
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
   const email = clean(body.email, 120);
   const company = clean(body.company, 200);
   const productId = clean(body.productId, 30);
+  const unitCount = clean(body.unitCount, 40);
   const message = clean(body.message, 2000);
   const pageUrl = clean(body.pageUrl, 500);
   const variant = clean(body.variant, 30) || "full";
@@ -84,6 +86,7 @@ export async function POST(req: Request) {
     email,
     company_name: company,
     product_id: productId,
+    unit_count: unitCount,
     message,
     gclid,
     utm_source: utmSource,
@@ -110,6 +113,7 @@ export async function POST(req: Request) {
       email,
       company,
       productId,
+      unitCount,
       message,
       utmSource,
       utmCampaign,

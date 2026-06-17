@@ -185,6 +185,7 @@ export async function notifyNewLead(p: {
   gclid: string | null;
   utmSource: string | null;
   utmCampaign: string | null;
+  unitCount?: string | null;
 }): Promise<void> {
   const adSource = p.gclid
     ? `Google Ads (gclid: ${p.gclid.slice(0, 12)}…)`
@@ -201,6 +202,7 @@ export async function notifyNewLead(p: {
   ];
   if (p.company) rows.push(infoRow("🏢 บริษัท", p.company));
   if (p.productId) rows.push(infoRow("📦 รุ่น", p.productId));
+  if (p.unitCount) rows.push(infoRow("🔢 จำนวนเครื่อง", p.unitCount));
   if (p.message) rows.push(infoRow("💬 ข้อความ", p.message));
   rows.push(infoRow("🌐 ที่มา", adSource));
   rows.push(infoRow("⏰ เวลา", bkkNow()));
@@ -282,6 +284,7 @@ export async function notifyAbandonedForm(p: {
   utmSource: string | null;
   utmCampaign: string | null;
   pageUrl: string | null;
+  unitCount?: string | null;
 }): Promise<void> {
   const lines: string[] = [`⚠️ Form ทิ้งกลางทาง (${p.variant})`];
   if (p.fullName) lines.push(`ชื่อ: ${p.fullName}`);
@@ -290,6 +293,7 @@ export async function notifyAbandonedForm(p: {
   if (p.email) lines.push(`อีเมล: ${p.email}`);
   if (p.company) lines.push(`บริษัท: ${p.company}`);
   if (p.productId) lines.push(`สนใจ: ${p.productId}`);
+  if (p.unitCount) lines.push(`จำนวนเครื่อง: ${p.unitCount}`);
   if (p.message) lines.push(`ข้อความ: ${p.message.slice(0, 120)}`);
   if (p.utmSource) {
     const src = p.utmCampaign ? `${p.utmSource} / ${p.utmCampaign}` : p.utmSource;

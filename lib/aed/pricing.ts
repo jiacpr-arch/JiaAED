@@ -63,6 +63,45 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     vatRate: 0.07,
     faProductCode: "AED-BATT",
   },
+  // ── PRIMEDIC HeartSave (premium line — same supplier cost tier as i7 for Y0) ──
+  // NOTE: PRIMEDIC อย./ฆพ. pending → not in the public products[] grid / Merchant
+  // feed yet (see lib/aed/products.ts). Priced here so the AI sales bot can quote.
+  "primedic-y0": {
+    id: "primedic-y0",
+    name: "PRIMEDIC HeartSave Y0",
+    nameTh: "เครื่อง AED PRIMEDIC HeartSave Y0",
+    description: "AED กึ่งอัตโนมัติ (มีปุ่ม Shock) เซ็นเซอร์ CPR feedback เป็นตัวเลือก",
+    msrp: 70_000,
+    startingPrice: 39_000,
+    bestPrice: 39_000,
+    minPrice: 39_000,
+    vatRate: 0.07,
+    faProductCode: "AED-PMD-Y0",
+  },
+  "primedic-y8": {
+    id: "primedic-y8",
+    name: "PRIMEDIC HeartSave Y8",
+    nameTh: "เครื่อง AED PRIMEDIC HeartSave Y8",
+    description: "AED กึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback มาตรฐาน",
+    msrp: 70_000,
+    startingPrice: 49_999,
+    bestPrice: 49_999,
+    minPrice: 49_999, // ราคาต่ำสุดที่ขายได้ (owner) — ห้ามต่ำกว่านี้
+    vatRate: 0.07,
+    faProductCode: "AED-PMD-Y8",
+  },
+  "yuwell-gps": {
+    id: "yuwell-gps",
+    name: "Yuwell AED (GPS built-in)",
+    nameTh: "เครื่อง AED Yuwell พร้อม GPS ในตัว",
+    description: "เครื่อง AED ที่มีระบบ GPS ในตัว ติดตามตำแหน่งและสถานะแบบเรียลไทม์",
+    msrp: 60_000,
+    startingPrice: 60_000,
+    bestPrice: 60_000,
+    minPrice: 58_000,
+    vatRate: 0.07,
+    faProductCode: "AED-YW-GPS",
+  },
 };
 
 export function getProduct(productId: string): AedProduct | null {
@@ -136,4 +175,32 @@ function buildResult(
 
 export function formatThaiPrice(amount: number): string {
   return amount.toLocaleString("th-TH") + " บาท";
+}
+
+// ─── Pricing policy: never the cheapest in the market ─────────────────────────
+// Owner directive: do NOT undercut the market on anything — INCLUDING electrode
+// pads and batteries. `minPrice` is the hard floor the AI/sales must never cross;
+// `marketFloor` documents the lowest competitor price we've observed, and our
+// minPrice must stay STRICTLY ABOVE it. Update these as wholesale is finalized.
+export const PRICING_POLICY = {
+  rule: "ห้ามตั้งราคาต่ำที่สุดในตลาด รวมถึงแผ่นแปะและแบตเตอรี่",
+  // TODO(owner): verify observed market-floor prices for consumables.
+  marketFloor: {
+    "pad-adult": 4_000,
+    battery: 6_000,
+  } as Record<string, number>,
+} as const;
+
+// Dev/CI guard — call from a unit check or a build script, NOT per request.
+// Returns a list of violations (empty = compliant) so future edits can't silently
+// drop a price to or below the market floor.
+export function assertAboveMarketFloor(): string[] {
+  const violations: string[] = [];
+  for (const [id, floor] of Object.entries(PRICING_POLICY.marketFloor)) {
+    const p = AED_PRODUCTS[id];
+    if (p && p.minPrice <= floor) {
+      violations.push(`${id}: minPrice ${p.minPrice} ≤ market floor ${floor}`);
+    }
+  }
+  return violations;
 }
