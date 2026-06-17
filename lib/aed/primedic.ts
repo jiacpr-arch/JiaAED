@@ -26,6 +26,10 @@ export type PrimedicModel = {
   // Y8 ships with the CPR feedback sensor as standard; Y0 makes it optional.
   cprFeedback: "standard" | "optional";
   summary: string;
+  // keyDiff = the ONE thing that sets this model apart (so Y0/Y8/GPS don't blur
+  // together on the page). bestFor = the buyer it suits.
+  keyDiff: string;
+  bestFor: string;
   image: string; // TODO(owner): real PRIMEDIC product photos
   badge: string | null;
 };
@@ -38,6 +42,8 @@ export const primedicModels: PrimedicModel[] = [
     shockMode: "semi-auto",
     cprFeedback: "optional",
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
+    keyDiff: "รุ่นเริ่มต้น — ยังไม่มีเซ็นเซอร์ CPR (เพิ่มทีหลังได้)",
+    bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
     image: "/images/primedic-open.png",
     badge: null,
   },
@@ -48,6 +54,8 @@ export const primedicModels: PrimedicModel[] = [
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "กึ่งอัตโนมัติ + เซ็นเซอร์ CPR feedback มาตรฐาน",
+    keyDiff: "เพิ่มเซ็นเซอร์ CPR feedback — วัดแรง/จังหวะกดหน้าอกแบบเรียลไทม์",
+    bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
     image: "/images/primedic-open.png",
     badge: "แนะนำ",
   },
@@ -59,6 +67,8 @@ export const yuwellGpsAed = {
   name: "Yuwell AED — GPS ในตัว",
   price: 60_000, // before VAT
   image: "/images/primedic-heartsave.png",
+  keyDiff: "มี GPS + ติดตามตำแหน่ง/สถานะออนไลน์ในตัวเครื่อง",
+  bestFor: "องค์กรหลายสาขา · ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ตลอดเวลา",
   description:
     "เครื่อง AED พร้อมระบบ GPS ในตัว — ติดตามตำแหน่งและสถานะเครื่องแบบเรียลไทม์ เหมาะกับองค์กรหลายสาขา",
   features: [

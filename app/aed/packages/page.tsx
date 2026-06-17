@@ -9,8 +9,10 @@ import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { PromoBanner } from "@/app/components/PromoBanner";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { packageFaqCategories } from "@/lib/aed/faqs";
+import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -56,6 +58,11 @@ export default function PackagesPage() {
         <p className="text-center text-gray-600 text-xs mt-4">
           * ราคาเป็นราคาเริ่มต้น อาจปรับตามจำนวนเครื่องและรูปแบบบริการ — ขอใบเสนอราคาเฉพาะองค์กรได้
         </p>
+      </section>
+
+      {/* ฿10,000 survivor-reward promotion */}
+      <section className="max-w-6xl mx-auto px-4 py-4">
+        <PromoBanner promo={survivorReward} />
       </section>
 
       {/* Rent vs buy */}

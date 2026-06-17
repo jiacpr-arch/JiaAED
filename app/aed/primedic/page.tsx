@@ -5,9 +5,12 @@ import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { SpecComparisonTable } from "@/app/components/SpecComparisonTable";
+import { PrimedicLineup } from "@/app/components/PrimedicLineup";
+import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
-import { primedicModels, yuwellGpsAed, PRIMEDIC_REGULATORY } from "@/lib/aed/primedic";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/primedic";
+import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -73,39 +76,31 @@ export default function PrimedicPage() {
         </div>
       </section>
 
-      {/* Spec comparison */}
+      {/* ฿10,000 survivor-reward promotion */}
+      <section className="max-w-6xl mx-auto px-4 py-4">
+        <PromoBanner promo={survivorReward} />
+      </section>
+
+      {/* 3-way lineup — Y0 vs Y8 vs GPS, each with its key difference called out */}
+      <section className="max-w-6xl mx-auto px-4 py-6">
+        <SectionHeading
+          title="3 รุ่นต่างกันยังไง?"
+          subtitle="เลือกให้เหมาะกับการใช้งานและงบประมาณ — ดูจุดต่างของแต่ละรุ่นได้ที่นี่"
+        />
+        <div className="mt-6">
+          <PrimedicLineup />
+        </div>
+      </section>
+
+      {/* Detailed spec comparison (Y0 vs Y8) */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <PriceViewTracker targetId="primedic-specs" />
         <div id="primedic-specs">
-          <SectionHeading title="เปรียบเทียบสเปกทั้ง 4 รุ่น" />
+          <SectionHeading title="เปรียบเทียบสเปกละเอียด — Y0 vs Y8" />
           <div className="mt-6">
             <SpecComparisonTable />
           </div>
         </div>
-      </section>
-
-      {/* Model quick cards + Yuwell GPS */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {primedicModels.map((m) => (
-            <div key={m.id} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <div className="font-bold text-white">{m.name}</div>
-              <div className="text-2xl font-black text-yellow-400 mt-1">
-                ฿{m.price.toLocaleString()}
-              </div>
-              <div className="text-xs text-gray-400 mt-1">{m.summary}</div>
-            </div>
-          ))}
-          {/* Yuwell AED with GPS built in */}
-          <div className="bg-gray-900 border border-yellow-400/40 rounded-xl p-5">
-            <div className="font-bold text-white">{yuwellGpsAed.name}</div>
-            <div className="text-2xl font-black text-yellow-400 mt-1">
-              ฿{yuwellGpsAed.price.toLocaleString()}
-            </div>
-            <div className="text-xs text-gray-400 mt-1">{yuwellGpsAed.description}</div>
-          </div>
-        </div>
-        <p className="text-center text-gray-600 text-xs mt-4">ราคายังไม่รวม VAT</p>
       </section>
 
       {/* Lead form */}

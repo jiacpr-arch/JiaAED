@@ -12,7 +12,9 @@ import { PriceViewTracker } from "./components/PriceViewTracker";
 import { LatestNews } from "./components/LatestNews";
 import { PackageCard } from "./components/PackageCard";
 import { TrustStats } from "./components/TrustStats";
+import { PromoBanner } from "./components/PromoBanner";
 import { acquisitionPackages } from "@/lib/aed/packages";
+import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -483,6 +485,11 @@ export default function Home() {
             </Link>
           </div>
 
+          {/* ฿10,000 survivor-reward promotion */}
+          <div className="mt-10">
+            <PromoBanner promo={survivorReward} />
+          </div>
+
           {/* PRIMEDIC premium line teaser */}
           <Link
             href="/aed/primedic"
@@ -495,9 +502,9 @@ export default function Home() {
               <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-2 border border-yellow-400/20">
                 ✨ ใหม่ · ไลน์พรีเมียม
               </div>
-              <h3 className="text-xl font-bold text-white">PRIMEDIC HeartSave — Y0 / Y8 / YA0 / YA8</h3>
+              <h3 className="text-xl font-bold text-white">PRIMEDIC HeartSave — Y0 / Y8 + Yuwell GPS</h3>
               <p className="text-sm text-gray-400 mt-1">
-                รุ่นกึ่งอัตโนมัติและอัตโนมัติเต็มระบบ พร้อมเซ็นเซอร์ CPR feedback — เปรียบเทียบสเปกทั้ง 4 รุ่น
+                รุ่นกึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback และรุ่นมี GPS ในตัว — ดูจุดต่างของแต่ละรุ่น
               </p>
               <span className="inline-block text-yellow-400 font-semibold text-sm mt-2">ดูรายละเอียด →</span>
             </div>
