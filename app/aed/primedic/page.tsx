@@ -10,7 +10,7 @@ import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, primedicCertifications } from "@/lib/aed/primedic";
-import { survivorReward } from "@/lib/aed/promotion";
+import { survivorReward, flyerImage } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -68,6 +68,26 @@ export default function PrimedicPage() {
               💬 สอบถามราคา / กำหนดวางจำหน่าย
             </a>
           </div>
+        </div>
+
+        {/* Flyer gallery — Y0 / Y8 marketing materials */}
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
+          {[
+            { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
+            { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
+            { src: "/images/primedic-y0-flyer-a.png", alt: "PRIMEDIC Y0 — แผ่นอิเล็กโทรดและชุดพร้อมใช้", w: 1254, h: 1254 },
+            { src: "/images/primedic-y0-promo.png",   alt: "Yuwell HeartSave Y0 — โปรโมชั่นและอบรม CPR", w: 1024, h: 1536 },
+          ].map((img) => (
+            <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={img.w}
+                height={img.h}
+                className="w-full h-auto"
+              />
+            </div>
+          ))}
         </div>
 
         {/* Regulatory disclaimer — PRIMEDIC needs its own อย./ฆพ. */}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
@@ -46,6 +47,20 @@ export default function SubscriptionPage() {
           title="ระบบดูแล AED อัจฉริยะ สำหรับองค์กรยุคใหม่"
           subtitle='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'
         />
+
+        {/* GPS AED + Cloud Dashboard flyer */}
+        <div className="mt-8 flex justify-center">
+          <div className="rounded-2xl overflow-hidden border border-gray-800 w-full max-w-lg">
+            <Image
+              src="/images/yuwell-gps-flyer.png"
+              alt="Yuwell GPS AED เช่า พร้อมระบบ Cloud Dashboard ติดตามสถานะ Real-time"
+              width={1159}
+              height={1358}
+              className="w-full h-auto"
+              priority
+            />
+          </div>
+        </div>
 
         <PriceViewTracker targetId="subscription-price" />
         <div id="subscription-price" className="mt-8">
