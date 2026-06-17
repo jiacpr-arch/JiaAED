@@ -9,7 +9,7 @@ import { PrimedicLineup } from "@/app/components/PrimedicLineup";
 import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
-import { PRIMEDIC_REGULATORY } from "@/lib/aed/primedic";
+import { PRIMEDIC_REGULATORY, primedicCertifications } from "@/lib/aed/primedic";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
@@ -73,6 +73,19 @@ export default function PrimedicPage() {
         {/* Regulatory disclaimer — PRIMEDIC needs its own อย./ฆพ. */}
         <div className="mt-6 rounded-xl border border-yellow-400/30 bg-yellow-400/5 px-4 py-3 text-sm text-yellow-200/90">
           ⚠️ {PRIMEDIC_REGULATORY.disclaimer}
+        </div>
+
+        {/* Certifications — ISO 13485 / CE / อย. (from the official Yuwell docs) */}
+        <div className="mt-4 grid grid-cols-3 gap-3">
+          {primedicCertifications.map((c) => (
+            <div
+              key={c.label}
+              className="rounded-xl border border-gray-800 bg-gray-900 px-3 py-3 text-center"
+            >
+              <div className="text-base font-extrabold text-white">{c.label}</div>
+              <div className="text-[11px] text-gray-400 mt-0.5">{c.sub}</div>
+            </div>
+          ))}
         </div>
       </section>
 
