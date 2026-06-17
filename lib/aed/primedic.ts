@@ -2,17 +2,28 @@
 // Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
 // HeartSave comparison sheet.
 //
-// IMPORTANT (compliance): PRIMEDIC needs its OWN อย./ฆพ. (Thai FDA registration +
-// advertising licence). DO NOT reuse the i7 numbers (อย. 68-2-2-2-0005243 /
-// ฆพ.743/2569). The values below are PLACEHOLDERS until the owner supplies the
-// real ones — do not publish them as real registrations in JSON-LD/feed.
+// IMPORTANT (compliance): the Yuwell/PRIMEDIC HeartSave Y-series has its OWN Thai
+// FDA registration (อย.) — number below, from the official ใบรับแจ้งรายการละเอียด
+// (มาตรา 19). It is DISTINCT from the i7 numbers (อย. 68-2-2-2-0005243 /
+// ฆพ.743/2569) — never mix them.
+//
+// อย. registration 65-2-2-2-0013415 covers HeartSave Y0/Y8 (semi-auto) and
+// YA0/YA8 (fully-auto), battery NRL01B, and the OBS-DE/P electrode pads.
+// Registrant/importer: บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด (กท.สน. 754/2564).
+// Manufacturer: Jiangsu Yuyue Medical Equipment & Supply Co., Ltd (China).
+//
+// NOTE(owner): this is the device registration (อย.) only. A separate advertising
+// licence (ฆพ.) is still required before public advertising / indexing the page.
+// Until ฆพ. is confirmed the page stays noindex and is kept out of feed/JSON-LD.
 export const PRIMEDIC_REGULATORY = {
-  // TODO(owner): replace with the real PRIMEDIC อย. number before advertising.
-  fdaRegistration: "อย. (อยู่ระหว่างขึ้นทะเบียน)",
-  // TODO(owner): replace with the real PRIMEDIC ฆพ. number before advertising.
-  adLicense: "ฆพ. (อยู่ระหว่างขออนุญาต)",
+  fdaRegistration: "อย. เลขที่ 65-2-2-2-0013415",
+  fdaValidUntil: "31 ธันวาคม 2569",
+  registrant: "บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
+  manufacturer: "Jiangsu Yuyue Medical Equipment & Supply Co., Ltd (จีน)",
+  // TODO(owner): add the ฆพ. (advertising licence) number once confirmed.
+  adLicense: null as string | null,
   disclaimer:
-    "รุ่น PRIMEDIC HeartSave อยู่ระหว่างดำเนินการขึ้นทะเบียน อย. และใบอนุญาตโฆษณาสำหรับประเทศไทย — สอบถามสถานะล่าสุดและกำหนดวางจำหน่ายได้ทาง LINE",
+    "เครื่อง AED Yuwell/PRIMEDIC HeartSave (Y0/Y8) ขึ้นทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
 } as const;
 
 export type PrimedicModelId = "primedic-y0" | "primedic-y8";
