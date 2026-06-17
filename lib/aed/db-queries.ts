@@ -209,6 +209,7 @@ export async function updateDeal(
     | "flowaccount_quotation_id"
     | "flowaccount_quotation_number"
     | "stripe_payment_link_url"
+    | "stripe_payment_intent_id"
     | "payment_status"
     | "paid_at"
     | "notes"
@@ -221,6 +222,11 @@ export async function updateDeal(
 export async function getDealById(dealId: string): Promise<AedDeal | null> {
   const { data } = await db().from("aed_deals").select("*").eq("id", dealId).maybeSingle();
   return data as AedDeal | null;
+}
+
+export async function getCustomerById(customerId: string): Promise<AedCustomer | null> {
+  const { data } = await db().from("aed_customers").select("*").eq("id", customerId).maybeSingle();
+  return data as AedCustomer | null;
 }
 
 // ─── Follow-ups ───────────────────────────────────────────────────────────────
