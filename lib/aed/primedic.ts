@@ -38,7 +38,7 @@ export const primedicModels: PrimedicModel[] = [
   {
     id: "primedic-y0",
     name: "HeartSave Y0",
-    price: 39_900,
+    price: 39_000,
     shockMode: "semi-auto",
     cprFeedback: "optional",
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
@@ -124,7 +124,7 @@ export const primedicDiffSpecs: PrimedicSpecRow[] = [
   {
     label: "ราคา (ก่อน VAT)",
     values: {
-      "primedic-y0": "฿39,900",
+      "primedic-y0": "฿39,000",
       "primedic-y8": "฿49,999",
     },
   },

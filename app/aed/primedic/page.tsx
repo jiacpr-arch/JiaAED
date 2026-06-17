@@ -21,7 +21,7 @@ const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 — AED รุ่นพรีเมียม | JiaAED",
   description:
-    "PRIMEDIC HeartSave ไลน์ AED พรีเมียม รุ่นกึ่งอัตโนมัติ Y0 (฿39,900) และ Y8 (฿49,999) พร้อมเซ็นเซอร์ CPR feedback และ Yuwell AED รุ่นมี GPS ในตัว",
+    "PRIMEDIC HeartSave ไลน์ AED พรีเมียม รุ่นกึ่งอัตโนมัติ Y0 (฿39,000) และ Y8 (฿49,999) พร้อมเซ็นเซอร์ CPR feedback และ Yuwell AED รุ่นมี GPS ในตัว",
   alternates: { canonical: "/aed/primedic" },
   robots: { index: false, follow: true },
 };
@@ -52,7 +52,7 @@ export default function PrimedicPage() {
           <div className="space-y-4">
             <p className="text-gray-300">
               ทั้งสองรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span>{" "}
-              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,900</span>{" "}
+              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,000</span>{" "}
               เซ็นเซอร์ CPR feedback เป็นตัวเลือก ส่วนรุ่น{" "}
               <span className="text-yellow-400 font-semibold">Y8 ฿49,999</span> มาพร้อมเซ็นเซอร์ CPR
               feedback มาตรฐาน
