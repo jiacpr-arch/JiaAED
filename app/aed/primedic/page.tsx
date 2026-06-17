@@ -41,8 +41,8 @@ export default function PrimedicPage() {
         <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
           <div className="relative w-full h-72 rounded-2xl overflow-hidden border border-gray-800 bg-white">
             <Image
-              src="/images/primedic-open.png"
-              alt="PRIMEDIC HeartSave AED"
+              src="/images/primedic-kit.png"
+              alt="PRIMEDIC HeartSave AED พร้อมแผ่นแปะอิเล็กโทรด"
               fill
               className="object-contain p-6"
               sizes="(max-width: 768px) 100vw, 50vw"
