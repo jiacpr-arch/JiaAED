@@ -4,7 +4,7 @@ import { products, accessories } from "@/lib/aed/products";
 import { faqs } from "@/lib/aed/faqs";
 import { rentalPlans } from "@/lib/aed/rental";
 import { LeadForm } from "./components/LeadForm";
-import { MiniLeadForm } from "./components/MiniLeadForm";
+import { QuickContact } from "./components/QuickContact";
 import { HeroCta } from "./components/HeroCta";
 import { HeroHeadline } from "./components/HeroHeadline";
 import { YouTubeLite } from "./components/YouTubeLite";
@@ -150,10 +150,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quick contact bar — for ad traffic that wants direct callback */}
+      {/* Quick contact bar — LINE-first (visitors prefer LINE over the form), phone callback as opt-in fallback */}
       <section className="bg-gray-900 border-y border-gray-800 py-6 px-4">
         <div className="max-w-3xl mx-auto">
-          <MiniLeadForm />
+          <QuickContact />
         </div>
       </section>
 
