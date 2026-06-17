@@ -34,6 +34,7 @@ export async function GET() {
     .join("\n");
 
   const accessoryItems = accessories
+    .filter((a): a is typeof a & { price: number } => a.price != null)
     .map((a) => {
       const title = `${a.name} — ${a.subtitle}`;
       const desc = `${a.description} · ${a.features.join(" · ")}`;

@@ -2,18 +2,9 @@
 // Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
 // HeartSave comparison sheet.
 //
-// IMPORTANT (compliance): PRIMEDIC needs its OWN อย./ฆพ. (Thai FDA registration +
-// advertising licence). DO NOT reuse the i7 numbers (อย. 68-2-2-2-0005243 /
-// ฆพ.743/2569). The values below are PLACEHOLDERS until the owner supplies the
-// real ones — do not publish them as real registrations in JSON-LD/feed.
-export const PRIMEDIC_REGULATORY = {
-  // TODO(owner): replace with the real PRIMEDIC อย. number before advertising.
-  fdaRegistration: "อย. (อยู่ระหว่างขึ้นทะเบียน)",
-  // TODO(owner): replace with the real PRIMEDIC ฆพ. number before advertising.
-  adLicense: "ฆพ. (อยู่ระหว่างขออนุญาต)",
-  disclaimer:
-    "รุ่น PRIMEDIC HeartSave อยู่ระหว่างดำเนินการขึ้นทะเบียน อย. และใบอนุญาตโฆษณาสำหรับประเทศไทย — สอบถามสถานะล่าสุดและกำหนดวางจำหน่ายได้ทาง LINE",
-} as const;
+// Compliance: PRIMEDIC's อย./ฆพ. live in ./regulatory.ts (re-exported here for
+// backward-compat). DO NOT reuse the i7 numbers — see regulatory.ts.
+export { PRIMEDIC_REGULATORY } from "./regulatory";
 
 export type PrimedicModelId = "primedic-y0" | "primedic-y8";
 

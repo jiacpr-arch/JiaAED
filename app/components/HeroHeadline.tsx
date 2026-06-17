@@ -5,8 +5,8 @@ import { getOrAssignHeadlineVariant, type HeadlineVariant } from "@/lib/aed/ab-v
 import { trackEvent } from "@/lib/aed/analytics-client";
 
 const COPY: Record<HeadlineVariant, { line1: string; accent: string; line2: string }> = {
-  a: { line1: "AED Amoul i7", accent: "เครื่องกระตุก", line2: "หัวใจไฟฟ้า" },
-  b: { line1: "ช่วยชีวิตได้ใน 7 วินาที", accent: "AED Amoul i7", line2: "พร้อมใช้ทันที" },
+  a: { line1: "เครื่องกระตุกหัวใจไฟฟ้า", accent: "Amoul i7 · PRIMEDIC", line2: "2 แบรนด์ให้เลือก" },
+  b: { line1: "ช่วยชีวิตได้ใน 7 วินาที", accent: "Amoul i7 · PRIMEDIC", line2: "พร้อมใช้ทันที" },
 };
 
 export function HeroHeadline() {

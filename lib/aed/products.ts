@@ -61,7 +61,10 @@ export type Accessory = {
   id: string;
   name: string;
   subtitle: string;
-  price: number; // ราคาก่อน VAT
+  // ราคาก่อน VAT. null = ยังไม่กำหนดราคา (โชว์ priceLabel แทน — สำหรับอะไหล่ PRIMEDIC
+  // ที่เจ้าของจะใส่ราคาทีหลัง)
+  price: number | null;
+  priceLabel?: string; // ข้อความแทนราคาเมื่อ price เป็น null
   image: string; // path ใต้ /public
   description: string;
   features: string[];
@@ -71,7 +74,7 @@ export const accessories: Accessory[] = [
   {
     id: "pad-adult",
     name: "แผ่นนำไฟฟ้า (Pad) สำหรับผู้ใหญ่",
-    subtitle: "อะไหล่ / วัสดุสิ้นเปลือง",
+    subtitle: "อะไหล่ Amoul i7 / วัสดุสิ้นเปลือง",
     price: 5000,
     image: "/images/accessory-pad.jpg",
     description: "แผ่นแปะนำไฟฟ้าสำหรับผู้ใหญ่ ใช้กับเครื่อง AED Amoul i7",
@@ -84,13 +87,42 @@ export const accessories: Accessory[] = [
   {
     id: "battery",
     name: "แบตเตอรี่ AED Amoul i7",
-    subtitle: "อะไหล่",
+    subtitle: "อะไหล่ Amoul i7",
     price: 7500,
     image: "/images/accessory-battery.jpg",
     description: "แบตเตอรี่สำรอง / เปลี่ยนทดแทน สำหรับเครื่อง AED Amoul i7",
     features: [
       "ของแท้ Ambul",
       "ลิเธียม อายุการใช้งานยาวนาน",
+      "พร้อมใช้งานทันที",
+    ],
+  },
+  // ─── อะไหล่ PRIMEDIC — ราคาจะใส่ทีหลัง (price: null) ───────────────────────────
+  {
+    id: "primedic-pad",
+    name: "แผ่นนำไฟฟ้า (Pad) PRIMEDIC HeartSave",
+    subtitle: "อะไหล่ PRIMEDIC / วัสดุสิ้นเปลือง",
+    price: null,
+    priceLabel: "สอบถามราคา",
+    image: "/images/primedic-open.png",
+    description: "แผ่นอิเล็กโทรดแบบใช้แล้วทิ้งสำหรับเครื่อง PRIMEDIC HeartSave (รองรับผู้ใหญ่และเด็ก)",
+    features: [
+      "ของแท้ PRIMEDIC",
+      "รองรับผู้ใหญ่และเด็ก (อายุ 3 ปีขึ้นไป)",
+      "แนะนำเปลี่ยนตามวันหมดอายุที่ระบุบนซอง",
+    ],
+  },
+  {
+    id: "primedic-battery",
+    name: "ชุดพลังงาน (Battery) PRIMEDIC HeartSave",
+    subtitle: "อะไหล่ PRIMEDIC",
+    price: null,
+    priceLabel: "สอบถามราคา",
+    image: "/images/primedic-open.png",
+    description: "โมดูลพลังงานสำรอง / เปลี่ยนทดแทน สำหรับเครื่อง PRIMEDIC HeartSave",
+    features: [
+      "ของแท้ PRIMEDIC",
+      "LiMnO₂ แบบใช้แล้วทิ้ง",
       "พร้อมใช้งานทันที",
     ],
   },
