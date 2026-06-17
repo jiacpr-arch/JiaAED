@@ -3,12 +3,12 @@ import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
-// Real product photos per model (same HeartSave hardware, shown from the angle
-// that best signals each option: open unit for Y0/Y8, closed red unit for GPS).
+// Owner-supplied marketing flyers per model (Y0 / Y8 / GPS), shown as the card
+// visual so each option carries its own branded artwork.
 const imgById: Record<string, string> = {
-  "primedic-y0": "/images/primedic-open.png",
-  "primedic-y8": "/images/primedic-y8.png",
-  "yuwell-gps": "/images/primedic-heartsave.png",
+  "primedic-y0": "/images/primedic-y0-flyer-b.png",
+  "primedic-y8": "/images/primedic-y8-flyer.png",
+  "yuwell-gps": "/images/yuwell-gps-flyer.png",
 };
 
 type Card = {
@@ -70,12 +70,12 @@ export function PrimedicLineup() {
             key={c.id}
             className={`flex flex-col rounded-2xl border bg-gray-900 p-5 ${c.accent.split(" ")[0]}`}
           >
-            <div className="relative w-full h-36 rounded-xl overflow-hidden bg-white mb-3">
+            <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-white mb-3">
               <Image
                 src={imgById[c.id]}
                 alt={c.name}
                 fill
-                className="object-contain p-2"
+                className="object-contain"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>

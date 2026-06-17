@@ -10,7 +10,7 @@ import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, primedicCertifications } from "@/lib/aed/primedic";
-import { survivorReward, flyerImage } from "@/lib/aed/promotion";
+import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
