@@ -36,7 +36,8 @@ export async function updateCustomer(
   customerId: string,
   updates: Partial<Pick<AedCustomer, "full_name" | "phone" | "email" | "company_name" | "tax_id" | "address" | "customer_type" | "is_company" | "notes">>,
 ): Promise<void> {
-  await db().from("aed_customers").update(updates).eq("id", customerId);
+  const { error } = await db().from("aed_customers").update(updates).eq("id", customerId);
+  if (error) console.error("[AED] updateCustomer failed:", customerId, error);
 }
 
 // ─── LINE follows (confirmed friend-adds) ──────────────────────────────────────
@@ -90,20 +91,22 @@ export async function bumpConversation(conversationId: string): Promise<void> {
     .eq("id", conversationId)
     .maybeSingle();
 
-  await supabase
+  const { error } = await supabase
     .from("aed_conversations")
     .update({
       last_message_at: new Date().toISOString(),
       message_count: ((data?.message_count as number) ?? 0) + 1,
     })
     .eq("id", conversationId);
+  if (error) console.error("[AED] bumpConversation failed:", conversationId, error);
 }
 
 export async function updateConversationState(
   conversationId: string,
   updates: Partial<Pick<AedConversation, "status" | "current_intent" | "collected_data" | "lead_score">>,
 ): Promise<void> {
-  await db().from("aed_conversations").update(updates).eq("id", conversationId);
+  const { error } = await db().from("aed_conversations").update(updates).eq("id", conversationId);
+  if (error) console.error("[AED] updateConversationState failed:", conversationId, error);
 }
 
 // ─── Messages ─────────────────────────────────────────────────────────────────
@@ -215,7 +218,8 @@ export async function updateDeal(
     | "flowaccount_receipt_id"
   >>,
 ): Promise<void> {
-  await db().from("aed_deals").update(updates).eq("id", dealId);
+  const { error } = await db().from("aed_deals").update(updates).eq("id", dealId);
+  if (error) console.error("[AED] updateDeal failed:", dealId, error);
 }
 
 export async function getDealById(dealId: string): Promise<AedDeal | null> {
@@ -255,8 +259,9 @@ export async function getPendingFollowups(before: Date = new Date()): Promise<Ae
 }
 
 export async function markFollowupSent(followupId: string): Promise<void> {
-  await db()
+  const { error } = await db()
     .from("aed_followups")
     .update({ status: "sent", sent_at: new Date().toISOString() })
     .eq("id", followupId);
+  if (error) console.error("[AED] markFollowupSent failed:", followupId, error);
 }
