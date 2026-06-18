@@ -144,19 +144,30 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
       });
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
+        error?: string;
         message?: string;
         skipped?: string;
       };
       if (!res.ok || !json.ok) {
-        setErrorMsg(json.message || "ส่งไม่สำเร็จ ลองใหม่หรือทักทาง LINE");
+        const errCode = json.error ?? "unknown";
+        trackEvent("lead_form_error", { variant, error: errCode });
+        const msgs: Record<string, string> = {
+          invalid_phone: "เบอร์โทรไม่ถูกต้อง กรุณาใส่เบอร์ 10 หลัก เช่น 0812345678",
+          missing_contact: "กรุณากรอกเบอร์โทร",
+          store_failed: "ส่งไม่สำเร็จ กรุณาลองอีกครั้ง",
+        };
+        setErrorMsg(msgs[errCode] ?? json.message ?? "ส่งไม่สำเร็จ ลองใหม่หรือทักทาง LINE");
         setState("error");
         return;
       }
 
       submittedRef.current = true;
 
-      // Only count submissions that actually stored a lead. Honeypot/bot trips
-      // return ok:true with `skipped`, and must not fire a phantom conversion.
+      // Honeypot trips return ok:true with `skipped` — track for diagnostics, no conversion fire.
+      if (json.skipped) {
+        trackEvent("lead_form_honeypot", { variant });
+      }
+
       if (!json.skipped) {
         trackEvent("lead_form_submit", { variant, product_id: "none" });
 
@@ -201,11 +212,9 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
       className="rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-yellow-400/5 to-transparent p-5 md:p-6"
       noValidate
     >
-      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px" }}>
-        <label>
-          ห้ามกรอก
-          <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" />
-        </label>
+      {/* display:none prevents browser autofill false-positives; the field is still submitted in FormData */}
+      <div aria-hidden="true" style={{ display: "none" }}>
+        <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" />
       </div>
       <div className="text-center mb-3">
         <p className="font-bold text-white text-lg">📞 ฝากเบอร์ ทีมงานโทรกลับ</p>
