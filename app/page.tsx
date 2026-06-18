@@ -111,7 +111,7 @@ export default function Home() {
               <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
                 🏅 Amoul i7 · {regLine(AMOUL_REGULATORY)}
               </span>
-              <span className="inline-block bg-sky-400/10 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full border border-sky-400/20">
+              <span className="inline-block bg-red-500/10 text-red-400 text-xs font-semibold px-3 py-1 rounded-full border border-red-500/30">
                 {PRIMEDIC_REGULATORY.published
                   ? `🏅 PRIMEDIC · ${regLine(PRIMEDIC_REGULATORY)}`
                   : "✨ PRIMEDIC HeartSave"}
@@ -182,7 +182,7 @@ export default function Home() {
                   priority
                 />
               </div>
-              <span className="mt-2 text-xs font-semibold text-sky-300">PRIMEDIC HeartSave</span>
+              <span className="mt-2 text-xs font-semibold text-red-400">PRIMEDIC HeartSave</span>
             </a>
           </div>
         </div>
@@ -200,8 +200,8 @@ export default function Home() {
         <Image src="/images/lifestyle-cpr.png" alt="AED ในสถานการณ์จริง" fill className="object-cover object-center" />
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <div className="text-center text-white px-4">
-            <p className="text-2xl md:text-4xl font-black">ทุกวินาทีคือชีวิต</p>
-            <p className="text-gray-300 mt-2 text-lg">Shock พร้อมใน 7 วินาที ลดการเสียชีวิตได้ 70%</p>
+            <p className="text-2xl md:text-4xl font-black">ทุกวินาทีคือ<span className="text-red-400">ชีวิต</span></p>
+            <p className="text-gray-300 mt-2 text-lg">Shock พร้อมใน 7 วินาที ลดการเสียชีวิตได้ <span className="text-red-400 font-bold">70%</span></p>
           </div>
         </div>
       </section>
@@ -422,7 +422,7 @@ export default function Home() {
       <section className="py-14 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
-            <div className="inline-block bg-sky-400/10 text-sky-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-sky-400/20">
+            <div className="inline-block bg-red-500/10 text-red-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-red-500/30">
               🔬 เทียบสเปก PRIMEDIC
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-white mb-2">PRIMEDIC HeartSave — Y0 vs Y8</h2>
@@ -895,7 +895,7 @@ export default function Home() {
           <Image src="/images/lifestyle-cpr.png" alt="" fill className="object-cover" />
         </div>
         <div className="relative max-w-xl mx-auto">
-          <div className="text-yellow-400 text-4xl mb-4">❤️</div>
+          <div className="text-red-400 text-4xl mb-4">❤️</div>
           <h2 className="text-3xl font-black mb-3 text-white">พร้อมปกป้องชีวิตแล้วใช่ไหม?</h2>
           <p className="text-gray-500 mb-8">คุยกับ AI เจี่ยทาง LINE — ตอบทันที ออกใบเสนอราคาได้เลย</p>
           <a

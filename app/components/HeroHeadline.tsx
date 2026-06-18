@@ -25,7 +25,17 @@ export function HeroHeadline() {
       className="text-4xl md:text-5xl font-black mb-4 leading-tight"
     >
       {c.line1}<br />
-      <span className="text-yellow-400">{c.accent}</span><br />
+      {/* Split the brand accent so each brand shows in its real device colour:
+          Amoul = yellow casing, PRIMEDIC (Yuwell family) = red casing. */}
+      {c.accent.split(" · ").map((part, i) => (
+        <span key={part}>
+          {i > 0 && <span className="text-gray-500"> · </span>}
+          <span className={part.startsWith("Amoul") ? "text-yellow-400" : "text-red-400"}>
+            {part}
+          </span>
+        </span>
+      ))}
+      <br />
       {c.line2}
     </h1>
   );
