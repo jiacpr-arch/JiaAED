@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
 import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAbandonedForm } from "@/lib/aed/notify-owner";
+import { clean, hashIp, isValidPhone, isValidEmail } from "@/lib/aed/lead-validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,22 +20,6 @@ type Body = {
   utm?: Record<string, string | undefined>;
   gclid?: string;
 };
-
-const PHONE_RE = /^[0-9+\-() ]{6,20}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function clean(v: unknown, max = 500): string | null {
-  if (typeof v !== "string") return null;
-  const t = v.trim();
-  if (!t) return null;
-  return t.slice(0, max);
-}
-
-function hashIp(ip: string | null): string | null {
-  if (!ip) return null;
-  const salt = process.env.LEAD_IP_SALT || "jiaaed";
-  return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
-}
 
 export async function POST(req: Request) {
   let body: Body;
@@ -59,10 +43,10 @@ export async function POST(req: Request) {
   if (!phone && !email) {
     return NextResponse.json({ ok: true, skipped: "no_contact" });
   }
-  if (phone && !PHONE_RE.test(phone)) {
+  if (phone && !isValidPhone(phone, 6)) {
     return NextResponse.json({ ok: true, skipped: "invalid_phone" });
   }
-  if (email && !EMAIL_RE.test(email)) {
+  if (email && !isValidEmail(email)) {
     return NextResponse.json({ ok: true, skipped: "invalid_email" });
   }
 

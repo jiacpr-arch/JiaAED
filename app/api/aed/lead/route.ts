@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
 import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
@@ -7,6 +6,7 @@ import { sendLeadAutoReply } from "@/lib/aed/email";
 import { recordConversion } from "@/lib/aed/conversion";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
 import { products, accessories } from "@/lib/aed/products";
+import { clean, hashIp, isValidPhone, isValidEmail } from "@/lib/aed/lead-validation";
 
 export const runtime = "nodejs";
 
@@ -55,22 +55,6 @@ type LeadBody = {
   hp?: string;
 };
 
-const PHONE_RE = /^[0-9+\-() ]{8,20}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function clean(v: unknown, max = 500): string | null {
-  if (typeof v !== "string") return null;
-  const t = v.trim();
-  if (!t) return null;
-  return t.slice(0, max);
-}
-
-function hashIp(ip: string | null): string | null {
-  if (!ip) return null;
-  const salt = process.env.LEAD_IP_SALT || "jiaaed";
-  return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
-}
-
 export async function POST(req: Request) {
   let body: LeadBody;
   try {
@@ -108,10 +92,10 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  if (phone && !PHONE_RE.test(phone)) {
+  if (phone && !isValidPhone(phone, 8)) {
     return NextResponse.json({ ok: false, error: "invalid_phone" }, { status: 400 });
   }
-  if (email && !EMAIL_RE.test(email)) {
+  if (email && !isValidEmail(email)) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }
   if (productId && !VALID_PRODUCT_IDS.has(productId)) {
