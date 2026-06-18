@@ -201,20 +201,21 @@ export async function POST(req: Request) {
   );
 
   // Report the lead to Meta via Conversions API (server-side), sharing eventId
-  // with the browser pixel for dedup. Safe no-op until META_CAPI_TOKEN +
-  // NEXT_PUBLIC_META_PIXEL_ID are set. Falls back to the lead id as eventId so a
-  // server-only event still dedupes against any retried browser fire.
-  void sendMetaLeadEvent({
-    eventId: eventId || data.id,
-    email,
-    phone,
-    fbc,
-    fbp,
-    clientIp: ip,
-    userAgent,
-    eventSourceUrl: pageUrl,
-    contentName: productName,
-  }).catch((e) => console.error("[AED] meta capi failed:", e));
+  // with the browser pixel for dedup. Must use waitUntil — bare void fetch is
+  // torn down the moment we return on Vercel serverless.
+  waitUntil(
+    sendMetaLeadEvent({
+      eventId: eventId || data.id,
+      email,
+      phone,
+      fbc,
+      fbp,
+      clientIp: ip,
+      userAgent,
+      eventSourceUrl: pageUrl,
+      contentName: productName,
+    }).catch((e) => console.error("[AED] meta capi failed:", e)),
+  );
 
   if (email) {
     waitUntil(
