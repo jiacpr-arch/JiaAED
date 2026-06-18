@@ -30,7 +30,7 @@ const cards: Card[] = [
     price: primedicModels[0].price,
     keyDiff: primedicModels[0].keyDiff,
     bestFor: primedicModels[0].bestFor,
-    accent: "border-sky-400/50 text-sky-300",
+    accent: "border-red-500/50 text-red-400",
     tag: "เริ่มต้น",
   },
   {
@@ -39,7 +39,7 @@ const cards: Card[] = [
     price: primedicModels[1].price,
     keyDiff: primedicModels[1].keyDiff,
     bestFor: primedicModels[1].bestFor,
-    accent: "border-yellow-400/60 text-yellow-300",
+    accent: "border-red-400/70 text-red-300",
     tag: "แนะนำ · มี CPR feedback",
   },
   {
@@ -48,7 +48,7 @@ const cards: Card[] = [
     price: yuwellGpsAed.price,
     keyDiff: yuwellGpsAed.keyDiff,
     bestFor: yuwellGpsAed.bestFor,
-    accent: "border-rose-400/50 text-rose-300",
+    accent: "border-red-500/50 text-red-400",
     tag: "มี GPS ในตัว",
   },
 ];
@@ -59,9 +59,9 @@ export function PrimedicLineup() {
       {/* One-line decision guide so the difference is obvious at a glance */}
       <div className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-sm text-gray-300 mb-5">
         <span className="text-gray-500">เลือกรุ่นไหนดี?</span>{" "}
-        งบจำกัด → <span className="text-sky-300 font-semibold">Y0</span> · อยากได้ CPR feedback →{" "}
-        <span className="text-yellow-300 font-semibold">Y8</span> · หลายสาขา/อยากติดตามออนไลน์ →{" "}
-        <span className="text-rose-300 font-semibold">GPS</span>
+        งบจำกัด → <span className="text-red-400 font-semibold">Y0</span> · อยากได้ CPR feedback →{" "}
+        <span className="text-red-300 font-semibold">Y8</span> · หลายสาขา/อยากติดตามออนไลน์ →{" "}
+        <span className="text-red-400 font-semibold">GPS</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
