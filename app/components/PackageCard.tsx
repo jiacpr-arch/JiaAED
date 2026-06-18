@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { AcquisitionPackage } from "@/lib/aed/packages";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 const KIND_LABEL: Record<AcquisitionPackage["kind"], string> = {
   buy: "ซื้อขาด",

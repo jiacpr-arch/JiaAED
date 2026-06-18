@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 const UTM_KEYS = ["source", "medium", "campaign", "term", "content"] as const;
 const UNIT_OPTIONS = ["1 เครื่อง", "2–10 เครื่อง", "มากกว่า 10 เครื่อง"] as const;
 

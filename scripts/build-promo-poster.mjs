@@ -116,7 +116,7 @@ const svg = `
   <rect x="0" y="1244" width="${W}" height="106" fill="#1f0405" opacity="0.55"/>
   <text x="60" y="1296" font-family="Kanit Black" font-size="44" fill="#FFC72C">JiaAED</text>
   <text x="60" y="1330" font-family="Sarabun" font-size="24" fill="#ffffff">เจี่ยรักษา · นำเข้าโดยตรง</text>
-  <text x="${W - 60}" y="1290" text-anchor="end" font-family="Kanit SemiBold" font-size="30" fill="#ffffff">LINE: @273fzpzs</text>
+  <text x="${W - 60}" y="1290" text-anchor="end" font-family="Kanit SemiBold" font-size="30" fill="#ffffff">LINE: @jiacpr</text>
   <text x="${W - 60}" y="1326" text-anchor="end" font-family="Sarabun" font-size="22" fill="#FFD24A">อย. 68-2-2-2-0005243 · ฆพ.743/2569</text>
 </svg>`;
 

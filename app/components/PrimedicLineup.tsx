@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 // Owner-supplied marketing flyers per model (Y0 / Y8 / GPS), shown as the card
 // visual so each option carries its own branded artwork.

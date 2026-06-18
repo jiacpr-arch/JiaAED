@@ -13,7 +13,7 @@ import {
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export const metadata: Metadata = {
   title: "อบรม CPR + การใช้ AED — วิทยากรผ่าน Instructor Course | JiaAED",

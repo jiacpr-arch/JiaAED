@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export function SiteFooter({
   fda = "68-2-2-2-0005243",
@@ -31,7 +31,7 @@ export function SiteFooter({
         <p className="text-xs text-gray-600 mt-2">
           © {new Date().getFullYear()} JiaAED ·{" "}
           <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="footer" className="hover:text-yellow-400">
-            ติดต่อทาง LINE @273fzpzs
+            ติดต่อทาง LINE @jiacpr
           </a>
         </p>
       </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 const DISMISS_KEY = "jiaaed_floating_line_dismissed";
 
 export function FloatingLineButton() {

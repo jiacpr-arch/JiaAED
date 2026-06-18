@@ -5,7 +5,7 @@ import {
   type SubscriptionTierId,
 } from "@/lib/aed/subscription";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 function Cell({ value }: { value: FeatureMatrixRow["values"][SubscriptionTierId] }) {
   if (value === true) return <span className="text-green-400 font-bold">✓</span>;

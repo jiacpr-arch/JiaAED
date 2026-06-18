@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-const LINE_ID = "@273fzpzs";
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_ID = "@jiacpr";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 // Shown on desktop when a LINE CTA is clicked. line.me add-friend links only
 // work inside the LINE mobile app, so on a desktop browser the click would

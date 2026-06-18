@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getOrAssignHeroVariant, type HeroVariant } from "@/lib/aed/ab-variant";
 import { trackEvent } from "@/lib/aed/analytics-client";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 const COPY: Record<HeroVariant, string> = {
   a: "📋 ขอใบเสนอราคา AED ใน 5 นาที",
