@@ -1,12 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { products, accessories } from "@/lib/aed/products";
+import { accessories } from "@/lib/aed/products";
+import { homepageTiers } from "@/lib/aed/lineup";
 import { faqs } from "@/lib/aed/faqs";
 import { rentalPlans } from "@/lib/aed/rental";
+import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { LeadForm } from "./components/LeadForm";
 import { QuickContact } from "./components/QuickContact";
 import { HeroCta } from "./components/HeroCta";
 import { HeroHeadline } from "./components/HeroHeadline";
+import { LineupProductCard } from "./components/LineupProductCard";
+import { SpecComparisonTable } from "./components/SpecComparisonTable";
 import { YouTubeLite } from "./components/YouTubeLite";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 import { LatestNews } from "./components/LatestNews";
@@ -103,19 +107,25 @@ export default function Home() {
       <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-16 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
-              🏅 ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569
+            <div className="flex flex-wrap gap-2 mb-4">
+              <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
+                🏅 Amoul i7 · {regLine(AMOUL_REGULATORY)}
+              </span>
+              <span className="inline-block bg-sky-400/10 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full border border-sky-400/20">
+                {PRIMEDIC_REGULATORY.published
+                  ? `🏅 PRIMEDIC · ${regLine(PRIMEDIC_REGULATORY)}`
+                  : "✨ PRIMEDIC HeartSave"}
+              </span>
             </div>
             <HeroHeadline />
             <p className="text-gray-400 text-lg mb-4">
-              Shock พร้อมใน <strong className="text-white">7 วินาที</strong> · เสียงแนะนำภาษาไทย<br />
-              IP65 กันน้ำ กันฝุ่น · ใช้ได้ทั้งผู้ใหญ่และเด็ก
+              <strong className="text-white">Amoul i7</strong> และ <strong className="text-white">PRIMEDIC HeartSave</strong> · เสียงแนะนำภาษาไทย<br />
+              Shock เร็ว · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
               <span className="text-xs text-gray-400">เริ่มต้น</span>
-              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿39,999</span>
-              <span className="text-gray-500 line-through text-base">฿70,000</span>
-              <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · ออกใบเสนอราคาได้</span>
+              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿39,000</span>
+              <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · ทั้ง 2 แบรนด์ · ออกใบเสนอราคาได้</span>
             </div>
             <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-300 mb-5">
               <li className="flex items-center gap-1.5"><span className="text-green-400">✓</span> อย. รับรอง</li>
@@ -128,30 +138,51 @@ export default function Home() {
                 href="#products"
                 className="bg-yellow-400/10 text-yellow-400 font-semibold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors text-center"
               >
-                ดูทั้ง 3 รุ่น →
+                ดูทุกรุ่น 2 แบรนด์ →
               </a>
             </div>
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคาได้เลย</p>
           </div>
-          <div className="flex justify-center">
+          <div className="grid grid-cols-2 gap-4">
             <a
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
-              data-line-cta="hero_product_image"
-              className="relative w-80 h-80 group cursor-pointer"
-              aria-label="คลิกเพื่อสอบถามทาง LINE"
+              data-line-cta="hero_image_amoul"
+              data-product="i7"
+              className="relative flex flex-col items-center group cursor-pointer"
+              aria-label="Amoul i7 — คลิกเพื่อสอบถามทาง LINE"
             >
-              <Image
-                src="/images/product-main.png"
-                alt="AED Amoul i7"
-                fill
-                className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
-                priority
-              />
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#06C755] text-white text-xs font-bold px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg">
-                💬 คลิกเพื่อสอบถาม
+              <div className="relative w-full h-56 md:h-64">
+                <Image
+                  src="/images/product-main.png"
+                  alt="AED Amoul i7"
+                  fill
+                  className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
+                  priority
+                />
               </div>
+              <span className="mt-2 text-xs font-semibold text-yellow-300">Amoul i7</span>
+            </a>
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-line-cta="hero_image_primedic"
+              data-product="primedic-y8"
+              className="relative flex flex-col items-center group cursor-pointer"
+              aria-label="PRIMEDIC HeartSave — คลิกเพื่อสอบถามทาง LINE"
+            >
+              <div className="relative w-full h-56 md:h-64 rounded-xl overflow-hidden bg-white">
+                <Image
+                  src="/images/primedic-heartsave.png"
+                  alt="PRIMEDIC HeartSave AED"
+                  fill
+                  className="object-contain p-3 transition-transform group-hover:scale-105"
+                  priority
+                />
+              </div>
+              <span className="mt-2 text-xs font-semibold text-sky-300">PRIMEDIC HeartSave</span>
             </a>
           </div>
         </div>
@@ -271,7 +302,9 @@ export default function Home() {
               {
                 icon: "📜",
                 title: "อย. รับรอง · ใบโฆษณาถูกต้อง",
-                desc: "ทะเบียน อย. 68-2-2-2-0005243 และใบอนุญาตโฆษณา ฆพ.743/2569 ตรวจสอบได้",
+                desc: PRIMEDIC_REGULATORY.published
+                  ? `Amoul i7: ${regLine(AMOUL_REGULATORY)} · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)} — ตรวจสอบได้`
+                  : `Amoul i7: ${regLine(AMOUL_REGULATORY)} ตรวจสอบได้ · PRIMEDIC HeartSave: ${PRIMEDIC_REGULATORY.pendingNote}`,
               },
               {
                 icon: "🛠️",
@@ -316,96 +349,96 @@ export default function Home() {
       <PriceViewTracker />
       <section id="products" className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกรุ่นที่ใช่สำหรับคุณ</h2>
-          <p className="text-center text-gray-500 mb-10">สอบถามราคาพิเศษองค์กรได้ทาง LINE</p>
+          <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกตามระดับการใช้งาน — 2 แบรนด์ให้เลือก</h2>
+          <p className="text-center text-gray-500 mb-10">i7 เทียบเท่า Y0 · Y8 และ GPS อยู่ระดับสูงกว่า · สอบถามราคาพิเศษองค์กรได้ทาง LINE</p>
 
-          {/* Package showcase banners */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <a
-              href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-line-cta="banner_floorstand"
-              data-product="i7-floor"
-              className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
-            >
-              <Image
-                src="/images/aed-floorstand.png"
-                alt="AED Amoul i7 + แท่นตั้งพื้น"
-                width={1536}
-                height={1024}
-                className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
-              />
-            </a>
-            <a
-              href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-line-cta="banner_wallcabinet"
-              data-product="i7-cabinet"
-              className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
-            >
-              <Image
-                src="/images/aed-wallcabinet.png"
-                alt="AED Amoul i7 + ตู้ติดผนัง"
-                width={1536}
-                height={1024}
-                className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
-              />
-            </a>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {products.map((p) => (
-              <div
-                key={p.id}
-                className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
-                  p.badge ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10" : "border-gray-700"
-                }`}
-              >
-                {p.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">
-                    {p.badge}
-                  </div>
-                )}
-                <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-gray-800">
-                  <Image src="/images/product-main.png" alt={p.name} fill className="object-contain p-3" />
+          <div className="space-y-12">
+            {homepageTiers.map((tier) => (
+              <div key={tier.label}>
+                <div className="flex flex-col items-center text-center mb-6">
+                  <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full border border-yellow-400/20">
+                    {tier.label}
+                  </span>
+                  <p className="text-gray-500 text-sm mt-2">{tier.note}</p>
                 </div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{p.subtitle}</div>
-                <h3 className="font-bold text-lg text-white mt-1 mb-3">{p.name}</h3>
-                <div className="mb-3">
-                  <div className="text-gray-600 text-sm line-through">฿{p.msrp.toLocaleString()}</div>
-                  <div className="text-3xl font-bold text-yellow-400">฿{p.price.toLocaleString()}</div>
-                  <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">{p.description}</p>
-                <ul className="space-y-1 mb-6 flex-1">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                      <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
-                    </li>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  {tier.cards.map((card) => (
+                    <LineupProductCard key={card.id} card={card} />
                   ))}
-                </ul>
-                <a
-                  href={LINE_OA}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-line-cta="product_card"
-                  data-product={p.id}
-                  className={`text-center font-semibold py-3 rounded-full transition-colors ${
-                    p.badge
-                      ? "bg-yellow-400 text-yellow-900 hover:bg-yellow-300"
-                      : "bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
-                  }`}
-                >
-                  สั่งซื้อ / ถามราคา
-                </a>
+                </div>
               </div>
             ))}
           </div>
-          <p className="text-center text-gray-600 text-sm mt-6">
+
+          {/* Amoul i7 mounting options — ตัวเลือกติดตั้ง (ไม่ใช่ยี่ห้อแยก) */}
+          <div className="mt-14">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ Amoul i7</h3>
+              <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿44,999) หรือแท่นตั้งพื้น (฿49,000) — ราคารวมเครื่อง i7 แล้ว</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <a
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="banner_floorstand"
+                data-product="i7-floor"
+                className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
+              >
+                <Image
+                  src="/images/aed-floorstand.png"
+                  alt="AED Amoul i7 + แท่นตั้งพื้น"
+                  width={1536}
+                  height={1024}
+                  className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+                />
+              </a>
+              <a
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="banner_wallcabinet"
+                data-product="i7-cabinet"
+                className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
+              >
+                <Image
+                  src="/images/aed-wallcabinet.png"
+                  alt="AED Amoul i7 + ตู้ติดผนัง"
+                  width={1536}
+                  height={1024}
+                  className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
+                />
+              </a>
+            </div>
+          </div>
+
+          <p className="text-center text-gray-600 text-sm mt-8">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
           </p>
+        </div>
+      </section>
+
+      {/* PRIMEDIC spec depth — Y0 vs Y8 comparison + link to full detail page */}
+      <section className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-block bg-sky-400/10 text-sky-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-sky-400/20">
+              🔬 เทียบสเปก PRIMEDIC
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">PRIMEDIC HeartSave — Y0 vs Y8</h2>
+            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+              รุ่นกึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback — ดูจุดต่างและสเปกร่วมของแต่ละรุ่น
+            </p>
+          </div>
+          <SpecComparisonTable />
+          <div className="text-center mt-8">
+            <Link
+              href="/aed/primedic"
+              className="inline-block bg-yellow-400 text-yellow-900 font-bold px-8 py-3 rounded-full hover:bg-yellow-300"
+            >
+              ดูรายละเอียด PRIMEDIC ทั้งหมด →
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -419,7 +452,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-3xl font-black text-white mb-2">แผ่นแปะ (Pad) &amp; แบตเตอรี่</h2>
           </div>
           <p className="text-center text-gray-500 mb-10 max-w-2xl mx-auto">
-            แผ่นนำไฟฟ้า (Pad) และแบตเตอรี่ของแท้ Ambul สำหรับเครื่อง AED Amoul i7 — สั่งซื้อหรือสอบถามราคาพิเศษได้ทาง LINE
+            แผ่นนำไฟฟ้า (Pad) และแบตเตอรี่/ชุดพลังงานของแท้ สำหรับ AED Amoul i7 และ PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -434,8 +467,17 @@ export default function Home() {
                 <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{a.subtitle}</div>
                 <h3 className="font-bold text-lg text-white mt-1 mb-3">{a.name}</h3>
                 <div className="mb-3">
-                  <div className="text-3xl font-bold text-yellow-400">฿{a.price.toLocaleString()}</div>
-                  <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
+                  {a.price != null ? (
+                    <>
+                      <div className="text-3xl font-bold text-yellow-400">฿{a.price.toLocaleString()}</div>
+                      <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-2xl font-bold text-gray-400">{a.priceLabel ?? "สอบถามราคา"}</div>
+                      <div className="text-gray-600 text-xs">ราคาจะอัปเดตเร็วๆ นี้</div>
+                    </>
+                  )}
                 </div>
                 <p className="text-gray-400 text-sm mb-4">{a.description}</p>
                 <ul className="space-y-1 mb-6 flex-1">
@@ -806,7 +848,7 @@ export default function Home() {
       <section id="specs" className="py-14 px-4 bg-gray-900">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">คุณลักษณะเฉพาะ AED Amoul i7</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">Automated External Defibrillator รุ่น i7</p>
+          <p className="text-center text-gray-500 text-sm mb-8">สเปกของรุ่น Amoul i7 · สเปก PRIMEDIC ดูได้ที่หัวข้อ “เทียบสเปก PRIMEDIC” ด้านบน</p>
           <div className="rounded-2xl overflow-hidden border border-gray-700">
             {specs.map((s, i) => (
               <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
@@ -824,13 +866,25 @@ export default function Home() {
           </div>
           <div className="mt-4 flex flex-wrap gap-3 justify-center">
             <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-              <div className="text-xs text-gray-400 font-semibold">เลขที่ใบรับแจ้ง อย.</div>
-              <div className="text-sm font-bold text-yellow-400">68-2-2-2-0005243</div>
+              <div className="text-xs text-gray-400 font-semibold">Amoul i7 — เลขที่ใบรับแจ้ง อย.</div>
+              <div className="text-sm font-bold text-yellow-400">{AMOUL_REGULATORY.fda}</div>
             </div>
             <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-              <div className="text-xs text-gray-400 font-semibold">ใบอนุญาตโฆษณา</div>
-              <div className="text-sm font-bold text-yellow-400">ฆพ. 743/2569</div>
+              <div className="text-xs text-gray-400 font-semibold">Amoul i7 — ใบอนุญาตโฆษณา</div>
+              <div className="text-sm font-bold text-yellow-400">ฆพ. {AMOUL_REGULATORY.adLicense}</div>
             </div>
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
+                <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
+              </div>
+            )}
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — ใบอนุญาตโฆษณา</div>
+                <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -886,7 +940,7 @@ export default function Home() {
       <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">คำถามที่พบบ่อย</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Amoul i7</p>
+          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Amoul i7 และ PRIMEDIC HeartSave</p>
           <div className="space-y-3">
             {faqs.map((f) => (
               <details
@@ -909,7 +963,10 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-black border-t border-gray-800 text-gray-600 text-sm py-8 px-4 text-center">
         <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>
-        <p>จำหน่าย AED Amoul i7 · ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569</p>
+        <p>
+          จำหน่าย AED Amoul i7 และ PRIMEDIC HeartSave · Amoul i7: {regLine(AMOUL_REGULATORY)}
+          {PRIMEDIC_REGULATORY.published ? ` · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)}` : ""}
+        </p>
         <p className="mt-3 text-xs text-gray-700">© {new Date().getFullYear()} JiaAED. All rights reserved.</p>
       </footer>
 

@@ -27,15 +27,19 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "JiaAED — AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า อย. รับรอง",
+    default: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave เครื่องกระตุกหัวใจไฟฟ้า อย. รับรอง",
     template: "%s · JiaAED",
   },
   description:
-    "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock พร้อมใน 7 วินาที เสียงแนะนำภาษาไทย IP65 กันน้ำ ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569",
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) 2 แบรนด์ให้เลือก — Amoul i7 และ PRIMEDIC HeartSave (Y0/Y8) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569",
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
     "Amoul i7",
+    "PRIMEDIC HeartSave",
+    "PRIMEDIC Y0",
+    "PRIMEDIC Y8",
+    "Yuwell AED GPS",
     "AED ราคา",
     "เครื่อง AED",
     "Defibrillator",
@@ -48,9 +52,9 @@ export const metadata: Metadata = {
     locale: "th_TH",
     url: SITE_URL,
     siteName: "JiaAED",
-    title: "JiaAED — AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
+    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
     description:
-      "Shock พร้อมใน 7 วินาที · เสียงแนะนำภาษาไทย · IP65 กันน้ำ · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ให้เลือก · เสียงแนะนำภาษาไทย · อย. รับรอง",
     images: [
       {
         url: "/images/aed-i7-poster.jpg",
@@ -62,9 +66,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JiaAED — AED Amoul i7",
+    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock 7 วินาที · เสียงไทย · IP65",
+      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ · เสียงไทย · อย. รับรอง",
     images: ["/images/aed-i7-poster.jpg"],
   },
   robots: { index: true, follow: true },

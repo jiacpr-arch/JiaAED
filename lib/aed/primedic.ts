@@ -2,29 +2,12 @@
 // Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
 // HeartSave comparison sheet.
 //
-// IMPORTANT (compliance): the Yuwell/PRIMEDIC HeartSave Y-series has its OWN Thai
-// FDA registration (อย.) — number below, from the official ใบรับแจ้งรายการละเอียด
-// (มาตรา 19). It is DISTINCT from the i7 numbers (อย. 68-2-2-2-0005243 /
-// ฆพ.743/2569) — never mix them.
-//
-// อย. registration 65-2-2-2-0013415 covers HeartSave Y0/Y8 (semi-auto) and
-// YA0/YA8 (fully-auto), battery NRL01B, and the OBS-DE/P electrode pads.
-// Registrant/importer: บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด (กท.สน. 754/2564).
-// Manufacturer: Jiangsu Yuyue Medical Equipment & Supply Co., Ltd (China).
-//
-// NOTE(owner): this is the device registration (อย.) only. A separate advertising
-// licence (ฆพ.) is still required before public advertising / indexing the page.
-// Until ฆพ. is confirmed the page stays noindex and is kept out of feed/JSON-LD.
-export const PRIMEDIC_REGULATORY = {
-  fdaRegistration: "อย. เลขที่ 65-2-2-2-0013415",
-  fdaValidUntil: "31 ธันวาคม 2569",
-  registrant: "บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
-  manufacturer: "Jiangsu Yuyue Medical Equipment & Supply Co., Ltd (จีน)",
-  // TODO(owner): add the ฆพ. (advertising licence) number once confirmed.
-  adLicense: null as string | null,
-  disclaimer:
-    "เครื่อง AED Yuwell/PRIMEDIC HeartSave (Y0/Y8) ขึ้นทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
-} as const;
+// Compliance: PRIMEDIC's อย./ฆพ. (incl. validUntil + importer disclaimer) live in
+// ./regulatory.ts (re-exported here for backward-compat). อย. 65-2-2-2-0013415
+// covers HeartSave Y0/Y8 (semi-auto) and YA0/YA8 (fully-auto), battery NRL01B, and
+// the OBS-DE/P electrode pads. Registrant/importer: บริษัท ยูเวล เมดิคอล (ไทยแลนด์)
+// จำกัด. DO NOT reuse the i7 numbers — see regulatory.ts.
+export { PRIMEDIC_REGULATORY } from "./regulatory";
 
 // Certifications confirmed by the official Yuwell Y8 spec sheet (ISO 13485 / CE)
 // and the Thai FDA ใบรับแจ้งรายการละเอียด (อย.). Shown as trust badges.

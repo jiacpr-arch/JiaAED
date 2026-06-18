@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { articles } from "@/lib/aed/articles";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 
@@ -69,6 +70,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.7,
     },
+    // PRIMEDIC detail page enters the sitemap only once it's indexable (published).
+    ...(PRIMEDIC_REGULATORY.published
+      ? [
+          {
+            url: `${SITE}/aed/primedic`,
+            lastModified: now,
+            changeFrequency: "weekly" as const,
+            priority: 0.9,
+          },
+        ]
+      : []),
   ];
 
   const articleEntries: MetadataRoute.Sitemap = articles.map((a) => ({

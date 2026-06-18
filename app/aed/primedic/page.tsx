@@ -9,21 +9,22 @@ import { PrimedicLineup } from "@/app/components/PrimedicLineup";
 import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
-import { PRIMEDIC_REGULATORY, primedicCertifications } from "@/lib/aed/primedic";
+import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
+import { primedicCertifications } from "@/lib/aed/primedic";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
 const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
-// noindex until PRIMEDIC has its own อย./ฆพ. — see PRIMEDIC_REGULATORY.
-// TODO(owner): set index:true once real registration numbers are published.
+// Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
+// Live now under อย. 65-2-2-2-0013415; ฆพ. (advertising licence) to be added later.
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 — AED รุ่นพรีเมียม | JiaAED",
   description:
     "PRIMEDIC HeartSave ไลน์ AED พรีเมียม รุ่นกึ่งอัตโนมัติ Y0 (฿39,000) และ Y8 (฿49,999) พร้อมเซ็นเซอร์ CPR feedback และ Yuwell AED รุ่นมี GPS ในตัว",
   alternates: { canonical: "/aed/primedic" },
-  robots: { index: false, follow: true },
+  robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
 
 export default function PrimedicPage() {
@@ -70,6 +71,21 @@ export default function PrimedicPage() {
           </div>
         </div>
 
+        {/* Regulatory line — real อย./ฆพ. once published, else a neutral pending note.
+            When published, the importer/valid-until disclaimer rides along as a sub-line. */}
+        {PRIMEDIC_REGULATORY.published ? (
+          <div className="mt-6 rounded-xl border border-green-400/30 bg-green-400/5 px-4 py-3 text-sm text-green-200/90">
+            ✅ PRIMEDIC HeartSave — {regLine(PRIMEDIC_REGULATORY)}
+            {PRIMEDIC_REGULATORY.disclaimer && (
+              <span className="mt-1 block text-green-200/70">{PRIMEDIC_REGULATORY.disclaimer}</span>
+            )}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-xl border border-yellow-400/30 bg-yellow-400/5 px-4 py-3 text-sm text-yellow-200/90">
+            ⚠️ {PRIMEDIC_REGULATORY.pendingNote}
+          </div>
+        )}
+
         {/* Flyer gallery — Y0 / Y8 marketing materials */}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
@@ -88,11 +104,6 @@ export default function PrimedicPage() {
               />
             </div>
           ))}
-        </div>
-
-        {/* Regulatory disclaimer — PRIMEDIC needs its own อย./ฆพ. */}
-        <div className="mt-6 rounded-xl border border-yellow-400/30 bg-yellow-400/5 px-4 py-3 text-sm text-yellow-200/90">
-          ⚠️ {PRIMEDIC_REGULATORY.disclaimer}
         </div>
 
         {/* Certifications — ISO 13485 / CE / อย. (from the official Yuwell docs) */}
@@ -154,7 +165,7 @@ export default function PrimedicPage() {
         </p>
       </section>
 
-      <SiteFooter regNote={`PRIMEDIC HeartSave — ${PRIMEDIC_REGULATORY.disclaimer}`} />
+      <SiteFooter regNote={`PRIMEDIC HeartSave — ${regLine(PRIMEDIC_REGULATORY)}`} />
     </div>
   );
 }
