@@ -18,7 +18,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 const specs = [
   { label: "น้ำหนัก", value: "ประมาณ 2.0 กก. (รวมแบตเตอรี่)" },
@@ -851,7 +851,7 @@ export default function Home() {
             data-line-cta="footer_cta"
             className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
-            💬 เพิ่มเพื่อน LINE @273fzpzs
+            💬 เพิ่มเพื่อน LINE @jiacpr
           </a>
         </div>
       </section>
@@ -869,7 +869,7 @@ export default function Home() {
           <p className="text-center text-gray-500 text-sm mb-8">
             หรือ{" "}
             <a
-              href="https://line.me/R/ti/p/@273fzpzs"
+              href="https://line.me/R/ti/p/@jiacpr"
               target="_blank"
               rel="noopener noreferrer"
               data-line-cta="contact_section_link"

@@ -16,7 +16,7 @@ import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export const metadata: Metadata = {
   title: "เช่า AED รายเดือน — ดูแลครบวงจร เริ่ม ฿1,990/เดือน | JiaAED",

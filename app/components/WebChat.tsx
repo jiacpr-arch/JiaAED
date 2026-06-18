@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent as sharedTrack } from "@/lib/aed/analytics-client";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 const STORAGE_KEY = "jiaaed_web_chat_v1";
 const GREETING =
   "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Amoul i7\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือคำแนะนำเลือกรุ่น?";

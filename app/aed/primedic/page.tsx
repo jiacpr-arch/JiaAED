@@ -14,7 +14,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 // noindex until PRIMEDIC has its own อย./ฆพ. — see PRIMEDIC_REGULATORY.
 // TODO(owner): set index:true once real registration numbers are published.

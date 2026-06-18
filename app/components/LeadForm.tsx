@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { products } from "@/lib/aed/products";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 const UTM_KEYS = ["source", "medium", "campaign", "term", "content"] as const;
 
 type State = "idle" | "submitting" | "success" | "error";

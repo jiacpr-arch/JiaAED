@@ -8,7 +8,7 @@ import { trustedBy, relatedRegulations } from "@/lib/aed/trust";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export const metadata: Metadata = {
   title: "เกี่ยวกับเรา — ดูแล AED กว่า 500 เครื่อง 15+ ปี | JiaAED",

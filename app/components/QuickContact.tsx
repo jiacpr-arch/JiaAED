@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { MiniLeadForm } from "./MiniLeadForm";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 /**
  * Prime "quick contact" slot under the hero. Real visitor behaviour shows people

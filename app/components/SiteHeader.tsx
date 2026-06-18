@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 const NAV_LINKS: { href: string; label: string }[] = [
   { href: "/aed/packages", label: "แพ็กเกจ" },

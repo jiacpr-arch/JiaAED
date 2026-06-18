@@ -16,7 +16,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export const metadata: Metadata = {
   title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ | JiaAED",

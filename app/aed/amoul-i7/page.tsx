@@ -8,7 +8,7 @@ import { LatestNews } from "@/app/components/LatestNews";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
+const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
 
 export const metadata: Metadata = {
   title: "AED Amoul i7 — รับส่วนลด + ใบเสนอราคาฟรี | JiaAED",

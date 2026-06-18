@@ -19,7 +19,7 @@ export function StructuredData() {
       "@type": "ContactPoint",
       contactType: "sales",
       availableLanguage: ["th", "en"],
-      url: "https://line.me/R/ti/p/@273fzpzs",
+      url: "https://line.me/R/ti/p/@jiacpr",
     },
     address: {
       "@type": "PostalAddress",
