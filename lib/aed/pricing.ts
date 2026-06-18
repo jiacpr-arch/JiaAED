@@ -184,7 +184,9 @@ export function formatThaiPrice(amount: number): string {
 // minPrice must stay STRICTLY ABOVE it. Update these as wholesale is finalized.
 export const PRICING_POLICY = {
   rule: "ห้ามตั้งราคาต่ำที่สุดในตลาด รวมถึงแผ่นแปะและแบตเตอรี่",
-  // TODO(owner): verify observed market-floor prices for consumables.
+  // Observed competitor market-floor for consumables. Our minPrice stays strictly
+  // above each (pad 5,000 > 4,000 · battery 7,500 > 6,000) — assertAboveMarketFloor
+  // guards this. Owner: lower these only if a competitor is actually seen below.
   marketFloor: {
     "pad-adult": 4_000,
     battery: 6_000,

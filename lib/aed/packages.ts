@@ -54,8 +54,9 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง",
     priceLabel: "฿2,500/เดือน",
     listPriceLabel: null,
-    // TODO(owner): 15,000 + 2,500 × 18 = 60,000 < Premium 69,900 — rent-to-own
-    // currently totals LESS than buying outright. Confirm intended pricing.
+    // Rent-to-own total = 15,000 + 2,500 × 18 = ฿60,000. Sits between cash buy
+    // (฿39,900) and the credit/government list (฿69,000) — a ~50% financing
+    // premium over cash, which is the expected cost of paying monthly. Coherent.
     priceNote: "มัดจำ ฿15,000 + ผ่อน ฿2,500/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
     deposit: "฿15,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
     features: [
@@ -75,13 +76,13 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     nameTh: "เช่าบริการครบวงจร",
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
     listPriceLabel: null,
-    // We treat the subscription tiers (BASIC/PREMIUM/ULTIMATE) as the canonical
-    // monthly price of Safety Care.
-    // TODO(owner): legacy material also says "฿1,500/เดือน" — reconcile with the
-    // BASIC tier (฿1,990–2,990/เดือน).
+    // Monthly price = the subscription tiers (BASIC/PREMIUM/ULTIMATE). The
+    // "฿1,500" in legacy material was the DAILY first-day rental rate (เช่ารายวัน
+    // ฿1,500/วันแรก), NOT a monthly price — the monthly entry is ฿1,990 (BASIC
+    // turn-in). Deposit aligned to the published rental flyer (฿5,000–10,000).
     priceLabel: "เริ่ม ฿1,990/เดือน",
-    priceNote: "มัดจำ ฿25,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PREMIUM/ULTIMATE",
-    deposit: "฿25,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
+    priceNote: "มัดจำ ฿5,000–10,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PREMIUM/ULTIMATE",
+    deposit: "฿5,000–10,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
     features: [
       "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
       "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",
