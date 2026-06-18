@@ -1,6 +1,6 @@
 import type { Promotion } from "@/lib/aed/promotion";
 
-const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
+const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
 
 // Highlighted promo callout. Reused on the homepage, /aed/primedic and
 // /aed/packages. Yellow-on-dark to match the existing accent system.
