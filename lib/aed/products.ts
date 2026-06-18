@@ -103,7 +103,7 @@ export const accessories: Accessory[] = [
     name: "แผ่นนำไฟฟ้า (Pad) Yuwell HeartSave Y8",
     subtitle: "อะไหล่ PRIMEDIC HeartSave Y8 / วัสดุสิ้นเปลือง",
     price: 4000,
-    image: "/images/primedic-open.png",
+    image: "/images/yuwell-pad.png",
     description: "แผ่นอิเล็กโทรดแบบใช้แล้วทิ้งสำหรับเครื่อง Yuwell PRIMEDIC HeartSave Y8 (รองรับผู้ใหญ่และเด็ก) — แบบไม่มีเซ็นเซอร์ CPR feedback",
     features: [
       "ของแท้ Yuwell (PRIMEDIC)",
@@ -116,7 +116,7 @@ export const accessories: Accessory[] = [
     name: "แผ่นนำไฟฟ้า (Pad) Yuwell HeartSave Y8 + CPR Feedback",
     subtitle: "อะไหล่ PRIMEDIC HeartSave Y8 / วัสดุสิ้นเปลือง",
     price: 5000,
-    image: "/images/primedic-open.png",
+    image: "/images/yuwell-pad-feedback.jpg",
     description: "แผ่นอิเล็กโทรดพร้อมเซ็นเซอร์ CPR feedback สำหรับเครื่อง Yuwell PRIMEDIC HeartSave Y8 — วัดแรงและจังหวะกดหน้าอกแบบเรียลไทม์",
     features: [
       "ของแท้ Yuwell (PRIMEDIC)",
@@ -130,7 +130,7 @@ export const accessories: Accessory[] = [
     name: "แบตเตอรี่ Yuwell HeartSave Y8 (NRL01C)",
     subtitle: "อะไหล่ PRIMEDIC HeartSave Y8",
     price: 8000,
-    image: "/images/primedic-open.png",
+    image: "/images/yuwell-battery.jpg",
     description: "โมดูลพลังงานสำรอง / เปลี่ยนทดแทน สำหรับเครื่อง Yuwell PRIMEDIC HeartSave Y8 — รุ่น NRL01C 12V 4.2Ah",
     features: [
       "ของแท้ Yuwell (PRIMEDIC) รุ่น NRL01C",
