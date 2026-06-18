@@ -532,25 +532,52 @@ export default function Home() {
             <PromoBanner promo={survivorReward} />
           </div>
 
-          {/* PRIMEDIC premium line teaser */}
-          <Link
-            href="/aed/primedic"
-            className="mt-10 flex flex-col sm:flex-row items-center gap-5 rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-gray-900 to-yellow-950/30 p-6 hover:border-yellow-400/60 transition-colors"
-          >
-            <div className="relative w-32 h-32 flex-shrink-0 rounded-xl overflow-hidden bg-white">
-              <Image src="/images/primedic-heartsave.png" alt="PRIMEDIC HeartSave" fill className="object-contain p-2" sizes="128px" />
-            </div>
-            <div className="text-center sm:text-left">
-              <div className="inline-block bg-sky-400/10 text-sky-300 text-xs font-semibold px-3 py-1 rounded-full mb-2 border border-sky-400/20">
-                🔬 เทียบสเปกละเอียด
+          {/* Premium line teaser — PRIMEDIC + Yuwell (both link to /aed/primedic) */}
+          <div className="mt-10">
+            <div className="text-center mb-4">
+              <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
+                ✨ ใหม่ · ไลน์พรีเมียม
               </div>
-              <h3 className="text-xl font-bold text-white">PRIMEDIC HeartSave — Y0 / Y8 + Yuwell GPS</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                รุ่นกึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback และรุ่นมี GPS ในตัว — ดูจุดต่างของแต่ละรุ่น
-              </p>
-              <span className="inline-block text-yellow-400 font-semibold text-sm mt-2">ดูรายละเอียด →</span>
             </div>
-          </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* PRIMEDIC HeartSave Y0 / Y8 */}
+              <Link
+                href="/aed/primedic"
+                className="flex items-center gap-4 rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-gray-900 to-yellow-950/30 p-5 hover:border-yellow-400/60 transition-colors"
+              >
+                <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-white">
+                  <Image src="/images/primedic-open.png" alt="PRIMEDIC HeartSave Y0 / Y8" fill className="object-contain p-1.5" sizes="96px" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">PRIMEDIC HeartSave — Y0 / Y8</h3>
+                  <p className="text-sm text-gray-400 mt-1">
+                    กึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback — ดูจุดต่างของแต่ละรุ่น
+                  </p>
+                  <span className="inline-block text-yellow-400 font-semibold text-sm mt-2">ดูรายละเอียด →</span>
+                </div>
+              </Link>
+
+              {/* Yuwell AED — GPS built in */}
+              <Link
+                href="/aed/primedic"
+                className="flex items-center gap-4 rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-gray-900 to-yellow-950/30 p-5 hover:border-yellow-400/60 transition-colors"
+              >
+                <div className="relative w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-white">
+                  <Image src="/images/primedic-heartsave.png" alt="Yuwell AED รุ่นมี GPS ในตัว" fill className="object-contain p-1.5" sizes="96px" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Yuwell AED — GPS ในตัว</h3>
+                  <p className="text-sm text-gray-400 mt-1">
+                    ติดตามตำแหน่ง/สถานะเครื่องออนไลน์ — เหมาะกับองค์กรหลายสาขา
+                  </p>
+                  <span className="inline-block text-yellow-400 font-semibold text-sm mt-2">ดูรายละเอียด →</span>
+                </div>
+              </Link>
+            </div>
+            <p className="text-center text-gray-600 text-xs mt-3">
+              Yuwell / PRIMEDIC HeartSave · อย. เลขที่ 65-2-2-2-0013415
+            </p>
+          </div>
         </div>
       </section>
 

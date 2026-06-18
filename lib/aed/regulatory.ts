@@ -14,6 +14,8 @@ export type BrandRegulatory = {
   adLicense: string | null; // ใบอนุญาตโฆษณา ฆพ. (null until confirmed)
   published: boolean; // true => assert numbers publicly + allow indexing
   pendingNote: string; // shown while not published
+  validUntil?: string; // อย. ใช้ได้ถึง (shown on the brand's own page once published)
+  disclaimer?: string; // full registration/importer statement (legal footnote)
 };
 
 export const AMOUL_REGULATORY: BrandRegulatory = {
@@ -34,6 +36,9 @@ export const PRIMEDIC_REGULATORY: BrandRegulatory = {
   adLicense: null,
   published: true,
   pendingNote: "อยู่ระหว่างยืนยันเลขทะเบียน — สอบถามสถานะล่าสุดทาง LINE",
+  validUntil: "31 ธันวาคม 2569",
+  disclaimer:
+    "เครื่อง AED Yuwell/PRIMEDIC HeartSave (Y0/Y8) ขึ้นทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
 };
 
 // Human-readable "อย. xxx · ฆพ.yyy" line for a brand, or its pending note.

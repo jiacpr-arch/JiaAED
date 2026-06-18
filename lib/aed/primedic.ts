@@ -2,9 +2,20 @@
 // Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
 // HeartSave comparison sheet.
 //
-// Compliance: PRIMEDIC's อย./ฆพ. live in ./regulatory.ts (re-exported here for
-// backward-compat). DO NOT reuse the i7 numbers — see regulatory.ts.
+// Compliance: PRIMEDIC's อย./ฆพ. (incl. validUntil + importer disclaimer) live in
+// ./regulatory.ts (re-exported here for backward-compat). อย. 65-2-2-2-0013415
+// covers HeartSave Y0/Y8 (semi-auto) and YA0/YA8 (fully-auto), battery NRL01B, and
+// the OBS-DE/P electrode pads. Registrant/importer: บริษัท ยูเวล เมดิคอล (ไทยแลนด์)
+// จำกัด. DO NOT reuse the i7 numbers — see regulatory.ts.
 export { PRIMEDIC_REGULATORY } from "./regulatory";
+
+// Certifications confirmed by the official Yuwell Y8 spec sheet (ISO 13485 / CE)
+// and the Thai FDA ใบรับแจ้งรายการละเอียด (อย.). Shown as trust badges.
+export const primedicCertifications: { label: string; sub: string }[] = [
+  { label: "อย.", sub: "65-2-2-2-0013415" },
+  { label: "ISO 13485", sub: "ระบบคุณภาพเครื่องมือแพทย์" },
+  { label: "CE", sub: "มาตรฐานความปลอดภัยยุโรป" },
+];
 
 export type PrimedicModelId = "primedic-y0" | "primedic-y8";
 
@@ -70,7 +81,11 @@ export const yuwellGpsAed = {
 };
 
 // Specs shared by all four models — rendered as a simple label/value list.
+// Verified against the official Yuwell HeartSave Y8 spec sheet + the อย. แนบท้าย.
 export const primedicSharedSpecs: { label: string; value: string }[] = [
+  { label: "รูปแบบคลื่นกระตุก", value: "Biphasic Truncated Exponential (BTE)" },
+  { label: "ECG ในตัว", value: "Single Channel ECG — วิเคราะห์จังหวะหัวใจอัตโนมัติ" },
+  { label: "มาตรฐานรับรอง", value: "ISO 13485 · CE · อย. 65-2-2-2-0013415" },
   { label: "ภาษาเสียงนำทาง CPR", value: "4 ภาษา (ไทย / อังกฤษ / จีน / เยอรมัน)" },
   { label: "หน้าจอแสดงสถานะ", value: "มี" },
   { label: "เสียงนำจังหวะกด CPR", value: "มี" },
