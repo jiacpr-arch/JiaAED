@@ -26,11 +26,13 @@ export const AMOUL_REGULATORY: BrandRegulatory = {
 
 export const PRIMEDIC_REGULATORY: BrandRegulatory = {
   brand: "PRIMEDIC HeartSave",
-  // TODO(owner): paste PRIMEDIC's real อย. / ฆพ. numbers here, then flip
-  // `published: true`. Until then the UI shows products + prices but NOT a number.
-  fda: null,
+  // อย. ครอบคลุมทั้งตระกูล HeartSave Y&YA (Y0/Y8/YA8 + แบต + แผ่น CPR) นำเข้าโดย
+  // บ.ยูเวล เมดิคอล (ไทยแลนด์) — ใช้กับทั้ง PRIMEDIC Y0/Y8 และ Yuwell GPS บนเว็บ.
+  // TODO(owner): ยังไม่มี ฆพ. (ใบอนุญาตโฆษณา) — เมื่อได้เลขจริงเติมที่ `adLicense`
+  // แล้ว UI จะแสดง ฆพ. เพิ่มเองอัตโนมัติ (regLine + การ์ดสเปก + JSON-LD).
+  fda: "65-2-2-2-0013415",
   adLicense: null,
-  published: false,
+  published: true,
   pendingNote: "อยู่ระหว่างยืนยันเลขทะเบียน — สอบถามสถานะล่าสุดทาง LINE",
 };
 

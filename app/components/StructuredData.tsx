@@ -46,6 +46,11 @@ export function StructuredData() {
               name: "FDA Registration (อย.) — PRIMEDIC",
               value: PRIMEDIC_REGULATORY.fda,
             },
+          ]
+        : []),
+      // ฆพ. emitted only when a real advertising-license number exists (never null).
+      ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense
+        ? [
             {
               "@type": "PropertyValue",
               name: "Advertising License (ฆพ.) — PRIMEDIC",

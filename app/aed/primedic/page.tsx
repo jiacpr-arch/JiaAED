@@ -16,8 +16,8 @@ export const revalidate = 3600;
 
 const LINE_OA = "https://line.me/R/ti/p/@273fzpzs";
 
-// Indexing follows the PRIMEDIC registration gate: it goes live once the owner
-// confirms the real อย./ฆพ. numbers and sets PRIMEDIC_REGULATORY.published = true.
+// Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
+// Live now under อย. 65-2-2-2-0013415; ฆพ. (advertising licence) to be added later.
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 — AED รุ่นพรีเมียม | JiaAED",
   description:

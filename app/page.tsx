@@ -846,17 +846,17 @@ export default function Home() {
               <div className="text-xs text-gray-400 font-semibold">Amoul i7 — ใบอนุญาตโฆษณา</div>
               <div className="text-sm font-bold text-yellow-400">ฆพ. {AMOUL_REGULATORY.adLicense}</div>
             </div>
-            {PRIMEDIC_REGULATORY.published && (
-              <>
-                <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                  <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
-                  <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                  <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — ใบอนุญาตโฆษณา</div>
-                  <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
-                </div>
-              </>
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
+                <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
+              </div>
+            )}
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — ใบอนุญาตโฆษณา</div>
+                <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
+              </div>
             )}
           </div>
         </div>
