@@ -22,7 +22,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/ti/p/@jiacpr";
+const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
 
 const specs = [
   { label: "น้ำหนัก", value: "ประมาณ 2.0 กก. (รวมแบตเตอรี่)" },
@@ -822,7 +822,7 @@ export default function Home() {
           <p className="text-center text-gray-500 text-sm mb-8">
             หรือ{" "}
             <a
-              href="https://line.me/R/ti/p/@jiacpr"
+              href="https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A"
               target="_blank"
               rel="noopener noreferrer"
               data-line-cta="contact_section_link"

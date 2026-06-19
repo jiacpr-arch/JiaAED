@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import type { AedCustomer } from "./types";
 
 const HOT_THRESHOLD = 7;
 const LOOKBACK_MIN = 30;
@@ -155,4 +156,90 @@ export function formatHotLeadMessage(args: {
   if (pageUrl) lines.push(`Page: ${pageUrl}`);
   lines.push(`⏰ ${new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" })}`);
   return lines.join("\n");
+}
+
+// ─── Conversation scoring (LINE chat) ──────────────────────────────────────────
+//
+// scoreSession() above scores anonymous WEB sessions from analytics events.
+// A LINE conversation is a stronger, different signal: the person has actually
+// messaged us, so we know who they are and what the AI did for them (which tools
+// it called). This turns that into a 0–N score plus a coarse intent label.
+//
+// Until now `aed_conversations.lead_score` was never written — every LINE chat
+// sat at 0, so the owner couldn't tell a tyre-kicker from a buyer who already
+// has a quotation in hand. scoreConversation() is the value that gets written
+// back via updateConversationState() from the LINE webhook.
+
+export const CONVERSATION_HOT_THRESHOLD = 7;
+
+export type ConversationScoreInput = {
+  customer: Pick<AedCustomer, "full_name" | "phone" | "email" | "company_name">;
+  // Tool calls the AI made this conversation (from the orchestrator). Only
+  // `name` and `input` are read, so callers can pass AiToolCall[] directly.
+  toolsUsed: { name: string; input?: Record<string, unknown> }[];
+  messageCount: number;
+};
+
+export type ConversationScore = {
+  score: number;
+  intent: string;
+  reasons: string[];
+};
+
+// A value the AI captured *this turn* via update_customer_info won't be on the
+// (start-of-turn) customer row yet, so OR the tool inputs in to avoid scoring a
+// just-shared phone number as missing.
+function freshValue(updates: Record<string, unknown>[], field: string, existing: string | null): string | null {
+  if (existing && existing.trim()) return existing;
+  for (const u of updates) {
+    const v = u[field];
+    if (typeof v === "string" && v.trim()) return v;
+  }
+  return null;
+}
+
+export function scoreConversation(input: ConversationScoreInput): ConversationScore {
+  const { customer, toolsUsed, messageCount } = input;
+  const toolNames = new Set(toolsUsed.map((t) => t.name));
+  const updates = toolsUsed.filter((t) => t.name === "update_customer_info").map((t) => t.input ?? {});
+
+  const name = freshValue(updates, "full_name", customer.full_name);
+  const phone = freshValue(updates, "phone", customer.phone);
+  const email = freshValue(updates, "email", customer.email);
+  const company = freshValue(updates, "company_name", customer.company_name);
+
+  let score = 0;
+  const reasons: string[] = [];
+  const add = (cond: unknown, pts: number, why: string) => {
+    if (cond) {
+      score += pts;
+      reasons.push(`${why} +${pts}`);
+    }
+  };
+
+  // Contact signals — on LINE a phone number is the strongest "real lead" signal.
+  add(phone, 4, "phone");
+  add(email, 2, "email");
+  add(company, 2, "company");
+  add(name, 1, "name");
+
+  // Buying-intent signals from what the AI actually did this conversation.
+  add(toolNames.has("calculate_price"), 2, "viewed_price");
+  add(toolNames.has("escalate_to_human"), 3, "escalated");
+  add(toolNames.has("create_quotation"), 5, "quotation");
+  add(toolNames.has("create_payment_link"), 6, "payment_link");
+
+  // Engagement depth.
+  add(messageCount >= 4, 1, "engaged");
+  add(messageCount >= 8, 1, "deep_engaged");
+
+  // Coarse intent label — highest-intent signal wins.
+  let intent = "browsing";
+  if (toolNames.has("create_payment_link")) intent = "ready_to_pay";
+  else if (toolNames.has("create_quotation")) intent = "quotation";
+  else if (toolNames.has("escalate_to_human")) intent = "escalated";
+  else if (toolNames.has("calculate_price")) intent = "pricing";
+  else if (phone || email) intent = "contact_shared";
+
+  return { score, intent, reasons };
 }

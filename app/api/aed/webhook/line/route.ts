@@ -9,9 +9,10 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
-import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow } from "@/lib/aed/db-queries";
+import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow, updateConversationState } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
-import { notifyNewFollow } from "@/lib/aed/notify-owner";
+import { notifyNewFollow, notifyHotConversation, notifyProcessingError } from "@/lib/aed/notify-owner";
+import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
 import type { LineEvent } from "@/lib/aed/types";
 
 export const runtime = "nodejs";
@@ -132,8 +133,36 @@ async function processEvents(events: LineEvent[]): Promise<void> {
       // Send reply via LINE
       await pushMessage(lineUserId, reply);
 
+      // Score the conversation now that we know the latest contact info + what
+      // the AI did, and write it back. This is the ONLY place
+      // aed_conversations.lead_score / current_intent ever get set — without it
+      // every LINE chat stays at score 0 and the owner can't rank leads.
+      const prevScore = conversation.lead_score ?? 0;
+      const { score, intent, reasons } = scoreConversation({
+        customer,
+        toolsUsed,
+        messageCount: (conversation.message_count ?? 0) + 2, // +inbound +outbound this turn
+      });
+      await updateConversationState(conversation.id, { lead_score: score, current_intent: intent }).catch(
+        (e) => console.error("[AED] updateConversationState failed:", e),
+      );
+
+      // Alert the owner the moment a chat crosses into "hot" — but only on the
+      // upward crossing, so a hot lead pings once, not on every later message.
+      if (score >= CONVERSATION_HOT_THRESHOLD && prevScore < CONVERSATION_HOT_THRESHOLD) {
+        await notifyHotConversation({
+          customerName: customer.full_name,
+          lineUserId,
+          score,
+          intent,
+          reasons,
+        }).catch((e) => console.error("[AED] notifyHotConversation failed:", e));
+      }
     } catch (err) {
       console.error("[AED] Error processing message:", err);
+      // A real person just hit a wall — make sure the owner knows so they can
+      // reply by hand. A swallowed error here is a silently lost lead.
+      await notifyProcessingError({ lineUserId, userText, error: err }).catch(() => null);
       await pushMessage(lineUserId, "ขออภัยครับ เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ 🙏");
     }
   }

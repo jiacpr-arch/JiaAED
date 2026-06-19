@@ -263,6 +263,58 @@ export async function notifyNewFollow(lineUserId: string): Promise<void> {
   );
 }
 
+// ─── Hot LINE conversation (plain text) ────────────────────────────────────────
+
+// A LINE chat just crossed the "hot" score threshold — the AI has captured a
+// phone / generated a quotation / etc. Distinct from the click-based hot-lead
+// alerts (which are mere button intent): this person is mid-conversation right
+// now, so speed to close matters most.
+export async function notifyHotConversation(p: {
+  customerName: string | null;
+  lineUserId: string;
+  score: number;
+  intent: string;
+  reasons: string[];
+}): Promise<void> {
+  await pushToOwner(
+    [
+      `🔥 แชต LINE มาแรง (score ${p.score})`,
+      `ลูกค้ากำลังคุยอยู่ตอนนี้ — รีบปิดการขาย`,
+      ``,
+      `👤 ${p.customerName ?? "ลูกค้า"}`,
+      `🎯 สนใจ: ${p.intent}`,
+      `📊 สัญญาณ: ${p.reasons.slice(0, 6).join(", ")}`,
+      `🔗 LINE ID: ${p.lineUserId}`,
+      `⏰ ${bkkNow()}`,
+    ].join("\n"),
+  );
+}
+
+// ─── LINE processing failure (plain text) ──────────────────────────────────────
+
+// Fired when a customer's LINE message blew up mid-processing (DB / AI / push
+// error). The customer just got a generic "try again" reply — without this the
+// owner would never know a real person reached out and hit a wall. A lost
+// message here is a lost lead, so surface it immediately with enough to follow
+// up by hand.
+export async function notifyProcessingError(p: {
+  lineUserId: string;
+  userText: string;
+  error: unknown;
+}): Promise<void> {
+  await pushToOwner(
+    [
+      `🚨 ระบบตอบ LINE ขัดข้อง — มีลูกค้าทักแต่บอทตอบไม่ได้`,
+      `รีบเข้าไปตอบเองใน LINE OA ด่วน`,
+      ``,
+      `🔗 LINE ID: ${p.lineUserId}`,
+      `💬 ข้อความลูกค้า: ${p.userText.slice(0, 200)}`,
+      `⚠️ ${p.error instanceof Error ? p.error.message : String(p.error)}`,
+      `⏰ ${bkkNow()}`,
+    ].join("\n"),
+  );
+}
+
 // ─── Analytics digest + alert (plain text) ─────────────────────────────────────
 
 export async function notifyAnalyticsDigest(text: string): Promise<void> {
