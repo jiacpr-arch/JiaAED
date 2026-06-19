@@ -1,8 +1,7 @@
-# เช็กลิสต์สิ่งที่เจ้าของต้องเติม (อัปเดต 18 มิ.ย. 2026)
+# เช็กลิสต์สิ่งที่เจ้าของต้องเติม (อัปเดต 19 มิ.ย. 2026)
 
-ผมจัดการ #3 (QR) และ #4 (ราคา) ให้เรียบร้อยแล้ว เหลือ #1 (ฆพ.) ที่ยังไม่มีเลข
-และ #2 (รูป GPS/อบรม) ที่ผมเข้าถึงไฟล์ Drive ไม่ได้ (network ของ environment บล็อก
-`drive.google.com` ไว้) — อธิบายวิธีปลดล็อกไว้ด้านล่าง
+ผมจัดการ #2 (รูป GPS + Dashboard), #3 (QR) และ #4 (ราคา) ให้เรียบร้อยแล้ว
+เหลือ #1 (ฆพ.) ที่ยังไม่มีเลข และรูป **อบรม BLS จริง** ที่ใน Drive ยังไม่มี (มีแต่ flyer)
 
 ---
 
@@ -17,38 +16,23 @@
 
 ## 2) รูปจริง — สถานะตอนนี้ 🖼️
 
-ผมตรวจรูปในเครื่องทั้ง 7 ช่องแล้ว:
+ดึงรูปจริงจาก Drive (โฟลเดอร์ `yuwell`) ผ่าน Google Drive MCP มาวางให้แล้ว:
 
 | ไฟล์ | สถานะ | หมายเหตุ |
 |---|---|---|
-| `primedic-open.png` | ✅ **รูปจริง** | PRIMEDIC HeartSave เปิดฝา เห็นแผ่น electrode — ใช้ได้เลย |
-| `primedic-heartsave.png` | ✅ รูปจริง (PRIMEDIC แดง) | ใช้กับการ์ด Yuwell-GPS อยู่ ถ้าอยากได้ตัว GPS จริงใช้ `gpsaed.png` จาก Drive |
-| `aed-gps-tracking.png` | ⚠️ **ผิดประเภท** | เป็น flyer Amoul i7 ไม่ใช่แผนที่/GPS tracking |
-| `cloud-dashboard.png` | ⚠️ **ผิดประเภท** | เป็น flyer Amoul i7 ไม่ใช่ dashboard |
-| `training-bls-1.jpg` | ⚠️ **ผิดประเภท** | เป็น flyer Amoul i7/i9 ไม่ใช่ภาพอบรม |
-| `training-bls-2.jpg` | ⚠️ **ผิดประเภท** | เป็น flyer ราคาเช่า ไม่ใช่ภาพอบรม |
+| `aed-gps-tracking.png` | ✅ **แก้แล้ว** | ดึง `gpsaed.png` จาก Drive — ภาพ AED GPS tracking real-time (มือถือโชว์ AED JIACPR-001 บนแผนที่) |
+| `cloud-dashboard.png` | ✅ **แก้แล้ว** | ดึง `gpsaedcloud.png` จาก Drive — ภาพ Yuwell Cloud Monitoring Dashboard (โน้ตบุ๊กโชว์สถานะหลายจุด) |
+| `primedic-open.png` | ✅ รูปจริง | PRIMEDIC HeartSave เปิดฝา เห็นแผ่น electrode |
+| `primedic-heartsave.png` | ✅ รูปจริง (PRIMEDIC แดง) | ใช้กับการ์ด Yuwell-GPS |
+| `training-bls-1.jpg` | ⚠️ **ยังเป็น flyer** | Drive ยังไม่มีรูปถ่ายคอร์สอบรมจริง |
+| `training-bls-2.jpg` | ⚠️ **ยังเป็น flyer** | Drive ยังไม่มีรูปถ่ายคอร์สอบรมจริง |
 
-**ทำไมผมยังไม่เปลี่ยนให้:** environment นี้บล็อก `drive.google.com` ใน network egress
-(โหลดไฟล์ตรงไม่ได้) ส่วนไฟล์ภาพใน Drive เป็น PNG ก้อนใหญ่ (~1.5MB) ดึงผ่าน MCP มาเขียน
-ลงดิสก์ไม่คุ้ม context
+> หมายเหตุ: egress ตรงไป `drive.google.com` ยัง **ปิดอยู่** (curl ไม่ได้) แต่ผมดึงผ่าน Google Drive
+> MCP server ได้แล้ว (เป็นคนละ network กับ sandbox) — รูปไหนใน Drive ที่อยากให้วางทับ บอกชื่อไฟล์มาได้เลย
 
-**2 วิธีให้รูปจริงขึ้นเว็บ — เลือกอย่างใดอย่างหนึ่ง:**
-
-**วิธี A (ง่ายสุด):** เปิด egress ให้ `drive.google.com` ใน environment settings แล้วบอกผม
-ผมจะดึงรูปจาก Drive มาวางให้ครบเอง โดยใช้ mapping นี้ (จากโฟลเดอร์ `yuwell` ใน Drive):
-
-| ไฟล์ Drive (โฟลเดอร์ yuwell) | → วางทับเป็น | ใช้ที่ |
-|---|---|---|
-| `gpsaedcloud.png` | `public/images/cloud-dashboard.png` | หน้า GPS — dashboard |
-| `gpsaed.png` | `public/images/aed-gps-tracking.png` | หน้า GPS — ตัวเครื่อง GPS |
-| `gpsaed.png` (หรือ Y0/Y8) | `public/images/primedic-heartsave.png` | การ์ด Yuwell-GPS (ถ้าอยากได้ตัว GPS จริง) |
-
-**วิธี B (ทำเองได้เลย):** ดาวน์โหลดจาก Drive แล้ว rename วางทับใน `public/images/` ตามตารางบน
-(ชื่อปลายทางต้องเป๊ะ ระบบใช้รูปใหม่ทันที)
-
-**ภาพอบรม BLS/CPR จริง (`training-bls-1.jpg`, `training-bls-2.jpg`):**
-ใน Drive ไม่มีภาพถ่ายคอร์สอบรมจริง (มีแต่ flyer สินค้า) — ถ้ามีรูปวันสอนจริง ส่งมา
-แล้ววางทับ 2 ไฟล์นี้ จะน่าเชื่อถือกว่า flyer มาก
+**ภาพอบรม BLS/CPR จริง (`training-bls-1.jpg`, `training-bls-2.jpg`) — ยังต้องเติม:**
+ผมไล่ดูรูปทุกไฟล์ใน Drive แล้ว ไม่มีภาพถ่ายคอร์สอบรมจริง (เป็น flyer สินค้า/ราคา ทั้งหมด)
+ถ้ามีรูปวันสอนจริง (คนกำลังฝึก CPR/AED) ส่งมาแล้วผมวางทับ 2 ไฟล์นี้ให้ จะน่าเชื่อถือกว่า flyer มาก
 
 ---
 

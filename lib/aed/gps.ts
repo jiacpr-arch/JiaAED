@@ -2,7 +2,7 @@
 // GPS (Yuwell GPS) is bundled with the managed-rental tiers (see ./subscription.ts).
 // It is positioned as an asset/team-tracking + readiness system, not just a tag.
 
-export const gpsImage = "/images/aed-gps-tracking.png"; // TODO(owner): clean GPS image
+export const gpsImage = "/images/aed-gps-tracking.png"; // real Yuwell/PRIMEDIC GPS tracking visual
 
 export const gpsFeatures: { icon: string; title: string; desc: string }[] = [
   {
@@ -28,7 +28,7 @@ export const gpsFeatures: { icon: string; title: string; desc: string }[] = [
 ];
 
 // Cloud Monitoring Dashboard — readiness at a glance across all locations.
-export const dashboardImage = "/images/cloud-dashboard.png"; // TODO(owner): dashboard mockup
+export const dashboardImage = "/images/cloud-dashboard.png"; // real Yuwell Cloud Monitoring Dashboard visual
 
 export const dashboardFeatures: string[] = [
   "ดูสถานะเครื่องหลายจุดในหน้าจอเดียว (Multi-location)",
