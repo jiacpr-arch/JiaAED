@@ -3,7 +3,6 @@
  * แต่ละ handler รับ input JSON และ return ผลลัพธ์เป็น string (Claude อ่านได้)
  */
 
-import Stripe from "stripe";
 import { calculatePrice, getProduct, evaluateNegotiation, formatThaiPrice } from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
@@ -12,7 +11,6 @@ import {
   updateCustomer,
   createDeal,
   updateDeal,
-  getDealById,
   scheduleFollowup,
   createChatLead,
 } from "./db-queries";
@@ -21,7 +19,6 @@ import type {
   AedConversation,
   CalculatePriceInput,
   CreateQuotationInput,
-  CreatePaymentLinkInput,
   EscalateToHumanInput,
   ScheduleFollowupInput,
   UpdateCustomerInfoInput,
@@ -169,68 +166,24 @@ export async function handleCreateQuotation(
   const vatAmount = Math.round(subtotal * 0.07 * 100) / 100;
   const grandTotal = subtotal + vatAmount;
 
+  // Notify owner about the new quotation
+  if (result.documentNumber) {
+    void notifyNewQuotation({
+      customerName: ctx.customer.full_name,
+      productName: product.nameTh,
+      quantity: input.quantity,
+      grandTotal,
+      quotationNumber: result.documentNumber,
+    }).catch((e) => console.error("[AED] notifyNewQuotation failed:", e));
+  }
+
   return [
     `สร้างใบเสนอราคาสำเร็จ`,
     `เลขที่: ${result.documentNumber ?? result.documentId}`,
     `deal_id: ${deal.id}`,
     `ยอดรวม: ${formatThaiPrice(grandTotal)}`,
-    `ขั้นตอนต่อไป: สร้าง payment link ด้วย deal_id ด้านบน`,
+    `ขั้นตอนต่อไป: แจ้งลูกค้าให้ติดต่อทีมผ่าน LINE @jiacpr เพื่อนัดชำระเงิน`,
   ].join("\n");
-}
-
-// ─── create_payment_link ──────────────────────────────────────────────────────
-
-export async function handleCreatePaymentLink(
-  ctx: ToolContext,
-  input: CreatePaymentLinkInput,
-): Promise<string> {
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (!stripeKey) return "Stripe key not configured";
-
-  const deal = await getDealById(input.deal_id);
-  if (!deal) return `ไม่พบ deal: ${input.deal_id}`;
-
-  const product = getProduct(deal.product_id);
-  const stripe = new Stripe(stripeKey);
-
-  try {
-    // Create a Stripe Payment Link
-    const price = await stripe.prices.create({
-      currency: "thb",
-      unit_amount: Math.round(input.amount_thb * 100), // satangs
-      product_data: {
-        name: input.description ?? product?.nameTh ?? "AED Amoul i7",
-      },
-    });
-
-    const link = await stripe.paymentLinks.create({
-      line_items: [{ price: price.id, quantity: 1 }],
-      metadata: { deal_id: input.deal_id, customer_id: ctx.customer.id },
-      after_completion: { type: "redirect", redirect: { url: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://jiaaed.com"}/payment/success?deal_id=${input.deal_id}` } },
-    });
-
-    await updateDeal(input.deal_id, { stripe_payment_link_url: link.url, stage: "negotiating" });
-
-    // Notify owner
-    if (deal.flowaccount_quotation_number) {
-      await notifyNewQuotation({
-        customerName: ctx.customer.full_name,
-        productName: product?.nameTh ?? deal.product_id,
-        quantity: deal.quantity,
-        grandTotal: input.amount_thb,
-        quotationNumber: deal.flowaccount_quotation_number,
-        paymentLinkUrl: link.url,
-      });
-    }
-
-    return [
-      `สร้าง payment link สำเร็จ`,
-      `URL: ${link.url}`,
-      `ส่งลิงก์นี้ให้ลูกค้าเพื่อชำระเงินได้เลยครับ`,
-    ].join("\n");
-  } catch (err) {
-    return `สร้าง payment link ล้มเหลว: ${String(err)}`;
-  }
 }
 
 // ─── escalate_to_human ────────────────────────────────────────────────────────

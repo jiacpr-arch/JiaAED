@@ -106,7 +106,6 @@ export async function notifyNewQuotation(p: {
   quantity: number;
   grandTotal: number;
   quotationNumber: string;
-  paymentLinkUrl: string;
 }): Promise<void> {
   const total = `฿${p.grandTotal.toLocaleString("th-TH")}`;
 
@@ -131,20 +130,7 @@ export async function notifyNewQuotation(p: {
         infoRow("👤 ลูกค้า", p.customerName ?? "ลูกค้าใหม่"),
         infoRow("📦 สินค้า", `${p.productName} × ${p.quantity} เครื่อง`),
         infoRow("💰 รวม", `${total} (รวม VAT)`),
-      ],
-    },
-    footer: {
-      type: "box",
-      layout: "vertical",
-      spacing: "sm",
-      contents: [
-        {
-          type: "button",
-          style: "primary",
-          color: "#06C755",
-          height: "sm",
-          action: { type: "uri", label: "💳 เปิดลิงก์ชำระเงิน", uri: p.paymentLinkUrl },
-        },
+        infoRow("💬 ชำระ", "ลูกค้าจะนัดชำระผ่าน LINE @jiacpr"),
       ],
     },
   };
