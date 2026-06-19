@@ -52,12 +52,12 @@ describe("scoreConversation", () => {
     expect(r.reasons).toContain("quotation +5");
   });
 
-  it("treats a payment link as the highest intent", () => {
+  it("treats a quotation as the highest buying intent (no payment link — LINE contact instead)", () => {
     const r = score({
-      toolsUsed: [{ name: "create_quotation" }, { name: "create_payment_link" }],
+      toolsUsed: [{ name: "create_quotation" }],
     });
-    expect(r.intent).toBe("ready_to_pay");
-    expect(r.reasons).toContain("payment_link +6");
+    expect(r.intent).toBe("quotation");
+    expect(r.reasons).toContain("quotation +5");
   });
 
   it("labels an escalation as escalated when no higher signal exists", () => {

@@ -227,7 +227,6 @@ export function scoreConversation(input: ConversationScoreInput): ConversationSc
   add(toolNames.has("calculate_price"), 2, "viewed_price");
   add(toolNames.has("escalate_to_human"), 3, "escalated");
   add(toolNames.has("create_quotation"), 5, "quotation");
-  add(toolNames.has("create_payment_link"), 6, "payment_link");
 
   // Engagement depth.
   add(messageCount >= 4, 1, "engaged");
@@ -235,8 +234,7 @@ export function scoreConversation(input: ConversationScoreInput): ConversationSc
 
   // Coarse intent label — highest-intent signal wins.
   let intent = "browsing";
-  if (toolNames.has("create_payment_link")) intent = "ready_to_pay";
-  else if (toolNames.has("create_quotation")) intent = "quotation";
+  if (toolNames.has("create_quotation")) intent = "quotation";
   else if (toolNames.has("escalate_to_human")) intent = "escalated";
   else if (toolNames.has("calculate_price")) intent = "pricing";
   else if (phone || email) intent = "contact_shared";

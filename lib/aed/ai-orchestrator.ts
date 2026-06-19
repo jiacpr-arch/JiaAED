@@ -6,7 +6,6 @@ import {
   handleUpdateCustomerInfo,
   handleCalculatePrice,
   handleCreateQuotation,
-  handleCreatePaymentLink,
   handleEscalateToHuman,
   handleScheduleFollowup,
   type ToolContext,
@@ -68,19 +67,6 @@ const AED_TOOLS: Anthropic.Tool[] = [
         notes: { type: "string" },
       },
       required: ["product_id", "quantity", "unit_price", "customer_name"],
-    },
-  },
-  {
-    name: "create_payment_link",
-    description: "สร้าง Stripe payment link สำหรับ deal ที่มีใบเสนอราคาแล้ว",
-    input_schema: {
-      type: "object" as const,
-      properties: {
-        deal_id: { type: "string", description: "deal_id ที่ได้จาก create_quotation" },
-        amount_thb: { type: "number", description: "ยอดรวม VAT แล้ว (บาท)" },
-        description: { type: "string", description: "ชื่อสินค้าที่แสดงในหน้าชำระเงิน" },
-      },
-      required: ["deal_id", "amount_thb"],
     },
   },
   {
@@ -198,9 +184,6 @@ async function executeToolCall(
 
       case "create_quotation":
         return await handleCreateQuotation(ctx, input as unknown as Parameters<typeof handleCreateQuotation>[1]);
-
-      case "create_payment_link":
-        return await handleCreatePaymentLink(ctx, input as unknown as Parameters<typeof handleCreatePaymentLink>[1]);
 
       case "escalate_to_human":
         return await handleEscalateToHuman(ctx, input as unknown as Parameters<typeof handleEscalateToHuman>[1]);

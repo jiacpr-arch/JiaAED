@@ -155,11 +155,6 @@ export interface CreateQuotationInput {
   notes?: string;
 }
 
-export interface CreatePaymentLinkInput {
-  deal_id: string;
-  amount_thb: number;
-  description?: string;
-}
 
 export interface EscalateToHumanInput {
   reason: string;

@@ -129,8 +129,9 @@ export async function createQuotation(input: QuotationInput): Promise<FaResult> 
 
 // ─── Issue receipt after payment ──────────────────────────────────────────────
 
-export async function issueReceipt(input: QuotationInput & { stripePaymentIntentId: string; publishedOn: string }): Promise<FaResult> {
+export async function issueReceipt(input: QuotationInput & { publishedOn: string; paymentRef?: string }): Promise<FaResult> {
   const { subtotal, vatAmount, grandTotal, items, contactMeta, remarks } = buildItems(input);
+  const paymentNote = input.paymentRef ? `${input.paymentRef} | ${remarks}` : remarks;
 
   try {
     const doc = await faPost<FaDoc>("/cash-invoices/inline/with-payment", {
@@ -139,12 +140,12 @@ export async function issueReceipt(input: QuotationInput & { stripePaymentIntent
       subTotal: subtotal, discountPercentage: 0, discountAmount: 0,
       totalAfterDiscount: subtotal, vatAmount, grandTotal,
       documentShowWithholdingTax: false, documentWithholdingTaxPercentage: 0, documentWithholdingTaxAmount: 0,
-      remarks: `Stripe: ${input.stripePaymentIntentId} | ${remarks}`, items,
+      remarks: paymentNote, items,
       documentPaymentStructureType: "InlineDocumentWithPaymentReceivingCash",
       paymentMethod: 1, paymentDate: input.publishedOn, collected: grandTotal,
       paymentDeductionType: 1, paymentDeductionAmount: 0,
       withheldPercentage: 0, withheldAmount: 0,
-      paymentRemarks: `Stripe: ${input.stripePaymentIntentId}`,
+      paymentRemarks: paymentNote,
       remainingCollectedType: 51, remainingCollected: 0,
     });
     return { ok: true, documentId: doc.id ?? doc.documentSerial, documentNumber: doc.documentNumber };
