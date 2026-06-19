@@ -3,8 +3,9 @@
 // certified through the BLS Instructor Course at วิทยาลัยแพทยศาสตร์พระมงกุฎเกล้า.
 
 export const trainingImages = [
-  "/images/training-bls-1.jpg", // TODO(owner): real instructor-training photo
-  "/images/training-bls-2.jpg", // TODO(owner): real instructor-training photo
+  "/images/training-bls-1.jpg", // real photo: CPR + AED hands-on (อบรมกระทรวงยุติธรรม)
+  "/images/training-bls-2.jpg", // real photo: BLS Instructor course group + certificates (PMC 2026)
+  "/images/training-bls-3.jpg", // real photo: first-aid practice session (เบรดี้ ประเทศไทย)
 ];
 
 export const instructorCredential = {

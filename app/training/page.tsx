@@ -41,18 +41,18 @@ export default function TrainingPage() {
           subtitle={`ดำเนินการสอนโดยวิทยากรที่ผ่าน ${instructorCredential.course} จาก${instructorCredential.issuer}`}
         />
 
-        <div className="grid md:grid-cols-2 gap-4 mt-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
           {trainingImages.map((src, i) => (
             <div
               key={src}
-              className="relative w-full h-56 md:h-72 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900"
+              className="relative w-full h-56 md:h-64 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900"
             >
               <Image
                 src={src}
                 alt={`ภาพการอบรม CPR และการใช้ AED ${i + 1}`}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
           ))}
