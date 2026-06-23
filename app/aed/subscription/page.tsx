@@ -19,9 +19,9 @@ export const revalidate = 3600;
 const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
 
 export const metadata: Metadata = {
-  title: "เช่า AED รายเดือน — ดูแลครบวงจร เริ่ม ฿1,990/เดือน | JiaAED",
+  title: "เช่า AED รายเดือน — ดูแลครบวงจร เริ่ม ฿2,990/เดือน | JiaAED",
   description:
-    "บริการเช่า AED สำหรับองค์กร พร้อมระบบดูแลครบวงจร — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PREMIUM / ULTIMATE",
+    "บริการเช่า AED สำหรับองค์กร พร้อมระบบดูแลครบวงจร — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
   openGraph: {
     title: "เช่า AED รายเดือน ดูแลครบวงจร | JiaAED",
@@ -38,7 +38,7 @@ export default function SubscriptionPage() {
       <SiteHeader />
 
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        ☁️ เช่า AED ดูแลครบวงจร — เริ่ม ฿1,990/เดือน* เมื่อ Turn เครื่องเดิม
+        ☁️ เช่า AED ดูแลครบวงจร — เริ่ม ฿2,990/เดือน ดูแลครบวงจรโดยทีมผู้เชี่ยวชาญ
       </div>
 
       <section className="max-w-6xl mx-auto px-4 py-10">
@@ -67,7 +67,7 @@ export default function SubscriptionPage() {
           <FeatureMatrix />
         </div>
         <p className="text-center text-gray-600 text-xs mt-4">
-          * ราคา/เดือน ยังไม่รวม VAT · BASIC พิเศษ ฿1,990/เดือน เมื่อนำเครื่องเดิมมาแลก
+          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿5,000 (คืนเมื่อจบสัญญา)
         </p>
       </section>
 

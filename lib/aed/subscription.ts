@@ -1,38 +1,38 @@
-// ─── Safety Care managed-rental subscription tiers ────────────────────────────
-// BASIC / PREMIUM / ULTIMATE are the monthly service levels OF the Safety Care
+// ─── ดูแลครบ managed-rental subscription tiers ─────────────────────────────
+// BASIC / PRO / ELITE are the monthly service levels of the ดูแลครบ
 // managed-rental package (see ./packages.ts). Prices are PROVISIONAL.
 
-export type SubscriptionTierId = "care-basic" | "care-premium" | "care-ultimate";
+export type SubscriptionTierId = "managed-basic" | "managed-pro" | "managed-elite";
 
 export type SubscriptionTier = {
   id: SubscriptionTierId;
   name: string; // "BASIC"
   pricePerMonth: number; // 2990
-  specialNote: string | null; // trade-in / turn-in discount
+  specialNote: string | null;
   bestFor: string;
   badge: string | null;
 };
 
 export const subscriptionTiers: SubscriptionTier[] = [
   {
-    id: "care-basic",
+    id: "managed-basic",
     name: "BASIC",
     pricePerMonth: 2990,
-    specialNote: "พิเศษ ฿1,990/เดือน เมื่อนำเครื่องเดิมมาแลก (Turn เครื่องเก่า)",
+    specialNote: null,
     bestFor: "SME · ร้านค้า · ฟิตเนส · คอนโด",
     badge: null,
   },
   {
-    id: "care-premium",
-    name: "PREMIUM",
+    id: "managed-pro",
+    name: "PRO",
     pricePerMonth: 3990,
     specialNote: null,
     bestFor: "โรงเรียน · โรงงาน · สำนักงาน",
     badge: "คุ้มค่าที่สุด",
   },
   {
-    id: "care-ultimate",
-    name: "ULTIMATE",
+    id: "managed-elite",
+    name: "ELITE",
     pricePerMonth: 4990,
     specialNote: null,
     bestFor: "องค์กรขนาดใหญ่ / หลายสาขา",
@@ -52,39 +52,39 @@ export type FeatureMatrixRow = {
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
     feature: "Yuwell GPS ติดตามตำแหน่ง",
-    values: { "care-basic": true, "care-premium": true, "care-ultimate": true },
+    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   {
     feature: "เปลี่ยนเครื่องเมื่อเสีย (SLA)",
-    values: { "care-basic": "48 ชม.", "care-premium": "48 ชม.", "care-ultimate": "24 ชม." },
+    values: { "managed-basic": "48 ชม.", "managed-pro": "48 ชม.", "managed-elite": "24 ชม." },
   },
   {
     feature: "รายงานประจำปี + Hotline",
-    values: { "care-basic": true, "care-premium": true, "care-ultimate": true },
+    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   {
     feature: "ตรวจเช็กหน้างาน (ครั้ง/ปี)",
-    values: { "care-basic": false, "care-premium": "1 ครั้ง/ปี", "care-ultimate": "2 ครั้ง/ปี" },
+    values: { "managed-basic": false, "managed-pro": "1 ครั้ง/ปี", "managed-elite": "2 ครั้ง/ปี" },
   },
   {
     feature: "อบรมพนักงาน (ครั้ง/ปี)",
-    values: { "care-basic": false, "care-premium": "1 ครั้ง/ปี", "care-ultimate": "2 ครั้ง/ปี" },
+    values: { "managed-basic": false, "managed-pro": "1 ครั้ง/ปี", "managed-elite": "2 ครั้ง/ปี" },
   },
   {
     feature: "สร้างผู้สอน (Instructor) ในองค์กร",
-    values: { "care-basic": false, "care-premium": false, "care-ultimate": true },
+    values: { "managed-basic": false, "managed-pro": false, "managed-elite": true },
   },
   {
     feature: "แจ้งเตือนทางอีเมล (Email Alert)",
-    values: { "care-basic": false, "care-premium": true, "care-ultimate": true },
+    values: { "managed-basic": false, "managed-pro": true, "managed-elite": true },
   },
   {
     feature: "ระบบควบคุม Cloud Dashboard",
-    values: { "care-basic": false, "care-premium": false, "care-ultimate": true },
+    values: { "managed-basic": false, "managed-pro": false, "managed-elite": true },
   },
   {
     feature: "ป้ายจุดติดตั้ง",
-    values: { "care-basic": false, "care-premium": false, "care-ultimate": "2 ป้าย พร้อมตู้" },
+    values: { "managed-basic": false, "managed-pro": false, "managed-elite": "2 ป้าย พร้อมตู้" },
   },
 ];
 

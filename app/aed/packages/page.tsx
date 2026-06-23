@@ -76,7 +76,7 @@ export default function PackagesPage() {
             href="/aed/subscription"
             className="inline-block bg-yellow-400/10 text-yellow-400 font-bold px-6 py-3 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20"
           >
-            ดูแพ็กเกจเช่าบริการ (BASIC / PREMIUM / ULTIMATE) →
+            ดูแพ็กเกจ ดูแลครบ (BASIC / PRO / ELITE) →
           </Link>
         </div>
       </section>

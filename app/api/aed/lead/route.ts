@@ -17,9 +17,15 @@ const EXTRA_PRODUCT_IDS = [
   "pkg-premium",
   "pkg-start",
   "pkg-care",
-  "care-basic",
-  "care-premium",
-  "care-ultimate",
+  // ดูแลครบ subscription tiers (BASIC / PRO / ELITE)
+  "managed-basic",
+  "managed-pro",
+  "managed-elite",
+  // แผนอีเวนต์ event packages
+  "event-day",
+  "event-weekend",
+  "event-weekly",
+  "event-extended",
   "primedic-y0",
   "primedic-y8",
   "yuwell-gps",
