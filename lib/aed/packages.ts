@@ -1,7 +1,7 @@
 // ─── Acquisition packages — "3 วิธีได้ AED มาใช้" ──────────────────────────────
 // The top-level way customers choose how to get an AED: buy outright, rent-to-own,
-// or managed rental. The managed-rental package (Safety Care) is the gateway to the
-// BASIC / PREMIUM / ULTIMATE subscription tiers in ./subscription.ts.
+// or managed rental. The managed-rental package (pkg-care) is the gateway to the
+// ดูแลครบ BASIC / PRO / ELITE subscription tiers in ./subscription.ts.
 //
 // Prices are PROVISIONAL (wholesale being finalized). Update here only.
 
@@ -76,13 +76,11 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     nameTh: "เช่าบริการครบวงจร",
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
     listPriceLabel: null,
-    // Monthly price = the subscription tiers (BASIC/PREMIUM/ULTIMATE). The
-    // "฿1,500" in legacy material was the DAILY first-day rental rate (เช่ารายวัน
-    // ฿1,500/วันแรก), NOT a monthly price — the monthly entry is ฿1,990 (BASIC
-    // turn-in). Deposit aligned to the published rental flyer (฿5,000–10,000).
-    priceLabel: "เริ่ม ฿1,990/เดือน",
-    priceNote: "มัดจำ ฿5,000–10,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PREMIUM/ULTIMATE",
-    deposit: "฿5,000–10,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
+    // Monthly price = the ดูแลครบ subscription tiers (BASIC/PRO/ELITE).
+    // BASIC tier starts at ฿2,990/month. Deposit ฿5,000 for annual contract.
+    priceLabel: "เริ่ม ฿2,990/เดือน",
+    priceNote: "มัดจำ ฿5,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE",
+    deposit: "฿5,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
     features: [
       "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
       "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",

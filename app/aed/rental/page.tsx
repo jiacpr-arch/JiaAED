@@ -4,21 +4,21 @@ import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { LatestNews } from "@/app/components/LatestNews";
-import { rentalPlans, rentalFaqs } from "@/lib/aed/rental";
+import { rentalPlans, rentalFaqs, eventPackages, multiUnitPricing } from "@/lib/aed/rental";
 
 export const revalidate = 3600;
 
 const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
 
 export const metadata: Metadata = {
-  title: "เช่า AED เริ่ม ฿1,990/เดือน — ไม่ต้องลงทุนก้อนใหญ่ | JiaAED",
+  title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน — ไม่ต้องลงทุนก้อนใหญ่ | JiaAED",
   description:
-    "เช่า / เช่ายืม AED Amoul i7 รายวัน รายเดือน รายปี เริ่ม 1,990 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
+    "เช่า / เช่ายืม AED Amoul i7 แผนอีเวนต์ แผนยืดหยุ่น แผนรายปี เริ่ม 2,490 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
   alternates: { canonical: "/aed/rental" },
   openGraph: {
-    title: "เช่า AED เริ่ม ฿1,990/เดือน | JiaAED",
+    title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน | JiaAED",
     description:
-      "เช่า AED Amoul i7 รายวัน/เดือน/ปี พร้อมทีมดูแลครบวงจร อย. รับรอง — ไม่ต้องลงทุนก้อนใหญ่",
+      "เช่า AED Amoul i7 แผนอีเวนต์/แผนยืดหยุ่น/แผนรายปี พร้อมทีมดูแลครบวงจร อย. รับรอง — ไม่ต้องลงทุนก้อนใหญ่",
     url: "/aed/rental",
     images: ["/images/product-main.png"],
     type: "website",
@@ -53,7 +53,7 @@ export default function AedRentalLanding() {
             target="_blank"
             rel="noopener noreferrer"
             data-line-cta="rental_navbar"
-            data-product="rent-monthly"
+            data-product="rent-flex"
             className="bg-[#06C755] text-white text-sm font-bold px-4 py-2 rounded-full hover:bg-[#05a847]"
           >
             💬 LINE
@@ -63,7 +63,7 @@ export default function AedRentalLanding() {
 
       {/* Promo banner */}
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        💼 เช่า AED พร้อมใช้ — ไม่ต้องลงทุนซื้อขาด เริ่ม ฿1,990/เดือน
+        💼 เช่า AED พร้อมใช้ — ไม่ต้องลงทุนซื้อขาด เริ่ม ฿2,490/เดือน
       </div>
 
       <section className="px-4 py-8 max-w-4xl mx-auto">
@@ -74,11 +74,11 @@ export default function AedRentalLanding() {
         <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
           เช่า AED พร้อมใช้
           <br />
-          <span className="text-yellow-400">เริ่ม ฿1,990/เดือน</span>
+          <span className="text-yellow-400">เริ่ม ฿2,490/เดือน</span>
         </h1>
 
         <p className="text-gray-400 mb-5">
-          เช่ารายวัน · รายเดือน · รายปี — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
+          แผนอีเวนต์ · แผนยืดหยุ่น · แผนรายปี — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
           ไม่ต้องลงทุนก้อนใหญ่
         </p>
 
@@ -89,7 +89,7 @@ export default function AedRentalLanding() {
             target="_blank"
             rel="noopener noreferrer"
             data-line-cta="rental_hero"
-            data-product="rent-monthly"
+            data-product="rent-flex"
             className="block bg-[#06C755] text-white font-bold text-xl px-8 py-5 rounded-full hover:bg-[#05a847] text-center shadow-2xl shadow-[#06C755]/40 ring-4 ring-[#06C755]/20"
           >
             💬 สอบถาม / จองเช่าทาง LINE
@@ -132,7 +132,7 @@ export default function AedRentalLanding() {
           target="_blank"
           rel="noopener noreferrer"
           data-line-cta="rental_product"
-          data-product="rent-monthly"
+          data-product="rent-flex"
           className="block relative w-full h-56 sm:h-72 mb-8"
         >
           <Image
@@ -146,7 +146,7 @@ export default function AedRentalLanding() {
 
         {/* Rental plans */}
         <PriceViewTracker targetId="rental-price" />
-        <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกแพ็กเช่าที่ใช่</h2>
+        <h2 className="text-2xl font-bold text-center mb-2 text-white">เลือกแพลนเช่าที่ใช่</h2>
         <p className="text-center text-gray-500 text-sm mb-6">ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้</p>
         <div id="rental-price" className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
           {rentalPlans.map((p) => (
@@ -196,8 +196,66 @@ export default function AedRentalLanding() {
           ))}
         </div>
         <p className="text-center text-gray-600 text-sm mb-4">
-          * มัดจำคืนเต็มเมื่อคืนเครื่องครบสภาพ · ราคาพิเศษสำหรับสัญญาระยะยาว/หลายเครื่อง
+          * มัดจำคืนเต็มเมื่อคืนเครื่องครบสภาพ
         </p>
+
+        {/* Event packages */}
+        <div className="mb-8 bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-1">แผนอีเวนต์ — เลือกระยะเวลา</h2>
+          <p className="text-xs text-gray-500 mb-4">เหมาะกับงานวิ่ง คอนเสิร์ต แข่งกีฬา กองถ่าย · มัดจำบัตรเครดิต hold ฿30,000</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {eventPackages.map((pkg) => (
+              <a
+                key={pkg.id}
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rental_event_pkg"
+                data-product={pkg.id}
+                className="flex flex-col items-center bg-gray-800 border border-gray-700 rounded-xl p-4 hover:border-yellow-400/40 hover:bg-gray-750 transition-colors text-center"
+              >
+                <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">{pkg.name}</div>
+                <div className="text-sm font-bold text-white mb-1">{pkg.nameTh}</div>
+                <div className="text-xs text-gray-400 mb-2">{pkg.duration}</div>
+                <div className="text-yellow-400 font-bold text-base">฿{pkg.price.toLocaleString()}</div>
+                <div className="text-xs text-gray-500 mt-0.5">{pkg.priceNote}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Multi-unit pricing */}
+        <div className="mb-8 bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-1">แผนรายปี (ANNUAL) — ราคาหลายเครื่อง</h2>
+          <p className="text-xs text-gray-500 mb-4">สำหรับองค์กรที่ต้องการ AED มากกว่า 1 เครื่อง</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left text-gray-400 font-semibold pb-2">จำนวน</th>
+                  <th className="text-right text-gray-400 font-semibold pb-2">ราคา/เครื่อง/ปี</th>
+                  <th className="text-right text-gray-400 font-semibold pb-2"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {multiUnitPricing.map((tier) => (
+                  <tr key={tier.units} className="border-b border-gray-800 last:border-0">
+                    <td className="py-3 text-gray-200">{tier.units}</td>
+                    <td className="py-3 text-right text-yellow-400 font-bold">฿{tier.pricePerUnit.toLocaleString()}</td>
+                    <td className="py-3 text-right">
+                      {tier.badge && (
+                        <span className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-2 py-0.5 rounded-full border border-yellow-400/20">
+                          {tier.badge}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <div className="text-center mb-10 rounded-2xl border border-gray-800 bg-gray-900 p-5">
           <p className="text-sm text-gray-300 mb-3">
             ต้องการใช้ระยะยาวพร้อมทีมดูแลครบวงจร (GPS · Dashboard · เปลี่ยนเครื่องสำรอง)?
@@ -207,7 +265,7 @@ export default function AedRentalLanding() {
               href="/aed/subscription"
               className="inline-block bg-yellow-400/10 text-yellow-400 font-bold px-5 py-2.5 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-sm"
             >
-              ดูแพ็กเกจเช่ารายเดือน (BASIC/PREMIUM/ULTIMATE) →
+              ดูแพ็กเกจ ดูแลครบ (BASIC/PRO/ELITE) →
             </Link>
             <Link
               href="/aed/packages"
@@ -277,7 +335,7 @@ export default function AedRentalLanding() {
             target="_blank"
             rel="noopener noreferrer"
             data-line-cta="rental_footer"
-            data-product="rent-monthly"
+            data-product="rent-flex"
             className="inline-block bg-[#06C755] text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-[#05a847] shadow-2xl shadow-[#06C755]/40"
           >
             💬 ติดต่อทาง LINE ทันที
