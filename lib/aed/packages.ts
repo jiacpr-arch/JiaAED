@@ -24,27 +24,31 @@ export type AcquisitionPackage = {
   href: string | null;
 };
 
+// Order matters: rental-first. The homepage and /aed/packages render this array
+// in order, so the two rental options (managed rental, rent-to-own) lead and the
+// outright purchase comes last — the site emphasises เช่า over ซื้อ.
 export const acquisitionPackages: AcquisitionPackage[] = [
   {
-    id: "pkg-premium",
-    kind: "buy",
-    name: "Safety Premium",
-    nameTh: "ซื้อขาด",
-    tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
-    priceLabel: "เงินสด ฿39,900",
-    listPriceLabel: "฿69,000",
-    priceNote: "เงินสด ฿39,900 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · ออกใบกำกับภาษีได้",
-    deposit: null,
+    id: "pkg-care",
+    kind: "managed-rental",
+    name: "Safety Care",
+    nameTh: "เช่าบริการครบวงจร",
+    tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
+    listPriceLabel: null,
+    // Monthly price = the ดูแลครบ subscription tiers (BASIC/PRO/ELITE).
+    // BASIC tier starts at ฿2,990/month. Deposit ฿5,000 for annual contract.
+    priceLabel: "เริ่ม ฿2,990/เดือน",
+    priceNote: "มัดจำ ฿5,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE",
+    deposit: "฿5,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
     features: [
-      "เครื่อง AED + GPS เป็นกรรมสิทธิ์ขององค์กร",
-      "ตู้ติดผนัง / ตู้ตั้งพื้น",
-      "อบรมการใช้งานให้ทีมงาน",
-      "บริการหลังการขายเบื้องต้น",
+      "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
+      "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",
+      "คืนได้เมื่อเลิกใช้",
     ],
-    bestFor: "องค์กรที่มีงบลงทุน (CAPEX) และต้องการเป็นเจ้าของ",
-    badge: null,
-    ctaProductHint: "pkg-premium",
-    href: "/quote",
+    bestFor: "องค์กรที่ต้องการความพร้อม 100% โดยไม่ต้องดูแลเอง / โครงการระยะสั้น",
+    badge: "เช่า · แนะนำ",
+    ctaProductHint: "pkg-care",
+    href: "/aed/subscription",
   },
   {
     id: "pkg-start",
@@ -70,25 +74,24 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     href: "/quote",
   },
   {
-    id: "pkg-care",
-    kind: "managed-rental",
-    name: "Safety Care",
-    nameTh: "เช่าบริการครบวงจร",
-    tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
-    listPriceLabel: null,
-    // Monthly price = the ดูแลครบ subscription tiers (BASIC/PRO/ELITE).
-    // BASIC tier starts at ฿2,990/month. Deposit ฿5,000 for annual contract.
-    priceLabel: "เริ่ม ฿2,990/เดือน",
-    priceNote: "มัดจำ ฿5,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE",
-    deposit: "฿5,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
+    id: "pkg-premium",
+    kind: "buy",
+    name: "Safety Premium",
+    nameTh: "ซื้อขาด",
+    tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
+    priceLabel: "เงินสด ฿39,900",
+    listPriceLabel: "฿69,000",
+    priceNote: "เงินสด ฿39,900 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · ออกใบกำกับภาษีได้",
+    deposit: null,
     features: [
-      "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
-      "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",
-      "คืนได้เมื่อเลิกใช้",
+      "เครื่อง AED + GPS เป็นกรรมสิทธิ์ขององค์กร",
+      "ตู้ติดผนัง / ตู้ตั้งพื้น",
+      "อบรมการใช้งานให้ทีมงาน",
+      "บริการหลังการขายเบื้องต้น",
     ],
-    bestFor: "องค์กรที่ต้องการความพร้อม 100% โดยไม่ต้องดูแลเอง / โครงการระยะสั้น",
+    bestFor: "องค์กรที่มีงบลงทุน (CAPEX) และต้องการเป็นเจ้าของ",
     badge: null,
-    ctaProductHint: "pkg-care",
-    href: "/aed/subscription",
+    ctaProductHint: "pkg-premium",
+    href: "/quote",
   },
 ];
