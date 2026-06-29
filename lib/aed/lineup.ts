@@ -94,12 +94,16 @@ const gpsCard: LineupCard = {
 export const homepageTiers: LineupTier[] = [
   {
     label: "รุ่นเริ่มต้น · เทียบเท่ากัน",
-    note: "สเปกระดับเดียวกัน — เลือกตามงบและความชอบ",
-    cards: [amoulI7Card, primedicCard(primedicModels[0], "กึ่งอัตโนมัติ · รุ่นเริ่มต้น")],
+    note: "สเปกระดับเดียวกัน — แนะนำ Yuwell/PRIMEDIC HeartSave (มาตรฐานเยอรมัน)",
+    // Yuwell/PRIMEDIC led and highlighted; Amoul i7 kept as the secondary option.
+    cards: [
+      { ...primedicCard(primedicModels[0], "กึ่งอัตโนมัติ · รุ่นเริ่มต้น"), badge: "แนะนำ", highlight: true },
+      amoulI7Card,
+    ],
   },
   {
     label: "รุ่นสูงกว่า · ฟีเจอร์เพิ่ม",
-    note: "เพิ่มเซ็นเซอร์ CPR feedback หรือ GPS ติดตามในตัว",
+    note: "Yuwell/PRIMEDIC — เพิ่มเซ็นเซอร์ CPR feedback หรือ GPS ติดตามในตัว",
     cards: [primedicCard(primedicModels[1], "กึ่งอัตโนมัติ · มี CPR feedback"), gpsCard],
   },
 ];

@@ -126,46 +126,55 @@ export default function Home() {
             </div>
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <a
-              href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-line-cta="hero_image_amoul"
-              data-product="i7"
-              className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="Amoul i7 — คลิกเพื่อสอบถามทาง LINE"
-            >
-              <div className="relative w-full h-56 md:h-64">
-                <Image
-                  src="/images/product-main.png"
-                  alt="AED Amoul i7"
-                  fill
-                  className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
-                  priority
-                />
-              </div>
-              <span className="mt-2 text-xs font-semibold text-yellow-300">Amoul i7</span>
-            </a>
+          <div className="flex flex-col gap-4">
+            {/* Featured brand — Yuwell / PRIMEDIC HeartSave (เด่นที่สุด) */}
             <a
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
               data-line-cta="hero_image_primedic"
               data-product="primedic-y8"
-              className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="PRIMEDIC HeartSave — คลิกเพื่อสอบถามทาง LINE"
+              className="relative flex flex-col items-center group cursor-pointer rounded-2xl border-2 border-red-500/50 bg-white p-3 shadow-2xl shadow-red-500/10"
+              aria-label="Yuwell · PRIMEDIC HeartSave — คลิกเพื่อสอบถามทาง LINE"
             >
-              <div className="relative w-full h-56 md:h-64 rounded-xl overflow-hidden bg-white">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-500 text-white text-xs font-black px-4 py-1 rounded-full z-10 whitespace-nowrap">
+                ⭐ แนะนำ — Yuwell · PRIMEDIC
+              </span>
+              <div className="relative w-full h-64 md:h-72">
                 <Image
                   src="/images/primedic-heartsave.png"
-                  alt="PRIMEDIC HeartSave AED"
+                  alt="Yuwell · PRIMEDIC HeartSave AED"
                   fill
-                  className="object-contain p-3 transition-transform group-hover:scale-105"
+                  className="object-contain transition-transform group-hover:scale-105"
                   priority
                 />
               </div>
-              <span className="mt-2 text-xs font-semibold text-red-400">PRIMEDIC HeartSave</span>
+              <span className="mt-1 text-sm font-bold text-red-500">Yuwell · PRIMEDIC HeartSave</span>
+              <span className="text-[11px] text-gray-500">มีเซ็นเซอร์ CPR feedback · GPS ในตัว (รุ่น Yuwell GPS)</span>
+            </a>
+            {/* Secondary brand — Amoul i7 (ทางเลือก) */}
+            <a
+              href={LINE_OA}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-line-cta="hero_image_amoul"
+              data-product="i7"
+              className="relative flex items-center gap-3 group cursor-pointer rounded-xl border border-gray-800 bg-gray-900/60 p-3 hover:border-yellow-400/40 transition-colors"
+              aria-label="Amoul i7 — คลิกเพื่อสอบถามทาง LINE"
+            >
+              <div className="relative w-20 h-20 flex-shrink-0">
+                <Image
+                  src="/images/product-main.png"
+                  alt="AED Amoul i7"
+                  fill
+                  className="object-contain drop-shadow-lg transition-transform group-hover:scale-105"
+                />
+              </div>
+              <div>
+                <span className="text-xs text-gray-500">อีกหนึ่งทางเลือก</span>
+                <div className="text-sm font-semibold text-yellow-300">Amoul i7</div>
+                <div className="text-[11px] text-gray-500">รุ่นเริ่มต้น เสียงไทย 5 ภาษา</div>
+              </div>
             </a>
           </div>
         </div>
@@ -249,18 +258,21 @@ export default function Home() {
             </p>
           </div>
 
-          {/* "Which one for me" recommendation — answers the question up front */}
+          {/* "Which one for me" recommendation — Yuwell/PRIMEDIC presented as the default */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mt-6 mb-10">
-            <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
-              <div className="text-yellow-300 font-bold mb-1">เลือก Amoul i7 ถ้า…</div>
+            <div className="relative rounded-2xl border-2 border-red-500/60 bg-red-500/10 p-5 shadow-lg shadow-red-500/10">
+              <span className="absolute -top-3 left-5 bg-red-500 text-white text-[11px] font-black px-3 py-0.5 rounded-full">
+                ⭐ แนะนำ
+              </span>
+              <div className="text-red-400 font-bold mb-1 mt-1">เลือก Yuwell · PRIMEDIC HeartSave (Y8) ถ้า…</div>
               <p className="text-gray-300 text-sm">
-                อยากได้ <strong className="text-white">ราคาเริ่มต้นคุ้มที่สุด</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
+                ต้องการ <strong className="text-white">เซ็นเซอร์ CPR feedback</strong> วัดแรง/จังหวะการปั๊มแบบเรียลไทม์ + ตัวเลือก <strong className="text-white">GPS ในตัว</strong> (รุ่น Yuwell GPS) — มาตรฐานเยอรมัน เหมาะกับโรงเรียน ฟิตเนส โรงงาน และองค์กรหลายสาขาที่เน้นคุณภาพการกู้ชีพ
               </p>
             </div>
-            <div className="rounded-2xl border border-red-500/40 bg-red-500/5 p-5">
-              <div className="text-red-400 font-bold mb-1">เลือก PRIMEDIC HeartSave (Y8) ถ้า…</div>
+            <div className="rounded-2xl border border-gray-800 bg-gray-900/60 p-5">
+              <div className="text-yellow-300 font-bold mb-1">เลือก Amoul i7 ถ้า…</div>
               <p className="text-gray-300 text-sm">
-                ต้องการ <strong className="text-white">เซ็นเซอร์ CPR feedback</strong> ช่วยบอกแรง/จังหวะการปั๊มแบบเรียลไทม์ — เหมาะกับทีมที่เน้นคุณภาพการกู้ชีพ
+                เน้น <strong className="text-white">ราคาเริ่มต้นประหยัด</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/ที่สาธารณะทั่วไปที่งบจำกัด
               </p>
             </div>
           </div>
