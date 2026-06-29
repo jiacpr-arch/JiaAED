@@ -9,8 +9,11 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED Amoul i7",
     description: "เครื่อง AED Amoul i7 พร้อมแผ่น Pad + แบตเตอรี่",
     msrp: 70_000,
-    startingPrice: 39_999,
-    bestPrice: 38_500,
+    // ราคาขยับขึ้นจาก 39,999 → 42,900 (มิ.ย. 2026): หน้าเว็บ "จ่ายจริงรวม VAT" เดิม
+    // ≈42,799 ต่ำกว่าคู่แข่งถูกสุดในตลาด (Y8 บน Shopee ฿44,888) ซึ่งผิดนโยบาย
+    // "ห้ามตั้งราคาต่ำที่สุดในตลาด" → ตั้งให้พ้นจุดถูกสุดแต่ยังต่ำกว่า Mindray (฿89,000) มาก
+    startingPrice: 42_900,
+    bestPrice: 40_000,
     minPrice: 37_000,
     vatRate: 0.07,
     faProductCode: "AED-I7",
@@ -21,8 +24,8 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED Amoul i7 พร้อมตู้แขวนผนัง",
     description: "เครื่อง AED Amoul i7 + ตู้ติดผนังมาตรฐาน พร้อมสัญญาณเตือน",
     msrp: 80_000,
-    startingPrice: 44_999,
-    bestPrice: 43_500,
+    startingPrice: 47_900,
+    bestPrice: 45_000,
     minPrice: 42_000,
     vatRate: 0.07,
     faProductCode: "AED-I7-CAB",
@@ -33,8 +36,8 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED Amoul i7 พร้อมตู้ตั้งพื้น",
     description: "เครื่อง AED Amoul i7 + ตู้ตั้งพื้น Stainless สำหรับพื้นที่เปิดโล่ง",
     msrp: 90_000,
-    startingPrice: 49_000,
-    bestPrice: 47_500,
+    startingPrice: 51_900,
+    bestPrice: 49_000,
     minPrice: 46_000,
     vatRate: 0.07,
     faProductCode: "AED-I7-FLR",
@@ -185,10 +188,12 @@ export function formatThaiPrice(amount: number): string {
 export const PRICING_POLICY = {
   rule: "ห้ามตั้งราคาต่ำที่สุดในตลาด รวมถึงแผ่นแปะและแบตเตอรี่",
   // Observed competitor market-floor for consumables. Our minPrice stays strictly
-  // above each (pad 5,000 > 4,000 · battery 7,500 > 6,000) — assertAboveMarketFloor
+  // above each (pad 5,000 > 1,890 · battery 7,500 > 6,000) — assertAboveMarketFloor
   // guards this. Owner: lower these only if a competitor is actually seen below.
+  // pad-adult: ปรับ 4,000 → 1,890 ตามราคาจริงที่พบบน Shopee (มิ.ย. 2026) — แผ่นนำไฟฟ้า
+  // ขายที่ ฿1,890 (น่าจะเป็นของเทียบ/generic) เราขายของแท้ Ambul จึงตั้ง premium เหนือได้
   marketFloor: {
-    "pad-adult": 4_000,
+    "pad-adult": 1_890,
     battery: 6_000,
   } as Record<string, number>,
 } as const;

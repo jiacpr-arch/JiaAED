@@ -59,7 +59,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     priceLabel: "฿2,500/เดือน",
     listPriceLabel: null,
     // Rent-to-own total = 15,000 + 2,500 × 18 = ฿60,000. Sits between cash buy
-    // (฿39,900) and the credit/government list (฿69,000) — a ~50% financing
+    // (฿42,900) and the credit/government list (฿69,000) — a ~40% financing
     // premium over cash, which is the expected cost of paying monthly. Coherent.
     priceNote: "มัดจำ ฿15,000 + ผ่อน ฿2,500/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
     deposit: "฿15,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
@@ -79,15 +79,15 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Premium",
     nameTh: "ซื้อขาด",
     tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
-    priceLabel: "เงินสด ฿39,900",
+    priceLabel: "เงินสด ฿42,900",
     listPriceLabel: "฿69,000",
-    priceNote: "เงินสด ฿39,900 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · ออกใบกำกับภาษีได้",
+    priceNote: "เงินสด ฿42,900 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · ออกใบกำกับภาษีได้",
     deposit: null,
     features: [
       "เครื่อง AED + GPS เป็นกรรมสิทธิ์ขององค์กร",
-      "ตู้ติดผนัง / ตู้ตั้งพื้น",
-      "อบรมการใช้งานให้ทีมงาน",
-      "บริการหลังการขายเบื้องต้น",
+      "เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้",
+      "อบรม CPR & AED สอนถึงที่ โดยทีม BLS Instructor",
+      "ชุดอุปกรณ์ฝึกสอน + บริการหลังการขาย",
     ],
     bestFor: "องค์กรที่มีงบลงทุน (CAPEX) และต้องการเป็นเจ้าของ",
     badge: null,
