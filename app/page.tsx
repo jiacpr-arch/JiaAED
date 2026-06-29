@@ -17,6 +17,7 @@ import { LatestNews } from "./components/LatestNews";
 import { PackageCard } from "./components/PackageCard";
 import { TrustStats } from "./components/TrustStats";
 import { PromoBanner } from "./components/PromoBanner";
+import { RentalSpotlight } from "./components/RentalSpotlight";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { survivorReward } from "@/lib/aed/promotion";
 
@@ -78,11 +79,11 @@ export default function Home() {
             <span className="font-bold text-xl text-yellow-400">JiaAED</span>
           </div>
           <div className="flex items-center gap-4">
+            <a href="#rent" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</a>
             <a href="#how" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">วิธีได้เครื่อง</a>
-            <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เลือกยี่ห้อ</a>
-            <Link href="/aed/subscription" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</Link>
+            <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
             <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">ข้อมูลเครื่อง</a>
-            <a href="#contact" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">ติดต่อ</a>
+            <Link href="/aed/rental" className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-4 py-2 rounded-full hover:bg-yellow-400/20 transition-colors hidden sm:block">เช่า AED →</Link>
             <a
               href={LINE_OA}
               target="_blank"
@@ -101,28 +102,29 @@ export default function Home() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
             <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20 mb-4">
-              ✅ อย. รับรอง · เลือกได้ 2 แบรนด์ · ออกใบเสนอราคาได้
+              ✅ อย. รับรอง · เช่าได้ ไม่ต้องลงทุนก้อนใหญ่ · ออกใบกำกับภาษีได้
             </span>
             <HeroHeadline />
             <p className="text-gray-400 text-lg mb-4">
-              <strong className="text-white">Amoul i7</strong> และ <strong className="text-white">PRIMEDIC HeartSave</strong> · เสียงแนะนำภาษาไทย<br />
-              Shock เร็ว · ใช้ได้ทั้งผู้ใหญ่และเด็ก
+              <strong className="text-white">เช่า AED พร้อมใช้</strong> — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร<br />
+              เสียงแนะนำภาษาไทย · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
-              <span className="text-xs text-gray-400">เริ่มต้น</span>
-              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿39,000</span>
-              <span className="text-xs text-gray-500 w-full">ราคาก่อน VAT · หรือเลือกผ่อน/เช่าได้ — ดูทั้ง 3 วิธีด้านล่าง</span>
+              <span className="text-xs text-gray-400">เช่าเริ่มต้น</span>
+              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿2,490</span>
+              <span className="text-lg text-gray-400 font-semibold">/เดือน</span>
+              <span className="text-xs text-gray-500 w-full">ก่อน VAT · แผนรายปีเฉลี่ย ~฿1,830/เดือน · หรือจะซื้อขาด ฿39,900 ก็ได้</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <a
-                href="#how"
+                href="#rent"
                 className="bg-yellow-400 text-yellow-900 font-bold text-lg px-8 py-4 rounded-full hover:bg-yellow-300 transition-colors text-center"
               >
-                เลือกวิธีได้เครื่อง →
+                ดูแผนเช่า AED →
               </a>
               <HeroCta />
             </div>
-            <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคาได้เลย</p>
+            <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <a
@@ -176,7 +178,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ DECISION 1: how to get an AED — buy / rent / rent-to-own ═══ */}
+      {/* ═══ RENTAL SPOTLIGHT — the primary offer, shown before buy/own ═══ */}
+      <RentalSpotlight />
+
+      {/* ═══ DECISION 1: how to get an AED — rent / rent-to-own / buy ═══ */}
       <PriceViewTracker />
       <section id="how" className="py-16 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-6xl mx-auto">
@@ -186,7 +191,7 @@ export default function Home() {
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-white">อยากได้ AED แบบไหน? เลือกได้ 3 ทาง</h2>
             <p className="text-gray-400 mt-2 max-w-2xl mx-auto">
-              ซื้อขาด · เช่า · เช่าซื้อ (ผ่อนแล้วได้เครื่อง) — เลือกแบบที่เหมาะกับงบและการใช้งานของคุณ
+              เช่าบริการครบวงจร · เช่าแล้วได้ซื้อ (ผ่อนแล้วได้เครื่อง) · ซื้อขาด — เลือกแบบที่เหมาะกับงบและการใช้งานของคุณ
             </p>
           </div>
 
