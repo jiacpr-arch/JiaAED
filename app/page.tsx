@@ -113,7 +113,7 @@ export default function Home() {
               <span className="text-xs text-gray-400">เช่าเริ่มต้น</span>
               <span className="text-4xl md:text-5xl font-black text-yellow-400">฿2,490</span>
               <span className="text-lg text-gray-400 font-semibold">/เดือน</span>
-              <span className="text-xs text-gray-500 w-full">ก่อน VAT · แผนรายปีเฉลี่ย ~฿1,830/เดือน · หรือจะซื้อขาด ฿39,900 ก็ได้</span>
+              <span className="text-xs text-gray-500 w-full">ก่อน VAT · แผนรายปีเฉลี่ย ~฿1,830/เดือน · หรือจะซื้อขาด ฿42,900 ก็ได้</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <a
@@ -306,7 +306,7 @@ export default function Home() {
           <div className="mt-12">
             <div className="text-center mb-6">
               <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ Amoul i7</h3>
-              <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿44,999) หรือแท่นตั้งพื้น (฿49,000) — ราคารวมเครื่อง i7 แล้ว</p>
+              <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿47,900) หรือแท่นตั้งพื้น (฿51,900) — ราคารวมเครื่อง i7 แล้ว</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <a
@@ -735,12 +735,12 @@ export default function Home() {
             {/* Accessories / spare parts */}
             <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
               <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">🔋 อุปกรณ์เสริม &amp; อะไหล่ — แผ่นแปะ (Pad) &amp; แบตเตอรี่</span>
+                <span className="font-semibold text-white">🔋 อุปกรณ์เสริม · ตู้ · อบรม CPR&amp;AED &amp; อะไหล่</span>
                 <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
               </summary>
               <div className="px-4 pb-6 pt-2">
                 <p className="text-center text-gray-500 mb-8 max-w-2xl mx-auto">
-                  แผ่นนำไฟฟ้า (Pad) และแบตเตอรี่/ชุดพลังงานของแท้ สำหรับ AED Amoul i7 และ PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
+                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Amoul i7 และ PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                   {accessories.map((a) => (

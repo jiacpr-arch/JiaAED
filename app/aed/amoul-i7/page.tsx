@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า · อย. รับรอง",
     description:
-      "Shock 7 วินาที · เสียงแนะนำภาษาไทย · IP65 · อย. รับรอง · เริ่ม 39,999฿",
+      "Shock 7 วินาที · เสียงแนะนำภาษาไทย · IP65 · อย. รับรอง · เริ่ม 42,900฿",
     images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
   },
   twitter: {
@@ -80,7 +80,7 @@ export default function AdsLandingI7() {
             <span className="text-gray-500 line-through text-base">฿70,000</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-5xl font-black text-yellow-400">฿39,999</span>
+            <span className="text-5xl font-black text-yellow-400">฿42,900</span>
             <span className="text-sm text-gray-500">+ ส่งฟรี</span>
           </div>
           <p className="text-xs text-gray-500 mt-1">ก่อน VAT · ออกใบกำกับภาษีได้</p>
