@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
+import { clean, hashIp } from "@/lib/aed/lead-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   HOT_LEAD_TRIGGER_EVENTS,
@@ -43,18 +43,6 @@ const ALLOWED_EVENTS = new Set([
   "web_chat_reset",
   "web_chat_contact_click",
 ]);
-
-function clean(v: unknown, max = 500): string | null {
-  if (typeof v !== "string") return null;
-  const t = v.trim();
-  return t ? t.slice(0, max) : null;
-}
-
-function hashIp(ip: string | null): string | null {
-  if (!ip) return null;
-  const salt = process.env.LEAD_IP_SALT || "jiaaed";
-  return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
-}
 
 async function maybeNotifyHotLead(args: {
   eventName: string;

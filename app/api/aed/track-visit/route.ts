@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createHash } from "crypto";
+import { clean, hashIp } from "@/lib/aed/lead-validation";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -13,18 +13,6 @@ type Body = {
   pageUrl?: string;
   referrer?: string;
 };
-
-function clean(v: unknown, max = 500): string | null {
-  if (typeof v !== "string") return null;
-  const t = v.trim();
-  return t ? t.slice(0, max) : null;
-}
-
-function hashIp(ip: string | null): string | null {
-  if (!ip) return null;
-  const salt = process.env.LEAD_IP_SALT || "jiaaed";
-  return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
-}
 
 export async function POST(req: Request) {
   let body: Body;

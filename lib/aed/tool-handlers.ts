@@ -3,7 +3,7 @@
  * แต่ละ handler รับ input JSON และ return ผลลัพธ์เป็น string (Claude อ่านได้)
  */
 
-import { calculatePrice, getProduct, evaluateNegotiation, formatThaiPrice } from "./pricing";
+import { calculatePrice, getProduct, formatThaiPrice } from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
 import { recordConversion } from "./conversion";

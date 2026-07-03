@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAbandonedForm } from "@/lib/aed/notify-owner";
-import { clean, hashIp, isValidPhone, isValidEmail } from "@/lib/aed/lead-validation";
+import {
+  clean,
+  hashIp,
+  isValidPhone,
+  isValidEmail,
+  VALID_PRODUCT_IDS,
+} from "@/lib/aed/lead-validation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,7 +39,11 @@ export async function POST(req: Request) {
   const phone = clean(body.phone, 30);
   const email = clean(body.email, 120);
   const company = clean(body.company, 200);
-  const productId = clean(body.productId, 30);
+  // Beacon route: keep the lead but drop an unrecognized product id instead of
+  // rejecting (the full form route 400s; here the contact info still matters).
+  const rawProductId = clean(body.productId, 30);
+  const productId =
+    rawProductId && VALID_PRODUCT_IDS.has(rawProductId) ? rawProductId : null;
   const unitCount = clean(body.unitCount, 40);
   const message = clean(body.message, 2000);
   const pageUrl = clean(body.pageUrl, 500);
