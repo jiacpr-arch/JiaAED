@@ -170,7 +170,7 @@ export function buildNewHeroHeadlineFile(
   }
   return current.replace(
     re,
-    (_, p1, _old1, p3, _old2, p5, _old3) =>
+    (_, p1, _old1, p3, _old2, p5) =>
       `${p1}${JSON.stringify(args.newHeadline.line1)}${p3}${JSON.stringify(args.newHeadline.accent)}${p5}${JSON.stringify(args.newHeadline.line2)}`,
   );
 }

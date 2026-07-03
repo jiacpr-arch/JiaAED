@@ -5,36 +5,16 @@ import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply } from "@/lib/aed/email";
 import { recordConversion } from "@/lib/aed/conversion";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
-import { products, accessories } from "@/lib/aed/products";
-import { clean, hashIp, isValidPhone, isValidEmail } from "@/lib/aed/lead-validation";
+import { products } from "@/lib/aed/products";
+import {
+  clean,
+  hashIp,
+  isValidPhone,
+  isValidEmail,
+  VALID_PRODUCT_IDS,
+} from "@/lib/aed/lead-validation";
 
 export const runtime = "nodejs";
-
-// Sellable ids the quote/lead forms may reference. Beyond the homepage product
-// grid (`products`) this also accepts accessories and the package/subscription
-// pseudo-products + PRIMEDIC models so corporate quote submissions don't 400.
-const EXTRA_PRODUCT_IDS = [
-  "pkg-premium",
-  "pkg-start",
-  "pkg-care",
-  // ดูแลครบ subscription tiers (BASIC / PRO / ELITE)
-  "managed-basic",
-  "managed-pro",
-  "managed-elite",
-  // แผนอีเวนต์ event packages
-  "event-day",
-  "event-weekend",
-  "event-weekly",
-  "event-extended",
-  "primedic-y0",
-  "primedic-y8",
-  "yuwell-gps",
-];
-const VALID_PRODUCT_IDS = new Set<string>([
-  ...products.map((p) => p.id),
-  ...accessories.map((a) => a.id),
-  ...EXTRA_PRODUCT_IDS,
-]);
 
 type LeadBody = {
   source?: string;

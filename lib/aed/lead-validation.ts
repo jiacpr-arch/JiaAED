@@ -3,6 +3,34 @@
 // and can be unit-tested directly instead of only through a live HTTP request.
 
 import { createHash } from "crypto";
+import { products, accessories } from "@/lib/aed/products";
+
+// Sellable ids the quote/lead forms may reference. Beyond the homepage product
+// grid (`products`) this also accepts accessories and the package/subscription
+// pseudo-products + PRIMEDIC models so corporate quote submissions don't 400.
+const EXTRA_PRODUCT_IDS = [
+  "pkg-premium",
+  "pkg-start",
+  "pkg-care",
+  // ดูแลครบ subscription tiers (BASIC / PRO / ELITE)
+  "managed-basic",
+  "managed-pro",
+  "managed-elite",
+  // แผนอีเวนต์ event packages
+  "event-day",
+  "event-weekend",
+  "event-weekly",
+  "event-extended",
+  "primedic-y0",
+  "primedic-y8",
+  "yuwell-gps",
+];
+
+export const VALID_PRODUCT_IDS = new Set<string>([
+  ...products.map((p) => p.id),
+  ...accessories.map((a) => a.id),
+  ...EXTRA_PRODUCT_IDS,
+]);
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
