@@ -1,3 +1,4 @@
+import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
@@ -19,12 +20,6 @@ const GOOD_CPL = 200;
 const BAD_CPL = 300;
 const CURRENT_DAILY_BUDGET = 150;
 const RANGE_DAYS = 14;
-
-function isAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
-}
 
 function baht(n: number): string {
   return `฿${Math.round(n).toLocaleString("en-US")}`;
@@ -74,7 +69,7 @@ async function logRun(payload: Record<string, unknown>): Promise<void> {
 }
 
 export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 

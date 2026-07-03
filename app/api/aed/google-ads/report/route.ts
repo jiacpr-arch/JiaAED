@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isConfigured, fetchAdsReport } from "@/lib/aed/google-ads";
+import { timingSafeEqual } from "@/lib/aed/timing-safe";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -7,8 +8,8 @@ export const maxDuration = 30;
 function authorized(req: Request): boolean {
   const expected = process.env.AED_INTERNAL_API_KEY;
   if (!expected) return false; // never allow if no key configured
-  const got = req.headers.get("authorization");
-  return got === `Bearer ${expected}`;
+  const got = req.headers.get("authorization") ?? "";
+  return timingSafeEqual(got, `Bearer ${expected}`);
 }
 
 // GET /api/aed/google-ads/report?days=14

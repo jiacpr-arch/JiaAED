@@ -1,3 +1,4 @@
+import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildWeeklyContext, generateWeeklyReview } from "@/lib/aed/analytics-weekly-review";
@@ -6,12 +7,6 @@ import { notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
-
-function isAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
-}
 
 function todayLabelBkk(): string {
   return new Intl.DateTimeFormat("en-CA", {
@@ -23,7 +18,7 @@ function todayLabelBkk(): string {
 }
 
 export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 

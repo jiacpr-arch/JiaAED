@@ -56,7 +56,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  const payload = JSON.parse(body) as { events: LineEvent[] };
+  let payload: { events?: LineEvent[] };
+  try {
+    payload = JSON.parse(body) as { events?: LineEvent[] };
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
   const events = payload.events ?? [];
 
   // LINE sends an empty events array to verify the webhook URL
