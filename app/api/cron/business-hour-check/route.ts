@@ -1,3 +1,4 @@
+import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
@@ -11,12 +12,6 @@ const BUSINESS_END_HOUR = 18;
 const WINDOW_HOURS = 4;
 const VISITOR_THRESHOLD = 30;
 const ALERT_COOLDOWN_HOURS = 6;
-
-function isAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
-}
 
 function bkkHour(): number {
   const fmt = new Intl.DateTimeFormat("en-US", {
@@ -38,7 +33,7 @@ function bkkDateLabel(): string {
 }
 
 export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 

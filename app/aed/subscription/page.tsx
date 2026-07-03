@@ -16,7 +16,7 @@ import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
+import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "เช่า AED รายเดือน — ดูแลครบวงจร เริ่ม ฿2,990/เดือน | JiaAED",
@@ -43,6 +43,7 @@ export default function SubscriptionPage() {
 
       <section className="max-w-6xl mx-auto px-4 py-10">
         <SectionHeading
+          as="h1"
           badge="Safety Care — เช่าบริการครบวงจร"
           title="ระบบดูแล AED อัจฉริยะ สำหรับองค์กรยุคใหม่"
           subtitle='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'

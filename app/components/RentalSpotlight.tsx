@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { rentalPlans } from "@/lib/aed/rental";
 
-const LINE_OA =
-  "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88%E0%B9%80%E0%B8%8A%E0%B9%88%E0%B8%B2+AED";
+import { lineOaUrl } from "@/lib/aed/line";
+
+const LINE_OA = lineOaUrl("สนใจเช่า AED");
 
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.

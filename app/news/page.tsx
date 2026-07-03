@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   description:
     "ข่าวที่เกี่ยวข้องกับภาวะหัวใจหยุดเต้นเฉียบพลัน การกู้ชีพ CPR และเครื่อง AED พร้อมมุมให้ความรู้จาก JiaAED",
   alternates: { canonical: "/news" },
+  openGraph: {
+    title: "ข่าวและความตระหนักเรื่องหัวใจหยุดเต้น | JiaAED",
+    description: "ข่าวภาวะหัวใจหยุดเต้นเฉียบพลัน การกู้ชีพ CPR และเครื่อง AED พร้อมมุมให้ความรู้จาก JiaAED",
+    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+  },
 };
 
 type NewsRow = {
@@ -134,7 +139,7 @@ export default async function NewsPage() {
             ช่วยเพิ่มโอกาสรอดได้
           </p>
           <Link
-            href="/#products"
+            href="/#brands"
             className="inline-block bg-yellow-400 text-gray-950 font-bold px-6 py-2.5 rounded-full hover:bg-yellow-300 transition-colors"
           >
             ดูเครื่อง AED

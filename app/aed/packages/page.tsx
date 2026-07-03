@@ -16,7 +16,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
+import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ | JiaAED",
@@ -43,6 +43,7 @@ export default function PackagesPage() {
 
       <section className="max-w-6xl mx-auto px-4 py-10">
         <SectionHeading
+          as="h1"
           badge="แพ็กเกจมาตรฐาน"
           title="3 วิธีได้ AED มาใช้ — สำหรับทุกความต้องการของธุรกิจ"
           subtitle="ทั้งแบบขายขาด, เช่าแล้วได้ซื้อ (Rent-to-Own) และบริการเช่าครบวงจร พร้อมระบบ GPS ในแพ็กเกจเดียว"

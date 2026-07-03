@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const FROM = process.env.RESEND_FROM_EMAIL || "JiaAED <noreply@jiaaed.com>";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "sales@jiaaed.com";
-const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
+import { LINE_OA } from "@/lib/aed/line";
 
 function getClient(): Resend | null {
   const key = process.env.RESEND_API_KEY;

@@ -1,3 +1,4 @@
+import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildDailyDigest, formatDigestForLine } from "@/lib/aed/analytics-digest";
@@ -9,13 +10,6 @@ export const dynamic = "force-dynamic";
 const BID_READY_THRESHOLD = 15; // real leads in the window — Google's floor for conversion-based bidding
 const BID_READY_DAYS = 30;
 const BID_READY_KIND = "bid_strategy_ready";
-
-function isAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  const auth = req.headers.get("authorization");
-  return auth === `Bearer ${secret}`;
-}
 
 async function checkBidReadiness(): Promise<{
   ready: boolean;
@@ -49,7 +43,7 @@ async function checkBidReadiness(): Promise<{
 }
 
 export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 

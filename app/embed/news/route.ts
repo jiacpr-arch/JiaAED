@@ -25,6 +25,17 @@ function escape(s: string) {
     .replace(/"/g, "&quot;");
 }
 
+/** Only allow http(s) URLs into href attributes (blocks javascript: etc.). */
+function safeUrl(s: string): string {
+  try {
+    const u = new URL(s);
+    if (u.protocol === "http:" || u.protocol === "https:") return s;
+  } catch {
+    // fall through
+  }
+  return "#";
+}
+
 function fmtDate(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
@@ -90,7 +101,7 @@ export async function GET(req: Request) {
       return `<article class="card">
         <div class="meta">${meta}</div>
         <p class="blurb">${escape(n.our_blurb)}</p>
-        <a class="src" href="${escape(n.source_url)}" target="_blank" rel="nofollow noopener noreferrer">
+        <a class="src" href="${escape(safeUrl(n.source_url))}" target="_blank" rel="nofollow noopener noreferrer">
           อ่านข่าวต้นฉบับ${n.source_name ? ` (${escape(n.source_name)})` : ""} →
         </a>
       </article>`;

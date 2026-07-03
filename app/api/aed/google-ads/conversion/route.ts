@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { recordConversion } from "@/lib/aed/conversion";
+import { timingSafeEqual } from "@/lib/aed/timing-safe";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -19,8 +20,8 @@ type Body = {
 function authorized(req: Request): boolean {
   const expected = process.env.AED_INTERNAL_API_KEY;
   if (!expected) return false; // never allow if no key configured
-  const got = req.headers.get("authorization");
-  return got === `Bearer ${expected}`;
+  const got = req.headers.get("authorization") ?? "";
+  return timingSafeEqual(got, `Bearer ${expected}`);
 }
 
 export async function POST(req: Request) {

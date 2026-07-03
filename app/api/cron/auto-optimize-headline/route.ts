@@ -1,3 +1,4 @@
+import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
@@ -24,12 +25,6 @@ export const maxDuration = 300;
 const FILE_PATH = "app/components/HeroHeadline.tsx";
 const SITE_URL = "https://www.jiaaed.com";
 const HEALTH_PATHS = ["/", "/docs", "/articles"];
-
-function isAuthorized(req: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
-  return req.headers.get("authorization") === `Bearer ${secret}`;
-}
 
 async function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -99,7 +94,7 @@ async function healthCheck(): Promise<{ ok: boolean; detail: string }> {
 }
 
 export async function GET(req: Request) {
-  if (!isAuthorized(req)) {
+  if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 

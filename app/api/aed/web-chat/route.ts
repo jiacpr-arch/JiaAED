@@ -9,6 +9,65 @@ const MODEL = "claude-sonnet-4-6";
 const MAX_TURNS = 30;
 const MAX_INPUT_CHARS = 4000;
 
+// ---- abuse guards -----------------------------------------------------------
+// This endpoint spends real money per call (Anthropic tokens), so it must not
+// be an open proxy. Two layers, both best-effort but cheap:
+//  1. Browser origin allow-list — blocks other sites calling us cross-origin
+//     and naive scripts that don't bother forging an Origin header.
+//  2. Per-IP sliding-window rate limit — in-memory per serverless instance,
+//     which still throttles any sustained single-source abuse.
+
+const SITE_HOST = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com").host;
+  } catch {
+    return "jiaaed.com";
+  }
+})();
+
+function isAllowedOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin");
+  if (!origin) return false; // browsers always send Origin on POST
+  try {
+    const host = new URL(origin).host;
+    return (
+      host === SITE_HOST ||
+      host === `www.${SITE_HOST}` ||
+      SITE_HOST === `www.${host}` ||
+      host === "localhost:3000" ||
+      host.endsWith(".vercel.app") // preview deployments
+    );
+  } catch {
+    return false;
+  }
+}
+
+const RATE_WINDOW_MS = 60_000;
+const RATE_MAX_PER_WINDOW = 10;
+const rateHits = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (rateHits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (recent.length >= RATE_MAX_PER_WINDOW) {
+    rateHits.set(ip, recent);
+    return true;
+  }
+  recent.push(now);
+  rateHits.set(ip, recent);
+  if (rateHits.size > 5000) {
+    for (const [key, hits] of rateHits) {
+      if (hits.every((t) => now - t >= RATE_WINDOW_MS)) rateHits.delete(key);
+    }
+  }
+  return false;
+}
+
+function clientIp(req: Request): string {
+  return (req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
+}
+// -----------------------------------------------------------------------------
+
 type Role = "user" | "assistant";
 type ChatMsg = { role: Role; content: string };
 
@@ -33,6 +92,16 @@ function sanitize(messages: ChatMsg[]): ChatMsg[] {
 }
 
 export async function POST(req: Request) {
+  if (!isAllowedOrigin(req)) {
+    return NextResponse.json({ ok: false, error: "forbidden" }, { status: 403 });
+  }
+  if (isRateLimited(clientIp(req))) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429, headers: { "retry-after": "60" } },
+    );
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     console.error("[web-chat] ANTHROPIC_API_KEY not set");

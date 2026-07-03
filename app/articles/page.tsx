@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description:
     "บทความเกี่ยวกับเครื่อง AED วิธีการใช้งาน การบำรุงรักษา และมาตรฐานความปลอดภัย",
   alternates: { canonical: "/articles" },
+  openGraph: {
+    title: "บทความ AED — ความรู้และวิธีใช้ | JiaAED",
+    description: "บทความเกี่ยวกับเครื่อง AED วิธีการใช้งาน การบำรุงรักษา และมาตรฐานความปลอดภัย",
+    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+  },
 };
 
 export default function ArticlesIndex() {
