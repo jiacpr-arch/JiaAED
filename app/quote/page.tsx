@@ -27,6 +27,7 @@ export default function QuotePage() {
 
       <section className="max-w-2xl mx-auto px-4 py-12">
         <SectionHeading
+          as="h1"
           badge="ขอใบเสนอราคา"
           title="ขอรับข้อเสนอระบบดูแล AED สำหรับองค์กร"
           subtitle="เพื่อให้เราออกแบบโปรแกรมดูแล AED ที่เหมาะกับองค์กรของท่าน กรุณากรอกข้อมูลเบื้องต้น"

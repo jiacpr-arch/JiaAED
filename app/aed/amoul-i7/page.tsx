@@ -8,14 +8,14 @@ import { LatestNews } from "@/app/components/LatestNews";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
+import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "AED Amoul i7 — รับส่วนลด + ใบเสนอราคาฟรี | JiaAED",
   description:
     "เครื่องกระตุกหัวใจไฟฟ้า AED Amoul i7 — Shock 7 วินาที · เสียงไทย · IP65 · อย. รับรอง · ฟรีค่าจัดส่ง",
   robots: { index: false, follow: false },
-  alternates: { canonical: "/ads/aed-i7" },
+  alternates: { canonical: "/aed/amoul-i7" },
   openGraph: {
     title: "AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า · อย. รับรอง",
     description:

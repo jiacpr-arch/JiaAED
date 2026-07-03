@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   description:
     "ดาวน์โหลดคู่มือการใช้งาน AED Amoul i7 ภาษาไทย, สเปคทางเทคนิคสำหรับ TOR/ใบเสนอราคา, ใบรับรอง CE Mark, ISO 13485 และ EN 1789:2020",
   alternates: { canonical: "/docs" },
+  openGraph: {
+    title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
+    description: "ดาวน์โหลดคู่มือการใช้งาน AED, สเปคสำหรับ TOR/ใบเสนอราคา และใบรับรองมาตรฐาน",
+    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+  },
 };
 
 const ORDER: DocumentItem["category"][] = [

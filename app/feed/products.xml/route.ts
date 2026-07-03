@@ -20,7 +20,7 @@ export async function GET() {
       <g:id>${escape(p.id)}</g:id>
       <g:title>${escape(title)}</g:title>
       <g:description>${escape(desc)}</g:description>
-      <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(p.id)}#products</g:link>
+      <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(p.id)}#brands</g:link>
       <g:image_link>${SITE}/images/product-main.png</g:image_link>
       <g:availability>in stock</g:availability>
       <g:price>${p.price.toFixed(2)} THB</g:price>

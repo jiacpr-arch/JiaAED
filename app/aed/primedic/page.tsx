@@ -15,7 +15,8 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-const LINE_OA = "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A";
+import { LINE_OA } from "@/lib/aed/line";
+import { ProductStructuredData } from "@/app/components/StructuredData";
 
 // Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
 // Live now under อย. 65-2-2-2-0013415; ฆพ. (advertising licence) to be added later.
@@ -30,10 +31,12 @@ export const metadata: Metadata = {
 export default function PrimedicPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <ProductStructuredData include="primedic" />
       <SiteHeader />
 
       <section className="max-w-6xl mx-auto px-4 py-10">
         <SectionHeading
+          as="h1"
           badge="✨ ไลน์พรีเมียม"
           title="PRIMEDIC HeartSave — Y0 / Y8"
           subtitle="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback"
@@ -92,7 +95,7 @@ export default function PrimedicPage() {
             { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
             { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
             { src: "/images/primedic-y0-flyer-a.png", alt: "PRIMEDIC Y0 — แผ่นอิเล็กโทรดและชุดพร้อมใช้", w: 1254, h: 1254 },
-            { src: "/images/primedic-y0-promo.png",   alt: "Yuwell HeartSave Y0 — โปรโมชั่นและอบรม CPR", w: 1024, h: 1536 },
+            { src: "/images/primedic-y0-promo.png",   alt: "PRIMEDIC HeartSave Y0 — โปรโมชั่นและอบรม CPR", w: 1024, h: 1536 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
               <Image

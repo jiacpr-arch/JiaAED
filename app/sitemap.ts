@@ -6,14 +6,17 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const sections = ["", "#features", "#products", "#specs", "#contact", "#faq"];
 
-  const sectionEntries: MetadataRoute.Sitemap = sections.map((s) => ({
-    url: `${SITE}/${s}`,
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: s === "" ? 1.0 : 0.7,
-  }));
+  // Fragment URLs (/#foo) don't belong in a sitemap — search engines collapse
+  // them all to "/" and several of the old anchors no longer exist.
+  const sectionEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${SITE}/`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 1.0,
+    },
+  ];
 
   const docsEntry: MetadataRoute.Sitemap = [
     {

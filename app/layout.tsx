@@ -27,7 +27,8 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave เครื่องกระตุกหัวใจไฟฟ้า อย. รับรอง",
+    // ~60 chars — longer titles get truncated in Google results
+    default: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขายและให้เช่า · อย. รับรอง",
     template: "%s · JiaAED",
   },
   description:

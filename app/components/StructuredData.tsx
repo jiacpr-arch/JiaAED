@@ -2,11 +2,18 @@ import { products } from "@/lib/aed/products";
 import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 import { faqs } from "@/lib/aed/faqs";
 import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
+import { LINE_OA } from "@/lib/aed/line";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 const BRAND = "JiaAED";
 const ORG_NAME = "เจี่ยรักษา (JiaAED)";
 
+/**
+ * Site-wide JSON-LD (rendered from the root layout): Organization + WebSite
+ * only. Product and FAQ markup must NOT be site-wide — Google flags rich
+ * results whose content doesn't appear on the page — so those live in
+ * `ProductStructuredData`, rendered only on pages that actually show them.
+ */
 export function StructuredData() {
   const organization = {
     "@context": "https://schema.org",
@@ -21,7 +28,7 @@ export function StructuredData() {
       "@type": "ContactPoint",
       contactType: "sales",
       availableLanguage: ["th", "en"],
-      url: "https://line.me/R/oaMessage/@jiacpr/?text=%E0%B8%AA%E0%B8%99%E0%B9%83%E0%B8%88+AED+%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B8%9A",
+      url: LINE_OA,
     },
     address: {
       "@type": "PostalAddress",
@@ -61,6 +68,32 @@ export function StructuredData() {
     ],
   };
 
+  const website = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BRAND,
+    url: SITE,
+    inLanguage: "th-TH",
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify([organization, website]) }}
+    />
+  );
+}
+
+/**
+ * Product + FAQ JSON-LD — render only on pages whose visible content matches
+ * (homepage shows every lineup and the FAQ section; /aed/primedic shows the
+ * PRIMEDIC/Yuwell lineup).
+ */
+export function ProductStructuredData({
+  include = "all",
+}: {
+  include?: "all" | "primedic";
+}) {
   const productSchemas = products.map((p) => ({
     "@context": "https://schema.org",
     "@type": "Product",
@@ -72,7 +105,7 @@ export function StructuredData() {
     category: "Medical Equipment / AED / Defibrillator",
     offers: {
       "@type": "Offer",
-      url: `${SITE}/#products`,
+      url: `${SITE}/#brands`,
       priceCurrency: "THB",
       price: p.price,
       availability: "https://schema.org/InStock",
@@ -92,7 +125,7 @@ export function StructuredData() {
       category: "Medical Equipment / AED / Defibrillator",
       offers: {
         "@type": "Offer",
-        url: `${SITE}/#products`,
+        url: `${SITE}/aed/primedic`,
         priceCurrency: "THB",
         price: m.price,
         availability: "https://schema.org/InStock",
@@ -110,7 +143,7 @@ export function StructuredData() {
       category: "Medical Equipment / AED / Defibrillator",
       offers: {
         "@type": "Offer",
-        url: `${SITE}/#products`,
+        url: `${SITE}/aed/primedic`,
         priceCurrency: "THB",
         price: yuwellGpsAed.price,
         availability: "https://schema.org/InStock",
@@ -129,15 +162,10 @@ export function StructuredData() {
     })),
   };
 
-  const website = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: BRAND,
-    url: SITE,
-    inLanguage: "th-TH",
-  };
-
-  const blob = [organization, website, faqPage, ...productSchemas, ...primedicSchemas];
+  const blob =
+    include === "primedic"
+      ? primedicSchemas
+      : [faqPage, ...productSchemas, ...primedicSchemas];
 
   return (
     <script
