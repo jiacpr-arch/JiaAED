@@ -92,7 +92,7 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
 export const rentVsBuy: { dimension: string; buy: string; subscribe: string }[] = [
   {
     dimension: "เงินลงทุนเริ่มต้น",
-    buy: "จ่ายเต็มจำนวนทันที (เงินสด ฿39,900 / เครดิต-ราชการ ฿69,000)",
+    buy: "จ่ายเต็มจำนวนทันที (เงินสด ฿42,900 / เครดิต-ราชการ ฿69,000)",
     subscribe: "ไม่ต้องจ่ายเงินก้อนใหญ่",
   },
   {
