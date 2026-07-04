@@ -32,7 +32,7 @@ export type PrimedicModel = {
   // together on the page). bestFor = the buyer it suits.
   keyDiff: string;
   bestFor: string;
-  image: string; // TODO(owner): real PRIMEDIC product photos
+  image: string; // real photos from the Yuwell/PRIMEDIC HeartSave Y/YA catalog
   badge: string | null;
 };
 
@@ -46,7 +46,7 @@ export const primedicModels: PrimedicModel[] = [
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
     keyDiff: "รุ่นเริ่มต้น — ยังไม่มีเซ็นเซอร์ CPR (เพิ่มทีหลังได้)",
     bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
-    image: "/images/primedic-open.png",
+    image: "/images/primedic-y-series.png",
     badge: null,
   },
   {
@@ -58,7 +58,7 @@ export const primedicModels: PrimedicModel[] = [
     summary: "กึ่งอัตโนมัติ + เซ็นเซอร์ CPR feedback มาตรฐาน",
     keyDiff: "เพิ่มเซ็นเซอร์ CPR feedback — วัดแรง/จังหวะกดหน้าอกแบบเรียลไทม์",
     bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
-    image: "/images/primedic-open.png",
+    image: "/images/primedic-y8-open.png",
     badge: "แนะนำ",
   },
 ];
@@ -98,6 +98,7 @@ export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "พลังงานเด็ก (ค่าเริ่มต้น)", value: "50 → 70 → 100 J" },
   { label: "วิเคราะห์ถึงชาร์จ 200J พร้อม", value: "≤ 5 วินาที" },
   { label: "วิเคราะห์ถึงชาร์จ 360J พร้อม", value: "≤ 12 วินาที" },
+  { label: "เปิดฝาเครื่องถึงชาร์จ 200J พร้อม", value: "≤ 7 วินาที" },
   { label: "เปิดฝาเครื่องถึงชาร์จ 360J พร้อม", value: "≤ 14 วินาที" },
   { label: "จำนวนช็อกต่อแบต", value: "≥ 200 ครั้งที่ 360J (NRL01C)" },
   { label: "แบตเตอรี่", value: "LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (non-rechargeable)" },

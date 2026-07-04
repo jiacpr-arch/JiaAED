@@ -320,7 +320,7 @@ export function LeadForm() {
       </button>
 
       <p className="text-xs text-gray-400 text-center">
-        ⚡ ทีมงานเจี่ยรักษาโทรกลับพร้อมใบเสนอราคา + ราคาพิเศษองค์กร · ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น
+        ⚡ ทีมงานเจี่ยรักษาโทรกลับพร้อมใบเสนอราคา + ราคาพิเศษองค์กร · ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น — <a href="/privacy" className="underline hover:text-yellow-400">นโยบายความเป็นส่วนตัว</a>
       </p>
     </form>
   );

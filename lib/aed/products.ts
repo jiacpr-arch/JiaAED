@@ -164,7 +164,7 @@ export const accessories: Accessory[] = [
     subtitle: "อะไหล่ PRIMEDIC / วัสดุสิ้นเปลือง",
     price: null,
     priceLabel: "สอบถามราคา",
-    image: "/images/primedic-open.png",
+    image: "/images/primedic-pads-y8.png",
     description: "แผ่นอิเล็กโทรดแบบใช้แล้วทิ้งสำหรับเครื่อง PRIMEDIC HeartSave (รองรับผู้ใหญ่และเด็ก)",
     features: [
       "ของแท้ PRIMEDIC",
@@ -178,7 +178,7 @@ export const accessories: Accessory[] = [
     subtitle: "อะไหล่ PRIMEDIC",
     price: null,
     priceLabel: "สอบถามราคา",
-    image: "/images/primedic-open.png",
+    image: "/images/primedic-battery-nrl01c.png",
     description: "โมดูลพลังงานสำรอง / เปลี่ยนทดแทน สำหรับเครื่อง PRIMEDIC HeartSave",
     features: [
       "ของแท้ PRIMEDIC",

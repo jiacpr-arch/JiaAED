@@ -51,11 +51,11 @@ export async function GET(req: Request) {
     await notifyAnalyticsDigest("🤖 Auto-optimizer-headline เริ่ม — วิเคราะห์ A/B headline");
     steps.push("start");
 
-    const ab = await readHeadlineAbState(7);
+    const ab = await readHeadlineAbState(30);
     result.ab = ab;
 
     if (ab.sample_too_small) {
-      const msg = `⏸️ Headline skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 30 ต่อ variant`;
+      const msg = `⏸️ Headline skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 100 ต่อ variant (30 วัน)`;
       await notifyAnalyticsDigest(msg);
       steps.push("skip_small");
       await logRun(result);
@@ -109,7 +109,7 @@ export async function GET(req: Request) {
     const commitMessage = `auto: swap hero headline variant ${ab.loser.toUpperCase()}
 
 Variant ${ab.loser.toUpperCase()} CTR was ${ab.loser_ctr.toFixed(1)}% over the
-last 7 days (vs ${ab.winner_ctr.toFixed(1)}% for variant ${ab.winner.toUpperCase()}).
+last 30 days (vs ${ab.winner_ctr.toFixed(1)}% for variant ${ab.winner.toUpperCase()}).
 Replacing the loser with a new headline proposed by Claude.
 
 New: "${proposed.line1} | ${proposed.accent} | ${proposed.line2}"
