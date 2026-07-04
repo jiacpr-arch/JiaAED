@@ -23,7 +23,11 @@ function readTracking() {
   }
 }
 
-export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
+export function MiniLeadForm({
+  variant = "mini",
+  title = "📞 ฝากเบอร์ ทีมงานโทรกลับ",
+  subtitle = "ใช้เวลา 5 วินาที · ตอบใน 24 ชั่วโมง",
+}: { variant?: string; title?: string; subtitle?: string } = {}) {
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const startedRef = useRef(false);
@@ -217,8 +221,8 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
         <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" />
       </div>
       <div className="text-center mb-3">
-        <p className="font-bold text-white text-lg">📞 ฝากเบอร์ ทีมงานโทรกลับ</p>
-        <p className="text-xs text-gray-500">ใช้เวลา 5 วินาที · ตอบใน 24 ชั่วโมง</p>
+        <p className="font-bold text-white text-lg">{title}</p>
+        <p className="text-xs text-gray-500">{subtitle}</p>
       </div>
       <div className="flex flex-col sm:flex-row gap-2">
         <input
@@ -247,6 +251,10 @@ export function MiniLeadForm({ variant = "mini" }: { variant?: string } = {}) {
       {state === "error" && errorMsg && (
         <p className="text-red-300 text-sm mt-2 text-center">{errorMsg}</p>
       )}
+      <p className="text-[11px] text-gray-500 mt-2 text-center">
+        ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น ·{" "}
+        <a href="/privacy" className="underline hover:text-yellow-400">นโยบายความเป็นส่วนตัว</a>
+      </p>
     </form>
   );
 }

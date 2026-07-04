@@ -137,7 +137,13 @@ export default function AdsLandingI7() {
 
         {/* Quick form */}
         <div id="ads-quote" className="mb-8 scroll-mt-20">
-          <MiniLeadForm variant="ads_mini" />
+          {/* The page's discount hook must hold here too — image taps land on
+              this form (see weekly review 14 Jun), so the redirect has to pay off */}
+          <MiniLeadForm
+            variant="ads_mini"
+            title="📞 ฝากเบอร์ — รับส่วนลดเดียวกับทาง LINE"
+            subtitle="ใช้เวลา 5 วินาที · ทีมงานโทรกลับใน 24 ชม. พร้อมยืนยันส่วนลด"
+          />
         </div>
 
         {/* Trust strip */}

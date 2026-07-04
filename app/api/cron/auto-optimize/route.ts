@@ -67,11 +67,11 @@ export async function GET(req: Request) {
     await notify("🤖 Auto-optimizer เริ่มทำงาน — กำลังวิเคราะห์ A/B test");
     steps.push("start");
 
-    const ab = await readAbState(7);
+    const ab = await readAbState(30);
     result.ab = ab;
 
     if (ab.sample_too_small) {
-      const msg = `⏸️ Skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 30 ต่อ variant`;
+      const msg = `⏸️ Skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 100 ต่อ variant (30 วัน)`;
       await notify(msg);
       steps.push("skip_small_sample");
       await logRun(result);
@@ -120,7 +120,7 @@ export async function GET(req: Request) {
     const commitMessage = `auto: swap hero CTA variant ${ab.loser.toUpperCase()} to "${proposed.copy}"
 
 Variant ${ab.loser.toUpperCase()} CTR was ${ab.loser_ctr.toFixed(1)}% over the
-last 7 days (vs ${ab.winner_ctr.toFixed(1)}% for variant ${ab.winner.toUpperCase()}).
+last 30 days (vs ${ab.winner_ctr.toFixed(1)}% for variant ${ab.winner.toUpperCase()}).
 Replacing the loser with a new candidate copy proposed by Claude.
 
 Rationale: ${proposed.rationale}

@@ -147,6 +147,11 @@ export default function PrimedicPage() {
           <div className="mt-6">
             <SpecComparisonTable />
           </div>
+          <p className="text-xs text-gray-500 mt-4 text-center">
+            ในซีรีส์เดียวกันยังมีรุ่น <strong className="text-gray-300">HeartSave YA0 / YA8</strong> แบบอัตโนมัติเต็มรูปแบบ
+            (เครื่องปล่อยพลังงานเองโดยไม่ต้องกดปุ่ม Shock — เหมาะกับจุดที่ผู้ใช้อาจลังเล เช่น โรงเรียน ที่สาธารณะ)
+            สนใจสอบถามได้ทาง LINE @jiacpr
+          </p>
         </div>
       </section>
 

@@ -73,6 +73,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.7,
     },
+    {
+      url: `${SITE}/privacy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.2,
+    },
     // PRIMEDIC detail page enters the sitemap only once it's indexable (published).
     ...(PRIMEDIC_REGULATORY.published
       ? [

@@ -3,14 +3,12 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import { GoogleTags } from "./components/GoogleTags";
-import { MetaPixel } from "./components/MetaPixel";
+import { CookieConsent } from "./components/CookieConsent";
 import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
-import { PostHogInit } from "./components/PostHogInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -83,14 +81,13 @@ export default function RootLayout({
   return (
     <html lang="th">
       <head>
-        <GoogleTags />
-        <MetaPixel />
         <StructuredData />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <PostHogInit />
+        {/* PDPA: trackers (gtag / Meta Pixel / PostHog) live behind the consent gate */}
+        <CookieConsent />
         <LineClickTracker />
         <ScrollDepthTracker />
         {children}

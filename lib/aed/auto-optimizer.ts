@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const MIN_VIEWS_PER_VARIANT = 30;
+const MIN_VIEWS_PER_VARIANT = 100;
 
 export type AbState = {
   a_views: number;

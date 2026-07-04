@@ -24,6 +24,7 @@ export function SiteFooter({
           <Link href="/about" className="hover:text-yellow-400">เกี่ยวกับเรา</Link>
           <Link href="/docs" className="hover:text-yellow-400">เอกสาร</Link>
           <Link href="/articles" className="hover:text-yellow-400">บทความ</Link>
+          <Link href="/privacy" className="hover:text-yellow-400">นโยบายความเป็นส่วนตัว</Link>
         </div>
         <p className="text-xs text-gray-500">
           {regNote ?? `เจี่ยรักษา (JiaAED) — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง · ทะเบียน อย. ${fda} · ฆพ.${adLicense}`}
