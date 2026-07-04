@@ -87,17 +87,23 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaLeadR
   if (typeof input.valueThb === "number") customData.value = input.valueThb;
   if (input.contentName) customData.content_name = input.contentName;
 
+  const eventTime = input.eventTime ?? Math.floor(Date.now() / 1000);
+  const baseEvent = {
+    event_time: eventTime,
+    action_source: "website",
+    ...(input.eventSourceUrl ? { event_source_url: input.eventSourceUrl } : {}),
+    user_data: userData,
+    custom_data: customData,
+  };
+
   const payload: Record<string, unknown> = {
+    // Fire the lead as BOTH standard events. Ad sets in this account optimise
+    // for CompleteRegistration while our canonical event is Lead — sending both
+    // guarantees whichever event an ad set targets, the conversion signal
+    // arrives. event_id is per-event_name, so pixel dedup still works.
     data: [
-      {
-        event_name: "Lead",
-        event_time: input.eventTime ?? Math.floor(Date.now() / 1000),
-        event_id: input.eventId,
-        action_source: "website",
-        ...(input.eventSourceUrl ? { event_source_url: input.eventSourceUrl } : {}),
-        user_data: userData,
-        custom_data: customData,
-      },
+      { event_name: "Lead", event_id: input.eventId, ...baseEvent },
+      { event_name: "CompleteRegistration", event_id: input.eventId, ...baseEvent },
     ],
     ...(testCode ? { test_event_code: testCode } : {}),
   };
