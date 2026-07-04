@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MiniLeadForm } from "./MiniLeadForm";
 
 import { LINE_OA } from "@/lib/aed/line";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 /**
  * Prime "quick contact" slot under the hero. Real visitor behaviour shows people
@@ -31,6 +32,14 @@ export function QuickContact() {
         className="block text-center bg-[#06C755] text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-[#05a847] transition-all hover:scale-[1.01] shadow-2xl shadow-[#06C755]/30"
       >
         💬 ทักไลน์ตอบทันที
+      </a>
+
+      <a
+        href={PHONE_HREF}
+        data-cta="tel_quick_contact"
+        className="mt-3 block text-center border border-gray-600 hover:border-yellow-400 text-white font-bold text-base px-8 py-3 rounded-full transition-colors"
+      >
+        📞 โทร {PHONE_DISPLAY}
       </a>
 
       {!showForm ? (

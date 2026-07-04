@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LINE_OA } from "@/lib/aed/line";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export function SiteFooter({
   fda = "68-2-2-2-0005243",
@@ -33,6 +34,10 @@ export function SiteFooter({
           © {new Date().getFullYear()} JiaAED ·{" "}
           <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="footer" className="hover:text-yellow-400">
             ติดต่อทาง LINE @jiacpr
+          </a>{" "}
+          ·{" "}
+          <a href={PHONE_HREF} data-cta="tel_footer" className="hover:text-yellow-400">
+            โทร {PHONE_DISPLAY}
           </a>
         </p>
       </div>

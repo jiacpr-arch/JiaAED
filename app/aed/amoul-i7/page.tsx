@@ -9,6 +9,7 @@ import { LatestNews } from "@/app/components/LatestNews";
 export const revalidate = 3600;
 
 import { LINE_OA } from "@/lib/aed/line";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export const metadata: Metadata = {
   title: "AED Amoul i7 — รับส่วนลด + ใบเสนอราคาฟรี | JiaAED",
@@ -132,6 +133,13 @@ export default function AdsLandingI7() {
             className="block bg-yellow-400/10 text-yellow-400 font-bold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-center transition-colors"
           >
             📋 ขอใบเสนอราคา (ไม่ต้องแชต)
+          </a>
+          <a
+            href={PHONE_HREF}
+            data-cta="tel_ads_hero"
+            className="block border border-gray-600 hover:border-yellow-400 text-white font-bold text-lg px-8 py-4 rounded-full text-center transition-colors"
+          >
+            📞 โทรเลย {PHONE_DISPLAY}
           </a>
         </div>
 
