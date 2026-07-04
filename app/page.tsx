@@ -24,6 +24,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 export const revalidate = 3600;
 
 import { LINE_OA } from "@/lib/aed/line";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { ProductStructuredData } from "./components/StructuredData";
 
 const specs = [
@@ -880,6 +881,15 @@ export default function Home() {
           <Link href="/news" className="hover:text-yellow-400 transition-colors">ข่าว</Link>
         </div>
         <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>
+        <p className="mb-1">
+          <a href={PHONE_HREF} data-cta="tel_footer" className="text-gray-400 hover:text-yellow-400">
+            📞 โทร {PHONE_DISPLAY}
+          </a>{" "}
+          ·{" "}
+          <Link href="/privacy" className="text-gray-400 hover:text-yellow-400">
+            นโยบายความเป็นส่วนตัว
+          </Link>
+        </p>
         <p>
           จำหน่าย AED Amoul i7 และ PRIMEDIC HeartSave · Amoul i7: {regLine(AMOUL_REGULATORY)}
           {PRIMEDIC_REGULATORY.published ? ` · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)}` : ""}
