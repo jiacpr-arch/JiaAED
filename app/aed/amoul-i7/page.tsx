@@ -75,9 +75,10 @@ export default function AdsLandingI7() {
         {/* Price */}
         <PriceViewTracker targetId="ads-price" />
         <div id="ads-price" className="bg-gradient-to-r from-yellow-400/10 to-transparent border border-yellow-400/40 rounded-2xl p-5 mb-5">
+          {/* Anchor = the real credit/government price, not an invented strike-through
+              (undated "special today" + fake ฿70,000 was a ฆพ./consumer-law risk) */}
           <div className="flex items-baseline gap-3 mb-1">
-            <span className="text-xs text-gray-400">ราคาพิเศษวันนี้</span>
-            <span className="text-gray-500 line-through text-base">฿70,000</span>
+            <span className="text-xs text-gray-400">ราคาเครดิต/หน่วยงานราชการ ฿69,000 · เงินสดเหลือ</span>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-5xl font-black text-yellow-400">฿42,900</span>
@@ -168,7 +169,7 @@ export default function AdsLandingI7() {
           <h2 className="font-bold text-lg text-white mb-3">⚡ จุดเด่น</h2>
           <ul className="space-y-2 text-sm">
             {[
-              "Shock พร้อมใน 7 วินาที (เร็วที่สุดในตลาด)",
+              "ชาร์จพร้อม Shock ภายใน 7 วินาที",
               "เสียงแนะนำภาษาไทย ใช้ได้ทันที ไม่ต้องอบรม",
               "ใช้ได้ทั้งผู้ใหญ่และเด็ก (ปรับพลังงานได้)",
               "IP65 กันน้ำ กันฝุ่น ใช้กลางแจ้งได้",

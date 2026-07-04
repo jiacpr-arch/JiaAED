@@ -256,7 +256,7 @@ export default function Home() {
             <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
               <div className="text-yellow-300 font-bold mb-1">เลือก Amoul i7 ถ้า…</div>
               <p className="text-gray-300 text-sm">
-                อยากได้ <strong className="text-white">ราคาเริ่มต้นคุ้มที่สุด</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
+                อยากได้ <strong className="text-white">ราคาเริ่มต้นเข้าถึงง่าย</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
               </p>
             </div>
             <div className="rounded-2xl border border-red-500/40 bg-red-500/5 p-5">
