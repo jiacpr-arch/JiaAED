@@ -95,7 +95,15 @@ export const homepageTiers: LineupTier[] = [
   {
     label: "รุ่นเริ่มต้น · เทียบเท่ากัน",
     note: "สเปกระดับเดียวกัน — เลือกตามงบและความชอบ",
-    cards: [amoulI7Card, primedicCard(primedicModels[0], "กึ่งอัตโนมัติ · รุ่นเริ่มต้น")],
+    // Yuwell/PRIMEDIC is the featured brand (owner decision) — red machine leads.
+    cards: [
+      {
+        ...primedicCard(primedicModels[0], "กึ่งอัตโนมัติ · รุ่นเริ่มต้น"),
+        badge: "⭐ แนะนำ",
+        highlight: true,
+      },
+      amoulI7Card,
+    ],
   },
   {
     label: "รุ่นสูงกว่า · ฟีเจอร์เพิ่ม",
