@@ -1,3 +1,5 @@
+import { createAdminClient } from "@/lib/supabase/admin";
+
 type LineMessage = Record<string, unknown>;
 
 /**
@@ -311,13 +313,13 @@ export async function notifyAnalyticsAlert(text: string): Promise<void> {
   await pushToOwner(text);
 }
 
-// ─── Batched notify (combine several messages from one cron run into a
-// single LINE push instead of one bubble per step) ─────────────────────────
+// ─── Batched notify (combine several messages from one cron run, then queue
+// them for cross-run batching instead of one bubble per step / per run) ────
 
-const LINE_TEXT_LIMIT = 4900; // stay under LINE's 5000-char cap per text message
-const BATCH_SEPARATOR = "\n\n━━━━━━━━━━\n\n";
+export const LINE_TEXT_LIMIT = 4900; // stay under LINE's 5000-char cap per text message
+export const NOTIFY_BATCH_SEPARATOR = "\n\n━━━━━━━━━━\n\n";
 
-function chunkForLine(text: string): string[] {
+export function chunkForLine(text: string): string[] {
   if (text.length <= LINE_TEXT_LIMIT) return [text];
   const chunks: string[] = [];
   let rest = text;
@@ -332,11 +334,28 @@ function chunkForLine(text: string): string[] {
 }
 
 /**
+ * Enqueues a message for /api/cron/flush-notify-queue to pick up and combine
+ * with whatever else is pending from other cron runs. Falls back to sending
+ * directly if the queue table/insert is unavailable, so a DB hiccup never
+ * silently drops a notification.
+ */
+async function enqueueNotification(text: string): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase.from("aed_notify_queue").insert({ text });
+    if (error) throw error;
+  } catch (e) {
+    console.error("[AED] notify enqueue failed, sending directly instead:", e);
+    for (const chunk of chunkForLine(text)) await pushToOwner(chunk);
+  }
+}
+
+/**
  * Collects the text messages a single cron run would otherwise push one at a
- * time, and sends them as one combined LINE message on flush(). Create one
- * per request, add() at each step instead of calling notifyAnalytics*
- * directly, and flush() once (typically in a `finally`) before the handler
- * returns.
+ * time, and enqueues them as one combined entry on flush() (see
+ * enqueueNotification). Create one per request, add() at each step instead
+ * of calling notifyAnalytics* directly, and flush() once (typically in a
+ * `finally`) before the handler returns.
  */
 export function createNotifyBatch() {
   const parts: string[] = [];
@@ -346,11 +365,9 @@ export function createNotifyBatch() {
     },
     async flush(): Promise<void> {
       if (parts.length === 0) return;
-      const combined = parts.join(BATCH_SEPARATOR);
+      const combined = parts.join(NOTIFY_BATCH_SEPARATOR);
       parts.length = 0;
-      for (const chunk of chunkForLine(combined)) {
-        await pushToOwner(chunk);
-      }
+      await enqueueNotification(combined);
     },
   };
 }
