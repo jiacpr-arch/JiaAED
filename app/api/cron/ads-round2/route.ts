@@ -1,7 +1,7 @@
 import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch, notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
 import {
   fetchAdsReport,
   fetchDeviceReport,
@@ -278,15 +278,11 @@ export async function GET(req: Request) {
           `4. รอ data อีก 7 วัน แล้วรีวิวใหม่`,
         ].join("\n");
 
-    // ── Send LINE notifications ───────────────────────────────────────────
+    // ── Send LINE notifications (combined into a single push) ────────────
     const messages = [msg1, msg2, msg3, msg4, msg5].filter(Boolean);
-    for (const msg of messages) {
-      try {
-        await notifyAnalyticsDigest(msg);
-      } catch (e) {
-        console.error("[ads-round2] notify failed:", e);
-      }
-    }
+    const batch = createNotifyBatch();
+    messages.forEach((m) => batch.add(m));
+    await batch.flush().catch((e) => console.error("[ads-round2] batch flush failed:", e));
 
     result.cpl = cpl;
     result.decision = decision;

@@ -5,7 +5,7 @@ import {
   healthCheck,
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 import {
   buildNewHeroHeadlineFile,
   extractHeadline,
@@ -35,10 +35,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  const batch = createNotifyBatch();
+  const notify = (text: string) => batch.add(text);
+  const notifyError = (text: string) => batch.add(text);
+
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
-    await notifyAnalyticsAlert("🚨 Auto-optimizer-headline: ไม่มี GITHUB_TOKEN");
+    notifyError("🚨 Auto-optimizer-headline: ไม่มี GITHUB_TOKEN");
+    await batch.flush().catch((e) => console.error("[auto-optimize-headline] batch flush failed:", e));
     return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
   }
   const [owner, repo] = ghRepo.split("/");
@@ -48,7 +53,7 @@ export async function GET(req: Request) {
   const steps = result.steps as string[];
 
   try {
-    await notifyAnalyticsDigest("🤖 Auto-optimizer-headline เริ่ม — วิเคราะห์ A/B headline");
+    notify("🤖 Auto-optimizer-headline เริ่ม — วิเคราะห์ A/B headline");
     steps.push("start");
 
     const ab = await readHeadlineAbState(30);
@@ -56,14 +61,14 @@ export async function GET(req: Request) {
 
     if (ab.sample_too_small) {
       const msg = `⏸️ Headline skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 100 ต่อ variant (30 วัน)`;
-      await notifyAnalyticsDigest(msg);
+      notify(msg);
       steps.push("skip_small");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "small_sample", ab });
     }
     if (Math.abs(ab.a_ctr - ab.b_ctr) < 0.5) {
       const msg = `⏸️ Headline skip: CTR ใกล้กัน A=${ab.a_ctr}% B=${ab.b_ctr}%`;
-      await notifyAnalyticsDigest(msg);
+      notify(msg);
       steps.push("skip_tie");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "tie", ab });
@@ -76,7 +81,7 @@ export async function GET(req: Request) {
     result.loser_headline = loserHeadline;
     result.winner_headline = winnerHeadline;
 
-    await notifyAnalyticsDigest(
+    notify(
       `📊 Loser ${ab.loser.toUpperCase()}: "${loserHeadline.line1} | ${loserHeadline.accent} | ${loserHeadline.line2}" (CTR ${ab.loser_ctr.toFixed(1)}%)\n🧠 ขอ headline ใหม่จาก Claude...`,
     );
 
@@ -92,7 +97,7 @@ export async function GET(req: Request) {
     const loserSig = `${loserHeadline.line1}|${loserHeadline.accent}|${loserHeadline.line2}`;
     const winnerSig = `${winnerHeadline.line1}|${winnerHeadline.accent}|${winnerHeadline.line2}`;
     if (sig === loserSig || sig === winnerSig) {
-      await notifyAnalyticsDigest(`⏸️ AI proposed headline ซ้ำ ข้ามรอบนี้`);
+      notify(`⏸️ AI proposed headline ซ้ำ ข้ามรอบนี้`);
       steps.push("skip_duplicate");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "duplicate" });
@@ -157,7 +162,7 @@ Rationale: ${proposed.rationale}
     result.pr_number = pr.number;
     result.pr_url = pr.html_url;
 
-    await notifyAnalyticsDigest(
+    notify(
       `🔀 PR #${pr.number} เปิดแล้ว (headline)\n${pr.html_url}`,
     );
 
@@ -165,7 +170,7 @@ Rationale: ${proposed.rationale}
     const checks = await waitForChecks(gh, pr.head.sha);
     result.checks = checks;
     if (!checks.ok) {
-      await notifyAnalyticsAlert(
+      notifyError(
         `🚨 Headline optimizer: checks ไม่ผ่าน (${checks.detail}) PR #${pr.number} ค้างไว้`,
       );
       steps.push("aborted_checks");
@@ -173,13 +178,13 @@ Rationale: ${proposed.rationale}
       return NextResponse.json({ ok: false, stage: "checks_failed", ...result });
     }
 
-    await notifyAnalyticsDigest(`✅ Checks ผ่าน — กำลัง merge headline PR`);
+    notify(`✅ Checks ผ่าน — กำลัง merge headline PR`);
 
     steps.push("merge");
     const mergeRes = await mergePullRequest(gh, pr.number, "squash");
     result.merge = mergeRes;
 
-    await notifyAnalyticsDigest(`🚀 Headline merged — รอ deploy + health check`);
+    notify(`🚀 Headline merged — รอ deploy + health check`);
 
     steps.push("health_check");
     const health = await healthCheck();
@@ -187,7 +192,7 @@ Rationale: ${proposed.rationale}
 
     if (!health.ok) {
       steps.push("revert_attempt");
-      await notifyAnalyticsAlert(
+      notifyError(
         `🚨🚨 Headline merge → health fail: ${health.detail}\nพยายาม revert...`,
       );
       try {
@@ -210,17 +215,17 @@ Rationale: ${proposed.rationale}
         });
         const revertMerge = await mergePullRequest(gh, revertPr.number, "squash");
         result.revert = { pr: revertPr.number, sha: revertMerge.sha };
-        await notifyAnalyticsDigest(`✅ Revert merged (PR #${revertPr.number})`);
+        notify(`✅ Revert merged (PR #${revertPr.number})`);
         steps.push("reverted");
       } catch (revertErr) {
-        await notifyAnalyticsAlert(`💀 Revert headline ล้มเหลว: ${String(revertErr).slice(0, 200)}`);
+        notifyError(`💀 Revert headline ล้มเหลว: ${String(revertErr).slice(0, 200)}`);
         steps.push("revert_failed");
       }
       await logRun(result);
       return NextResponse.json({ ok: false, stage: "health_failed", ...result });
     }
 
-    await notifyAnalyticsDigest(
+    notify(
       `🟢 Headline เสร็จสมบูรณ์!\nVariant ${ab.loser.toUpperCase()} ตอนนี้คือ:\n"${proposed.line1} | ${proposed.accent} | ${proposed.line2}"`,
     );
     steps.push("done");
@@ -229,11 +234,13 @@ Rationale: ${proposed.rationale}
   } catch (err) {
     const msg = String(err).slice(0, 300);
     console.error("[auto-optimize-headline] failed:", err);
-    await notifyAnalyticsAlert(
+    notifyError(
       `🚨 Auto-optimizer-headline error:\n${msg}\nSteps: ${steps.join(" → ")}`,
     );
     result.error = msg;
     await logRun(result);
     return NextResponse.json({ ok: false, error: msg, ...result }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[auto-optimize-headline] batch flush failed:", e));
   }
 }

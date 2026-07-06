@@ -2,7 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildDailyDigest, formatDigestForLine } from "@/lib/aed/analytics-digest";
-import { notifyAnalyticsDigest, notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -47,6 +47,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  const batch = createNotifyBatch();
+
   try {
     const digest = await buildDailyDigest();
 
@@ -63,25 +65,25 @@ export async function GET(req: Request) {
       );
     if (logError) console.error("[cron/daily-digest] log upsert failed:", logError);
 
-    const text = formatDigestForLine(digest);
-    await notifyAnalyticsDigest(text);
+    batch.add(formatDigestForLine(digest));
 
     const bid = await checkBidReadiness();
     if (bid.ready && !bid.alreadyAlerted) {
-      const msg = [
-        `🎯 พร้อมสลับ Bid Strategy แล้ว!`,
-        ``,
-        `${BID_READY_DAYS} วันที่ผ่านมา มี "ลีดจริง" ${bid.count} ราย`,
-        `(ฟอร์ม + LINE/แชทที่เก็บเบอร์ได้ — ไม่นับ LINE click ลอย ๆ)`,
-        ``,
-        `Google มี conversion จริงพอให้เรียนรู้แล้ว แนะนำ:`,
-        `1. Campaign Settings → Bidding`,
-        `2. เปลี่ยน "เพิ่มจำนวนคลิกสูงสุด" → "Maximize Conversions"`,
-        `3. รัน 2-3 สัปดาห์ให้นิ่ง แล้วค่อยใส่ Target CPA`,
-        ``,
-        `(ยิ่งลีดเยอะยิ่งแม่น — 30+/เดือนดีสุด)`,
-      ].join("\n");
-      await notifyAnalyticsAlert(msg);
+      batch.add(
+        [
+          `🎯 พร้อมสลับ Bid Strategy แล้ว!`,
+          ``,
+          `${BID_READY_DAYS} วันที่ผ่านมา มี "ลีดจริง" ${bid.count} ราย`,
+          `(ฟอร์ม + LINE/แชทที่เก็บเบอร์ได้ — ไม่นับ LINE click ลอย ๆ)`,
+          ``,
+          `Google มี conversion จริงพอให้เรียนรู้แล้ว แนะนำ:`,
+          `1. Campaign Settings → Bidding`,
+          `2. เปลี่ยน "เพิ่มจำนวนคลิกสูงสุด" → "Maximize Conversions"`,
+          `3. รัน 2-3 สัปดาห์ให้นิ่ง แล้วค่อยใส่ Target CPA`,
+          ``,
+          `(ยิ่งลีดเยอะยิ่งแม่น — 30+/เดือนดีสุด)`,
+        ].join("\n"),
+      );
 
       await supabase.from("aed_analytics_digest_log").insert({
         digest_date: digest.date,
@@ -98,5 +100,7 @@ export async function GET(req: Request) {
   } catch (err) {
     console.error("[cron/daily-digest] failed:", err);
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[cron/daily-digest] batch flush failed:", e));
   }
 }

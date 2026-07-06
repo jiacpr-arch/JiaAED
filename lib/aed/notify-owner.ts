@@ -311,6 +311,50 @@ export async function notifyAnalyticsAlert(text: string): Promise<void> {
   await pushToOwner(text);
 }
 
+// ─── Batched notify (combine several messages from one cron run into a
+// single LINE push instead of one bubble per step) ─────────────────────────
+
+const LINE_TEXT_LIMIT = 4900; // stay under LINE's 5000-char cap per text message
+const BATCH_SEPARATOR = "\n\n━━━━━━━━━━\n\n";
+
+function chunkForLine(text: string): string[] {
+  if (text.length <= LINE_TEXT_LIMIT) return [text];
+  const chunks: string[] = [];
+  let rest = text;
+  while (rest.length > LINE_TEXT_LIMIT) {
+    const cut = rest.lastIndexOf("\n\n", LINE_TEXT_LIMIT);
+    const splitAt = cut > 0 ? cut : LINE_TEXT_LIMIT;
+    chunks.push(rest.slice(0, splitAt));
+    rest = rest.slice(splitAt).replace(/^\n+/, "");
+  }
+  if (rest) chunks.push(rest);
+  return chunks;
+}
+
+/**
+ * Collects the text messages a single cron run would otherwise push one at a
+ * time, and sends them as one combined LINE message on flush(). Create one
+ * per request, add() at each step instead of calling notifyAnalytics*
+ * directly, and flush() once (typically in a `finally`) before the handler
+ * returns.
+ */
+export function createNotifyBatch() {
+  const parts: string[] = [];
+  return {
+    add(text: string | null | undefined | false): void {
+      if (text && text.trim()) parts.push(text.trim());
+    },
+    async flush(): Promise<void> {
+      if (parts.length === 0) return;
+      const combined = parts.join(BATCH_SEPARATOR);
+      parts.length = 0;
+      for (const chunk of chunkForLine(combined)) {
+        await pushToOwner(chunk);
+      }
+    },
+  };
+}
+
 export async function notifyAbandonedForm(p: {
   variant: string;
   fullName: string | null;

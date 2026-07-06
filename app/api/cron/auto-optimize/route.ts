@@ -5,7 +5,7 @@ import {
   healthCheck,
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 import {
   readAbState,
   proposeNewCta,
@@ -30,31 +30,20 @@ const FILE_PATH = "app/components/HeroCta.tsx";
 const logRun = (payload: Record<string, unknown>) =>
   logOptimizerRun("auto_optimize", payload);
 
-async function notify(text: string) {
-  try {
-    await notifyAnalyticsDigest(text);
-  } catch (e) {
-    console.error("[auto-optimize] notify failed:", e);
-  }
-}
-
-async function notifyError(text: string) {
-  try {
-    await notifyAnalyticsAlert(text);
-  } catch (e) {
-    console.error("[auto-optimize] notifyError failed:", e);
-  }
-}
-
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  const batch = createNotifyBatch();
+  const notify = (text: string) => batch.add(text);
+  const notifyError = (text: string) => batch.add(text);
+
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
-    await notifyError("🚨 Auto-optimizer ปิด: ไม่มี GITHUB_TOKEN env var");
+    notifyError("🚨 Auto-optimizer ปิด: ไม่มี GITHUB_TOKEN env var");
+    await batch.flush().catch((e) => console.error("[auto-optimize] batch flush failed:", e));
     return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
   }
   const [owner, repo] = ghRepo.split("/");
@@ -64,7 +53,7 @@ export async function GET(req: Request) {
   const steps = result.steps as string[];
 
   try {
-    await notify("🤖 Auto-optimizer เริ่มทำงาน — กำลังวิเคราะห์ A/B test");
+    notify("🤖 Auto-optimizer เริ่มทำงาน — กำลังวิเคราะห์ A/B test");
     steps.push("start");
 
     const ab = await readAbState(30);
@@ -72,14 +61,14 @@ export async function GET(req: Request) {
 
     if (ab.sample_too_small) {
       const msg = `⏸️ Skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 100 ต่อ variant (30 วัน)`;
-      await notify(msg);
+      notify(msg);
       steps.push("skip_small_sample");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "small_sample", ab });
     }
     if (Math.abs(ab.a_ctr - ab.b_ctr) < 0.5) {
       const msg = `⏸️ Skip: CTR ใกล้กันมาก A=${ab.a_ctr}% B=${ab.b_ctr}% รอ data เพิ่ม`;
-      await notify(msg);
+      notify(msg);
       steps.push("skip_tie");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "tie", ab });
@@ -252,5 +241,7 @@ Rationale: ${proposed.rationale}
     result.error = msg;
     await logRun(result);
     return NextResponse.json({ ok: false, error: msg, ...result }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[auto-optimize] batch flush failed:", e));
   }
 }
