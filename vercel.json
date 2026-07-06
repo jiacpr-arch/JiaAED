@@ -32,6 +32,10 @@
     {
       "path": "/api/cron/ads-round2",
       "schedule": "30 3 * * 1"
+    },
+    {
+      "path": "/api/cron/flush-notify-queue",
+      "schedule": "*/3 1-12 * * *"
     }
   ]
 }
