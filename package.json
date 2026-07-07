@@ -20,8 +20,7 @@
     "posthog-js": "^1.376.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "resend": "^6.12.3",
-    "stripe": "^22.1.1"
+    "resend": "^6.12.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
