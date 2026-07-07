@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildDailyDigest, formatDigestForLine } from "@/lib/aed/analytics-digest";
 import { notifyAnalyticsDigest, notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -49,6 +50,12 @@ export async function GET(req: Request) {
 
   try {
     const digest = await buildDailyDigest();
+
+    // At-least-once cron gate: if this Bangkok day was already claimed, a twin
+    // invocation already sent the digest — return without pushing to LINE again.
+    if (!(await claimDailyCronRun("daily", { date: digest.date }))) {
+      return NextResponse.json({ ok: true, skipped: "already_sent", date: digest.date });
+    }
 
     const supabase = createAdminClient();
     const { error: logError } = await supabase

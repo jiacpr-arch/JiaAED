@@ -2,6 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   fetchAdsReport,
   fetchDeviceReport,
@@ -71,6 +72,12 @@ async function logRun(payload: Record<string, unknown>): Promise<void> {
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+  }
+
+  // At-least-once cron gate: bail out if a twin invocation already claimed today,
+  // so the Ads Round-2 report is pushed to LINE at most once per day.
+  if (!(await claimDailyCronRun("ads_round2"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
 
   if (!isConfigured()) {

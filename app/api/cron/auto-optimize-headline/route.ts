@@ -6,6 +6,7 @@ import {
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   buildNewHeroHeadlineFile,
   extractHeadline,
@@ -33,6 +34,13 @@ const logRun = (payload: Record<string, unknown>) =>
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+  }
+
+  // At-least-once cron gate: the "start"/"skip" LINE messages below are the
+  // first side effect, so a re-delivered tick would re-push them. Claim the day
+  // before doing anything else and bail out if a twin invocation already ran.
+  if (!(await claimDailyCronRun("auto_optimize_headline"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
 
   const ghToken = process.env.GITHUB_TOKEN;
