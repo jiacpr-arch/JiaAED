@@ -2,6 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   hasEnoughSignal,
   insertArticleIntoSource,
@@ -43,6 +44,12 @@ async function logRun(payload: Record<string, unknown>): Promise<void> {
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+  }
+
+  // At-least-once cron gate: bail out if a twin invocation already claimed today,
+  // so the article-gap LINE messages (and its PR flow) run at most once.
+  if (!(await claimDailyCronRun("article_gap"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
 
   const ghToken = process.env.GITHUB_TOKEN;

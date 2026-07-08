@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildWeeklyContext, generateWeeklyReview } from "@/lib/aed/analytics-weekly-review";
 import { notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,12 @@ export async function GET(req: Request) {
   try {
     const ctx = await buildWeeklyContext();
     const review = await generateWeeklyReview(ctx);
+
+    // At-least-once cron gate: a twin invocation on the same Bangkok day has
+    // already pushed this review — don't send it to LINE twice.
+    if (!(await claimDailyCronRun("weekly_ai", { date: todayLabelBkk() }))) {
+      return NextResponse.json({ ok: true, skipped: "already_sent" });
+    }
 
     const supabase = createAdminClient();
     await supabase

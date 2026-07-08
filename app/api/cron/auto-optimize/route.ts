@@ -6,6 +6,7 @@ import {
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
 import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   readAbState,
   proposeNewCta,
@@ -49,6 +50,12 @@ async function notifyError(text: string) {
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+  }
+
+  // At-least-once cron gate: bail out if a twin invocation already claimed today,
+  // so the optimizer's LINE messages (and its PR/merge flow) run at most once.
+  if (!(await claimDailyCronRun("auto_optimize"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
 
   const ghToken = process.env.GITHUB_TOKEN;
