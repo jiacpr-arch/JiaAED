@@ -8,6 +8,7 @@ import { LINE_OA } from "@/lib/aed/line";
 const imgById: Record<string, string> = {
   "primedic-y0": "/images/primedic-y0-flyer-b.png",
   "primedic-y8": "/images/primedic-y8-flyer.png",
+  "primedic-y2": "/images/primedic-y2-flyer.jpg",
   "yuwell-gps": "/images/yuwell-gps-flyer.png",
 };
 
@@ -40,7 +41,17 @@ const cards: Card[] = [
     keyDiff: primedicModels[1].keyDiff,
     bestFor: primedicModels[1].bestFor,
     accent: "border-red-400/70 text-red-300",
-    tag: "แนะนำ · มี CPR feedback",
+    tag: "มี CPR feedback",
+  },
+  {
+    // รุ่นเรือธงที่ดัน — accent สีเหลืองให้เด่นกว่าตัวอื่น
+    id: primedicModels[2].id,
+    name: primedicModels[2].name,
+    price: primedicModels[2].price,
+    keyDiff: primedicModels[2].keyDiff,
+    bestFor: primedicModels[2].bestFor,
+    accent: "border-yellow-400/70 text-yellow-300",
+    tag: "🚩 เรือธง · จอ EKG + ดู CPR สด",
   },
   {
     id: yuwellGpsAed.id,
@@ -60,11 +71,12 @@ export function PrimedicLineup() {
       <div className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-sm text-gray-300 mb-5">
         <span className="text-gray-500">เลือกรุ่นไหนดี?</span>{" "}
         งบจำกัด → <span className="text-red-400 font-semibold">Y0</span> · อยากได้ CPR feedback →{" "}
-        <span className="text-red-300 font-semibold">Y8</span> · หลายสาขา/อยากติดตามออนไลน์ →{" "}
+        <span className="text-red-300 font-semibold">Y8</span> · อยากเห็นคุณภาพ CPR บนจอ →{" "}
+        <span className="text-yellow-300 font-semibold">Y2</span> · หลายสาขา/ติดตามออนไลน์ →{" "}
         <span className="text-red-400 font-semibold">GPS</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {cards.map((c) => (
           <div
             key={c.id}

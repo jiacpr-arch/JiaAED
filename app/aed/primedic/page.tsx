@@ -21,9 +21,9 @@ import { ProductStructuredData } from "@/app/components/StructuredData";
 // Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
 // Live now under อย. 65-2-2-2-0013415; ฆพ. (advertising licence) to be added later.
 export const metadata: Metadata = {
-  title: "PRIMEDIC HeartSave Y0 / Y8 — AED รุ่นพรีเมียม | JiaAED",
+  title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม | JiaAED",
   description:
-    "PRIMEDIC HeartSave ไลน์ AED พรีเมียม รุ่นกึ่งอัตโนมัติ Y0 (฿39,000) และ Y8 (฿49,999) พร้อมเซ็นเซอร์ CPR feedback และ Yuwell AED รุ่นมี GPS ในตัว",
+    "ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (฿39,999), Y8 (฿44,900) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (฿52,900) จอสี EKG ดูคุณภาพ CPR สด ๆ",
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -38,8 +38,8 @@ export default function PrimedicPage() {
         <SectionHeading
           as="h1"
           badge="✨ ไลน์พรีเมียม"
-          title="PRIMEDIC HeartSave — Y0 / Y8"
-          subtitle="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback"
+          title="PRIMEDIC HeartSave — Y0 / Y8 / Yuwell Y2"
+          subtitle="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback — รุ่นเรือธง Y2 มีจอ EKG ดูคุณภาพ CPR สด ๆ"
         />
 
         <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
@@ -55,11 +55,13 @@ export default function PrimedicPage() {
           </div>
           <div className="space-y-4">
             <p className="text-gray-300">
-              ทั้งสองรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span>{" "}
-              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,000</span>{" "}
-              เซ็นเซอร์ CPR feedback เป็นตัวเลือก ส่วนรุ่น{" "}
-              <span className="text-yellow-400 font-semibold">Y8 ฿49,999</span> มาพร้อมเซ็นเซอร์ CPR
-              feedback มาตรฐาน
+              ทุกรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span>{" "}
+              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,999</span>{" "}
+              เซ็นเซอร์ CPR feedback เป็นตัวเลือก · รุ่น{" "}
+              <span className="text-yellow-400 font-semibold">Y8 ฿44,900</span> มาพร้อมเซ็นเซอร์ CPR
+              feedback มาตรฐาน · รุ่นเรือธง{" "}
+              <span className="text-yellow-300 font-semibold">Yuwell Y2 ฿52,900</span>{" "}
+              เพิ่มจอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
             </p>
             <a
               href={LINE_OA}
@@ -89,13 +91,13 @@ export default function PrimedicPage() {
           </div>
         )}
 
-        {/* Flyer gallery — Y0 / Y8 marketing materials */}
+        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials */}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
+            { src: "/images/primedic-y2-flyer.jpg",   alt: "Yuwell Y2 — จอ EKG แสดงคุณภาพ CPR สด ๆ (รุ่นเรือธง)", w: 1040, h: 900 },
+            { src: "/images/primedic-y2-screen.jpg",  alt: "Yuwell Y2 — หน้าจอแสดงคลื่น EKG และภาพนำการกู้ชีพ", w: 1040, h: 980 },
             { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
             { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
-            { src: "/images/primedic-y0-flyer-a.png", alt: "PRIMEDIC Y0 — แผ่นอิเล็กโทรดและชุดพร้อมใช้", w: 1254, h: 1254 },
-            { src: "/images/primedic-y0-promo.png",   alt: "PRIMEDIC HeartSave Y0 — โปรโมชั่นและอบรม CPR", w: 1024, h: 1536 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
               <Image

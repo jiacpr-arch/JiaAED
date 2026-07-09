@@ -35,27 +35,33 @@ export type LineupTier = {
 const i7 = products[0]; // id "i7"
 
 // PRIMEDIC card body, derived from the model's own fields so density matches i7.
-function primedicFeatures(cprFeedback: PrimedicModel["cprFeedback"]): string[] {
+// Y2 (เรือธง) leads with its screen; Y0/Y8 lead with the CPR-feedback difference.
+function primedicFeatures(m: PrimedicModel): string[] {
+  const first =
+    m.id === "primedic-y2"
+      ? "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)"
+      : m.cprFeedback === "standard"
+        ? "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดเรียลไทม์"
+        : "เซ็นเซอร์ CPR feedback เป็นตัวเลือกเสริม (เพิ่มทีหลังได้)";
   return [
     "กึ่งอัตโนมัติ — มีปุ่ม Shock ใช้งานง่าย",
-    cprFeedback === "standard"
-      ? "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดเรียลไทม์"
-      : "เซ็นเซอร์ CPR feedback เป็นตัวเลือกเสริม (เพิ่มทีหลังได้)",
+    first,
     "เสียงนำทาง CPR 4 ภาษา (ไทย/อังกฤษ/จีน/เยอรมัน)",
     "พลังงาน escalating 200 → 300 → 360 J",
   ];
 }
 
 function primedicCard(m: PrimedicModel, subtitle: string): LineupCard {
+  const brand: LineupBrand = m.id === "primedic-y2" ? "Yuwell" : "PRIMEDIC";
   return {
     id: m.id,
-    brand: "PRIMEDIC",
+    brand,
     name: m.name,
     subtitle,
     price: m.price,
     image: m.image,
     description: m.bestFor,
-    features: primedicFeatures(m.cprFeedback),
+    features: primedicFeatures(m),
     badge: m.badge,
     highlight: m.badge != null,
     dataProduct: m.id,
@@ -107,7 +113,14 @@ export const homepageTiers: LineupTier[] = [
   },
   {
     label: "รุ่นสูงกว่า · ฟีเจอร์เพิ่ม",
-    note: "เพิ่มเซ็นเซอร์ CPR feedback หรือ GPS ติดตามในตัว",
-    cards: [primedicCard(primedicModels[1], "กึ่งอัตโนมัติ · มี CPR feedback"), gpsCard],
+    note: "เพิ่มเซ็นเซอร์ CPR feedback · จอ EKG ดู CPR สด หรือ GPS ติดตามในตัว",
+    cards: [
+      primedicCard(primedicModels[1], "กึ่งอัตโนมัติ · มี CPR feedback"),
+      {
+        ...primedicCard(primedicModels[2], "จอ EKG · ดู CPR สด · รุ่นเรือธง"),
+        highlight: true,
+      },
+      gpsCard,
+    ],
   },
 ];
