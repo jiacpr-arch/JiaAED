@@ -37,6 +37,18 @@ export const documents: DocumentItem[] = [
     updatedAt: "2025-01-01",
   },
   {
+    id: "aed-y2-specification-2026",
+    title: "คุณลักษณะเฉพาะ AED รุ่น Y2 (สำหรับ TOR/ใบเสนอราคา)",
+    description:
+      "เอกสารสเปคทางเทคนิคแบบละเอียดของ Yuwell/PRIMEDIC HeartSave Y2 (จอสี EKG) สำหรับใช้แนบใบเสนอราคา/TOR ของหน่วยงานราชการและองค์กร",
+    href: "/documents/aed-y2-specification-2026.docx",
+    category: "specification",
+    mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    sizeLabel: "18 KB",
+    language: "th",
+    updatedAt: "2026-07-11",
+  },
+  {
     id: "ce-mark-aed-i7-i9",
     title: "CE Mark — Declaration of Conformity",
     description:
