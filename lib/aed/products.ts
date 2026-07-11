@@ -9,28 +9,33 @@ export type Product = {
   badge: string | null;
 };
 
+// Amoul i7 discontinued — Yuwell Y2 takes over the "i7" SKU slot (ids kept
+// as-is for LeadForm/lead-validation/Merchant-feed/accounting continuity).
+// Real specs from lib/aed/primedic.ts (primedicSharedSpecs) — same numbers
+// as the "primedic-y2" catalog entry, never re-typed independently.
 export const products: Product[] = [
   {
     id: "i7",
-    name: "AED Amoul i7",
-    subtitle: "รุ่นมาตรฐาน",
-    price: 42900,
-    msrp: 70000,
-    description: "เหมาะสำหรับสำนักงาน โรงเรียน และสถานที่ทั่วไป",
+    name: "AED Yuwell Y2",
+    subtitle: "รุ่นเรือธง · จอสี EKG",
+    price: 59000,
+    msrp: 89000,
+    description:
+      "จอสี EKG แสดงคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) เหมาะสำหรับสำนักงาน โรงเรียน และหน่วยกู้ชีพที่ต้องการ CPR คุณภาพสูงสุด",
     features: [
-      "น้ำหนัก ~ 2 กก. (รวมแบตเตอรี่)",
-      "เสียงแนะนำ 5 ภาษา (TH/EN/CN/ES/IT)",
-      "Escalating 100-360J ผู้ใหญ่ · 10-100J เด็ก",
-      "Standalone — ไม่ต้องเชื่อมต่อก็ใช้งานได้",
+      "น้ำหนัก ~2.5 กก. (รวมโมดูลพลังงานและแผ่น)",
+      "เสียงแนะนำ 4 ภาษา (ไทย/อังกฤษ/จีน/เยอรมัน)",
+      "Escalating 200-360J ผู้ใหญ่ · 50-100J เด็ก",
+      "จอสี EKG + เซ็นเซอร์ CPR feedback มาตรฐาน",
     ],
-    badge: null,
+    badge: "เรือธง",
   },
   {
     id: "i7-cabinet",
-    name: "AED Amoul i7 + ตู้",
+    name: "AED Yuwell Y2 + ตู้",
     subtitle: "รุ่นพร้อมตู้ติดผนัง",
-    price: 47900,
-    msrp: 80000,
+    price: 64900,
+    msrp: 99000,
     description: "ครบชุด พร้อมตู้ติดผนังและสัญญาณเตือน",
     features: [
       "ครบชุดพร้อมติดตั้ง",
@@ -41,10 +46,10 @@ export const products: Product[] = [
   },
   {
     id: "i7-floor",
-    name: "AED Amoul i7 + แท่นตั้งพื้น",
+    name: "AED Yuwell Y2 + แท่นตั้งพื้น",
     subtitle: "รุ่นแท่นตั้งพื้น",
-    price: 51900,
-    msrp: 90000,
+    price: 68900,
+    msrp: 109000,
     description: "เคลื่อนย้ายได้ เหมาะสำหรับสถานที่ขนาดใหญ่",
     features: [
       "เคลื่อนย้ายได้สะดวก",

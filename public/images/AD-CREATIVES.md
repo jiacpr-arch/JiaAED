@@ -1,19 +1,35 @@
-# Ad creative assets — JiaAED (AED Amoul i7)
+# Ad creative assets — JiaAED (AED Yuwell Y2)
 
 Use ONLY AED product images when building Meta/Google ad creatives for this
-project. The copy is about the **AED Amoul i7 defibrillator** — the image must
+project. The copy is about the **AED Yuwell Y2 defibrillator** — the image must
 show the AED, not another product.
+
+> **Amoul i7 discontinued (ก.ค. 2026)** — Yuwell Y2 replaced it as the
+> site-wide featured product. `product-main.png` (below) is Amoul-only
+> creative and is NOT used anywhere in the codebase anymore — the new hero
+> photo is `yuwell-y2-main.jpg`. The `/aed/amoul-i7` PPC landing page and its
+> creatives (`aed-i7-poster.jpg`, `aed-i7-promo-39999.png`,
+> `scripts/build-promo-poster.mjs`) were intentionally left untouched because
+> they're tied to a live Google Ads campaign — coordinate with the owner
+> before changing those so ad copy and landing page stay in sync.
 
 ## ✅ AED creatives (safe to use)
 
 | File | Content |
 | --- | --- |
-| `product-main.png` | AED Amoul i7 unit (front) |
-| `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
+| `yuwell-y2-main.jpg` | AED Yuwell Y2 unit (open, current site-wide hero) |
+| `primedic-y2-open.jpg` | AED Yuwell Y2 unit (alternate open shot) |
 | `aed-poster.jpg` | AED poster |
 | `aed-floorstand.png` | AED on floor stand |
 | `aed-wallcabinet.png` | AED wall cabinet |
 | `feature-grid.jpg` | AED feature grid |
+
+## 🟡 Amoul i7 creatives (legacy — `/aed/amoul-i7` PPC campaign only)
+
+| File | Content |
+| --- | --- |
+| `product-main.png` | AED Amoul i7 unit (front) — discontinued, ads-landing-page only |
+| `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
 
 ## 🟢 AED rental campaign creatives (เช่า AED — Amoul)
 

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "แพ็กเกจ AED + GPS สำหรับองค์กร | JiaAED",
     description: "เลือกแพ็กเกจความปลอดภัย AED ที่เหมาะกับธุรกิจคุณ — ซื้อขาด เช่าแล้วได้ซื้อ หรือเช่าบริการครบวงจร",
     url: "/aed/packages",
-    images: ["/images/product-main.png"],
+    images: ["/images/yuwell-y2-main.jpg"],
     type: "website",
   },
 };

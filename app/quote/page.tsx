@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "ขอใบเสนอราคา AED สำหรับองค์กร | JiaAED",
     description: "รับใบเสนอราคา AED ภายใน 24 ชั่วโมง",
     url: "/quote",
-    images: ["/images/product-main.png"],
+    images: ["/images/yuwell-y2-main.jpg"],
     type: "website",
   },
 };

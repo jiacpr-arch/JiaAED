@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "เครื่องกระตุกหัวใจไฟฟ้า (AED) 2 แบรนด์ให้เลือก — Amoul i7 และ PRIMEDIC HeartSave (Y0/Y8) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569",
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 65-2-2-2-0013415",
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
-    "Amoul i7",
+    "Yuwell Y2",
     "PRIMEDIC HeartSave",
     "PRIMEDIC Y0",
     "PRIMEDIC Y8",
@@ -52,24 +52,24 @@ export const metadata: Metadata = {
     locale: "th_TH",
     url: SITE_URL,
     siteName: "JiaAED",
-    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ให้เลือก · เสียงแนะนำภาษาไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · อย. รับรอง",
     images: [
       {
-        url: "/images/aed-i7-poster.jpg",
-        width: 1179,
-        height: 1651,
-        alt: "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
+        url: "/images/yuwell-y2-main.jpg",
+        width: 720,
+        height: 1469,
+        alt: "AED Yuwell Y2 เครื่องกระตุกหัวใจไฟฟ้า",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ · เสียงไทย · อย. รับรอง",
-    images: ["/images/aed-i7-poster.jpg"],
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · อย. รับรอง",
+    images: ["/images/yuwell-y2-main.jpg"],
   },
   robots: { index: true, follow: true },
 };
