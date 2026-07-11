@@ -8,7 +8,7 @@ import { LINE_OA } from "@/lib/aed/line";
 const imgById: Record<string, string> = {
   "primedic-y0": "/images/primedic-y0-flyer-b.png",
   "primedic-y8": "/images/primedic-y8-flyer.png",
-  "primedic-y2": "/images/primedic-y2-flyer.jpg",
+  "primedic-y2": "/images/primedic-y2-open.jpg",
   "yuwell-gps": "/images/yuwell-gps-flyer.png",
 };
 
