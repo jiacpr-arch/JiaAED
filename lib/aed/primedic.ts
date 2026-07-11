@@ -66,7 +66,7 @@ export const primedicModels: PrimedicModel[] = [
     // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
     id: "primedic-y2",
     name: "Yuwell Y2",
-    price: 52_900,
+    price: 59_000,
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นท็อป (You Too)",
@@ -160,7 +160,7 @@ export const primedicDiffSpecs: PrimedicSpecRow[] = [
     values: {
       "primedic-y0": "฿39,999",
       "primedic-y8": "฿44,900",
-      "primedic-y2": "฿52,900",
+      "primedic-y2": "฿59,000",
     },
   },
 ];

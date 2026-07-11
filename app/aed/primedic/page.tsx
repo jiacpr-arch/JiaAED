@@ -23,7 +23,7 @@ import { ProductStructuredData } from "@/app/components/StructuredData";
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม | JiaAED",
   description:
-    "ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (฿39,999), Y8 (฿44,900) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (฿52,900) จอสี EKG ดูคุณภาพ CPR สด ๆ",
+    "ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (฿39,999), Y8 (฿44,900) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (฿59,000) จอสี EKG ดูคุณภาพ CPR สด ๆ",
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -60,7 +60,7 @@ export default function PrimedicPage() {
               เซ็นเซอร์ CPR feedback เป็นตัวเลือก · รุ่น{" "}
               <span className="text-yellow-400 font-semibold">Y8 ฿44,900</span> มาพร้อมเซ็นเซอร์ CPR
               feedback มาตรฐาน · รุ่นเรือธง{" "}
-              <span className="text-yellow-300 font-semibold">Yuwell Y2 ฿52,900</span>{" "}
+              <span className="text-yellow-300 font-semibold">Yuwell Y2 ฿59,000</span>{" "}
               เพิ่มจอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
             </p>
             <a
