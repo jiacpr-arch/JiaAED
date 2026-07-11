@@ -321,9 +321,7 @@ const ARTICLE_COVER: Record<string, string> = {
   "how-to-use-aed": "/images/lifestyle-cpr.png",
   "aed-maintenance-checklist": "/images/accessory-battery.jpg",
   "aed-standards-certifications": "/images/feature-grid.jpg",
-  // Price-neutral image on purpose — rental posters carry printed prices that
-  // can drift from lib data.
-  "aed-price-guide": "/images/primedic-heartsave.png",
+  "aed-price-guide": "/images/aed-rent-all.webp",
   "aed-rental-running-events": "/images/aed-rent-daily.jpg",
   "aed-law-thailand": "/images/aed-floorstand.webp",
 };
