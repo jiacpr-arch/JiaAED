@@ -548,7 +548,7 @@ export default function Home() {
       <section className="py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-            <Image src="/images/aed-weather.png" alt="AED ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C" width={600} height={400} className="w-full h-auto" />
+            <Image src="/images/aed-weather.webp" alt="AED PRIMEDIC ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C" width={1200} height={647} className="w-full h-auto" />
           </div>
           <div>
             <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">🛡️ IP65 CERTIFIED</div>
@@ -583,7 +583,7 @@ export default function Home() {
             </a>
           </div>
           <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/lifestyle-man.webp" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
+            <Image src="/images/lifestyle-aed-carry.webp" alt="พร้อมช่วยในทุกวินาที — ใช้งาน AED ง่าย" width={1313} height={1198} className="w-full h-auto" />
           </div>
         </div>
         <div className="max-w-4xl mx-auto">
