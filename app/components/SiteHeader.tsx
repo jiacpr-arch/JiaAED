@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LINE_OA } from "@/lib/aed/line";
+import { JiaAedLogo } from "./JiaAedLogo";
 
 const NAV_LINKS: { href: string; label: string }[] = [
   { href: "/aed/packages", label: "แพ็กเกจ" },
@@ -16,8 +17,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 bg-gray-950/95 backdrop-blur border-b border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-2xl">❤️</span>
-          <span className="font-bold text-xl text-yellow-400">JiaAED</span>
+          <JiaAedLogo className="h-8 w-auto" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-5 text-sm text-gray-300">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
+import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 import { YouTubeLite } from "@/app/components/YouTubeLite";
 import { LatestNews } from "@/app/components/LatestNews";
 
@@ -36,8 +37,7 @@ export default function AdsLandingI7() {
       <header className="bg-gray-950 border-b border-gray-800">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">❤️</span>
-            <span className="font-bold text-xl text-yellow-400">JiaAED</span>
+            <JiaAedLogo className="h-8 w-auto" />
           </Link>
           <a
             href={LINE_OA}

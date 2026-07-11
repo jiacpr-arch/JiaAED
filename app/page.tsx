@@ -18,6 +18,7 @@ import { PackageCard } from "./components/PackageCard";
 import { TrustStats } from "./components/TrustStats";
 import { PromoBanner } from "./components/PromoBanner";
 import { RentalSpotlight } from "./components/RentalSpotlight";
+import { JiaAedLogo } from "./components/JiaAedLogo";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { survivorReward } from "@/lib/aed/promotion";
 
@@ -90,8 +91,7 @@ export default function Home() {
       <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">❤️</span>
-            <span className="font-bold text-xl text-yellow-400">JiaAED</span>
+            <JiaAedLogo className="h-8 w-auto" />
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
