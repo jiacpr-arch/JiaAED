@@ -13,12 +13,12 @@ import { LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export const metadata: Metadata = {
-  title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน — ไม่ต้องลงทุนก้อนใหญ่ | JiaAED",
+  title: "เช่า AED แผนยืดหยุ่น ฿1,990/เดือน — ไม่ต้องลงทุนก้อนใหญ่ | JiaAED",
   description:
-    "เช่า / เช่ายืม AED Yuwell/PRIMEDIC HeartSave Y2 แผนอีเวนต์ แผนยืดหยุ่น แผนรายปี เริ่ม 2,490 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
+    "เช่า / เช่ายืม AED Yuwell/PRIMEDIC HeartSave Y2 แผนอีเวนต์ แผนยืดหยุ่น แผนรายปี เริ่ม 1,990 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
   alternates: { canonical: "/aed/rental" },
   openGraph: {
-    title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน | JiaAED",
+    title: "เช่า AED แผนยืดหยุ่น ฿1,990/เดือน | JiaAED",
     description:
       "เช่า AED Yuwell/PRIMEDIC HeartSave Y2 แผนอีเวนต์/แผนยืดหยุ่น/แผนรายปี พร้อมทีมดูแลครบวงจร อย. รับรอง — ไม่ต้องลงทุนก้อนใหญ่",
     url: "/aed/rental",
@@ -64,7 +64,7 @@ export default function AedRentalLanding() {
 
       {/* Promo banner */}
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        💼 เช่า AED พร้อมใช้ — ไม่ต้องลงทุนซื้อขาด เริ่ม ฿2,490/เดือน
+        💼 เช่า AED พร้อมใช้ — ไม่ต้องลงทุนซื้อขาด เริ่ม ฿1,990/เดือน
       </div>
 
       <section className="px-4 py-8 max-w-4xl mx-auto">
@@ -75,7 +75,7 @@ export default function AedRentalLanding() {
         <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
           เช่า AED พร้อมใช้
           <br />
-          <span className="text-yellow-400">เริ่ม ฿2,490/เดือน</span>
+          <span className="text-yellow-400">เริ่ม ฿1,990/เดือน</span>
         </h1>
 
         <p className="text-gray-400 mb-5">
