@@ -91,11 +91,12 @@ export default function PrimedicPage() {
           </div>
         )}
 
-        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials */}
+        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials (Y2 = ภาพสินค้าจริงจากผู้ผลิต) */}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
-            { src: "/images/primedic-y2-flyer.jpg",   alt: "Yuwell Y2 — จอ EKG แสดงคุณภาพ CPR สด ๆ (รุ่นเรือธง)", w: 1040, h: 900 },
-            { src: "/images/primedic-y2-screen.jpg",  alt: "Yuwell Y2 — หน้าจอแสดงคลื่น EKG และภาพนำการกู้ชีพ", w: 1040, h: 980 },
+            { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-flyer.jpg",       alt: "Yuwell Y2 — เครื่องปิดและเปิดฝาแสดงขั้นตอนใช้งานบนจอ", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
             { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
           ].map((img) => (

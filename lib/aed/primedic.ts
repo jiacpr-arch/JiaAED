@@ -72,7 +72,7 @@ export const primedicModels: PrimedicModel[] = [
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นท็อป (You Too)",
     keyDiff: "จอแสดงคุณภาพ CPR เรียลไทม์ — ความเร็ว/ความลึก/การปล่อยสุด (full recoil) + คลื่น EKG",
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการ CPR คุณภาพสูงสุด · เห็นบนจอ ปรับท่าปั๊มได้ทันที",
-    image: "/images/primedic-y2-flyer.jpg",
+    image: "/images/primedic-y2-open.jpg",
     badge: "เรือธง",
   },
 ];
