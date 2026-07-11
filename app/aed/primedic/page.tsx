@@ -45,8 +45,8 @@ export default function PrimedicPage() {
         <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
           <div className="relative w-full h-72 rounded-2xl overflow-hidden border border-gray-800 bg-white">
             <Image
-              src="/images/primedic-kit.png"
-              alt="PRIMEDIC HeartSave AED พร้อมแผ่นแปะอิเล็กโทรด"
+              src="/images/primedic-y-open-pads.webp"
+              alt="PRIMEDIC HeartSave เปิดฝา พร้อมแผ่นอิเล็กโทรดผู้ใหญ่และเด็ก"
               fill
               className="object-contain p-6"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -54,15 +54,23 @@ export default function PrimedicPage() {
             />
           </div>
           <div className="space-y-4">
-            <p className="text-gray-300">
-              ทุกรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span>{" "}
-              (มีปุ่ม Shock) — รุ่น <span className="text-yellow-400 font-semibold">Y0 ฿39,999</span>{" "}
-              เซ็นเซอร์ CPR feedback เป็นตัวเลือก · รุ่น{" "}
-              <span className="text-yellow-400 font-semibold">Y8 ฿44,900</span> มาพร้อมเซ็นเซอร์ CPR
-              feedback มาตรฐาน · รุ่นเรือธง{" "}
-              <span className="text-yellow-300 font-semibold">Yuwell Y2 ฿59,000</span>{" "}
-              เพิ่มจอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
+            <p className="text-gray-400 text-sm">
+              ทุกรุ่นเป็นแบบ <span className="text-yellow-400 font-semibold">กึ่งอัตโนมัติ</span> (มีปุ่ม Shock)
             </p>
+            {/* Same facts as the old paragraph, one scannable row per model */}
+            <ul className="space-y-2">
+              {[
+                { model: "Y0", price: "฿39,999", diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
+                { model: "Y8", price: "฿44,900", diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
+                { model: "Yuwell Y2", price: "฿59,000", diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)" },
+              ].map((m) => (
+                <li key={m.model} className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900 px-4 py-3">
+                  <span className="flex-shrink-0 font-black text-yellow-400 w-20">{m.model}</span>
+                  <span className="flex-shrink-0 font-bold text-white w-20">{m.price}</span>
+                  <span className="text-sm text-gray-300">{m.diff}</span>
+                </li>
+              ))}
+            </ul>
             <a
               href={LINE_OA}
               target="_blank"
@@ -149,6 +157,16 @@ export default function PrimedicPage() {
         <PriceViewTracker targetId="primedic-specs" />
         <div id="primedic-specs">
           <SectionHeading title="เปรียบเทียบสเปกละเอียด — Y0 vs Y8" />
+          {/* Manufacturer features infographic — the picture version of the table below */}
+          <div className="mt-6 max-w-2xl mx-auto rounded-2xl overflow-hidden border border-gray-800">
+            <Image
+              src="/images/primedic-features-infographic.png"
+              alt="สรุปฟีเจอร์ PRIMEDIC HeartSave — พลังงาน 200–360J ผู้ใหญ่ / 50–100J เด็ก, จอ 4.3 และ 7 นิ้ว, ชุดอุปกรณ์ฉุกเฉิน, แบตเตอรี่ 5 ปี, ประกัน 8 ปี"
+              width={1092}
+              height={1993}
+              className="w-full h-auto"
+            />
+          </div>
           <div className="mt-6">
             <SpecComparisonTable />
           </div>

@@ -49,9 +49,9 @@ export default function SubscriptionPage() {
           subtitle='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'
         />
 
-        {/* GPS AED + Cloud Dashboard flyer */}
-        <div className="mt-8 flex justify-center">
-          <div className="rounded-2xl overflow-hidden border border-gray-800 w-full max-w-lg">
+        {/* GPS AED + Cloud Dashboard flyer + the 4 things the service actually does */}
+        <div className="mt-8 grid md:grid-cols-2 gap-8 items-center">
+          <div className="rounded-2xl overflow-hidden border border-gray-800">
             <Image
               src="/images/yuwell-gps-flyer.png"
               alt="Yuwell GPS AED เช่า พร้อมระบบ Cloud Dashboard ติดตามสถานะ Real-time"
@@ -60,6 +60,22 @@ export default function SubscriptionPage() {
               className="w-full h-auto"
               priority
             />
+          </div>
+          <div className="space-y-3">
+            {[
+              { icon: "📡", title: "GPS + Cloud Dashboard", desc: "เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time" },
+              { icon: "🔔", title: "แจ้งเตือนอัตโนมัติ", desc: "แบตเตอรี่/แผ่นอิเล็กโทรดใกล้หมดอายุ ระบบเตือนก่อนเสมอ" },
+              { icon: "♻️", title: "เครื่องสำรองถ้าเสีย", desc: "เปลี่ยนเครื่องให้ภายใน 24–48 ชม. ไม่มีช่วงที่จุดติดตั้งไม่มีเครื่อง" },
+              { icon: "🎓", title: "อบรมพนักงานถึงที่", desc: "ทีม BLS Instructor สอนการใช้ AED + CPR ให้ทีมงานของคุณ" },
+            ].map((b) => (
+              <div key={b.title} className="flex items-start gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
+                <span className="text-2xl leading-none mt-0.5">{b.icon}</span>
+                <div>
+                  <div className="font-bold text-white">{b.title}</div>
+                  <div className="text-sm text-gray-400 mt-0.5">{b.desc}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

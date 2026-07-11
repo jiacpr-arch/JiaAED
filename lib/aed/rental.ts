@@ -9,6 +9,8 @@ export type RentalPlan = {
   deposit: string;
   features: string[];
   badge: string;
+  // Plan thumbnail (public path) — shared by RentalSpotlight and /aed/rental cards.
+  image: string;
 };
 
 export const rentalPlans: RentalPlan[] = [
@@ -26,6 +28,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
+    image: "/images/aed-rent-daily.jpg",
   },
   {
     id: "rent-annual",
@@ -41,6 +44,7 @@ export const rentalPlans: RentalPlan[] = [
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
     ],
     badge: "คุ้มที่สุด",
+    image: "/images/aed-rent-yearly.jpg",
   },
   {
     id: "rent-flex",
@@ -56,6 +60,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
+    image: "/images/aed-rent-monthly.jpg",
   },
 ];
 

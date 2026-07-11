@@ -178,25 +178,25 @@ export default function AdsLandingI7() {
           <YouTubeLite videoId="cpM78Zc2RC0" title="วิธีการใช้งาน AED Amoul i7" />
         </div>
 
-        {/* Key specs */}
+        {/* Key specs — same 7 facts, icon tiles instead of a bullet wall */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-6">
-          <h2 className="font-bold text-lg text-white mb-3">⚡ จุดเด่น</h2>
-          <ul className="space-y-2 text-sm">
+          <h2 className="font-bold text-lg text-white mb-4">⚡ จุดเด่น</h2>
+          <div className="grid grid-cols-2 gap-3">
             {[
-              "ชาร์จพร้อม Shock ภายใน 7 วินาที",
-              "เสียงแนะนำภาษาไทย ใช้ได้ทันที ไม่ต้องอบรม",
-              "ใช้ได้ทั้งผู้ใหญ่และเด็ก (ปรับพลังงานได้)",
-              "IP65 กันน้ำ กันฝุ่น ใช้กลางแจ้งได้",
-              "Self-test อัตโนมัติทุกวัน รู้ทันทีถ้ามีปัญหา",
-              "แบตเตอรี่อายุ ≥ 7 ปี · electrode 5 ปี",
-              "มีบริการสาธิตการใช้งานฟรีถึงที่",
+              { icon: "⚡", text: "ชาร์จพร้อม Shock ภายใน 7 วินาที" },
+              { icon: "🗣️", text: "เสียงแนะนำภาษาไทย ใช้ได้ทันที ไม่ต้องอบรม" },
+              { icon: "👨‍👧", text: "ใช้ได้ทั้งผู้ใหญ่และเด็ก (ปรับพลังงานได้)" },
+              { icon: "🛡️", text: "IP65 กันน้ำ กันฝุ่น ใช้กลางแจ้งได้" },
+              { icon: "🔍", text: "Self-test อัตโนมัติทุกวัน รู้ทันทีถ้ามีปัญหา" },
+              { icon: "🔋", text: "แบตเตอรี่อายุ ≥ 7 ปี · electrode 5 ปี" },
+              { icon: "🎓", text: "มีบริการสาธิตการใช้งานฟรีถึงที่" },
             ].map((f) => (
-              <li key={f} className="flex items-start gap-2 text-gray-300">
-                <span className="text-yellow-400 font-bold mt-0.5">✓</span>
-                <span>{f}</span>
-              </li>
+              <div key={f.text} className="flex items-start gap-2.5 rounded-xl bg-gray-950 border border-gray-800 p-3">
+                <span className="text-xl leading-none mt-0.5">{f.icon}</span>
+                <span className="text-sm text-gray-300">{f.text}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
         {/* Full product poster — the marketing creative used across ads */}

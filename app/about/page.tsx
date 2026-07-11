@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { PhotoStrip } from "@/app/components/PhotoStrip";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
@@ -40,14 +42,37 @@ export default function AboutPage() {
           <TrustStats />
         </div>
 
-        <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900 p-6 text-gray-300 leading-relaxed">
-          <p>
-            เจี่ยรักษา (JIA CPR) เป็นผู้นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง
-            ดูแลเครื่อง AED ให้องค์กรทั่วประเทศมากกว่า 15 ปี ครอบคลุมทั้งการขายขาด
-            เช่าแล้วได้ซื้อ และบริการเช่าดูแลครบวงจร พร้อมระบบติดตาม GPS และการอบรม CPR/AED
-            โดยวิทยากรที่ผ่านการรับรอง — เพื่อให้ทุกองค์กรมั่นใจว่าเครื่อง “พร้อมใช้จริง”
-            เมื่อเกิดเหตุฉุกเฉิน
-          </p>
+        <div className="mt-8 rounded-2xl border border-gray-800 bg-gray-900 p-6">
+          <div className="grid md:grid-cols-[280px_1fr] gap-6 items-center">
+            <div className="relative w-full h-44 md:h-full min-h-40 rounded-xl overflow-hidden">
+              <Image
+                src="/images/training-bls-2.jpg"
+                alt="ทีมงานเจี่ยรักษาอบรม CPR และการใช้ AED ให้องค์กร"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 280px"
+              />
+            </div>
+            <p className="text-gray-300 leading-relaxed">
+              เจี่ยรักษา (JIA CPR) เป็นผู้นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง
+              ดูแลเครื่อง AED ให้องค์กรทั่วประเทศมากกว่า 15 ปี ครอบคลุมทั้งการขายขาด
+              เช่าแล้วได้ซื้อ และบริการเช่าดูแลครบวงจร พร้อมระบบติดตาม GPS และการอบรม CPR/AED
+              โดยวิทยากรที่ผ่านการรับรอง — เพื่อให้ทุกองค์กรมั่นใจว่าเครื่อง “พร้อมใช้จริง”
+              เมื่อเกิดเหตุฉุกเฉิน
+            </p>
+          </div>
+        </div>
+
+        {/* Our work, in photos */}
+        <div className="mt-8">
+          <PhotoStrip
+            heightClass="h-44 md:h-56"
+            photos={[
+              { src: "/images/training-bls-1.jpg", alt: "สาธิตการใช้ AED นอกสถานที่", caption: "สาธิตการใช้ AED ถึงหน่วยงาน" },
+              { src: "/images/training-bls-3.jpg", alt: "ฝึกปฏิบัติ CPR กับหุ่นจำลอง", caption: "อบรม CPR โดย BLS Instructor" },
+              { src: "/images/aed-floorstand.webp", alt: "จุดติดตั้งเครื่อง AED พร้อมตู้ตั้งพื้น", caption: "ติดตั้งจุดวาง AED ให้พร้อมใช้" },
+            ]}
+          />
         </div>
       </section>
 

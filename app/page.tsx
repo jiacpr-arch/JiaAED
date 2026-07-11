@@ -19,6 +19,8 @@ import { TrustStats } from "./components/TrustStats";
 import { PromoBanner } from "./components/PromoBanner";
 import { RentalSpotlight } from "./components/RentalSpotlight";
 import { JiaAedLogo } from "./components/JiaAedLogo";
+import { PhotoStrip } from "./components/PhotoStrip";
+import { SplitFeature } from "./components/SplitFeature";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { survivorReward } from "@/lib/aed/promotion";
 
@@ -61,25 +63,26 @@ const specs = [
   { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือไทย" },
 ];
 
+// v = joules, drives the visual energy-bar width (max 360 adult / 100 child)
 const adultShocks = [
-  { n: "Shock 1", j: "100 J" },
-  { n: "Shock 2", j: "150 J" },
-  { n: "Shock 3", j: "170 J" },
-  { n: "Shock 4", j: "200 J" },
-  { n: "Shock 5", j: "300 J" },
-  { n: "Shock 6", j: "360 J" },
-  { n: "Shock 7+", j: "360 J (cap max)" },
+  { n: "Shock 1", j: "100 J", v: 100 },
+  { n: "Shock 2", j: "150 J", v: 150 },
+  { n: "Shock 3", j: "170 J", v: 170 },
+  { n: "Shock 4", j: "200 J", v: 200 },
+  { n: "Shock 5", j: "300 J", v: 300 },
+  { n: "Shock 6", j: "360 J", v: 360 },
+  { n: "Shock 7+", j: "360 J (cap max)", v: 360 },
 ];
 
 const pediatricShocks = [
-  { n: "Shock 1", j: "10 J" },
-  { n: "Shock 2", j: "15 J" },
-  { n: "Shock 3", j: "20 J" },
-  { n: "Shock 4", j: "30 J" },
-  { n: "Shock 5", j: "50 J" },
-  { n: "Shock 6", j: "70 J" },
-  { n: "Shock 7", j: "100 J" },
-  { n: "Shock 8+", j: "100 J (cap max)" },
+  { n: "Shock 1", j: "10 J", v: 10 },
+  { n: "Shock 2", j: "15 J", v: 15 },
+  { n: "Shock 3", j: "20 J", v: 20 },
+  { n: "Shock 4", j: "30 J", v: 30 },
+  { n: "Shock 5", j: "50 J", v: 50 },
+  { n: "Shock 6", j: "70 J", v: 70 },
+  { n: "Shock 7", j: "100 J", v: 100 },
+  { n: "Shock 8+", j: "100 J (cap max)", v: 100 },
 ];
 
 export default function Home() {
@@ -501,6 +504,22 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Real training photos — photographic proof of the after-sales story */}
+          <div className="mt-10">
+            <PhotoStrip
+              photos={[
+                { src: "/images/training-bls-1.jpg", alt: "สาธิต CPR และการใช้ AED นอกสถานที่", caption: "สาธิตการใช้ AED ถึงหน่วยงาน" },
+                { src: "/images/training-bls-2.jpg", alt: "ผู้เข้าอบรม CPR รับใบประกาศ", caption: "อบรมโดยทีม BLS Instructor" },
+                { src: "/images/training-bls-3.jpg", alt: "ฝึกปฏิบัติ CPR กับหุ่นจำลอง", caption: "ฝึกปฏิบัติจริงกับหุ่น CPR" },
+              ]}
+            />
+            <p className="text-center mt-4">
+              <Link href="/training" className="text-yellow-400 hover:text-yellow-300 text-sm font-medium">
+                เราอบรมให้จริงทุกแพ็กเกจ — ดูหลักสูตรอบรม CPR &amp; AED →
+              </Link>
+            </p>
+          </div>
+
           {/* Trust stats */}
           <div className="mt-12">
             <TrustStats />
@@ -546,32 +565,29 @@ export default function Home() {
 
       {/* Waterproof */}
       <section className="py-14 px-4 bg-gray-950">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-            <Image src="/images/aed-weather.webp" alt="AED PRIMEDIC ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C" width={1200} height={647} className="w-full h-auto" />
-          </div>
-          <div>
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">🛡️ IP65 CERTIFIED</div>
-            <h2 className="text-3xl font-black mb-4 text-white">กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</h2>
-            <p className="text-gray-400 mb-5">ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C</p>
-            <ul className="space-y-3">
-              {["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"].map(f => (
-                <li key={f} className="flex items-center gap-3 text-gray-300">
-                  <span className="text-yellow-400 font-bold text-lg">✓</span>{f}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="max-w-5xl mx-auto">
+          <SplitFeature
+            image="/images/aed-weather.webp"
+            imageAlt="AED PRIMEDIC ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C"
+            badge="🛡️ IP65 CERTIFIED"
+            title={<>กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</>}
+            intro="ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C"
+            bullets={["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"]}
+          />
         </div>
       </section>
 
       {/* Easy to use + demo video */}
       <section className="py-14 px-4 bg-gray-900">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center mb-12">
-          <div className="order-2 md:order-1">
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">👥 ใช้งานง่าย</div>
-            <h2 className="text-3xl font-black mb-4 text-white">ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</h2>
-            <p className="text-gray-400 mb-6">เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน</p>
+        <div className="max-w-5xl mx-auto mb-12">
+          <SplitFeature
+            image="/images/lifestyle-aed-carry.webp"
+            imageAlt="พร้อมช่วยในทุกวินาที — ใช้งาน AED ง่าย"
+            badge="👥 ใช้งานง่าย"
+            title={<>ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</>}
+            intro="เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน"
+            reverse
+          >
             <a
               href={LINE_OA}
               target="_blank"
@@ -581,10 +597,7 @@ export default function Home() {
             >
               💬 สอบถามราคา
             </a>
-          </div>
-          <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/lifestyle-aed-carry.webp" alt="พร้อมช่วยในทุกวินาที — ใช้งาน AED ง่าย" width={1313} height={1198} className="w-full h-auto" />
-          </div>
+          </SplitFeature>
         </div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-6">
@@ -631,11 +644,17 @@ export default function Home() {
                       <h3 className="font-bold text-lg text-red-400">ADULT (ผู้ใหญ่) — 6 ระดับ</h3>
                       <span className="text-xs text-gray-500">100 → 360 J</span>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2.5">
                       {adultShocks.map((s) => (
-                        <li key={s.n} className="flex justify-between items-center bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-sm">
-                          <span className="text-gray-400 font-medium">{s.n}</span>
-                          <span className="text-red-400 font-bold">{s.j}</span>
+                        <li key={s.n} className="flex items-center gap-3 text-sm">
+                          <span className="w-16 flex-shrink-0 text-gray-400 font-medium text-xs">{s.n}</span>
+                          <div className="flex-1 h-5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-red-900 to-red-500"
+                              style={{ width: `${(s.v / 360) * 100}%` }}
+                            />
+                          </div>
+                          <span className="w-24 flex-shrink-0 text-right text-red-400 font-bold text-xs">{s.j}</span>
                         </li>
                       ))}
                     </ul>
@@ -647,11 +666,17 @@ export default function Home() {
                       <h3 className="font-bold text-lg text-green-400">PEDIATRIC (เด็ก) — 7 ระดับ</h3>
                       <span className="text-xs text-gray-500">10 → 100 J</span>
                     </div>
-                    <ul className="space-y-2">
+                    <ul className="space-y-2.5">
                       {pediatricShocks.map((s) => (
-                        <li key={s.n} className="flex justify-between items-center bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-sm">
-                          <span className="text-gray-400 font-medium">{s.n}</span>
-                          <span className="text-green-400 font-bold">{s.j}</span>
+                        <li key={s.n} className="flex items-center gap-3 text-sm">
+                          <span className="w-16 flex-shrink-0 text-gray-400 font-medium text-xs">{s.n}</span>
+                          <div className="flex-1 h-5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-green-900 to-green-500"
+                              style={{ width: `${(s.v / 100) * 100}%` }}
+                            />
+                          </div>
+                          <span className="w-24 flex-shrink-0 text-right text-green-400 font-bold text-xs">{s.j}</span>
                         </li>
                       ))}
                     </ul>
@@ -741,6 +766,15 @@ export default function Home() {
                       <li>เลือกช่องทาง: USB / Wi-Fi / SIM 4G</li>
                     </ol>
                     <p className="text-xs text-blue-300 mt-3">→ จึงจะเข้าถึงข้อมูลผ่าน dashboard ได้</p>
+                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-800">
+                      <Image
+                        src="/images/cloud-dashboard.png"
+                        alt="ตัวอย่างหน้าจอ AED Management Dashboard"
+                        width={600}
+                        height={400}
+                        className="w-full h-auto"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -809,13 +843,27 @@ export default function Home() {
               </summary>
               <div className="px-4 pb-6 pt-2">
                 <p className="text-center text-gray-500 text-sm mb-6">สเปกของรุ่น Amoul i7 · สเปก PRIMEDIC ดูได้ที่หัวข้อ “เลือกยี่ห้อ” ด้านบน</p>
-                <div className="rounded-2xl overflow-hidden border border-gray-700">
-                  {specs.map((s, i) => (
-                    <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
-                      <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
-                      <div className="text-sm text-gray-200">{s.value}</div>
+                <div className="grid md:grid-cols-[260px_1fr] gap-6 items-start">
+                  <div className="hidden md:block sticky top-24">
+                    <div className="rounded-2xl overflow-hidden border border-gray-700 bg-white">
+                      <Image
+                        src="/images/product-main.png"
+                        alt="เครื่อง AED Amoul i7"
+                        width={520}
+                        height={520}
+                        className="w-full h-auto"
+                      />
                     </div>
-                  ))}
+                    <p className="text-center text-xs text-gray-500 mt-2">AED Amoul i7</p>
+                  </div>
+                  <div className="rounded-2xl overflow-hidden border border-gray-700">
+                    {specs.map((s, i) => (
+                      <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
+                        <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
+                        <div className="text-sm text-gray-200">{s.value}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center mt-6">
                   {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "ILCOR/AHA 2020-2025", "FDA"].map((cert) => (

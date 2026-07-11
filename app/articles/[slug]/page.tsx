@@ -1,9 +1,11 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { articles, findArticle } from "@/lib/aed/articles";
+import { SiteHeader } from "@/app/components/SiteHeader";
+import { SiteFooter } from "@/app/components/SiteFooter";
+import { articles, findArticle, articleCover } from "@/lib/aed/articles";
 import { renderMarkdown } from "@/lib/aed/markdown";
-import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
@@ -38,18 +40,7 @@ export default async function ArticlePage(
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <JiaAedLogo className="h-8 w-auto" />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/articles" className="text-sm text-gray-400 hover:text-yellow-400">บทความทั้งหมด</Link>
-            <Link href="/docs" className="text-sm text-gray-400 hover:text-yellow-400">เอกสาร</Link>
-            <Link href="/#contact" className="text-sm text-gray-400 hover:text-yellow-400">ติดต่อ</Link>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <article className="py-12 px-4">
         <div className="max-w-3xl mx-auto">
@@ -67,10 +58,21 @@ export default async function ArticlePage(
 
           <h1 className="text-3xl md:text-4xl font-black mb-3">{article.title}</h1>
           <p className="text-lg text-gray-400 mb-3 leading-relaxed">{article.description}</p>
-          <div className="text-xs text-gray-500 mb-8 flex gap-3 border-b border-gray-800 pb-6">
+          <div className="text-xs text-gray-500 mb-6 flex gap-3 border-b border-gray-800 pb-6">
             <span>{article.publishedAt}</span>
             <span>·</span>
             <span>อ่าน ~{article.readMinutes} นาที</span>
+          </div>
+
+          <div className="relative w-full h-52 md:h-72 rounded-2xl overflow-hidden border border-gray-800 mb-8">
+            <Image
+              src={articleCover(article.slug)}
+              alt={article.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 768px"
+              priority
+            />
           </div>
 
           <div className="article-content">{renderMarkdown(article.content)}</div>
@@ -88,6 +90,8 @@ export default async function ArticlePage(
           </div>
         </div>
       </article>
+
+      <SiteFooter />
     </div>
   );
 }

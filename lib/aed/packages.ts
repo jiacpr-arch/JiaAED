@@ -22,6 +22,9 @@ export type AcquisitionPackage = {
   ctaProductHint: string;
   // Where the package's primary CTA links (a detail page, or null for LINE only).
   href: string | null;
+  // Card header photo (public path). null = text-only card.
+  image: string | null;
+  imageAlt: string;
 };
 
 // Order matters: rental-first. The homepage and /aed/packages render this array
@@ -49,6 +52,8 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: "เช่า · แนะนำ",
     ctaProductHint: "pkg-care",
     href: "/aed/subscription",
+    image: "/images/primedic-heartsave.png",
+    imageAlt: "เช่า AED บริการครบวงจร — PRIMEDIC HeartSave",
   },
   {
     id: "pkg-start",
@@ -72,6 +77,8 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: "ยอดนิยม",
     ctaProductHint: "pkg-start",
     href: "/quote",
+    image: "/images/product-main.png",
+    imageAlt: "เช่าแล้วได้ซื้อ AED Amoul i7",
   },
   {
     id: "pkg-start-y2",
@@ -95,6 +102,8 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: "ผ่อนรุ่นเรือธง",
     ctaProductHint: "primedic-y2",
     href: "/quote",
+    image: "/images/primedic-y2-open.jpg",
+    imageAlt: "Yuwell/PRIMEDIC HeartSave Y2 เปิดฝาพร้อมจอ EKG",
   },
   {
     id: "pkg-premium",
@@ -116,5 +125,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: null,
     ctaProductHint: "pkg-premium",
     href: "/quote",
+    image: "/images/aed-floorstand.webp",
+    imageAlt: "ซื้อขาดเครื่อง AED พร้อมตู้ตั้งพื้น",
   },
 ];
