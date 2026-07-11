@@ -14,14 +14,14 @@ import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 export const metadata: Metadata = {
   title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน — ไม่ต้องลงทุนก้อนใหญ่ | JiaAED",
   description:
-    "เช่า / เช่ายืม AED Amoul i7 แผนอีเวนต์ แผนยืดหยุ่น แผนรายปี เริ่ม 2,490 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
+    "เช่า / เช่ายืม AED Yuwell/PRIMEDIC HeartSave Y2 แผนอีเวนต์ แผนยืดหยุ่น แผนรายปี เริ่ม 2,490 บาท/เดือน — รวมส่ง+ติดตั้ง อบรมใช้งาน ดูแลแบต/แผ่น เปลี่ยนเครื่องสำรองถ้าเสีย · อย. รับรอง เหมาะกับออฟฟิศ โรงงาน ฟิตเนส และงานอีเวนต์",
   alternates: { canonical: "/aed/rental" },
   openGraph: {
     title: "เช่า AED แผนยืดหยุ่น ฿2,490/เดือน | JiaAED",
     description:
-      "เช่า AED Amoul i7 แผนอีเวนต์/แผนยืดหยุ่น/แผนรายปี พร้อมทีมดูแลครบวงจร อย. รับรอง — ไม่ต้องลงทุนก้อนใหญ่",
+      "เช่า AED Yuwell/PRIMEDIC HeartSave Y2 แผนอีเวนต์/แผนยืดหยุ่น/แผนรายปี พร้อมทีมดูแลครบวงจร อย. รับรอง — ไม่ต้องลงทุนก้อนใหญ่",
     url: "/aed/rental",
-    images: ["/images/product-main.png"],
+    images: ["/images/primedic-y2-open.jpg"],
     type: "website",
   },
 };
@@ -69,7 +69,7 @@ export default function AedRentalLanding() {
 
       <section className="px-4 py-8 max-w-4xl mx-auto">
         <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
-          🏅 ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569
+          🏅 ทะเบียน อย. 65-2-2-2-0013415
         </div>
 
         <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
@@ -144,8 +144,8 @@ export default function AedRentalLanding() {
           className="block relative w-full h-56 sm:h-72 mb-8"
         >
           <Image
-            src="/images/product-main.png"
-            alt="เช่า AED Amoul i7"
+            src="/images/primedic-y2-open.jpg"
+            alt="เช่า AED Yuwell/PRIMEDIC HeartSave Y2"
             fill
             className="object-contain drop-shadow-2xl"
             priority
@@ -307,8 +307,8 @@ export default function AedRentalLanding() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
           {[
             { icon: "🏅", title: "อย. รับรอง" },
-            { icon: "🔋", title: "แบต ≥ 7 ปี · แผ่น 5 ปี" },
-            { icon: "💧", title: "IP65 กันน้ำกันฝุ่น" },
+            { icon: "📜", title: "ISO 13485 · CE" },
+            { icon: "🩹", title: "แผ่นอิเล็กโทรด 3 ปี" },
             { icon: "🧾", title: "ออกใบกำกับภาษี" },
           ].map((t) => (
             <div key={t.title} className="bg-gray-900 border border-gray-800 rounded-xl p-3 text-center">
