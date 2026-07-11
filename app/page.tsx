@@ -590,7 +590,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-3xl font-black text-white mb-2">ดูวิธีการใช้งานเครื่อง AED</h2>
             <p className="text-gray-400 text-sm">ทีละขั้นตอน — ใช้ได้ทันที ไม่ต้องอบรม</p>
           </div>
-          <YouTubeLite videoId="ayov6IVgW7w" title="วิธีการใช้งานเครื่อง AED" />
+          <YouTubeLite videoId="cpM78Zc2RC0" title="วิธีการใช้งานเครื่อง AED" />
         </div>
       </section>
 
