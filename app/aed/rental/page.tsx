@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { PhotoStrip } from "@/app/components/PhotoStrip";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 import { LatestNews } from "@/app/components/LatestNews";
@@ -68,89 +69,107 @@ export default function AedRentalLanding() {
       </div>
 
       <section className="px-4 py-8 max-w-4xl mx-auto">
-        <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
-          🏅 ทะเบียน อย. 65-2-2-2-0013415
-        </div>
+        {/* Hero — copy + CTAs left, product photo right on desktop */}
+        <div className="grid md:grid-cols-[1fr_300px] gap-8 items-center mb-8">
+          <div>
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
+              🏅 ทะเบียน อย. 65-2-2-2-0013415
+            </div>
 
-        <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
-          เช่า AED พร้อมใช้
-          <br />
-          <span className="text-yellow-400">เริ่ม ฿1,990/เดือน</span>
-        </h1>
+            <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
+              เช่า AED พร้อมใช้
+              <br />
+              <span className="text-yellow-400">เริ่ม ฿1,990/เดือน</span>
+            </h1>
 
-        <p className="text-gray-400 mb-5">
-          แผนอีเวนต์ · แผนยืดหยุ่น · แผนรายปี — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
-          ไม่ต้องลงทุนก้อนใหญ่
-        </p>
+            <p className="text-gray-400 mb-5">
+              แผนอีเวนต์ · แผนยืดหยุ่น · แผนรายปี — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
+              ไม่ต้องลงทุนก้อนใหญ่
+            </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col gap-3 mb-8">
+            {/* CTAs */}
+            <div className="flex flex-col gap-3">
+              <a
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rental_hero"
+                data-product="rent-flex"
+                className="block bg-[#06C755] text-white font-bold text-xl px-8 py-5 rounded-full hover:bg-[#05a847] text-center shadow-2xl shadow-[#06C755]/40 ring-4 ring-[#06C755]/20"
+              >
+                💬 สอบถาม / จองเช่าทาง LINE
+              </a>
+              <a
+                href="#rental-quote"
+                className="block bg-yellow-400/10 text-yellow-400 font-bold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-center transition-colors"
+              >
+                📋 ให้เจ้าหน้าที่ติดต่อกลับ (ไม่ต้องแชต)
+              </a>
+              <a
+                href={PHONE_HREF}
+                data-cta="tel_rental_hero"
+                className="block border border-gray-600 hover:border-yellow-400 text-white font-bold text-lg px-8 py-4 rounded-full text-center transition-colors"
+              >
+                📞 โทรเลย {PHONE_DISPLAY}
+              </a>
+            </div>
+          </div>
+
+          {/* Product photo — inline on mobile (below CTAs), side column on md+ */}
           <a
             href={LINE_OA}
             target="_blank"
             rel="noopener noreferrer"
-            data-line-cta="rental_hero"
+            data-line-cta="rental_product"
             data-product="rent-flex"
-            className="block bg-[#06C755] text-white font-bold text-xl px-8 py-5 rounded-full hover:bg-[#05a847] text-center shadow-2xl shadow-[#06C755]/40 ring-4 ring-[#06C755]/20"
+            className="block relative w-full h-56 sm:h-72 md:h-96"
           >
-            💬 สอบถาม / จองเช่าทาง LINE
-          </a>
-          <a
-            href="#rental-quote"
-            className="block bg-yellow-400/10 text-yellow-400 font-bold text-lg px-8 py-4 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 text-center transition-colors"
-          >
-            📋 ให้เจ้าหน้าที่ติดต่อกลับ (ไม่ต้องแชต)
-          </a>
-          <a
-            href={PHONE_HREF}
-            data-cta="tel_rental_hero"
-            className="block border border-gray-600 hover:border-yellow-400 text-white font-bold text-lg px-8 py-4 rounded-full text-center transition-colors"
-          >
-            📞 โทรเลย {PHONE_DISPLAY}
+            <Image
+              src="/images/primedic-y2-open.jpg"
+              alt="เช่า AED Yuwell/PRIMEDIC HeartSave Y2"
+              fill
+              className="object-contain drop-shadow-2xl"
+              priority
+            />
           </a>
         </div>
 
-        {/* Pain points */}
+        {/* Pain points — real photo beside the problem list */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-8">
-          <h2 className="font-bold text-lg text-white mb-1">
-            มีเครื่อง <span className="text-red-400">≠</span> เครื่องพร้อมใช้
-          </h2>
-          <p className="text-xs text-gray-500 mb-4">
-            ปัญหาที่เจอบ่อยเมื่อซื้อ AED มาเก็บไว้เอง
-          </p>
-          <ul className="space-y-2">
-            {painPoints.map((p) => (
-              <li key={p.text} className="flex items-center gap-3 text-sm text-gray-300">
-                <span className="text-xl">{p.icon}</span>
-                <span>
-                  <span className="text-red-400 font-bold mr-1">✗</span>
-                  {p.text}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-sm text-yellow-400 font-semibold mt-4 pt-3 border-t border-gray-800">
-            เช่ากับเรา = มีทีมดูแลความพร้อมให้ตลอดสัญญา
-          </p>
+          <div className="grid md:grid-cols-[240px_1fr] gap-5 items-center">
+            <div className="relative w-full h-40 md:h-full min-h-32 rounded-xl overflow-hidden">
+              <Image
+                src="/images/lifestyle-cpr.png"
+                alt="สถานการณ์ฉุกเฉินที่ AED ต้องพร้อมใช้"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 240px"
+              />
+            </div>
+            <div>
+              <h2 className="font-bold text-lg text-white mb-1">
+                มีเครื่อง <span className="text-red-400">≠</span> เครื่องพร้อมใช้
+              </h2>
+              <p className="text-xs text-gray-500 mb-4">
+                ปัญหาที่เจอบ่อยเมื่อซื้อ AED มาเก็บไว้เอง
+              </p>
+              <ul className="space-y-2">
+                {painPoints.map((p) => (
+                  <li key={p.text} className="flex items-center gap-3 text-sm text-gray-300">
+                    <span className="text-xl">{p.icon}</span>
+                    <span>
+                      <span className="text-red-400 font-bold mr-1">✗</span>
+                      {p.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-sm text-yellow-400 font-semibold mt-4 pt-3 border-t border-gray-800">
+                เช่ากับเรา = มีทีมดูแลความพร้อมให้ตลอดสัญญา
+              </p>
+            </div>
+          </div>
         </div>
-
-        {/* Product image */}
-        <a
-          href={LINE_OA}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-line-cta="rental_product"
-          data-product="rent-flex"
-          className="block relative w-full h-56 sm:h-72 mb-8"
-        >
-          <Image
-            src="/images/primedic-y2-open.jpg"
-            alt="เช่า AED Yuwell/PRIMEDIC HeartSave Y2"
-            fill
-            className="object-contain drop-shadow-2xl"
-            priority
-          />
-        </a>
 
         {/* Rental plans */}
         <PriceViewTracker targetId="rental-price" />
@@ -165,10 +184,19 @@ export default function AedRentalLanding() {
               }`}
             >
               {p.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">
                   {p.badge}
                 </div>
               )}
+              <div className="relative h-36 -mx-6 -mt-6 mb-4 rounded-t-2xl overflow-hidden">
+                <Image
+                  src={p.image}
+                  alt={p.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+              </div>
               <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{p.subtitle}</div>
               <h3 className="font-bold text-lg text-white mt-1 mb-3">{p.name}</h3>
               <div className="mb-3">
@@ -282,6 +310,19 @@ export default function AedRentalLanding() {
               เปรียบเทียบ ซื้อขาด / เช่าได้ซื้อ →
             </Link>
           </div>
+        </div>
+
+        {/* Real training photos — the service story shown, not just told */}
+        <div className="mb-8">
+          <PhotoStrip
+            cols={3}
+            heightClass="h-40 md:h-48"
+            photos={[
+              { src: "/images/training-bls-3.jpg", alt: "อบรมการใช้ AED ให้ทีมงาน", caption: "อบรมถึงที่ รวมในทุกแผนเช่า" },
+              { src: "/images/training-bls-1.jpg", alt: "สาธิต CPR พร้อมเครื่อง AED", caption: "สาธิตการใช้งานจริง" },
+              { src: "/images/training-bls-2.jpg", alt: "ทีมงานผ่านการอบรม CPR", caption: "ทีมงานใช้เป็นทุกคน" },
+            ]}
+          />
         </div>
 
         {/* What's included */}

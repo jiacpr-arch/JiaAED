@@ -14,12 +14,6 @@ const PLAN_LINE_URL: Record<string, string> = {
   "rent-flex": lineOaUrl("สนใจเช่า AED รายเดือน"),
 };
 
-const PLAN_THUMB: Record<string, string> = {
-  "rent-event": "/images/aed-rent-daily.jpg",
-  "rent-annual": "/images/aed-rent-yearly.jpg",
-  "rent-flex": "/images/aed-rent-monthly.jpg",
-};
-
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.
 export function RentalSpotlight() {
@@ -73,9 +67,9 @@ export function RentalSpotlight() {
                     : "border-gray-800 hover:border-yellow-400/40"
                 }`}
               >
-                {PLAN_THUMB[p.id] && (
+                {p.image && (
                   <Image
-                    src={PLAN_THUMB[p.id]}
+                    src={p.image}
                     alt={p.name}
                     width={64}
                     height={64}

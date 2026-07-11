@@ -10,6 +10,7 @@ import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PromoBanner } from "@/app/components/PromoBanner";
+import { PhotoStrip } from "@/app/components/PhotoStrip";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { packageFaqCategories } from "@/lib/aed/faqs";
 import { survivorReward } from "@/lib/aed/promotion";
@@ -80,6 +81,18 @@ export default function PackagesPage() {
             ดูแพ็กเกจ ดูแลครบ (BASIC / PRO / ELITE) →
           </Link>
         </div>
+      </section>
+
+      {/* What every package includes — shown in photos, not another list */}
+      <section className="max-w-6xl mx-auto px-4 py-6">
+        <PhotoStrip
+          heightClass="h-44 md:h-56"
+          photos={[
+            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดย BLS Instructor ทุกแพ็กเกจ" },
+            { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
+            { src: "/images/cloud-dashboard.png", alt: "Cloud Dashboard ดูสถานะเครื่อง AED", caption: "Dashboard เช็กความพร้อม 24 ชม." },
+          ]}
+        />
       </section>
 
       {/* Trust */}
