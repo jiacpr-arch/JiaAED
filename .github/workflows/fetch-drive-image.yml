@@ -4,7 +4,11 @@
 name: fetch-drive-image
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - claude/image-replacement-l9wojc
+    paths:
+      - .github/workflows/fetch-drive-image.yml
 
 permissions:
   contents: write
