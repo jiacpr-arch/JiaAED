@@ -175,7 +175,7 @@ export default function AdsLandingI7() {
             <h2 className="font-bold text-lg text-white">🎬 ดูวิธีการใช้งาน</h2>
             <p className="text-xs text-gray-500">วิดีโอสาธิตทีละขั้นตอน</p>
           </div>
-          <YouTubeLite videoId="ayov6IVgW7w" title="วิธีการใช้งาน AED Amoul i7" />
+          <YouTubeLite videoId="cpM78Zc2RC0" title="วิธีการใช้งาน AED Amoul i7" />
         </div>
 
         {/* Key specs */}
