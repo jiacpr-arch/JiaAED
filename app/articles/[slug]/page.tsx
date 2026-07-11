@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { articles, findArticle } from "@/lib/aed/articles";
 import { renderMarkdown } from "@/lib/aed/markdown";
+import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
@@ -40,8 +41,7 @@ export default async function ArticlePage(
       <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">❤️</span>
-            <span className="font-bold text-xl text-yellow-400">JiaAED</span>
+            <JiaAedLogo className="h-8 w-auto" />
           </Link>
           <div className="flex items-center gap-4">
             <Link href="/articles" className="text-sm text-gray-400 hover:text-yellow-400">บทความทั้งหมด</Link>
