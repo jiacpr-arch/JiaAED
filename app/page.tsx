@@ -207,9 +207,11 @@ export default function Home() {
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
           </div>
           {/* Yuwell/PRIMEDIC is the featured brand (owner decision): red machine
-              first with the แนะนำ badge; Amoul stays as the secondary option.
-              The featured image links to the brand page, not LINE — image taps
-              are inspection intent, not chat intent (weekly review 14 Jun). */}
+              first with the แนะนำ badge; Yuwell Y2 (เรือธง) spotlighted alongside
+              it. Amoul i7 discontinued (ก.ค. 2026) — this slot used to be its
+              secondary option. The featured image links to the brand page, not
+              LINE — image taps are inspection intent, not chat intent (weekly
+              review 14 Jun). */}
           <div className="grid grid-cols-2 gap-4">
             <Link
               href="/aed/primedic"
@@ -236,21 +238,21 @@ export default function Home() {
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
-              data-line-cta="hero_image_amoul"
-              data-product="i7"
+              data-line-cta="hero_image_y2"
+              data-product="primedic-y2"
               className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="Amoul i7 — คลิกเพื่อสอบถามทาง LINE"
+              aria-label="Yuwell Y2 — คลิกเพื่อสอบถามทาง LINE"
             >
               <div className="relative w-full h-56 md:h-64">
                 <Image
-                  src="/images/product-main.png"
-                  alt="AED Amoul i7"
+                  src="/images/yuwell-y2-main.jpg"
+                  alt="AED Yuwell Y2"
                   fill
                   className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
                   priority
                 />
               </div>
-              <span className="mt-2 text-xs font-semibold text-gray-400">Amoul i7 — อีกหนึ่งทางเลือก</span>
+              <span className="mt-2 text-xs font-semibold text-gray-400">Yuwell Y2 — รุ่นเรือธง จอสี EKG</span>
             </a>
           </div>
         </div>
@@ -366,9 +368,9 @@ export default function Home() {
               </p>
             </div>
             <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
-              <div className="text-yellow-300 font-bold mb-1">เลือก Amoul i7 ถ้า…</div>
+              <div className="text-yellow-300 font-bold mb-1">เลือก PRIMEDIC Y0 ถ้า…</div>
               <p className="text-gray-300 text-sm">
-                อยากได้ <strong className="text-white">ราคาเริ่มต้นเข้าถึงง่าย</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
+                อยากได้ <strong className="text-white">ราคาเริ่มต้นเข้าถึงง่าย</strong> กึ่งอัตโนมัติใช้งานง่าย เสียงไทย — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
               </p>
             </div>
           </div>
@@ -474,8 +476,8 @@ export default function Home() {
                 icon: "📜",
                 title: "อย. รับรอง · ใบโฆษณาถูกต้อง",
                 desc: PRIMEDIC_REGULATORY.published
-                  ? `Amoul i7: ${regLine(AMOUL_REGULATORY)} · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)} — ตรวจสอบได้`
-                  : `Amoul i7: ${regLine(AMOUL_REGULATORY)} ตรวจสอบได้ · PRIMEDIC HeartSave: ${PRIMEDIC_REGULATORY.pendingNote}`,
+                  ? `Yuwell / PRIMEDIC HeartSave: ${regLine(PRIMEDIC_REGULATORY)} — ตรวจสอบได้`
+                  : `Yuwell / PRIMEDIC HeartSave: ${PRIMEDIC_REGULATORY.pendingNote}`,
               },
               {
                 icon: "🛠️",
@@ -599,10 +601,17 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-block bg-gray-700/40 text-gray-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-gray-600/40">
-              📋 ข้อมูลทางเทคนิคแบบละเอียด
+              📋 ข้อมูลทางเทคนิคแบบละเอียด — AED Amoul i7 (รุ่นเดิม)
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">เจาะลึกสเปก & การทำงาน</h2>
-            <p className="text-gray-400 text-sm max-w-2xl mx-auto">สำหรับผู้ที่ต้องการรายละเอียด — กดเปิดหัวข้อที่สนใจได้เลย</p>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">เจาะลึกสเปก & การทำงาน — Amoul i7</h2>
+            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+              Amoul i7 เลิกจำหน่ายแล้ว (ก.ค. 2026) — เก็บไว้เป็นข้อมูลอ้างอิงสำหรับลูกค้าเดิม สเปกรุ่นปัจจุบัน (Yuwell / PRIMEDIC HeartSave รวมถึง Yuwell Y2)
+              ดูได้ที่หัวข้อ{" "}
+              <a href="#brands" className="text-yellow-400 hover:underline">
+                เลือกยี่ห้อ
+              </a>{" "}
+              ด้านบน
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -952,7 +961,7 @@ export default function Home() {
       <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">คำถามที่พบบ่อย</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Amoul i7 และ PRIMEDIC HeartSave</p>
+          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Yuwell Y2 และ PRIMEDIC HeartSave</p>
           <div className="space-y-3">
             {faqs.map((f) => (
               <details
@@ -996,8 +1005,8 @@ export default function Home() {
           </Link>
         </p>
         <p>
-          จำหน่าย AED Amoul i7 และ PRIMEDIC HeartSave · Amoul i7: {regLine(AMOUL_REGULATORY)}
-          {PRIMEDIC_REGULATORY.published ? ` · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)}` : ""}
+          จำหน่าย AED Yuwell / PRIMEDIC HeartSave
+          {PRIMEDIC_REGULATORY.published ? ` · ${regLine(PRIMEDIC_REGULATORY)}` : ""}
         </p>
         <p className="mt-3 text-xs text-gray-700">© {new Date().getFullYear()} JiaAED. All rights reserved.</p>
       </footer>

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "เช่า AED รายเดือน ดูแลครบวงจร | JiaAED",
     description: "Safety Care — เช่า AED พร้อมทีมดูแล ระบบ GPS และ Cloud Dashboard มั่นใจเครื่องพร้อมใช้ 24 ชม.",
     url: "/aed/subscription",
-    images: ["/images/product-main.png"],
+    images: ["/images/yuwell-y2-main.jpg"],
     type: "website",
   },
 };

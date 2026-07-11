@@ -1,7 +1,7 @@
 import { products } from "@/lib/aed/products";
 import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 import { faqs } from "@/lib/aed/faqs";
-import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA } from "@/lib/aed/line";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
@@ -21,9 +21,9 @@ export function StructuredData() {
     name: ORG_NAME,
     alternateName: "JiaAED",
     url: SITE,
-    logo: `${SITE}/images/product-main.png`,
+    logo: `${SITE}/images/yuwell-y2-main.jpg`,
     description:
-      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Amoul i7 และ PRIMEDIC HeartSave อย. รับรอง",
+      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
@@ -35,17 +35,9 @@ export function StructuredData() {
       addressCountry: "TH",
     },
     identifier: [
-      {
-        "@type": "PropertyValue",
-        name: "FDA Registration (อย.) — Amoul i7",
-        value: AMOUL_REGULATORY.fda,
-      },
-      {
-        "@type": "PropertyValue",
-        name: "Advertising License (ฆพ.) — Amoul i7",
-        value: AMOUL_REGULATORY.adLicense,
-      },
       // PRIMEDIC numbers are emitted only once the owner confirms them (published).
+      // Amoul i7's own อย./ฆพ. identifier is no longer emitted here — it's
+      // discontinued (Yuwell Y2 replaced it, ก.ค. 2026).
       ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
         ? [
             {
@@ -99,8 +91,8 @@ export function ProductStructuredData({
     "@type": "Product",
     name: p.name,
     description: `${p.description} ${p.features.join(" ")}`,
-    image: `${SITE}/images/product-main.png`,
-    brand: { "@type": "Brand", name: "Amoul" },
+    image: `${SITE}/images/yuwell-y2-main.jpg`,
+    brand: { "@type": "Brand", name: "Yuwell" },
     sku: p.id,
     category: "Medical Equipment / AED / Defibrillator",
     offers: {
