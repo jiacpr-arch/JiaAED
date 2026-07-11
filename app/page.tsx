@@ -23,9 +23,21 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
+import { rentalPlans } from "@/lib/aed/rental";
 import { ProductStructuredData } from "./components/StructuredData";
+
+// Hero renders rent and buy as two equal offers; prices come from the same data
+// the plan/package sections use, so the hero can never drift from them.
+const RENT_FLEX = rentalPlans.find((p) => p.id === "rent-flex")!;
+const RENT_ANNUAL = rentalPlans.find((p) => p.id === "rent-annual")!;
+const BUY_PKG = acquisitionPackages.find((p) => p.id === "pkg-premium")!;
+const ANNUAL_PER_MONTH = Math.round(RENT_ANNUAL.price / 12 / 10) * 10;
+const LINE_RENT_HERO = lineOaUrl("สนใจเช่า AED");
+const LINE_BUY_HERO = lineOaUrl(`สนใจซื้อ AED ${BUY_PKG.priceLabel}`);
+const LINE_RENT_TABLE = lineOaUrl("สนใจเช่า AED ขอรายละเอียดแผนเช่า");
+const LINE_BUY_TABLE = lineOaUrl("สนใจซื้อ AED ขอใบเสนอราคา");
 
 const specs = [
   { label: "น้ำหนัก", value: "ประมาณ 2.0 กก. (รวมแบตเตอรี่)" },
@@ -81,12 +93,27 @@ export default function Home() {
             <span className="text-2xl">❤️</span>
             <span className="font-bold text-xl text-yellow-400">JiaAED</span>
           </div>
-          <div className="flex items-center gap-4">
-            <a href="#rent" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</a>
-            <a href="#how" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">วิธีได้เครื่อง</a>
+          <div className="flex items-center gap-3 sm:gap-4">
             <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
             <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">ข้อมูลเครื่อง</a>
-            <Link href="/aed/rental" className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-4 py-2 rounded-full hover:bg-yellow-400/20 transition-colors hidden sm:block">เช่า AED →</Link>
+            {/* เช่า/ซื้อ as one segmented pair, visible at every width — the two
+                offers carry equal weight from the very first glance. */}
+            <div className="flex items-center">
+              <a
+                href="#rent"
+                data-cta="nav_rent"
+                className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-3 sm:px-4 py-2 rounded-l-full hover:bg-yellow-400/20 transition-colors"
+              >
+                เช่า
+              </a>
+              <a
+                href="#how"
+                data-cta="nav_buy"
+                className="bg-white/5 text-gray-200 border border-l-0 border-gray-500/40 text-sm font-semibold px-3 sm:px-4 py-2 rounded-r-full hover:bg-white/10 transition-colors"
+              >
+                ซื้อ
+              </a>
+            </div>
             <a
               href={LINE_OA}
               target="_blank"
@@ -105,26 +132,76 @@ export default function Home() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
             <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20 mb-4">
-              ✅ อย. รับรอง · เช่าได้ ไม่ต้องลงทุนก้อนใหญ่ · ออกใบกำกับภาษีได้
+              ✅ อย. รับรอง · เช่าหรือซื้อขาดก็ได้ · ออกใบกำกับภาษีได้
             </span>
             <HeroHeadline />
             <p className="text-gray-400 text-lg mb-4">
               <strong className="text-white">เช่า AED พร้อมใช้</strong> — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร<br />
               เสียงแนะนำภาษาไทย · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
-              <span className="text-xs text-gray-400">เช่าเริ่มต้น</span>
-              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿2,490</span>
-              <span className="text-lg text-gray-400 font-semibold">/เดือน</span>
-              <span className="text-xs text-gray-500 w-full">ก่อน VAT · แผนรายปีเฉลี่ย ~฿1,830/เดือน · หรือจะซื้อขาด ฿42,900 ก็ได้</span>
+            {/* Rent and buy side by side at equal weight — rent keeps the yellow
+                identity, buy gets the white/silver "ownership" treatment. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5 flex flex-col">
+                <span className="text-xs font-bold text-yellow-400">เช่า — ไม่ต้องลงทุนก้อนใหญ่</span>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl md:text-4xl font-black text-yellow-400">
+                    ฿{RENT_FLEX.price.toLocaleString()}
+                  </span>
+                  <span className="text-sm text-gray-400 font-semibold">/เดือน</span>
+                </div>
+                <span className="text-xs text-gray-500 mt-1 mb-4">
+                  ก่อน VAT · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน
+                </span>
+                <a
+                  href={LINE_RENT_HERO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="hero_rent_card"
+                  data-product="rent-flex"
+                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
+                >
+                  💬 สนใจเช่า — ทัก LINE
+                </a>
+                <a
+                  href="#rent"
+                  className="text-center text-xs text-yellow-400/80 hover:text-yellow-300 font-medium mt-2"
+                >
+                  ดูแผนเช่า →
+                </a>
+              </div>
+              <div className="rounded-2xl border border-gray-400/40 bg-white/5 p-5 flex flex-col">
+                <span className="text-xs font-bold text-gray-200">ซื้อขาด — เป็นเจ้าของเต็มตัว</span>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl md:text-4xl font-black text-white">
+                    {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
+                  </span>
+                  {BUY_PKG.listPriceLabel && (
+                    <span className="text-sm text-gray-500 line-through">{BUY_PKG.listPriceLabel}</span>
+                  )}
+                </div>
+                <span className="text-xs text-gray-500 mt-1 mb-4">
+                  ราคาเงินสด · ออกใบกำกับภาษีได้
+                </span>
+                <a
+                  href={LINE_BUY_HERO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="hero_buy_card"
+                  data-product="pkg-premium"
+                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
+                >
+                  💬 สนใจซื้อ — ทัก LINE
+                </a>
+                <a
+                  href="#how"
+                  className="text-center text-xs text-gray-300 hover:text-white font-medium mt-2"
+                >
+                  เทียบ 3 วิธี →
+                </a>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <a
-                href="#rent"
-                className="bg-yellow-400 text-yellow-900 font-bold text-lg px-8 py-4 rounded-full hover:bg-yellow-300 transition-colors text-center"
-              >
-                ดูแผนเช่า AED →
-              </a>
               <HeroCta />
             </div>
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
@@ -217,16 +294,36 @@ export default function Home() {
             </Link>
           </p>
 
-          {/* Decision helper — rent vs buy, collapsed to keep the section clean */}
-          <details className="group mt-8 max-w-3xl mx-auto rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-            <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-              <span className="font-semibold text-white">เช่า vs ซื้อ — อันไหนคุ้มกว่าสำหรับคุณ?</span>
-              <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-            </summary>
-            <div className="px-4 pb-5 pt-1">
-              <RentVsBuyTable />
+          {/* Decision helper — rent vs buy, shown in full: this is the single
+              most decision-critical content on the page, so no accordion. */}
+          <div className="mt-10 max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold text-white text-center mb-5">
+              เช่า vs ซื้อ — อันไหนคุ้มกว่าสำหรับคุณ?
+            </h3>
+            <RentVsBuyTable />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+              <a
+                href={LINE_RENT_TABLE}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rent_vs_buy_rent"
+                data-product="pkg-care"
+                className="bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors text-center"
+              >
+                💬 สนใจเช่า — คุยทาง LINE
+              </a>
+              <a
+                href={LINE_BUY_TABLE}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rent_vs_buy_buy"
+                data-product="pkg-premium"
+                className="bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors text-center"
+              >
+                💬 สนใจซื้อ — คุยทาง LINE
+              </a>
             </div>
-          </details>
+          </div>
 
           <div className="text-center mt-8">
             <Link

@@ -28,15 +28,34 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <a
-          href={LINE_OA}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-line-cta="site_header"
-          className="bg-[#06C755] text-white text-sm font-bold px-4 py-2 rounded-full hover:bg-[#05a847] flex-shrink-0"
-        >
-          💬 LINE
-        </a>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {/* Same เช่า/ซื้อ pair as the homepage nav — equal-weight offers everywhere */}
+          <div className="hidden sm:flex items-center">
+            <Link
+              href="/#rent"
+              data-cta="nav_rent"
+              className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-3 py-2 rounded-l-full hover:bg-yellow-400/20 transition-colors"
+            >
+              เช่า
+            </Link>
+            <Link
+              href="/#how"
+              data-cta="nav_buy"
+              className="bg-white/5 text-gray-200 border border-l-0 border-gray-500/40 text-sm font-semibold px-3 py-2 rounded-r-full hover:bg-white/10 transition-colors"
+            >
+              ซื้อ
+            </Link>
+          </div>
+          <a
+            href={LINE_OA}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-line-cta="site_header"
+            className="bg-[#06C755] text-white text-sm font-bold px-4 py-2 rounded-full hover:bg-[#05a847] flex-shrink-0"
+          >
+            💬 LINE
+          </a>
+        </div>
       </div>
 
       {/* Mobile nav row */}
