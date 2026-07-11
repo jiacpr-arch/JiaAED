@@ -544,14 +544,14 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-center mb-2 text-white">เทคโนโลยีครบทุกมิติ</h2>
           <p className="text-center text-gray-500 text-sm mb-8">ออกแบบมาเพื่อช่วยชีวิตในทุกสถานการณ์</p>
           <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/feature-grid.jpg" alt="i-SHOCK i-SAVE i-LOOK i-CARE" width={1080} height={1080} className="w-full h-auto" />
+            <Image src="/images/yuwell-y2-features.webp" alt="Yuwell Y2 — หน้าจอสีแนะนำทุกขั้นตอน พร้อมระบบแนะนำ CPR แบบเรียลไทม์" width={1536} height={1024} className="w-full h-auto" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center text-sm">
             {[
-              { icon: "⚡", name: "i-SHOCK", desc: "360J พร้อมใน 7 วินาที" },
-              { icon: "❤️", name: "i-SAVE", desc: "วิเคราะห์คลื่นหัวใจอัตโนมัติ" },
-              { icon: "🖥️", name: "i-LOOK", desc: "จอแสดงขั้นตอนการใช้งาน" },
-              { icon: "📡", name: "i-CARE", desc: "บันทึก ECG ส่งข้อมูลผ่าน WiFi" },
+              { icon: "🖥️", name: "หน้าจอสี", desc: "แนะนำทุกขั้นตอน เข้าใจง่ายแม้ไม่มีประสบการณ์" },
+              { icon: "❤️", name: "CPR เรียลไทม์", desc: "บอกความลึกและจังหวะการกดหน้าอก" },
+              { icon: "⚡", name: "วิเคราะห์รวดเร็ว", desc: "วิเคราะห์คลื่นหัวใจ พร้อมช็อกแม่นยำ" },
+              { icon: "👨‍👩‍👧", name: "Smart Pad", desc: "แผ่นเดียวใช้ได้ทั้งเด็กและผู้ใหญ่" },
             ].map((f) => (
               <div key={f.name} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl mb-1">{f.icon}</div>
