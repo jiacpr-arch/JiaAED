@@ -21,7 +21,7 @@ export function StructuredData() {
     name: ORG_NAME,
     alternateName: "JiaAED",
     url: SITE,
-    logo: `${SITE}/images/yuwell-y2-main.jpg`,
+    logo: `${SITE}/images/jia-logo.webp`,
     description:
       "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
     contactPoint: {

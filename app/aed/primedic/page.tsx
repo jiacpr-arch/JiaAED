@@ -97,6 +97,8 @@ export default function PrimedicPage() {
             { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)", w: 1254, h: 1254 },
             { src: "/images/primedic-y2-flyer.jpg",       alt: "Yuwell Y2 — เครื่องปิดและเปิดฝาแสดงขั้นตอนใช้งานบนจอ", w: 1254, h: 1254 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-vital-launch.webp", alt: "Yuwell Y2 VITAL — จอสีแสดงสัญญาณชีพ EKG และคุณภาพ CPR แบบเรียลไทม์", w: 1254, h: 1254 },
+            { src: "/images/yuwell-y2-features.webp", alt: "Yuwell Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทุกวัย", w: 1536, h: 1024 },
             { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
             { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
           ].map((img) => (
