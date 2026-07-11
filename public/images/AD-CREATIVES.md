@@ -43,6 +43,13 @@ Pricing posters for the AED rental program (landing: `/aed/rental`). VAT not inc
 | `aed-rent-all.jpg` | รวม 3 แพ็กเกจ (แนวนอน 3:2) |
 | `aed-rent-all-portrait.jpg` | รวม 3 แพ็กเกจ (แนวตั้ง 3:4) |
 
+## 🔴 PRIMEDIC / Yuwell assets
+
+| File | Content |
+| --- | --- |
+| `primedic-y-open-pads.webp` | PRIMEDIC HeartSave เปิดฝา + แผ่น electrode ผู้ใหญ่/เด็ก บนพื้นขาว (product shot) |
+| `primedic-features-infographic.png` | อินโฟกราฟิกฟีเจอร์ HeartSave โทนดำ/แดง (พลังงาน 200–360J, จอ 4.3"/7", ชุดอุปกรณ์, แบต 5 ปี, ประกัน 8 ปี) |
+
 ## ⛔ NOT an AED — do not use in AED ads
 
 | File | Content |

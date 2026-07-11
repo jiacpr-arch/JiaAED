@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { AcquisitionPackage } from "@/lib/aed/packages";
 
@@ -33,6 +34,18 @@ export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
           }`}
         >
           {displayBadge}
+        </div>
+      )}
+
+      {pkg.image && (
+        <div className="relative h-36 -mx-6 -mt-6 mb-4 rounded-t-2xl overflow-hidden bg-white">
+          <Image
+            src={pkg.image}
+            alt={pkg.imageAlt}
+            fill
+            className="object-contain p-2"
+            sizes="(max-width: 768px) 100vw, 25vw"
+          />
         </div>
       )}
 
