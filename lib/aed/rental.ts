@@ -60,7 +60,9 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
-    image: "/images/aed-rent-monthly.jpg",
+    // NOT aed-rent-monthly.jpg — that poster shows the old ฿1,990 price and the
+    // card renders it large enough to read next to the current ฿2,490.
+    image: "/images/primedic-y2-open.jpg",
   },
 ];
 
