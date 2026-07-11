@@ -40,7 +40,7 @@ export function RentalSpotlight() {
             className="block rounded-2xl overflow-hidden border border-yellow-400/30 shadow-2xl shadow-yellow-400/10 hover:border-yellow-400/60 transition-colors"
           >
             <Image
-              src="/images/aed-rent-all.jpg"
+              src="/images/aed-rent-all.webp"
               alt="แพ็กเกจเช่า AED — รายวัน / รายเดือน / รายปี"
               width={1200}
               height={800}

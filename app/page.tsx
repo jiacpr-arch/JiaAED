@@ -313,10 +313,10 @@ export default function Home() {
             </div>
           </details>
 
-          {/* Amoul i7 mounting options — ตัวเลือกติดตั้ง (ไม่ใช่ยี่ห้อแยก) */}
+          {/* AED yuwell mounting options — ตัวเลือกติดตั้ง */}
           <div className="mt-12">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ Amoul i7</h3>
+              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ AED yuwell</h3>
               <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿47,900) หรือแท่นตั้งพื้น (฿51,900) — ราคารวมเครื่อง i7 แล้ว</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -329,8 +329,8 @@ export default function Home() {
                 className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
               >
                 <Image
-                  src="/images/aed-floorstand.png"
-                  alt="AED Amoul i7 + แท่นตั้งพื้น"
+                  src="/images/aed-floorstand.webp"
+                  alt="AED yuwell + แท่นตั้งพื้น"
                   width={1536}
                   height={1024}
                   className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
@@ -345,8 +345,8 @@ export default function Home() {
                 className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
               >
                 <Image
-                  src="/images/aed-wallcabinet.png"
-                  alt="AED Amoul i7 + ตู้ติดผนัง"
+                  src="/images/aed-wallcabinet.webp"
+                  alt="AED yuwell + ตู้ติดผนัง"
                   width={1536}
                   height={1024}
                   className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
@@ -484,7 +484,7 @@ export default function Home() {
             </a>
           </div>
           <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/lifestyle-man.jpeg" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
+            <Image src="/images/lifestyle-man.webp" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
           </div>
         </div>
         <div className="max-w-4xl mx-auto">
