@@ -6,7 +6,7 @@
 // Prices are PROVISIONAL (wholesale being finalized). Update here only.
 
 export type AcquisitionPackage = {
-  id: "pkg-premium" | "pkg-start" | "pkg-care";
+  id: "pkg-premium" | "pkg-start" | "pkg-start-y2" | "pkg-care";
   kind: "buy" | "rent-to-own" | "managed-rental";
   name: string; // English brand name, e.g. "Safety Premium"
   nameTh: string; // Thai label, e.g. "ซื้อขาด"
@@ -71,6 +71,29 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
     badge: "ยอดนิยม",
     ctaProductHint: "pkg-start",
+    href: "/quote",
+  },
+  {
+    id: "pkg-start-y2",
+    kind: "rent-to-own",
+    name: "Safety Start — Yuwell Y2",
+    nameTh: "เช่าแล้วได้ซื้อ · รุ่นเรือธง",
+    tagline: "ผ่อนเบา ๆ ได้เครื่องรุ่นท็อป จอ EKG ดู CPR สด ๆ",
+    priceLabel: "฿3,400/เดือน",
+    listPriceLabel: null,
+    // Rent-to-own total = 22,000 + 3,400 × 18 = ฿83,200. สัดส่วนพรีเมียมเทียบราคาสด
+    // (83,200 / 59,000 ≈ 1.41) เท่ากับสัดส่วนของแพ็ก pkg-start เดิม (60,000/42,900 ≈ 1.40)
+    // — คงความสม่ำเสมอของนโยบายผ่อนระหว่างรุ่น (ปรับตามราคาป้าย Y2 ใหม่ 59,000).
+    priceNote: "มัดจำ ฿22,000 + ผ่อน ฿3,400/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
+    deposit: "฿22,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
+    features: [
+      "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
+      "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
+      "ครบ 18 เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม",
+    ],
+    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นเรือธงแต่ผ่อนเบา ๆ",
+    badge: "ผ่อนรุ่นเรือธง",
+    ctaProductHint: "primedic-y2",
     href: "/quote",
   },
   {

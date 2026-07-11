@@ -203,7 +203,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
             {acquisitionPackages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
@@ -294,10 +294,10 @@ export default function Home() {
             ))}
           </div>
 
-          {/* PRIMEDIC Y0 vs Y8 detail — collapsed so the brand choice stays simple */}
+          {/* PRIMEDIC Y0 / Y8 / Y2 detail — collapsed so the brand choice stays simple */}
           <details className="group mt-12 rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
             <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-              <span className="font-semibold text-white">เทียบสเปก PRIMEDIC HeartSave — Y0 vs Y8</span>
+              <span className="font-semibold text-white">เทียบสเปก PRIMEDIC HeartSave — Y0 / Y8 / Yuwell Y2</span>
               <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
             </summary>
             <div className="px-4 pb-5 pt-1">

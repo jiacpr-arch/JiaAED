@@ -17,7 +17,7 @@ export const primedicCertifications: { label: string; sub: string }[] = [
   { label: "CE", sub: "มาตรฐานความปลอดภัยยุโรป" },
 ];
 
-export type PrimedicModelId = "primedic-y0" | "primedic-y8";
+export type PrimedicModelId = "primedic-y0" | "primedic-y8" | "primedic-y2";
 
 export type PrimedicModel = {
   id: PrimedicModelId;
@@ -52,7 +52,7 @@ export const primedicModels: PrimedicModel[] = [
   {
     id: "primedic-y8",
     name: "HeartSave Y8",
-    price: 49_999,
+    price: 44_900,
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "กึ่งอัตโนมัติ + เซ็นเซอร์ CPR feedback มาตรฐาน",
@@ -60,6 +60,20 @@ export const primedicModels: PrimedicModel[] = [
     bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
     image: "/images/primedic-y8-open.png",
     badge: "แนะนำ",
+  },
+  {
+    // รุ่นเรือธง — ฮาร์ดแวร์เดียวกับ Y8 แต่มีจอสีแสดง EKG + ดูคุณภาพ CPR สด ๆ.
+    // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
+    id: "primedic-y2",
+    name: "Yuwell Y2",
+    price: 59_000,
+    shockMode: "semi-auto",
+    cprFeedback: "standard",
+    summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นท็อป (You Too)",
+    keyDiff: "จอแสดงคุณภาพ CPR เรียลไทม์ — ความเร็ว/ความลึก/การปล่อยสุด (full recoil) + คลื่น EKG",
+    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการ CPR คุณภาพสูงสุด · เห็นบนจอ ปรับท่าปั๊มได้ทันที",
+    image: "/images/primedic-y2-flyer.jpg",
+    badge: "เรือธง",
   },
 ];
 
@@ -92,7 +106,7 @@ export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "ภาษาเสียงนำทาง CPR", value: "4 ภาษา (ไทย / อังกฤษ / จีน / เยอรมัน)" },
   { label: "หน้าจอแสดงสถานะ", value: "มี" },
   { label: "เสียงนำจังหวะกด CPR", value: "มี" },
-  { label: "ปุ่ม Shock (กึ่งอัตโนมัติ)", value: "มี ทั้ง Y0 และ Y8" },
+  { label: "ปุ่ม Shock (กึ่งอัตโนมัติ)", value: "มี ทั้ง Y0 / Y8 / Y2" },
   { label: "ปุ่มเลือกโหมดเด็ก (Child)", value: "มี" },
   { label: "พลังงานผู้ใหญ่ (ค่าเริ่มต้น)", value: "200 → 300 → 360 J (escalating)" },
   { label: "พลังงานเด็ก (ค่าเริ่มต้น)", value: "50 → 70 → 100 J" },
@@ -125,17 +139,28 @@ export type PrimedicSpecRow = {
 
 export const primedicDiffSpecs: PrimedicSpecRow[] = [
   {
+    // จุดต่างหลักของ Y2 (รุ่นเรือธง) — เห็นคุณภาพการปั๊มบนจอ ไม่ใช่แค่ฟังเสียง
+    label: "จอสี EKG + ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
+    values: {
+      "primedic-y0": false,
+      "primedic-y8": false,
+      "primedic-y2": true,
+    },
+  },
+  {
     label: "เซ็นเซอร์ CPR feedback",
     values: {
       "primedic-y0": "optional",
       "primedic-y8": true,
+      "primedic-y2": true,
     },
   },
   {
     label: "ราคา (ก่อน VAT)",
     values: {
-      "primedic-y0": "฿39,000",
-      "primedic-y8": "฿49,999",
+      "primedic-y0": "฿39,999",
+      "primedic-y8": "฿44,900",
+      "primedic-y2": "฿59,000",
     },
   },
 ];

@@ -23,7 +23,10 @@ const EXTRA_PRODUCT_IDS = [
   "event-extended",
   "primedic-y0",
   "primedic-y8",
+  "primedic-y2",
   "yuwell-gps",
+  // Y2 rent-to-own package (see ./packages.ts)
+  "pkg-start-y2",
 ];
 
 export const VALID_PRODUCT_IDS = new Set<string>([
