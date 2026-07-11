@@ -10,27 +10,49 @@ const KIND_LABEL: Record<AcquisitionPackage["kind"], string> = {
 };
 
 export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
+  // Two visual families so the grid scans at a glance: rent = yellow (brand
+  // accent), buy = white/silver "ownership". Buy also gets a fallback badge so
+  // it never looks recessive next to the badged rental cards.
+  const isBuy = pkg.kind === "buy";
+  const displayBadge = pkg.badge ?? (isBuy ? "เป็นเจ้าของ" : null);
+
   return (
     <div
       className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
-        pkg.badge ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10" : "border-gray-800"
+        pkg.badge
+          ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10"
+          : isBuy
+            ? "border-gray-400/50 shadow-lg shadow-white/5"
+            : "border-gray-800"
       }`}
     >
-      {pkg.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 text-xs font-bold px-4 py-1 rounded-full">
-          {pkg.badge}
+      {displayBadge && (
+        <div
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full ${
+            pkg.badge ? "bg-yellow-400 text-yellow-900" : "bg-gray-200 text-gray-900"
+          }`}
+        >
+          {displayBadge}
         </div>
       )}
 
-      <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+      <div
+        className={`inline-block w-fit text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${
+          isBuy ? "bg-white/10 text-gray-200" : "bg-yellow-400/10 text-yellow-400"
+        }`}
+      >
         {KIND_LABEL[pkg.kind]}
       </div>
-      <h3 className="font-bold text-xl text-white mt-1">{pkg.name}</h3>
-      <div className="text-sm text-yellow-400/90 mb-3">{pkg.nameTh}</div>
+      <h3 className="font-bold text-xl text-white mt-2">{pkg.name}</h3>
+      <div className={`text-sm mb-3 ${isBuy ? "text-gray-300" : "text-yellow-400/90"}`}>
+        {pkg.nameTh}
+      </div>
       <p className="text-sm text-gray-400 mb-4">{pkg.tagline}</p>
 
       <div className="mb-1 flex items-end gap-2">
-        <span className="text-3xl font-black text-yellow-400">{pkg.priceLabel}</span>
+        <span className={`text-3xl font-black ${isBuy ? "text-white" : "text-yellow-400"}`}>
+          {pkg.priceLabel}
+        </span>
         {pkg.listPriceLabel && (
           <span className="text-gray-500 line-through text-base mb-1">{pkg.listPriceLabel}</span>
         )}
@@ -40,7 +62,7 @@ export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
       <ul className="space-y-1.5 mb-5 flex-1">
         {pkg.features.map((f) => (
           <li key={f} className="flex items-start gap-2 text-sm text-gray-300">
-            <span className="text-yellow-400 flex-shrink-0 mt-0.5">✓</span>
+            <span className={`flex-shrink-0 mt-0.5 ${isBuy ? "text-gray-200" : "text-yellow-400"}`}>✓</span>
             <span>{f}</span>
           </li>
         ))}
@@ -68,7 +90,9 @@ export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
         {pkg.href && (
           <Link
             href={pkg.href}
-            className="text-center text-sm text-yellow-400/80 hover:text-yellow-300 font-medium py-1"
+            className={`text-center text-sm font-medium py-1 ${
+              isBuy ? "text-gray-300 hover:text-white" : "text-yellow-400/80 hover:text-yellow-300"
+            }`}
           >
             ดูรายละเอียด →
           </Link>

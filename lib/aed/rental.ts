@@ -1,3 +1,5 @@
+import { AMOUL_REGULATORY, regLine } from "./regulatory";
+
 export type RentalPlan = {
   id: string;
   subtitle: string;
@@ -111,6 +113,17 @@ export const multiUnitPricing: MultiUnitTier[] = [
   { units: "1 เครื่อง", pricePerUnit: 22000 },
   { units: "2–4 เครื่อง", pricePerUnit: 20000, badge: "ประหยัด" },
   { units: "5+ เครื่อง", pricePerUnit: 18000, badge: "ราคาพิเศษองค์กร" },
+];
+
+// Why renting is safe to say yes to — each point restates a commitment already
+// made in rentalPlans/rentalFaqs (never promise here what those don't back up).
+export type RentalTrustSignal = { icon: string; text: string };
+
+export const rentalTrustSignals: RentalTrustSignal[] = [
+  { icon: "🔁", text: "เครื่องสำรองเปลี่ยนให้ใน 24–48 ชม. ถ้าเครื่องเสีย" },
+  { icon: "🩹", text: "ใช้ช่วยชีวิตจริง — เปลี่ยนแผ่นให้ฟรี" },
+  { icon: "✅", text: regLine(AMOUL_REGULATORY) },
+  { icon: "💰", text: "มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ" },
 ];
 
 export const rentalFaqs = [

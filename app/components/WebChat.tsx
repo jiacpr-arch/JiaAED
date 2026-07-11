@@ -178,7 +178,7 @@ export function WebChat() {
         type="button"
         onClick={toggle}
         aria-label={open ? "ปิดแชท" : "เปิดแชท AI"}
-        className={`fixed bottom-5 right-5 z-50 rounded-full shadow-2xl transition-all ${
+        className={`fixed bottom-20 md:bottom-5 right-5 z-50 rounded-full shadow-2xl transition-all ${
           open
             ? "bg-gray-800 hover:bg-gray-700 w-12 h-12"
             : "bg-yellow-400 hover:bg-yellow-300 px-5 py-3 flex items-center gap-2"
@@ -196,7 +196,7 @@ export function WebChat() {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-20 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-md h-[70vh] max-h-[600px] rounded-2xl bg-gray-950 border border-gray-700 shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-36 md:bottom-20 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-md h-[70vh] max-h-[600px] rounded-2xl bg-gray-950 border border-gray-700 shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-yellow-900/40 to-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">

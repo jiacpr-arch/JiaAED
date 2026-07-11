@@ -1,10 +1,24 @@
 import Image from "next/image";
 import Link from "next/link";
-import { rentalPlans } from "@/lib/aed/rental";
+import { rentalPlans, rentalTrustSignals } from "@/lib/aed/rental";
 
 import { lineOaUrl } from "@/lib/aed/line";
 
 const LINE_OA = lineOaUrl("สนใจเช่า AED");
+
+// Per-plan LINE prefills so the admin knows which plan the chat is about
+// before typing a single question back.
+const PLAN_LINE_URL: Record<string, string> = {
+  "rent-event": lineOaUrl("สนใจเช่า AED รายวัน/อีเวนต์"),
+  "rent-annual": lineOaUrl("สนใจเช่า AED รายปี"),
+  "rent-flex": lineOaUrl("สนใจเช่า AED รายเดือน"),
+};
+
+const PLAN_THUMB: Record<string, string> = {
+  "rent-event": "/images/aed-rent-daily.jpg",
+  "rent-annual": "/images/aed-rent-yearly.jpg",
+  "rent-flex": "/images/aed-rent-monthly.jpg",
+};
 
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.
@@ -51,33 +65,56 @@ export function RentalSpotlight() {
           {/* Three rental plans at a glance */}
           <div className="space-y-4">
             {rentalPlans.map((p) => (
-              <Link
+              <div
                 key={p.id}
-                href="/aed/rental"
-                className={`flex items-center justify-between gap-4 rounded-2xl border p-5 bg-gray-900 transition-colors ${
+                className={`flex items-center gap-3 rounded-2xl border p-4 bg-gray-900 transition-colors ${
                   p.badge
                     ? "border-yellow-400/60 hover:border-yellow-400"
                     : "border-gray-800 hover:border-yellow-400/40"
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{p.name}</span>
-                    {p.badge && (
-                      <span className="bg-yellow-400 text-yellow-900 text-[10px] font-black px-2 py-0.5 rounded-full">
-                        {p.badge}
-                      </span>
-                    )}
+                {PLAN_THUMB[p.id] && (
+                  <Image
+                    src={PLAN_THUMB[p.id]}
+                    alt={p.name}
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                  />
+                )}
+                <Link
+                  href="/aed/rental"
+                  className="flex-1 flex items-center justify-between gap-4 min-w-0"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-white">{p.name}</span>
+                      {p.badge && (
+                        <span className="bg-yellow-400 text-yellow-900 text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {p.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">{p.subtitle}</div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">{p.subtitle}</div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="text-2xl font-black text-yellow-400">
-                    ฿{p.price.toLocaleString()}
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-2xl font-black text-yellow-400">
+                      ฿{p.price.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500">{p.unit}</div>
                   </div>
-                  <div className="text-xs text-gray-500">{p.unit}</div>
-                </div>
-              </Link>
+                </Link>
+                <a
+                  href={PLAN_LINE_URL[p.id] ?? LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="home_rent_plan"
+                  data-product={p.id}
+                  className="flex-shrink-0 bg-[#06C755] text-white text-xs font-bold px-3 py-2 rounded-full hover:bg-[#05a847] transition-colors"
+                >
+                  💬 เช่า
+                </a>
+              </div>
             ))}
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -102,6 +139,20 @@ export function RentalSpotlight() {
               ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้ · อย. รับรอง
             </p>
           </div>
+        </div>
+
+        {/* Why renting is safe to say yes to — commitments already made in
+            rentalPlans/rentalFaqs, surfaced where the decision happens. */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+          {rentalTrustSignals.map((t) => (
+            <div
+              key={t.text}
+              className="rounded-2xl border border-gray-800 bg-gray-900 p-4 flex items-start gap-2.5"
+            >
+              <span className="text-xl leading-none">{t.icon}</span>
+              <span className="text-xs text-gray-300 leading-relaxed">{t.text}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
