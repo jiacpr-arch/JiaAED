@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { JiaAedLogo } from "@/app/components/JiaAedLogo";
+import { SiteHeader } from "@/app/components/SiteHeader";
+import { SiteFooter } from "@/app/components/SiteFooter";
 import {
   documents,
   documentCategoryLabel,
@@ -45,28 +47,28 @@ export default function DocsPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <JiaAedLogo className="h-8 w-auto" />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm text-gray-400 hover:text-yellow-400">หน้าหลัก</Link>
-            <Link href="/articles" className="text-sm text-gray-400 hover:text-yellow-400">บทความ</Link>
-            <Link href="/#contact" className="text-sm text-gray-400 hover:text-yellow-400">ติดต่อ</Link>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-12 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
-            📚 Document Center
+        <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_220px] gap-8 items-center">
+          <div>
+            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
+              📚 Document Center
+            </div>
+            <h1 className="text-3xl md:text-4xl font-black mb-3">เอกสารดาวน์โหลด</h1>
+            <p className="text-gray-400 max-w-2xl">
+              คู่มือการใช้งาน คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Amoul i7 — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา
+            </p>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black mb-3">เอกสารดาวน์โหลด</h1>
-          <p className="text-gray-400 max-w-2xl">
-            คู่มือการใช้งาน คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Amoul i7 — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา
-          </p>
+          <div className="hidden md:block rounded-2xl overflow-hidden border border-gray-800 bg-white">
+            <Image
+              src="/images/product-main.png"
+              alt="เครื่อง AED Amoul i7"
+              width={440}
+              height={440}
+              className="w-full h-auto"
+            />
+          </div>
         </div>
       </section>
 
@@ -124,6 +126,8 @@ export default function DocsPage() {
           </Link>
         </div>
       </section>
+
+      <SiteFooter />
     </div>
   );
 }

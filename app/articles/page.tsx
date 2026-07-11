@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { articles } from "@/lib/aed/articles";
-import { JiaAedLogo } from "@/app/components/JiaAedLogo";
+import { SiteHeader } from "@/app/components/SiteHeader";
+import { SiteFooter } from "@/app/components/SiteFooter";
+import { articles, articleCover } from "@/lib/aed/articles";
 
 export const metadata: Metadata = {
   title: "บทความ AED — ความรู้และวิธีใช้ | JiaAED",
@@ -20,19 +22,7 @@ export default function ArticlesIndex() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <JiaAedLogo className="h-8 w-auto" />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-sm text-gray-400 hover:text-yellow-400">หน้าหลัก</Link>
-            <Link href="/news" className="text-sm text-gray-400 hover:text-yellow-400">ข่าว</Link>
-            <Link href="/docs" className="text-sm text-gray-400 hover:text-yellow-400">เอกสาร</Link>
-            <Link href="/#contact" className="text-sm text-gray-400 hover:text-yellow-400">ติดต่อ</Link>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-12 px-4">
         <div className="max-w-5xl mx-auto">
@@ -52,26 +42,39 @@ export default function ArticlesIndex() {
             <Link
               key={a.slug}
               href={`/articles/${a.slug}`}
-              className="block bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-yellow-400/40 rounded-xl p-6 transition-colors"
+              className="flex bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-yellow-400/40 rounded-xl overflow-hidden transition-colors"
             >
-              <div className="flex flex-wrap gap-2 mb-2">
-                {a.tags.map((t) => (
-                  <span key={t} className="text-[10px] font-semibold bg-yellow-400/10 text-yellow-400 px-2 py-0.5 rounded border border-yellow-400/20">
-                    {t}
-                  </span>
-                ))}
+              <div className="relative w-28 sm:w-44 flex-shrink-0">
+                <Image
+                  src={articleCover(a.slug)}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="176px"
+                />
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">{a.title}</h2>
-              <p className="text-gray-400 text-sm mb-3 leading-relaxed">{a.description}</p>
-              <div className="text-xs text-gray-500 flex gap-3">
-                <span>{a.publishedAt}</span>
-                <span>·</span>
-                <span>อ่าน ~{a.readMinutes} นาที</span>
+              <div className="p-5 sm:p-6 min-w-0">
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {a.tags.map((t) => (
+                    <span key={t} className="text-[10px] font-semibold bg-yellow-400/10 text-yellow-400 px-2 py-0.5 rounded border border-yellow-400/20">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">{a.title}</h2>
+                <p className="text-gray-400 text-sm mb-3 leading-relaxed">{a.description}</p>
+                <div className="text-xs text-gray-500 flex gap-3">
+                  <span>{a.publishedAt}</span>
+                  <span>·</span>
+                  <span>อ่าน ~{a.readMinutes} นาที</span>
+                </div>
               </div>
             </Link>
           ))}
         </div>
       </section>
+
+      <SiteFooter />
     </div>
   );
 }

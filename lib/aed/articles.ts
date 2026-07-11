@@ -313,3 +313,19 @@ AED Amoul i7 มี Self-test อัตโนมัติทั้งแบบ D
 export function findArticle(slug: string): Article | undefined {
   return articles.find((a) => a.slug === slug);
 }
+
+// Static per-article cover art from existing assets (no CMS/schema change).
+// New articles without an entry fall back to the default lifestyle shot.
+const ARTICLE_COVER: Record<string, string> = {
+  "what-is-aed": "/images/product-main.png",
+  "how-to-use-aed": "/images/lifestyle-cpr.png",
+  "aed-maintenance-checklist": "/images/accessory-battery.jpg",
+  "aed-standards-certifications": "/images/feature-grid.jpg",
+  "aed-price-guide": "/images/aed-rent-all.webp",
+  "aed-rental-running-events": "/images/aed-rent-daily.jpg",
+  "aed-law-thailand": "/images/aed-floorstand.webp",
+};
+
+export function articleCover(slug: string): string {
+  return ARTICLE_COVER[slug] ?? "/images/lifestyle-man.webp";
+}
