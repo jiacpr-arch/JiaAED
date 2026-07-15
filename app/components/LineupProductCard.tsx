@@ -3,28 +3,19 @@ import type { LineupCard } from "@/lib/aed/lineup";
 
 import { LINE_OA } from "@/lib/aed/line";
 
-// Brand chip accent — colours mirror each brand's physical AED casing:
-// Amoul = yellow device, Yuwell/PRIMEDIC = red device (same Yuwell PRIMEDIC family).
+// Brand chip accent — colours mirror each brand's physical AED casing
+// (Yuwell/PRIMEDIC = red device, same Yuwell PRIMEDIC family).
 const BRAND_CHIP: Record<LineupCard["brand"], string> = {
-  Amoul: "border-yellow-400/30 text-yellow-300 bg-yellow-400/10",
   PRIMEDIC: "border-red-500/40 text-red-400 bg-red-500/10",
   Yuwell: "border-red-500/40 text-red-400 bg-red-500/10",
 };
 
-// Per-brand accent so each card glows in its real device colour (Amoul yellow,
-// Yuwell/PRIMEDIC red) instead of a single global yellow. Full literal class
-// strings so Tailwind v4's source scanner can detect them.
+// Per-brand accent so each card glows in its real device colour (Yuwell/PRIMEDIC
+// red). Full literal class strings so Tailwind v4's source scanner can detect them.
 const BRAND_ACCENT: Record<
   LineupCard["brand"],
   { border: string; badge: string; price: string; check: string; button: string }
 > = {
-  Amoul: {
-    border: "border-yellow-400/60 shadow-lg shadow-yellow-400/10",
-    badge: "bg-yellow-400 text-yellow-900",
-    price: "text-yellow-400",
-    check: "text-yellow-400",
-    button: "bg-yellow-400 text-yellow-900 hover:bg-yellow-300",
-  },
   PRIMEDIC: {
     border: "border-red-500/60 shadow-lg shadow-red-500/10",
     badge: "bg-red-600 text-white",

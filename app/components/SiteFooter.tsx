@@ -4,8 +4,12 @@ import { LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export function SiteFooter({
-  fda = "68-2-2-2-0005243",
-  adLicense = "743/2569",
+  // Default to the current lineup's registration (Yuwell / PRIMEDIC HeartSave).
+  // The Amoul i7 อย./ฆพ. is no longer asserted anywhere (Thai FDA suspension of
+  // Amoul advertising, ก.ค. 2026). The current line holds no ฆพ. yet — leave
+  // adLicense empty so no advertising-licence number is claimed.
+  fda = "65-2-2-2-0013415",
+  adLicense = "",
   regNote,
 }: {
   fda?: string;
@@ -28,7 +32,7 @@ export function SiteFooter({
           <Link href="/privacy" className="hover:text-yellow-400">นโยบายความเป็นส่วนตัว</Link>
         </div>
         <p className="text-xs text-gray-500">
-          {regNote ?? `เจี่ยรักษา (JiaAED) — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง · ทะเบียน อย. ${fda} · ฆพ.${adLicense}`}
+          {regNote ?? `เจี่ยรักษา (JiaAED) — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง · ทะเบียน อย. ${fda}${adLicense ? ` · ฆพ.${adLicense}` : ""}`}
         </p>
         <p className="text-xs text-gray-600 mt-2">
           © {new Date().getFullYear()} JiaAED ·{" "}

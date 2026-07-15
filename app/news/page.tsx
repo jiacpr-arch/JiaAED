@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ข่าวและความตระหนักเรื่องหัวใจหยุดเต้น | JiaAED",
     description: "ข่าวภาวะหัวใจหยุดเต้นเฉียบพลัน การกู้ชีพ CPR และเครื่อง AED พร้อมมุมให้ความรู้จาก JiaAED",
-    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+    images: [{ url: "/images/yuwell-y2-main.jpg", width: 1200, height: 900, alt: "AED Yuwell Y2 / PRIMEDIC HeartSave" }],
   },
 };
 

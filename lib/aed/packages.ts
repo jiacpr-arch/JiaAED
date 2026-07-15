@@ -77,8 +77,8 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: "ยอดนิยม",
     ctaProductHint: "pkg-start",
     href: "/quote",
-    image: "/images/product-main.png",
-    imageAlt: "เช่าแล้วได้ซื้อ AED Amoul i7",
+    image: "/images/primedic-y-series.png",
+    imageAlt: "เช่าแล้วได้ซื้อ AED PRIMEDIC HeartSave",
   },
   {
     id: "pkg-start-y2",

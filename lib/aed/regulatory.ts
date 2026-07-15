@@ -18,13 +18,9 @@ export type BrandRegulatory = {
   disclaimer?: string; // full registration/importer statement (legal footnote)
 };
 
-export const AMOUL_REGULATORY: BrandRegulatory = {
-  brand: "Amoul i7",
-  fda: "68-2-2-2-0005243",
-  adLicense: "743/2569",
-  published: true,
-  pendingNote: "",
-};
+// AMOUL_REGULATORY removed (ก.ค. 2026) — the Thai FDA suspended advertising of the
+// Amoul i7 device, so its อย./ฆพ. numbers are no longer asserted anywhere on the site.
+// The current lineup (Yuwell Y2 / PRIMEDIC HeartSave) uses PRIMEDIC_REGULATORY below.
 
 export const PRIMEDIC_REGULATORY: BrandRegulatory = {
   brand: "PRIMEDIC HeartSave",

@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/aed/analytics-client";
 
 const COPY: Record<HeadlineVariant, { line1: string; accent: string; line2: string }> = {
   a: { line1: "หัวใจหยุดเต้น", accent: "Yuwell · PRIMEDIC HeartSave", line2: "ช่วยได้ก่อนรถพยาบาลมา" },
-  b: { line1: "ช่วยชีวิตได้ใน 7 วินาที", accent: "PRIMEDIC HeartSave · Amoul i7", line2: "พร้อมใช้ทันที" },
+  b: { line1: "ช่วยชีวิตได้ทันที", accent: "PRIMEDIC HeartSave · Yuwell Y2", line2: "พร้อมใช้ทันที" },
 };
 
 export function HeroHeadline() {
@@ -25,12 +25,11 @@ export function HeroHeadline() {
       className="text-4xl md:text-5xl font-black mb-4 leading-tight"
     >
       {c.line1}<br />
-      {/* Split the brand accent so each brand shows in its real device colour:
-          Amoul = yellow casing, PRIMEDIC (Yuwell family) = red casing. */}
+      {/* Split the brand accent — the Yuwell/PRIMEDIC family shows in its red casing. */}
       {c.accent.split(" · ").map((part, i) => (
         <span key={part}>
           {i > 0 && <span className="text-gray-500"> · </span>}
-          <span className={part.startsWith("Amoul") ? "text-yellow-400" : "text-red-400"}>
+          <span className="text-red-400">
             {part}
           </span>
         </span>

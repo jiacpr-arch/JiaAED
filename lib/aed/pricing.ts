@@ -43,32 +43,8 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     vatRate: 0.07,
     faProductCode: "AED-I7-FLR",
   },
-  "pad-adult": {
-    id: "pad-adult",
-    name: "AED Pad (Adult)",
-    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (Ambul) สำหรับ AED Amoul i7",
-    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ ของแท้ Ambul REF 1.129.00201 ใช้กับ AED Amoul i7",
-    msrp: 5_000,
-    startingPrice: 5_000,
-    bestPrice: 5_000,
-    minPrice: 5_000,
-    vatRate: 0.07,
-    faProductCode: "AED-PAD-ADT",
-  },
-  battery: {
-    id: "battery",
-    name: "AED Battery (Amoul i7)",
-    nameTh: "แบตเตอรี่ AED Amoul i7 (Ambul)",
-    description: "แบตเตอรี่สำรอง/ทดแทน ของแท้ Ambul สำหรับ AED Amoul i7",
-    msrp: 7_500,
-    startingPrice: 7_500,
-    bestPrice: 7_500,
-    minPrice: 7_500,
-    vatRate: 0.07,
-    faProductCode: "AED-BATT",
-  },
   // ── PRIMEDIC HeartSave (premium line — Y2 also mirrored into the "i7" SKU
-  // slot above now that Amoul i7 is discontinued, see lib/aed/products.ts) ──
+  // slot above, see lib/aed/products.ts) ──
   // NOTE: PRIMEDIC อย. confirmed to cover Y2 (ก.ค. 2026, importer-verified) —
   // ฆพ. (ใบอนุญาตโฆษณา) still pending, see lib/aed/regulatory.ts.
   // กลยุทธ์ราคาใหม่ (ก.ค. 2026 — ดู docs/yuwell-pricing-strategy-2026-07-09.md):
@@ -200,21 +176,15 @@ export function formatThaiPrice(amount: number): string {
 }
 
 // ─── Pricing policy: never the cheapest in the market ─────────────────────────
-// Owner directive: do NOT undercut the market on anything — INCLUDING electrode
-// pads and batteries. `minPrice` is the hard floor the AI/sales must never cross;
-// `marketFloor` documents the lowest competitor price we've observed, and our
-// minPrice must stay STRICTLY ABOVE it. Update these as wholesale is finalized.
+// Owner directive: do NOT undercut the market on anything. `minPrice` is the hard
+// floor the AI/sales must never cross; `marketFloor` documents the lowest
+// competitor price we've observed, and our minPrice must stay STRICTLY ABOVE it.
+// (The Amoul/Ambul consumable SKUs that used to be guarded here were removed —
+// อย. สั่งระงับสินค้า Amoul ทั้งหมด. Add current-line consumable floors here when
+// their prices are finalized.)
 export const PRICING_POLICY = {
   rule: "ห้ามตั้งราคาต่ำที่สุดในตลาด รวมถึงแผ่นแปะและแบตเตอรี่",
-  // Observed competitor market-floor for consumables. Our minPrice stays strictly
-  // above each (pad 5,000 > 1,890 · battery 7,500 > 6,000) — assertAboveMarketFloor
-  // guards this. Owner: lower these only if a competitor is actually seen below.
-  // pad-adult: ปรับ 4,000 → 1,890 ตามราคาจริงที่พบบน Shopee (มิ.ย. 2026) — แผ่นนำไฟฟ้า
-  // ขายที่ ฿1,890 (น่าจะเป็นของเทียบ/generic) เราขายของแท้ Ambul จึงตั้ง premium เหนือได้
-  marketFloor: {
-    "pad-adult": 1_890,
-    battery: 6_000,
-  } as Record<string, number>,
+  marketFloor: {} as Record<string, number>,
 } as const;
 
 // Dev/CI guard — call from a unit check or a build script, NOT per request.

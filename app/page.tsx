@@ -3,7 +3,7 @@ import Link from "next/link";
 import { accessories } from "@/lib/aed/products";
 import { homepageTiers } from "@/lib/aed/lineup";
 import { faqs } from "@/lib/aed/faqs";
-import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
+import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { LeadForm } from "./components/LeadForm";
 import { QuickContact } from "./components/QuickContact";
 import { HeroCta } from "./components/HeroCta";
@@ -42,49 +42,6 @@ const LINE_BUY_HERO = lineOaUrl(`สนใจซื้อ AED ${BUY_PKG.priceLab
 const LINE_RENT_TABLE = lineOaUrl("สนใจเช่า AED ขอรายละเอียดแผนเช่า");
 const LINE_BUY_TABLE = lineOaUrl("สนใจซื้อ AED ขอใบเสนอราคา");
 
-const specs = [
-  { label: "น้ำหนัก", value: "ประมาณ 2.0 กก. (รวมแบตเตอรี่)" },
-  { label: "ผู้ใช้งาน", value: "ผู้ใหญ่ และ เด็ก (<8 ปี หรือ <25 กก.) — สลับโหมดด้วยสวิตช์" },
-  { label: "ภาษาเสียงแนะนำ", value: "5 ภาษา: ไทย · อังกฤษ · จีน · สเปน · อิตาลี" },
-  { label: "พลังงานสูงสุด", value: "360 Joules (BTE Biphasic Waveform)" },
-  { label: "พลังงาน Shock ผู้ใหญ่", value: "Escalating 6 ระดับ: 100 → 150 → 170 → 200 → 300 → 360 J" },
-  { label: "พลังงาน Shock เด็ก", value: "Escalating 7 ระดับ: 10 → 15 → 20 → 30 → 50 → 70 → 100 J" },
-  { label: "การปรับพลังงาน", value: "Auto ตาม Patient Impedance (ผู้ใช้ตั้งค่าเองไม่ได้)" },
-  { label: "เวลาชาร์จพร้อม Shock", value: "< 7 วินาที" },
-  { label: "แบตเตอรี่", value: "Lithium 4,500 mAh · 12V (แบบใช้แล้วทิ้ง ชาร์จใหม่ไม่ได้)" },
-  { label: "อายุแบตเตอรี่", value: "≥ 5 ปี (สแตนด์บายในเครื่อง) · ≥ 7 ปี (เก็บแยกในอุณหภูมิเหมาะสม)" },
-  { label: "จำนวน Shock ต่อชาร์จ", value: "≥ 420 ครั้ง ที่ 200J (ทดสอบมาตรฐาน)" },
-  { label: "บันทึก ECG", value: "≥ 8 ชั่วโมง · เหตุการณ์ ≥ 1,500 รายการ" },
-  { label: "Self-test", value: "อัตโนมัติ — รายวัน / รายสัปดาห์ / รายเดือน" },
-  { label: "อุณหภูมิใช้งาน", value: "-25°C ถึง 60°C" },
-  { label: "การเชื่อมต่อ", value: "USB · Wi-Fi · SIM (4G) — เลือกใช้เมื่อเปิด AED Management Platform" },
-  { label: "โหมดการทำงาน", value: "Standalone (ค่าเริ่มต้น) — ใช้ช่วยชีวิตได้โดยไม่ต้องเชื่อมต่อ" },
-  { label: "มาตรฐาน", value: "CE Mark · ISO 13485 · IP65 · EN 1789:2020 · ILCOR/AHA 2020-2025" },
-  { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือไทย" },
-];
-
-// v = joules, drives the visual energy-bar width (max 360 adult / 100 child)
-const adultShocks = [
-  { n: "Shock 1", j: "100 J", v: 100 },
-  { n: "Shock 2", j: "150 J", v: 150 },
-  { n: "Shock 3", j: "170 J", v: 170 },
-  { n: "Shock 4", j: "200 J", v: 200 },
-  { n: "Shock 5", j: "300 J", v: 300 },
-  { n: "Shock 6", j: "360 J", v: 360 },
-  { n: "Shock 7+", j: "360 J (cap max)", v: 360 },
-];
-
-const pediatricShocks = [
-  { n: "Shock 1", j: "10 J", v: 10 },
-  { n: "Shock 2", j: "15 J", v: 15 },
-  { n: "Shock 3", j: "20 J", v: 20 },
-  { n: "Shock 4", j: "30 J", v: 30 },
-  { n: "Shock 5", j: "50 J", v: 50 },
-  { n: "Shock 6", j: "70 J", v: 70 },
-  { n: "Shock 7", j: "100 J", v: 100 },
-  { n: "Shock 8+", j: "100 J (cap max)", v: 100 },
-];
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
@@ -98,7 +55,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
-            <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">ข้อมูลเครื่อง</a>
+            <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">อุปกรณ์เสริม</a>
             {/* เช่า/ซื้อ as one segmented pair, visible at every width — the two
                 offers carry equal weight from the very first glance. */}
             <div className="flex items-center">
@@ -609,16 +566,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ Technical deep-dive — collapsed by default, kept in DOM for SEO ═══ */}
+      {/* ═══ Accessories / spare parts — collapsed by default ═══ */}
       <section id="tech" className="py-14 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-block bg-gray-700/40 text-gray-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-gray-600/40">
-              📋 ข้อมูลทางเทคนิคแบบละเอียด — AED Amoul i7 (รุ่นเดิม)
+              🔋 อุปกรณ์เสริม · ตู้จัดเก็บ · อบรม · อะไหล่
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">เจาะลึกสเปก & การทำงาน — Amoul i7</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">อุปกรณ์เสริม &amp; อะไหล่ของแท้</h2>
             <p className="text-gray-400 text-sm max-w-2xl mx-auto">
-              Amoul i7 เลิกจำหน่ายแล้ว (ก.ค. 2026) — เก็บไว้เป็นข้อมูลอ้างอิงสำหรับลูกค้าเดิม สเปกรุ่นปัจจุบัน (Yuwell / PRIMEDIC HeartSave รวมถึง Yuwell Y2)
+              สเปกและการเปรียบเทียบรุ่นปัจจุบัน (Yuwell Y2 / PRIMEDIC HeartSave)
               ดูได้ที่หัวข้อ{" "}
               <a href="#brands" className="text-yellow-400 hover:underline">
                 เลือกยี่ห้อ
@@ -628,275 +585,6 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            {/* Shock protocol */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">⚡ โปรแกรมการช็อก (Escalating Energy Protocol) + Evidence ทางการแพทย์</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm max-w-2xl mx-auto text-center mb-6">
-                  เครื่องของเราใช้ escalating protocol ตาม international guidelines เริ่มต่ำเพื่อลด myocardial damage แล้วเพิ่มเมื่อจำเป็น เป็น standard ที่ AHA recognize
-                </p>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-gray-950 border border-red-400/30 rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-lg text-red-400">ADULT (ผู้ใหญ่) — 6 ระดับ</h3>
-                      <span className="text-xs text-gray-500">100 → 360 J</span>
-                    </div>
-                    <ul className="space-y-2.5">
-                      {adultShocks.map((s) => (
-                        <li key={s.n} className="flex items-center gap-3 text-sm">
-                          <span className="w-16 flex-shrink-0 text-gray-400 font-medium text-xs">{s.n}</span>
-                          <div className="flex-1 h-5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-red-900 to-red-500"
-                              style={{ width: `${(s.v / 360) * 100}%` }}
-                            />
-                          </div>
-                          <span className="w-24 flex-shrink-0 text-right text-red-400 font-bold text-xs">{s.j}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-xs text-gray-500 mt-3">↑ เพิ่มพลังงานอัตโนมัติเมื่อช็อกครั้งก่อนไม่สำเร็จ</p>
-                  </div>
-
-                  <div className="bg-gray-950 border border-green-400/30 rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-lg text-green-400">PEDIATRIC (เด็ก) — 7 ระดับ</h3>
-                      <span className="text-xs text-gray-500">10 → 100 J</span>
-                    </div>
-                    <ul className="space-y-2.5">
-                      {pediatricShocks.map((s) => (
-                        <li key={s.n} className="flex items-center gap-3 text-sm">
-                          <span className="w-16 flex-shrink-0 text-gray-400 font-medium text-xs">{s.n}</span>
-                          <div className="flex-1 h-5 bg-gray-900 border border-gray-800 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-green-900 to-green-500"
-                              style={{ width: `${(s.v / 100) * 100}%` }}
-                            />
-                          </div>
-                          <span className="w-24 flex-shrink-0 text-right text-green-400 font-bold text-xs">{s.j}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-xs text-gray-500 mt-3">สำหรับเด็ก &lt; 8 ปี หรือน้ำหนัก &lt; 25 กก.</p>
-                  </div>
-                </div>
-
-                {/* Medical Evidence */}
-                <div className="mt-8 bg-gray-950 border border-gray-800 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span>📚</span> EVIDENCE ทางการแพทย์
-                  </h3>
-                  <div className="grid md:grid-cols-3 gap-5 text-sm">
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">Guidelines ILCOR/AHA 2020-2025</div>
-                      <ul className="space-y-1.5 text-gray-300">
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Escalating energy = acceptable strategy</span></li>
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Fixed high energy = also acceptable</span></li>
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Both have similar outcomes</span></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">Studies</div>
-                      <ol className="space-y-1.5 text-gray-300 list-decimal list-inside">
-                        <li><span className="font-semibold">BIPHASIC Trial (2007):</span> Escalating ≈ fixed high energy — termination rates ใกล้เคียง</li>
-                        <li><span className="font-semibold">AHA 2020 Guidelines:</span> ทั้ง 2 กลยุทธ์ recommended — ไม่มี superiority</li>
-                        <li><span className="font-semibold">ILCOR 2025 Update:</span> Initial 120-200J biphasic · Subsequent ≥ initial · 360J max</li>
-                      </ol>
-                    </div>
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">First Shock Success Rates</div>
-                      <ul className="space-y-1.5 text-gray-300">
-                        <li className="flex justify-between"><span>100J biphasic</span><span className="text-red-400 font-bold">70-80%</span></li>
-                        <li className="flex justify-between"><span>150J biphasic</span><span className="text-red-400 font-bold">80-90%</span></li>
-                        <li className="flex justify-between"><span>200J biphasic</span><span className="text-red-400 font-bold">85-90%</span></li>
-                      </ul>
-                      <div className="mt-3 pt-3 border-t border-gray-800">
-                        <div className="text-xs text-gray-400 mb-1">After 3 shocks</div>
-                        <div className="text-green-400 font-bold">Cumulative success &gt; 95%</div>
-                        <div className="text-xs text-gray-500 mt-1">ส่วนใหญ่ไม่ต้องถึง 360J</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            {/* Connectivity */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">📡 โหมดการทำงาน & การเชื่อมต่อ (Standalone + Optional Connectivity)</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm max-w-2xl mx-auto text-center mb-6">
-                  AED Amoul i7 ทำงานแบบ Standalone เป็นค่าเริ่มต้น ช่วยชีวิตได้ทันทีโดยไม่ต้องเชื่อมต่อใดๆ — Connectivity จะใช้ก็ต่อเมื่อลูกค้าเปิดใช้ AED Management Platform เอง
-                </p>
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-gray-950 border border-green-400/40 rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl">✅</span>
-                      <div>
-                        <div className="text-xs text-green-400 font-bold uppercase tracking-wide">โหมดที่ 1 (ค่าเริ่มต้น)</div>
-                        <h3 className="font-bold text-lg text-white">Standalone Mode</h3>
-                      </div>
-                    </div>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>เครื่องทำงานเดี่ยว ไม่ส่งข้อมูลขึ้นส่วนกลาง</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ไม่ต้องเปิดใช้ dashboard หรือสมัครอะไรเพิ่ม</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ใช้ช่วยชีวิตได้ปกติทุกอย่าง — Self-test รายวันก็ทำให้เอง</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ดึง event log ผ่าน USB เมื่อตรวจสอบเครื่อง</span></li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-gray-950 border border-blue-400/40 rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl">🔗</span>
-                      <div>
-                        <div className="text-xs text-blue-400 font-bold uppercase tracking-wide">โหมดที่ 2 (ตัวเลือก)</div>
-                        <h3 className="font-bold text-lg text-white">Connected Mode</h3>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-400 mb-3">เมื่อต้องการดูข้อมูล ECG ขณะใช้เครื่องแบบ real-time:</p>
-                    <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
-                      <li>เปิดใช้ AED Management Platform</li>
-                      <li>ลงทะเบียนข้อมูลเครื่อง</li>
-                      <li>เลือกช่องทาง: USB / Wi-Fi / SIM 4G</li>
-                    </ol>
-                    <p className="text-xs text-blue-300 mt-3">→ จึงจะเข้าถึงข้อมูลผ่าน dashboard ได้</p>
-                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-800">
-                      <Image
-                        src="/images/cloud-dashboard.png"
-                        alt="ตัวอย่างหน้าจอ AED Management Dashboard"
-                        width={600}
-                        height={400}
-                        className="w-full h-auto"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connectivity channels */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    {
-                      icon: "🔌",
-                      name: "USB",
-                      desc: "ดาวน์โหลด event log ออกได้ — ไม่ส่งอัตโนมัติ เก็บข้อมูลผ่าน USB เมื่อตรวจสอบ",
-                    },
-                    {
-                      icon: "📶",
-                      name: "Wi-Fi",
-                      desc: "ส่งข้อมูลขึ้นแพลตฟอร์มแบบ real-time ในพื้นที่ที่มี Wi-Fi ครอบคลุม",
-                    },
-                    {
-                      icon: "📡",
-                      name: "SIM (4G)",
-                      desc: "ส่งข้อมูลขึ้น real-time ผ่าน 4G cellular — สำหรับพื้นที่ไม่มี Wi-Fi",
-                    },
-                  ].map((c) => (
-                    <div key={c.name} className="bg-gray-950 border border-gray-700 rounded-xl p-5">
-                      <div className="text-3xl mb-2">{c.icon}</div>
-                      <div className="font-bold text-white mb-1">{c.name}</div>
-                      <p className="text-sm text-gray-400 leading-relaxed">{c.desc}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-center text-xs text-gray-500 mt-6">
-                  * รุ่น i7 ยังไม่มี GPS tracking (อยู่ระหว่างการพัฒนากับ supplier) · Wi-Fi/4G มีประโยชน์ก็ต่อเมื่อท่านเปิดใช้แพลตฟอร์ม
-                </p>
-              </div>
-            </details>
-
-            {/* Battery life */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">🔋 อายุการใช้งานแบตเตอรี่</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm text-center mb-6">Lithium 4,500 mAh · 12V · แบบใช้แล้วทิ้ง · &gt; 420 ครั้ง shock ที่ 200J</p>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-gray-950 border border-gray-800 rounded-2xl p-6 text-center">
-                    <div className="text-5xl mb-2">⏱️</div>
-                    <div className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">กรณีสแตนด์บายปกติ</div>
-                    <div className="text-4xl font-black text-yellow-400 mb-1">มากกว่า 5 ปี</div>
-                    <p className="text-sm text-gray-400">(เครื่องออโต้เทสทุกวัน แต่ไม่ได้ส่งรายงานไร้สาย)</p>
-                  </div>
-                  <div className="bg-gray-950 border border-gray-800 rounded-2xl p-6 text-center">
-                    <div className="text-5xl mb-2">📦</div>
-                    <div className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">กรณีเก็บแบตเตอรี่</div>
-                    <div className="text-4xl font-black text-yellow-400 mb-1">สูงสุด 7 ปี</div>
-                    <p className="text-sm text-gray-400">(แยกไว้ภายนอกเครื่อง ในอุณหภูมิที่เหมาะสม)</p>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            {/* Full spec table */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">📑 คุณลักษณะเฉพาะ AED Amoul i7 (ตารางสเปกเต็ม)</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-center text-gray-500 text-sm mb-6">สเปกของรุ่น Amoul i7 · สเปก PRIMEDIC ดูได้ที่หัวข้อ “เลือกยี่ห้อ” ด้านบน</p>
-                <div className="grid md:grid-cols-[260px_1fr] gap-6 items-start">
-                  <div className="hidden md:block sticky top-24">
-                    <div className="rounded-2xl overflow-hidden border border-gray-700 bg-white">
-                      <Image
-                        src="/images/product-main.png"
-                        alt="เครื่อง AED Amoul i7"
-                        width={520}
-                        height={520}
-                        className="w-full h-auto"
-                      />
-                    </div>
-                    <p className="text-center text-xs text-gray-500 mt-2">AED Amoul i7</p>
-                  </div>
-                  <div className="rounded-2xl overflow-hidden border border-gray-700">
-                    {specs.map((s, i) => (
-                      <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
-                        <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
-                        <div className="text-sm text-gray-200">{s.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center mt-6">
-                  {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "ILCOR/AHA 2020-2025", "FDA"].map((cert) => (
-                    <span key={cert} className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
-                      ✓ {cert}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 flex flex-wrap gap-3 justify-center">
-                  <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                    <div className="text-xs text-gray-400 font-semibold">Amoul i7 — เลขที่ใบรับแจ้ง อย.</div>
-                    <div className="text-sm font-bold text-yellow-400">{AMOUL_REGULATORY.fda}</div>
-                  </div>
-                  <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                    <div className="text-xs text-gray-400 font-semibold">Amoul i7 — ใบอนุญาตโฆษณา</div>
-                    <div className="text-sm font-bold text-yellow-400">ฆพ. {AMOUL_REGULATORY.adLicense}</div>
-                  </div>
-                  {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                      <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
-                      <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
-                    </div>
-                  )}
-                  {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                      <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — ใบอนุญาตโฆษณา</div>
-                      <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </details>
-
             {/* Accessories / spare parts */}
             <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
               <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
@@ -905,7 +593,7 @@ export default function Home() {
               </summary>
               <div className="px-4 pb-6 pt-2">
                 <p className="text-center text-gray-500 mb-8 max-w-2xl mx-auto">
-                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Amoul i7 และ PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
+                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Yuwell Y2 / PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                   {accessories.map((a) => (
@@ -1036,7 +724,7 @@ export default function Home() {
           <Link href="/aed/subscription" className="hover:text-yellow-400 transition-colors">เช่า AED</Link>
           <Link href="/aed/rental" className="hover:text-yellow-400 transition-colors">เช่าระยะสั้น</Link>
           <Link href="/aed/primedic" className="hover:text-yellow-400 transition-colors">PRIMEDIC</Link>
-          <a href="#tech" className="hover:text-yellow-400 transition-colors">สเปก</a>
+          <a href="#tech" className="hover:text-yellow-400 transition-colors">อุปกรณ์เสริม</a>
           <a href="#faq" className="hover:text-yellow-400 transition-colors">FAQ</a>
           <Link href="/docs" className="hover:text-yellow-400 transition-colors">เอกสาร</Link>
           <Link href="/articles" className="hover:text-yellow-400 transition-colors">บทความ</Link>

@@ -1,5 +1,7 @@
 # Google Ads Setup — JiaAED
 
+> 🛑 **ด่วน — คำสั่งระงับโฆษณาจาก อย.:** แคมเปญ/โฆษณารุ่น Amoul i7 ต้องถูก **PAUSE ที่แพลตฟอร์ม Google Ads / Facebook Ads โดยตรง** ทันที (เจ้าของต้องเข้าไปกดหยุดเองในหน้าจัดการโฆษณา — การแก้โค้ด/เอกสารอย่างเดียว **ไม่หยุด** โฆษณาที่กำลังรันอยู่) เนื่องจาก อย. สั่งระงับการโฆษณา อย่ายิงโฆษณาแบบเสียเงินกับ AED ทุกรุ่นจนกว่าจะได้เลข ฆพ. ที่ถูกต้องของรุ่นปัจจุบัน
+
 คู่มือเปิด Google Ads สำหรับ JiaAED โดยใช้ tracking ที่ติดไว้ใน landing page นี้แล้ว
 
 ## 1. Environment variables (Vercel)
@@ -102,9 +104,9 @@
 
 **Group C — Brand-specific**
 ```
-"Amoul i7"
-"AED Amoul"
-[AED Amoul i7]
+"Yuwell Y2"
+"PRIMEDIC HeartSave"
+[AED Yuwell Y2]
 ```
 
 Negative keywords (ใส่ทั้งระดับ campaign):
@@ -115,12 +117,12 @@ Negative keywords (ใส่ทั้งระดับ campaign):
 ### Responsive Search Ads (RSA) — เตรียม headlines/descriptions
 
 Headlines (15 ชิ้น, ≤ 30 ตัวอักษร):
-- AED Amoul i7 อย. รับรอง
+- AED Yuwell Y2 อย. รับรอง
 - เครื่องกระตุกหัวใจ Shock 7 วินาที
 - ราคาเริ่ม 39,999 บาท
 - เสียงแนะนำภาษาไทย
 - IP65 กันน้ำกันฝุ่น
-- ใบโฆษณา ฆพ.743/2569
+- อย. รับรองถูกต้อง
 - บริการหลังการขายไทย
 - พร้อมตู้/แท่นตั้งพื้น
 - ใช้ได้ทั้งผู้ใหญ่และเด็ก
@@ -132,8 +134,8 @@ Headlines (15 ชิ้น, ≤ 30 ตัวอักษร):
 - โหลด 360J · 200J ผู้ใหญ่
 
 Descriptions (4 ชิ้น, ≤ 90):
-- AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock พร้อมใน 7 วินาที เสียงแนะนำภาษาไทย IP65
-- ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569 · ปรึกษาฟรีทาง LINE
+- AED Yuwell Y2 เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ Shock พร้อมใน 7 วินาที เสียงแนะนำภาษาไทย IP65
+- ทะเบียน อย. 65-2-2-2-0013415 · ปรึกษาฟรีทาง LINE
 - ราคาเริ่ม 39,999 บาท พร้อมส่ง · มีตู้ติดผนัง/แท่นตั้งพื้น · ออกใบเสนอราคาทันที
 - เหมาะสำหรับสำนักงาน โรงเรียน โรงงาน ฟิตเนส และหน่วยงานภาครัฐ
 
@@ -142,7 +144,7 @@ Final URL: `https://jiaaed.vercel.app/?utm_source=google&utm_medium=cpc&utm_camp
 ### Sitelinks/Callouts/Structured snippets
 - Sitelinks: "ดูราคา 3 แพ็กเกจ" → `#products`, "สเปคเครื่อง" → `#specs`, "ทำไมเลือกเรา" → trust section, "คุยกับ AI ฟรี" → LINE
 - Callouts: "อย. รับรอง" "ส่งฟรีทั่วประเทศ" "บริการหลังการขายไทย" "ออกใบกำกับภาษี"
-- Structured snippet (Models): Amoul i7, Amoul i7+ตู้, Amoul i7+แท่นตั้ง
+- Structured snippet (Models): Yuwell Y2, Yuwell Y2+ตู้, Yuwell Y2+แท่นตั้ง
 
 ## 5. Performance Max campaign
 
@@ -170,7 +172,7 @@ https://jiaaed.vercel.app/feed/products.xml
 | Campaign | Daily budget | หมายเหตุ |
 | --- | --- | --- |
 | Search — Generic AED | 300 บาท/วัน | คาดหวัง CPC 15-40 บาท |
-| Search — Brand Amoul | 100 บาท/วัน | CPC ต่ำ คุ้มมาก |
+| Search — Brand Yuwell/PRIMEDIC | 100 บาท/วัน | CPC ต่ำ คุ้มมาก |
 | Performance Max | 300 บาท/วัน | ปล่อย learning 2-3 สัปดาห์ |
 
 รวม ~700 บาท/วัน → ~21,000 บาท/เดือน

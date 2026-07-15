@@ -55,7 +55,7 @@
 
 ### P1.4 Canonical ของหน้า ads ชี้ไป URL ที่ไม่มีจริง
 `app/aed/amoul-i7/page.tsx:18` → `canonical: "/ads/aed-i7"` แต่ route นี้ไม่มี (404)
-- **แก้:** เปลี่ยนเป็น `/aed/amoul-i7` หรือเอา canonical ออก (หน้าเป็น noindex อยู่แล้ว)
+- **อัปเดต (ก.ค. 2026):** หน้า landing เดิมของรุ่น Amoul ถูกยกเลิก (อย. สั่งระงับโฆษณา) — path นี้กำลังถูกลบและ redirect ไป `/` ประเด็น canonical จึงตกไป
 
 ### P1.5 รวม LINE OA URL ให้เหลือที่เดียว
 URL `https://line.me/R/oaMessage/@jiacpr/...` hardcode ซ้ำใน **24 ไฟล์** และข้อความ prefill เริ่ม drift แล้ว (ส่วนใหญ่ "สนใจ AED ครับ" แต่ `RentalSpotlight.tsx:5` ใช้ "สนใจเช่า AED")
