@@ -1,6 +1,6 @@
 // ─── PRIMEDIC HeartSave line (Y0 / Y8 / YA0 / YA8) ─────────────────────────────
-// Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
-// HeartSave comparison sheet.
+// The current AED product line (Yuwell Y2 flagship + HeartSave Y0/Y8). Specs from
+// the PRIMEDIC HeartSave comparison sheet.
 //
 // Compliance: PRIMEDIC's อย./ฆพ. (incl. validUntil + importer disclaimer) live in
 // ./regulatory.ts (re-exported here for backward-compat). อย. 65-2-2-2-0013415

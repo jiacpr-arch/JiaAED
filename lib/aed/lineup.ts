@@ -3,17 +3,16 @@
 // (primedic.ts). Prices/ids are imported, never re-typed here, so there's one
 // source of truth per model.
 //
-// Amoul i7 discontinued (ก.ค. 2026) — Yuwell Y2 replaced it everywhere,
-// including the SKU/lead-form slot it used to occupy (see products.ts). The
-// "Amoul" brand type/styling stay in LineupBrand/LineupProductCard in case a
-// future legacy-support card needs it, but no card uses it anymore.
+// Yuwell Y2 replaced Amoul i7 everywhere (ก.ค. 2026), including the SKU/lead-form
+// slot it used to occupy (see products.ts). All Amoul product data/styling has
+// been removed (อย. สั่งระงับสินค้า Amoul ทั้งหมด).
 //
 //   Tier 1 "รุ่นเริ่มต้น":  PRIMEDIC HeartSave Y0
 //   Tier 2 "รุ่นสูงกว่า":   PRIMEDIC HeartSave Y8  +  Yuwell Y2 (เรือธง)  +  Yuwell AED GPS
 
 import { primedicModels, yuwellGpsAed, type PrimedicModel } from "./primedic";
 
-export type LineupBrand = "Amoul" | "PRIMEDIC" | "Yuwell";
+export type LineupBrand = "PRIMEDIC" | "Yuwell";
 
 export type LineupCard = {
   id: string;
