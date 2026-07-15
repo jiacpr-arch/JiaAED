@@ -4,14 +4,14 @@ Use ONLY AED product images when building Meta/Google ad creatives for this
 project. The copy is about the **AED Yuwell Y2 defibrillator** — the image must
 show the AED, not another product.
 
-> **Amoul i7 discontinued (ก.ค. 2026)** — Yuwell Y2 replaced it as the
-> site-wide featured product. `product-main.png` (below) is Amoul-only
-> creative and is NOT used anywhere in the codebase anymore — the new hero
-> photo is `yuwell-y2-main.jpg`. The `/aed/amoul-i7` PPC landing page and its
-> creatives (`aed-i7-poster.jpg`, `aed-i7-promo-39999.png`,
-> `scripts/build-promo-poster.mjs`) were intentionally left untouched because
-> they're tied to a live Google Ads campaign — coordinate with the owner
-> before changing those so ad copy and landing page stay in sync.
+> **Amoul i7 discontinued (ก.ค. 2026) + คำสั่งระงับโฆษณาจาก อย.** — Yuwell Y2
+> replaced it as the site-wide featured product. `product-main.png` (below) is
+> Amoul-only creative and is NOT used anywhere in the codebase anymore — the new
+> hero photo is `yuwell-y2-main.jpg`. อย. สั่งระงับการโฆษณารุ่น Amoul: แคมเปญ/
+> โฆษณาต้องถูก PAUSE ที่แพลตฟอร์ม Google/Facebook Ads โดยตรง (งานที่เจ้าของต้องทำ
+> เอง) หน้า landing `/aed/amoul-i7` กำลังถูกลบและ redirect ไปหน้าแรก
+> `scripts/build-promo-poster.mjs` ถูกรีแบรนด์เป็น Yuwell Y2 แล้ว ส่วนรูป Amoul เดิม
+> (`aed-i7-poster.jpg`, `aed-i7-promo-39999.png`) เลิกใช้กับงานโฆษณาแล้ว
 
 ## ✅ AED creatives (safe to use)
 
@@ -24,14 +24,18 @@ show the AED, not another product.
 | `aed-wallcabinet.png` | AED wall cabinet |
 | `feature-grid.jpg` | AED feature grid |
 
-## 🟡 Amoul i7 creatives (legacy — `/aed/amoul-i7` PPC campaign only)
+## 🟡 Legacy creatives (retired — do NOT use in any live ad)
+
+Former Amoul i7 assets. Kept only as historical files — the product is
+discontinued and its advertising was suspended by อย. Do not use these in any
+Meta/Google ad creative.
 
 | File | Content |
 | --- | --- |
-| `product-main.png` | AED Amoul i7 unit (front) — discontinued, ads-landing-page only |
-| `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
+| `product-main.png` | Legacy AED unit (front) — discontinued, retired |
+| `aed-i7-2.jpg` | Legacy AED poster (MP Group) — retired |
 
-## 🟢 AED rental campaign creatives (เช่า AED — Amoul)
+## 🟢 AED rental campaign creatives (เช่า AED)
 
 Pricing posters for the AED rental program (landing: `/aed/rental`). VAT not included on the posters.
 

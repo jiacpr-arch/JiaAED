@@ -1,4 +1,4 @@
-// Build the AED Amoul i7 promo poster (full price ฿70,000 struck through → ฿39,999).
+// Build the AED Yuwell Y2 promo poster (full price ฿70,000 struck through → ฿39,999).
 //
 // Renders a self-contained SVG to PNG with @resvg/resvg-js using the Kanit /
 // Sarabun Thai fonts in ./.fonts. Output: public/images/aed-i7-promo-39999.png
@@ -63,7 +63,7 @@ const svg = `
   <!-- title -->
   <text x="540" y="206" text-anchor="middle" font-family="Kanit ExtraBold" font-size="68" fill="#ffffff">เครื่องกระตุกหัวใจไฟฟ้า</text>
   <text x="540" y="284" text-anchor="middle" font-family="Kanit Black" font-size="74" fill="#FFC72C">อัตโนมัติ (AED)</text>
-  <text x="540" y="344" text-anchor="middle" font-family="Kanit SemiBold" font-size="42" fill="#ffffff">รุ่น AED Amoul i7</text>
+  <text x="540" y="344" text-anchor="middle" font-family="Kanit SemiBold" font-size="42" fill="#ffffff">รุ่น AED Yuwell Y2</text>
 
   <!-- corner discount ribbon -->
   <g transform="translate(1080,0) rotate(45)">
@@ -117,7 +117,7 @@ const svg = `
   <text x="60" y="1296" font-family="Kanit Black" font-size="44" fill="#FFC72C">JiaAED</text>
   <text x="60" y="1330" font-family="Sarabun" font-size="24" fill="#ffffff">เจี่ยรักษา · นำเข้าโดยตรง</text>
   <text x="${W - 60}" y="1290" text-anchor="end" font-family="Kanit SemiBold" font-size="30" fill="#ffffff">LINE: @jiacpr</text>
-  <text x="${W - 60}" y="1326" text-anchor="end" font-family="Sarabun" font-size="22" fill="#FFD24A">อย. 68-2-2-2-0005243 · ฆพ.743/2569</text>
+  <text x="${W - 60}" y="1326" text-anchor="end" font-family="Sarabun" font-size="22" fill="#FFD24A">อย. 65-2-2-2-0013415</text>
 </svg>`;
 
 const resvg = new Resvg(svg, {

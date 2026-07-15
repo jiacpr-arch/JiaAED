@@ -119,7 +119,7 @@ export const accessories: Accessory[] = [
     features: [
       "สัญญาณเตือนเมื่อเปิดตู้",
       "ติดตั้งง่าย มองเห็นชัด",
-      "ใช้ได้กับ AED Amoul i7 และรุ่นทั่วไป",
+      "ใช้ได้กับ AED ทุกรุ่นทั่วไป",
     ],
   },
   {
@@ -136,32 +136,9 @@ export const accessories: Accessory[] = [
       "เคลื่อนย้ายตำแหน่งได้",
     ],
   },
-  {
-    id: "pad-adult",
-    name: "แผ่นนำไฟฟ้า (Pad) สำหรับผู้ใหญ่",
-    subtitle: "อะไหล่ Amoul i7 / วัสดุสิ้นเปลือง",
-    price: 5000,
-    image: "/images/accessory-pad.jpg",
-    description: "แผ่นแปะนำไฟฟ้าสำหรับผู้ใหญ่ ใช้กับเครื่อง AED Amoul i7",
-    features: [
-      "ของแท้ Ambul (REF 1.129.00201)",
-      "สำหรับผู้ใหญ่",
-      "แนะนำเปลี่ยนตามวันหมดอายุที่ระบุบนซอง",
-    ],
-  },
-  {
-    id: "battery",
-    name: "แบตเตอรี่ AED Amoul i7",
-    subtitle: "อะไหล่ Amoul i7",
-    price: 7500,
-    image: "/images/accessory-battery.jpg",
-    description: "แบตเตอรี่สำรอง / เปลี่ยนทดแทน สำหรับเครื่อง AED Amoul i7",
-    features: [
-      "ของแท้ Ambul",
-      "ลิเธียม อายุการใช้งานยาวนาน",
-      "พร้อมใช้งานทันที",
-    ],
-  },
+  // ─── อะไหล่ Amoul i7 (pad/แบตเตอรี่) ถูกถอดออก (ก.ค. 2026) — อย. สั่งระงับโฆษณา
+  //     ผลิตภัณฑ์ Amoul ทั้งหมด จึงไม่แสดงรายการอะไหล่ Amoul บนเว็บอีกต่อไป
+  //     (ลูกค้าเดิมสอบถามได้ทาง LINE) เหลือเฉพาะอะไหล่ PRIMEDIC/Yuwell ด้านล่าง ───────
   // ─── อะไหล่ PRIMEDIC — ราคาจะใส่ทีหลัง (price: null) ───────────────────────────
   {
     id: "primedic-pad",

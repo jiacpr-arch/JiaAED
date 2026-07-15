@@ -13,12 +13,12 @@ import {
 export const metadata: Metadata = {
   title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
   description:
-    "ดาวน์โหลดคู่มือการใช้งาน AED Amoul i7 ภาษาไทย, สเปคทางเทคนิคสำหรับ TOR/ใบเสนอราคา, ใบรับรอง CE Mark, ISO 13485 และ EN 1789:2020",
+    "ดาวน์โหลดคู่มือการใช้งาน AED Yuwell Y2 / PRIMEDIC HeartSave ภาษาไทย, สเปคทางเทคนิคสำหรับ TOR/ใบเสนอราคา และใบรับรองมาตรฐาน CE Mark, ISO 13485",
   alternates: { canonical: "/docs" },
   openGraph: {
     title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
     description: "ดาวน์โหลดคู่มือการใช้งาน AED, สเปคสำหรับ TOR/ใบเสนอราคา และใบรับรองมาตรฐาน",
-    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+    images: [{ url: "/images/primedic-y2-open.jpg", width: 1200, height: 900, alt: "AED Yuwell Y2 / PRIMEDIC HeartSave" }],
   },
 };
 
@@ -57,13 +57,13 @@ export default function DocsPage() {
             </div>
             <h1 className="text-3xl md:text-4xl font-black mb-3">เอกสารดาวน์โหลด</h1>
             <p className="text-gray-400 max-w-2xl">
-              คู่มือการใช้งาน คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Amoul i7 — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา
+              คู่มือการใช้งาน คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Yuwell Y2 / PRIMEDIC HeartSave — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา
             </p>
           </div>
           <div className="hidden md:block rounded-2xl overflow-hidden border border-gray-800 bg-white">
             <Image
-              src="/images/product-main.png"
-              alt="เครื่อง AED Amoul i7"
+              src="/images/primedic-y2-open.jpg"
+              alt="เครื่อง AED Yuwell Y2 / PRIMEDIC HeartSave"
               width={440}
               height={440}
               className="w-full h-auto"

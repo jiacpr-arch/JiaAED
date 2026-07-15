@@ -1,4 +1,4 @@
-import { AMOUL_REGULATORY, regLine } from "./regulatory";
+import { PRIMEDIC_REGULATORY, regLine } from "./regulatory";
 
 export type RentalPlan = {
   id: string;
@@ -127,7 +127,7 @@ export type RentalTrustSignal = { icon: string; text: string };
 export const rentalTrustSignals: RentalTrustSignal[] = [
   { icon: "🔁", text: "เครื่องสำรองเปลี่ยนให้ใน 24–48 ชม. ถ้าเครื่องเสีย" },
   { icon: "🩹", text: "ใช้ช่วยชีวิตจริง — เปลี่ยนแผ่นให้ฟรี" },
-  { icon: "✅", text: regLine(AMOUL_REGULATORY) },
+  { icon: "✅", text: regLine(PRIMEDIC_REGULATORY) },
   { icon: "💰", text: "มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ" },
 ];
 

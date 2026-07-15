@@ -19,7 +19,7 @@ export async function sendLeadAutoReply(p: {
   if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
 
   const greeting = p.fullName ? `คุณ${p.fullName}` : "ลูกค้า";
-  const product = p.productName ? `รุ่น ${p.productName}` : "AED Amoul i7";
+  const product = p.productName ? `รุ่น ${p.productName}` : "AED Yuwell Y2 / PRIMEDIC HeartSave";
 
   const subject = `JiaAED — ได้รับข้อมูลของคุณแล้ว`;
   const html = `<!DOCTYPE html>
@@ -33,8 +33,8 @@ export async function sendLeadAutoReply(p: {
   </p>
   <hr style="border:none; border-top:1px solid #eee; margin:24px 0;">
   <p style="font-size:13px; color:#666;">
-    JiaAED by เจี่ยรักษา · ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569<br>
-    เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Amoul i7
+    JiaAED by เจี่ยรักษา · ทะเบียน อย. 65-2-2-2-0013415<br>
+    เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Yuwell Y2 / PRIMEDIC HeartSave
   </p>
 </body>
 </html>`;
@@ -47,7 +47,7 @@ export async function sendLeadAutoReply(p: {
     `หากเร่งด่วน คุยทาง LINE ได้ทันที: ${LINE_OA}`,
     ``,
     `JiaAED by เจี่ยรักษา`,
-    `ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569`,
+    `ทะเบียน อย. 65-2-2-2-0013415`,
   ].join("\n");
 
   const res = await client.emails.send({

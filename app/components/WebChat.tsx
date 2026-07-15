@@ -6,7 +6,7 @@ import { trackEvent as sharedTrack } from "@/lib/aed/analytics-client";
 import { LINE_OA } from "@/lib/aed/line";
 const STORAGE_KEY = "jiaaed_web_chat_v1";
 const GREETING =
-  "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Amoul i7\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือคำแนะนำเลือกรุ่น?";
+  "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Yuwell Y2 / PRIMEDIC HeartSave\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือคำแนะนำเลือกรุ่น?";
 
 type Msg = { role: "user" | "assistant"; content: string };
 

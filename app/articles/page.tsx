@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "บทความ AED — ความรู้และวิธีใช้ | JiaAED",
     description: "บทความเกี่ยวกับเครื่อง AED วิธีการใช้งาน การบำรุงรักษา และมาตรฐานความปลอดภัย",
-    images: [{ url: "/images/aed-i7-poster.jpg", width: 1179, height: 1651, alt: "AED Amoul i7" }],
+    images: [{ url: "/images/yuwell-y2-main.jpg", width: 1200, height: 900, alt: "AED Yuwell Y2 / PRIMEDIC HeartSave" }],
   },
 };
 
