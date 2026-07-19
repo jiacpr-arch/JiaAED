@@ -23,11 +23,44 @@ function readTracking() {
   }
 }
 
+// Class sets per theme — "dark" matches the site-wide dark pages (default);
+// "light" is for white-background landing pages (e.g. /aed/yuwell-y2).
+const THEMES = {
+  dark: {
+    success: "border-green-400/40 bg-green-400/5",
+    successText: "text-green-300",
+    form: "border-yellow-400/30 bg-gradient-to-br from-yellow-400/5 to-transparent",
+    title: "text-white",
+    subtitle: "text-gray-500",
+    input:
+      "bg-gray-950 border-gray-700 text-white placeholder:text-gray-600 focus:border-yellow-400",
+    submit: "bg-yellow-400 text-yellow-900 hover:bg-yellow-300",
+    error: "text-red-300",
+    footer: "text-gray-500",
+    footerLink: "hover:text-yellow-400",
+  },
+  light: {
+    success: "border-green-500/40 bg-green-50",
+    successText: "text-green-700",
+    form: "border-gray-200 bg-gray-50",
+    title: "text-gray-900",
+    subtitle: "text-gray-500",
+    input:
+      "bg-white border-gray-300 text-gray-900 placeholder:text-gray-400 focus:border-red-500",
+    submit: "bg-red-600 text-white hover:bg-red-500",
+    error: "text-red-600",
+    footer: "text-gray-500",
+    footerLink: "hover:text-gray-900",
+  },
+} as const;
+
 export function MiniLeadForm({
   variant = "mini",
   title = "📞 ฝากเบอร์ ทีมงานโทรกลับ",
   subtitle = "ใช้เวลา 5 วินาที · ตอบใน 24 ชั่วโมง",
-}: { variant?: string; title?: string; subtitle?: string } = {}) {
+  theme = "dark",
+}: { variant?: string; title?: string; subtitle?: string; theme?: "dark" | "light" } = {}) {
+  const t = THEMES[theme];
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const startedRef = useRef(false);
@@ -202,8 +235,8 @@ export function MiniLeadForm({
 
   if (state === "success") {
     return (
-      <div className="rounded-2xl border border-green-400/40 bg-green-400/5 px-5 py-4 text-center">
-        <p className="text-green-300 font-semibold">✅ ได้รับเบอร์แล้ว — ทีมงานจะโทรกลับภายใน 24 ชม.</p>
+      <div className={`rounded-2xl border px-5 py-4 text-center ${t.success}`}>
+        <p className={`font-semibold ${t.successText}`}>✅ ได้รับเบอร์แล้ว — ทีมงานจะโทรกลับภายใน 24 ชม.</p>
       </div>
     );
   }
@@ -213,7 +246,7 @@ export function MiniLeadForm({
       ref={formRef}
       onSubmit={onSubmit}
       onFocus={onFieldFocus}
-      className="rounded-2xl border border-yellow-400/30 bg-gradient-to-br from-yellow-400/5 to-transparent p-5 md:p-6"
+      className={`rounded-2xl border p-5 md:p-6 ${t.form}`}
       noValidate
     >
       {/* display:none prevents browser autofill false-positives; the field is still submitted in FormData */}
@@ -221,15 +254,15 @@ export function MiniLeadForm({
         <input type="text" name="hp_field" tabIndex={-1} autoComplete="off" />
       </div>
       <div className="text-center mb-3">
-        <p className="font-bold text-white text-lg">{title}</p>
-        <p className="text-xs text-gray-500">{subtitle}</p>
+        <p className={`font-bold text-lg ${t.title}`}>{title}</p>
+        <p className={`text-xs ${t.subtitle}`}>{subtitle}</p>
       </div>
       <div className="flex flex-col sm:flex-row gap-2">
         <input
           name="fullName"
           placeholder="ชื่อ (ไม่บังคับ)"
           autoComplete="name"
-          className="flex-1 rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white placeholder:text-gray-600 focus:border-yellow-400 focus:outline-none"
+          className={`flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
         />
         <input
           name="phone"
@@ -238,22 +271,22 @@ export function MiniLeadForm({
           required
           placeholder="เบอร์โทร *"
           autoComplete="tel"
-          className="flex-1 rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white placeholder:text-gray-600 focus:border-yellow-400 focus:outline-none"
+          className={`flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
         />
         <button
           type="submit"
           disabled={state === "submitting"}
-          className="bg-yellow-400 text-yellow-900 font-bold px-6 py-3 rounded-xl hover:bg-yellow-300 transition-colors disabled:opacity-60"
+          className={`font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-60 ${t.submit}`}
         >
           {state === "submitting" ? "กำลังส่ง…" : "📨 ส่ง"}
         </button>
       </div>
       {state === "error" && errorMsg && (
-        <p className="text-red-300 text-sm mt-2 text-center">{errorMsg}</p>
+        <p className={`text-sm mt-2 text-center ${t.error}`}>{errorMsg}</p>
       )}
-      <p className="text-[11px] text-gray-500 mt-2 text-center">
+      <p className={`text-[11px] mt-2 text-center ${t.footer}`}>
         ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น ·{" "}
-        <a href="/privacy" className="underline hover:text-yellow-400">นโยบายความเป็นส่วนตัว</a>
+        <a href="/privacy" className={`underline ${t.footerLink}`}>นโยบายความเป็นส่วนตัว</a>
       </p>
     </form>
   );

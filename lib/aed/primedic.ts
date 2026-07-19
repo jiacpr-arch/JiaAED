@@ -66,7 +66,7 @@ export const primedicModels: PrimedicModel[] = [
     // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
     id: "primedic-y2",
     name: "Yuwell Y2",
-    price: 59_000,
+    price: 59_999,
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นท็อป (You Too)",
@@ -99,12 +99,17 @@ export const yuwellGpsAed = {
 
 // Specs shared by all four models — rendered as a simple label/value list.
 // Verified against the official Yuwell HeartSave Y8 spec sheet + the อย. แนบท้าย.
+// ตัวเครื่อง/หูหิ้ว, Self-test ทุก 24 ชม., AHA Guideline 2010/2015 และจอ Backlight
+// ยืนยันโดยเจ้าของ (ก.ค. 2026) เพื่อให้ตรงกับเอกสารสเปกจัดซื้อภาครัฐ.
 export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "รูปแบบคลื่นกระตุก", value: "Biphasic Truncated Exponential (BTE)" },
   { label: "ECG ในตัว", value: "Single Channel ECG — วิเคราะห์จังหวะหัวใจอัตโนมัติ" },
   { label: "มาตรฐานรับรอง", value: "ISO 13485 · CE · อย. 65-2-2-2-0013415" },
+  { label: "แนวทางการกู้ชีพ (CPR)", value: "ตาม AHA Guideline 2010/2015" },
+  { label: "ตัวเครื่อง", value: "วัสดุแข็งแรง มีหูหิ้วในตัว ขนาดกะทัดรัด เคลื่อนย้ายสะดวก" },
+  { label: "Self-test อัตโนมัติ", value: "ทุก 24 ชั่วโมง (บันทึกผลได้ 3,650 ครั้ง)" },
   { label: "ภาษาเสียงนำทาง CPR", value: "4 ภาษา (ไทย / อังกฤษ / จีน / เยอรมัน)" },
-  { label: "หน้าจอแสดงสถานะ", value: "มี" },
+  { label: "หน้าจอแสดงสถานะ", value: "มี — Backlight อ่านง่ายแม้ในที่มืด" },
   { label: "เสียงนำจังหวะกด CPR", value: "มี" },
   { label: "ปุ่ม Shock (กึ่งอัตโนมัติ)", value: "มี ทั้ง Y0 / Y8 / Y2" },
   { label: "ปุ่มเลือกโหมดเด็ก (Child)", value: "มี" },
@@ -160,7 +165,7 @@ export const primedicDiffSpecs: PrimedicSpecRow[] = [
     values: {
       "primedic-y0": "฿39,999",
       "primedic-y8": "฿44,900",
-      "primedic-y2": "฿59,000",
+      "primedic-y2": "฿59,999",
     },
   },
 ];

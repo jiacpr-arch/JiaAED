@@ -18,7 +18,7 @@ export const products: Product[] = [
     id: "i7",
     name: "AED Yuwell Y2",
     subtitle: "รุ่นเรือธง · จอสี EKG",
-    price: 59000,
+    price: 59999,
     msrp: 89000,
     description:
       "จอสี EKG แสดงคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) เหมาะสำหรับสำนักงาน โรงเรียน และหน่วยกู้ชีพที่ต้องการ CPR คุณภาพสูงสุด",

@@ -165,14 +165,14 @@ export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
     cashPriceLabel: "ซื้อสด Y8 ฿44,900",
   },
   {
-    // 22,000 + 3,400 × 18 = ฿83,200 (≈1.41× ราคาสด)
+    // 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999)
     packageId: "pkg-start-y2",
     model: "Yuwell Y2",
     deposit: 22_000,
     monthly: 3_400,
     months: 18,
-    cashPrice: 59_000,
-    cashPriceLabel: "ซื้อสด Y2 ฿59,000",
+    cashPrice: 59_999,
+    cashPriceLabel: "ซื้อสด Y2 ฿59,999",
   },
 ];
 
