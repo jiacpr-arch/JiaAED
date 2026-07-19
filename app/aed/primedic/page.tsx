@@ -19,7 +19,8 @@ import { LINE_OA } from "@/lib/aed/line";
 import { ProductStructuredData } from "@/app/components/StructuredData";
 
 // Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
-// Live now under อย. 65-2-2-2-0013415; ฆพ. (advertising licence) to be added later.
+// Live under อย. 65-2-2-2-0013415 + ฆพ.2475/2569 (Y0/Y2) / ฆพ.287/2567 (Y8) —
+// numbers live in lib/aed/regulatory.ts.
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม | JiaAED",
   description:
