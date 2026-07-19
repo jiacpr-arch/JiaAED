@@ -110,9 +110,17 @@ const keyFeatures: { icon: string; title: string; desc: string }[] = [
   },
 ];
 
+// ใบปลิวทางการ (ฆพ.2475/2569) แยกออกมาโชว์ใหญ่ต่างหาก — ไม่ครอบด้วย aspect-square
+// เหมือนรูปอื่น เพราะเป็นเอกสารที่ต้องอ่านเลขใบอนุญาตได้ชัด
+const FEATURED_KHOP_FLYER = {
+  src: "/images/primedic-y2-flyer-khop.jpg",
+  alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+  width: 4749,
+  height: 5174,
+};
+
 const gallery: { src: string; alt: string }[] = [
   { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)" },
-  { src: "/images/primedic-y2-flyer-khop.jpg", alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569" },
   { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
   // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า ฿59,000
   // ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคา ฿59,999
@@ -269,6 +277,22 @@ export default function YuwellY2Landing() {
       {/* Gallery */}
       <section className="max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">รูปสินค้าจริง</h2>
+
+        {/* ใบปลิวทางการ ฆพ.2475/2569 — โชว์ใหญ่เด่นเป็นพิเศษ อ่านเลขใบอนุญาตได้ชัด */}
+        <div className="max-w-md mx-auto mb-6">
+          <div className="rounded-2xl overflow-hidden border-2 border-red-100 bg-white shadow-sm">
+            <Image
+              src={FEATURED_KHOP_FLYER.src}
+              alt={FEATURED_KHOP_FLYER.alt}
+              width={FEATURED_KHOP_FLYER.width}
+              height={FEATURED_KHOP_FLYER.height}
+              className="w-full h-auto"
+              sizes="(max-width: 768px) 100vw, 448px"
+            />
+          </div>
+          <p className="text-center text-xs text-gray-500 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {gallery.map((img) => (
             <div

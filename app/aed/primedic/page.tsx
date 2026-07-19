@@ -112,12 +112,25 @@ export default function PrimedicPage() {
           </div>
         )}
 
+        {/* Y2 ใบปลิวทางการ (ฆพ.2475/2569) — โชว์ใหญ่เด่นเป็นพิเศษ แยกจากแกลเลอรีปกติ */}
+        <div className="mt-8 max-w-sm mx-auto">
+          <div className="rounded-xl overflow-hidden border-2 border-yellow-400/40 bg-white">
+            <Image
+              src="/images/primedic-y2-flyer-khop.jpg"
+              alt="Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569"
+              width={4749}
+              height={5174}
+              className="w-full h-auto"
+            />
+          </div>
+          <p className="text-center text-xs text-gray-400 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
+        </div>
+
         {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials, khop = official ฆพ.-stamped
             flyers (ฆพ.2475/2569 Y0/Y2, ฆพ.287/2567 Y8) supplied by the owner ก.ค. 2026 */}
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
             { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)", w: 1254, h: 1254 },
-            { src: "/images/primedic-y2-flyer-khop.jpg", alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1961, h: 2137 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่
