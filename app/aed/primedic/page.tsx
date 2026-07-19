@@ -100,17 +100,18 @@ export default function PrimedicPage() {
           </div>
         )}
 
-        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials (Y2 = ภาพสินค้าจริงจากผู้ผลิต) */}
+        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials, khop = official ฆพ.-stamped
+            flyers (ฆพ.2475/2569 Y0/Y2, ฆพ.287/2567 Y8) supplied by the owner ก.ค. 2026 */}
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
             { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)", w: 1254, h: 1254 },
-            { src: "/images/primedic-y2-flyer.jpg",       alt: "Yuwell Y2 — เครื่องปิดและเปิดฝาแสดงขั้นตอนใช้งานบนจอ", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-flyer-khop.jpg", alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1961, h: 2137 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่
             { src: "/images/yuwell-y2-features.webp", alt: "Yuwell Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทุกวัย", w: 1536, h: 1024 },
-            { src: "/images/primedic-y0-flyer-b.png", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวสินค้า", w: 1254, h: 1254 },
-            { src: "/images/primedic-y8-flyer.png",   alt: "PRIMEDIC HeartSave Y8 — ใบปลิวสินค้า", w: 1254, h: 1254 },
+            { src: "/images/primedic-y0-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1957, h: 2142 },
+            { src: "/images/primedic-y8-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y8 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.287/2567", w: 1957, h: 2143 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
               <Image
@@ -135,6 +136,31 @@ export default function PrimedicPage() {
               <div className="text-[11px] text-gray-400 mt-0.5">{c.sub}</div>
             </div>
           ))}
+        </div>
+
+        {/* ใบอนุญาตโฆษณา ฆพ. ตัวจริงจาก อย. — สำหรับผู้ซื้อภาครัฐ/องค์กรที่ต้องตรวจสอบ */}
+        <div className="mt-4">
+          <h2 className="text-sm font-bold text-gray-300 mb-2">ใบอนุญาตโฆษณาเครื่องมือแพทย์ (ฆพ.) ฉบับจริง</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href="/documents/khop-2475-2569-y0-y2.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-center hover:border-yellow-400/50 transition-colors"
+            >
+              <div className="text-sm font-bold text-white">ฆพ.2475/2569</div>
+              <div className="text-[11px] text-gray-400 mt-0.5">HeartSave Y0 / Yuwell Y2 · ดูใบอนุญาตฉบับเต็ม →</div>
+            </a>
+            <a
+              href="/documents/khop-287-2567-y8.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-center hover:border-yellow-400/50 transition-colors"
+            >
+              <div className="text-sm font-bold text-white">ฆพ.287/2567</div>
+              <div className="text-[11px] text-gray-400 mt-0.5">HeartSave Y8 · ดูใบอนุญาตฉบับเต็ม →</div>
+            </a>
+          </div>
         </div>
       </section>
 
