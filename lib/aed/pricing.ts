@@ -13,7 +13,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED Yuwell Y2",
     description: "เครื่อง AED Yuwell Y2 — จอสี EKG + ดู CPR เรียลไทม์ พร้อมแผ่น Pad + แบตเตอรี่",
     msrp: 89_000,
-    startingPrice: 59_000,
+    startingPrice: 59_999,
     bestPrice: 55_900,
     minPrice: 55_900,
     vatRate: 0.07,
@@ -74,7 +74,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   // กลยุทธ์ราคาใหม่ (ก.ค. 2026 — ดู docs/yuwell-pricing-strategy-2026-07-09.md):
   // จุดยืน "เน้นปริมาณ" + Y0/Y8 = ฮาร์ดแวร์เดียวกัน → ให้ Y0 เป็นตัวขายหลัก/โฆษณา
   // ที่หมุด 39,999 (ราคาที่ Y8 เคยขายดี), เก็บพรีเมียม feedback ไว้ที่ Y8 (44,900)
-  // และเก็บพรีเมียมจอ EKG ไว้ที่ Y2 (59,000). bestPrice = ราคายกล็อต (qty ≥ 5).
+  // และเก็บพรีเมียมจอ EKG ไว้ที่ Y2 (59,999). bestPrice = ราคายกล็อต (qty ≥ 5).
   "primedic-y0": {
     id: "primedic-y0",
     name: "PRIMEDIC HeartSave Y0",
@@ -106,7 +106,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     description:
       "AED รุ่นเรือธง — จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) พร้อมเซ็นเซอร์ CPR feedback",
     msrp: 89_000, // เทียบคู่แข่งรุ่นมีจอ (ZOLL/Mindray 72,500–89,000)
-    startingPrice: 59_000, // รุ่นที่ดัน — ถูกกว่าคู่แข่งรุ่นมีจอครึ่งหนึ่ง
+    startingPrice: 59_999, // รุ่นที่ดัน — ถูกกว่าคู่แข่งรุ่นมีจอครึ่งหนึ่ง
     bestPrice: 55_900, // ราคายกล็อต (ทุน 27,000–30,000)
     minPrice: 55_900,
     vatRate: 0.07,
