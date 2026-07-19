@@ -111,7 +111,7 @@ const keyFeatures: { icon: string; title: string; desc: string }[] = [
 
 const gallery: { src: string; alt: string }[] = [
   { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)" },
-  { src: "/images/primedic-y2-flyer.jpg", alt: "Yuwell Y2 — เครื่องปิดและเปิดฝาแสดงขั้นตอนใช้งานบนจอ" },
+  { src: "/images/primedic-y2-flyer-khop.jpg", alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569" },
   { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
   // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า ฿59,000
   // ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคา ฿59,999
@@ -432,6 +432,16 @@ export default function YuwellY2Landing() {
         {PRIMEDIC_REGULATORY.disclaimer && (
           <p className="text-xs text-gray-400 text-center mt-4">{PRIMEDIC_REGULATORY.disclaimer}</p>
         )}
+        <div className="text-center mt-4">
+          <a
+            href="/documents/khop-2475-2569-y0-y2.jpg"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-red-600 hover:text-red-700 font-semibold underline"
+          >
+            📄 ดูใบอนุญาตโฆษณาเครื่องมือแพทย์ ฆพ.2475/2569 ฉบับเต็ม (สำหรับหน่วยงานจัดซื้อ)
+          </a>
+        </div>
       </section>
 
       {/* Lead form */}
