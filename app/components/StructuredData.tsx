@@ -1,6 +1,6 @@
 import { products } from "@/lib/aed/products";
 import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
-import { faqs } from "@/lib/aed/faqs";
+import { faqs, type FAQ } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA } from "@/lib/aed/line";
 
@@ -81,6 +81,29 @@ export function StructuredData() {
  * (homepage shows every lineup and the FAQ section; /aed/primedic shows the
  * PRIMEDIC/Yuwell lineup).
  */
+/**
+ * FAQPage JSON-LD for a specific FAQ list — pass exactly the items the page
+ * renders (same policy as above: markup must mirror visible content).
+ */
+export function FaqStructuredData({ items }: { items: FAQ[] }) {
+  const faqPage = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }}
+    />
+  );
+}
+
 export function ProductStructuredData({
   include = "all",
 }: {

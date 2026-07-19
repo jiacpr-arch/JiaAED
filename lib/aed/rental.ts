@@ -1,4 +1,10 @@
 import { AMOUL_REGULATORY, regLine } from "./regulatory";
+import {
+  faqRentToOwnVsRental,
+  faqMidContractCancel,
+  faqSwitchPackage,
+  type FaqCategory,
+} from "./faqs";
 
 export type RentalPlan = {
   id: string;
@@ -131,6 +137,95 @@ export const rentalTrustSignals: RentalTrustSignal[] = [
   { icon: "💰", text: "มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ" },
 ];
 
+// ─── เช่าซื้อ (Rent-to-Own) ────────────────────────────────────────────────────
+// ตัวเลข mirror acquisitionPackages (./packages.ts) priceNote — แก้ต้องแก้คู่กัน.
+// ยอดรวมทั้งสัญญา derive ด้วย rentToOwnTotal เสมอ ไม่พิมพ์ซ้ำ.
+
+export type RentToOwnBreakdown = {
+  packageId: "pkg-start-y8" | "pkg-start-y2"; // must exist in acquisitionPackages
+  model: string;
+  deposit: number;
+  monthly: number;
+  months: number;
+  cashPrice: number; // ราคาซื้อสดของรุ่นเดียวกัน (จาก primedicModels)
+  cashPriceLabel: string;
+};
+
+export const rentToOwnTotal = (b: RentToOwnBreakdown) => b.deposit + b.monthly * b.months;
+
+export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
+  {
+    // 16,000 + 2,600 × 18 = ฿62,800 (≈1.40× ราคาสด — owner approved 2026-07-19)
+    packageId: "pkg-start-y8",
+    model: "Yuwell Y8",
+    deposit: 16_000,
+    monthly: 2_600,
+    months: 18,
+    cashPrice: 44_900,
+    cashPriceLabel: "ซื้อสด Y8 ฿44,900",
+  },
+  {
+    // 22,000 + 3,400 × 18 = ฿83,200 (≈1.41× ราคาสด)
+    packageId: "pkg-start-y2",
+    model: "Yuwell Y2",
+    deposit: 22_000,
+    monthly: 3_400,
+    months: 18,
+    cashPrice: 59_000,
+    cashPriceLabel: "ซื้อสด Y2 ฿59,000",
+  },
+];
+
+// ─── ตารางเปรียบเทียบ เช่า / เช่าซื้อ / ซื้อขาด ───────────────────────────────
+// ตัวเลขอ้างจาก rentalPlans (เช่า), rentToOwnBreakdowns (เช่าซื้อ) และ
+// acquisitionPackages pkg-premium (ซื้อขาดเงินสด ฿42,900) — ห้ามใส่ราคาใหม่ที่นี่.
+
+export type AcquisitionCompareRow = {
+  dimension: string;
+  rent: string;
+  rentToOwn: string;
+  buy: string;
+};
+
+export const acquisitionComparison: AcquisitionCompareRow[] = [
+  {
+    dimension: "เงินก้อนแรก",
+    rent: "มัดจำ ฿5,000–10,000 (คืนได้)",
+    rentToOwn: "มัดจำ ฿16,000–22,000 (นับเป็นค่าเครื่อง)",
+    buy: "จ่ายเต็ม เงินสด ฿42,900",
+  },
+  {
+    dimension: "ค่าใช้จ่ายต่อเดือน",
+    rent: "เริ่ม ฿1,990 (รายปีเฉลี่ย ~฿1,830)",
+    rentToOwn: "฿2,600–3,400 × 18 เดือน",
+    buy: "ไม่มี (มีค่าวัสดุสิ้นเปลืองเมื่อหมดอายุ)",
+  },
+  {
+    dimension: "กรรมสิทธิ์เมื่อจบสัญญา",
+    rent: "คืนเครื่อง",
+    rentToOwn: "เครื่องเป็นของท่าน ไม่มีค่าใช้จ่ายเพิ่ม",
+    buy: "เป็นเจ้าของตั้งแต่วันแรก",
+  },
+  {
+    dimension: "การดูแลรักษา",
+    rent: "ทีมเราดูแลตลอดสัญญา",
+    rentToOwn: "ตรวจเช็คเบื้องต้น + ประกันโรงงาน",
+    buy: "ดูแลเอง (เลือกซื้อบริการเสริมได้)",
+  },
+  {
+    dimension: "ระยะสัญญา",
+    rent: "รายวัน · รายเดือน (ขั้นต่ำ 3 เดือน) · รายปี",
+    rentToOwn: "18 เดือน",
+    buy: "—",
+  },
+  {
+    dimension: "เหมาะกับ",
+    rent: "อีเวนต์ · ไซต์งาน · องค์กรที่ไม่อยากลงทุนก้อนใหญ่",
+    rentToOwn: "SME ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
+    buy: "องค์กรที่มีงบลงทุน (CAPEX)",
+  },
+];
+
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
@@ -156,5 +251,15 @@ export const rentalFaqs = [
     question: "AED ที่ให้เช่าผ่าน อย. หรือไม่?",
     answer:
       "ผ่านครับ เป็นรุ่น AED Yuwell/PRIMEDIC HeartSave Y2 ทะเบียน อย. 65-2-2-2-0013415 มาตรฐาน ISO 13485 · CE แผ่นอิเล็กโทรดแบบใช้แล้วทิ้ง อายุ 3 ปี แบตเตอรี่ LiMnO₂ ใช้ครั้งเดียว (non-rechargeable)",
+  },
+];
+
+// FAQ ของหน้า /aed/rental แบ่งสองหมวด — หมวดเช่าซื้อ reuse copy ที่ owner อนุมัติ
+// แล้วจาก ./faqs.ts (อ้างอิง ไม่ก็อป).
+export const rentalFaqCategories: FaqCategory[] = [
+  { category: "เช่า AED (รายวัน / รายเดือน / รายปี)", items: rentalFaqs },
+  {
+    category: "เช่าซื้อ — เช่าแล้วได้ซื้อ (Rent-to-Own)",
+    items: [faqRentToOwnVsRental, faqMidContractCancel, faqSwitchPackage],
   },
 ];
