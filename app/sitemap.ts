@@ -88,6 +88,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: "weekly" as const,
             priority: 0.9,
           },
+          {
+            url: `${SITE}/aed/yuwell-y2`,
+            lastModified: now,
+            changeFrequency: "weekly" as const,
+            priority: 0.9,
+          },
         ]
       : []),
   ];
