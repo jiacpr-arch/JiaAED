@@ -60,15 +60,27 @@ export default function PrimedicPage() {
             </p>
             {/* Same facts as the old paragraph, one scannable row per model */}
             <ul className="space-y-2">
-              {[
-                { model: "Y0", price: "฿39,999", diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
-                { model: "Y8", price: "฿44,900", diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
-                { model: "Yuwell Y2", price: "฿59,999", diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)" },
-              ].map((m) => (
+              {(
+                [
+                  { model: "Y0", price: "฿39,999", diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
+                  { model: "Y8", price: "฿44,900", diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
+                  { model: "Yuwell Y2", price: "฿59,999", diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
+                ] as { model: string; price: string; diff: string; href?: string }[]
+              ).map((m) => (
                 <li key={m.model} className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900 px-4 py-3">
                   <span className="flex-shrink-0 font-black text-yellow-400 w-20">{m.model}</span>
                   <span className="flex-shrink-0 font-bold text-white w-20">{m.price}</span>
-                  <span className="text-sm text-gray-300">{m.diff}</span>
+                  <span className="text-sm text-gray-300">
+                    {m.diff}
+                    {m.href && (
+                      <>
+                        {" "}
+                        <Link href={m.href} className="text-yellow-400 hover:text-yellow-300 font-semibold whitespace-nowrap">
+                          ดูรายละเอียดรุ่นนี้ →
+                        </Link>
+                      </>
+                    )}
+                  </span>
                 </li>
               ))}
             </ul>

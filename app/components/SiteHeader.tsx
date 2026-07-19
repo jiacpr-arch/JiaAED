@@ -1,16 +1,8 @@
 import Link from "next/link";
 
 import { LINE_OA } from "@/lib/aed/line";
+import { HEADER_LINKS } from "@/lib/aed/nav";
 import { JiaAedLogo } from "./JiaAedLogo";
-
-const NAV_LINKS: { href: string; label: string }[] = [
-  { href: "/aed/packages", label: "แพ็กเกจ" },
-  { href: "/aed/subscription", label: "เช่า AED" },
-  { href: "/aed/primedic", label: "PRIMEDIC" },
-  { href: "/aed/rental", label: "เช่าระยะสั้น" },
-  { href: "/training", label: "อบรม" },
-  { href: "/about", label: "เกี่ยวกับเรา" },
-];
 
 export function SiteHeader() {
   return (
@@ -20,8 +12,10 @@ export function SiteHeader() {
           <JiaAedLogo className="h-8 w-auto" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-5 text-sm text-gray-300">
-          {NAV_LINKS.map((l) => (
+        {/* Full nav needs lg — 7 links overflow the md range, where the
+            scrollable row below covers navigation instead. */}
+        <nav className="hidden lg:flex items-center gap-5 text-sm text-gray-300">
+          {HEADER_LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="hover:text-yellow-400 transition-colors">
               {l.label}
             </Link>
@@ -58,9 +52,9 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Mobile nav row */}
-      <nav className="md:hidden flex items-center gap-4 overflow-x-auto px-4 pb-2 text-xs text-gray-400">
-        {NAV_LINKS.map((l) => (
+      {/* Mobile/tablet nav row */}
+      <nav className="lg:hidden flex items-center gap-4 overflow-x-auto px-4 pb-2 text-xs text-gray-400">
+        {HEADER_LINKS.map((l) => (
           <Link
             key={l.href}
             href={l.href}

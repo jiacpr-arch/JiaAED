@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { LINE_OA } from "@/lib/aed/line";
+import { FOOTER_GROUPS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export function SiteFooter({
@@ -16,16 +17,24 @@ export function SiteFooter({
   return (
     <footer className="border-t border-gray-800 bg-gray-950">
       <div className="max-w-6xl mx-auto px-4 py-10 text-sm text-gray-400">
-        <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4">
-          <Link href="/aed/packages" className="hover:text-yellow-400">แพ็กเกจ AED</Link>
-          <Link href="/aed/subscription" className="hover:text-yellow-400">เช่า AED รายเดือน</Link>
-          <Link href="/aed/primedic" className="hover:text-yellow-400">PRIMEDIC HeartSave</Link>
-          <Link href="/aed/rental" className="hover:text-yellow-400">เช่าระยะสั้น</Link>
-          <Link href="/training" className="hover:text-yellow-400">อบรม CPR/AED</Link>
-          <Link href="/about" className="hover:text-yellow-400">เกี่ยวกับเรา</Link>
-          <Link href="/docs" className="hover:text-yellow-400">เอกสาร</Link>
-          <Link href="/articles" className="hover:text-yellow-400">บทความ</Link>
-          <Link href="/privacy" className="hover:text-yellow-400">นโยบายความเป็นส่วนตัว</Link>
+        {/* Grouped sitemap — every public page is reachable from any footer */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 mb-8">
+          {FOOTER_GROUPS.map((g) => (
+            <div key={g.title}>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
+                {g.title}
+              </h3>
+              <ul className="space-y-2">
+                {g.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="hover:text-yellow-400 transition-colors">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
         <p className="text-xs text-gray-500">
           {regNote ?? `เจี่ยรักษา (JiaAED) — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง · ทะเบียน อย. ${fda} · ฆพ.${adLicense}`}
