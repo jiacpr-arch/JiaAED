@@ -44,20 +44,27 @@ function fmtDate(iso: string | null): string {
 }
 
 async function getNews(): Promise<NewsRow[]> {
-  const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("aed_news_items")
-    .select("id,source_title,source_url,source_name,topic,our_blurb,published_at,created_at")
-    .eq("hidden", false)
-    .order("published_at", { ascending: false, nullsFirst: false })
-    .order("created_at", { ascending: false })
-    .limit(60);
+  // Any Supabase problem (missing env, network, query error) degrades to the
+  // page's empty state instead of a 500 — news is never worth killing the page.
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("aed_news_items")
+      .select("id,source_title,source_url,source_name,topic,our_blurb,published_at,created_at")
+      .eq("hidden", false)
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
+      .limit(60);
 
-  if (error) {
-    console.error("[news] query error:", error.message);
+    if (error) {
+      console.error("[news] query error:", error.message);
+      return [];
+    }
+    return (data ?? []) as NewsRow[];
+  } catch (e) {
+    console.error("[news] failed to load:", e instanceof Error ? e.message : e);
     return [];
   }
-  return (data ?? []) as NewsRow[];
 }
 
 export default async function NewsPage() {

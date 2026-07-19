@@ -28,6 +28,7 @@ export type LineupCard = {
   badge: string | null; // ป้ายมุมบน เช่น "แนะนำ"
   highlight: boolean; // true => เน้นกรอบ/ปุ่มสีเหลือง
   dataProduct: string; // data-product attr (ตรงกับ id ใน pricing.ts)
+  detailHref?: string; // หน้ารายละเอียดรุ่น (ถ้ามี) — การ์ดจะแสดงลิงก์ "ดูรายละเอียด"
 };
 
 export type LineupTier = {
@@ -67,6 +68,8 @@ function primedicCard(m: PrimedicModel, subtitle: string): LineupCard {
     badge: m.badge,
     highlight: m.badge != null,
     dataProduct: m.id,
+    // Y2 has its own landing page; the rest share the PRIMEDIC lineup page.
+    detailHref: m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic",
   };
 }
 

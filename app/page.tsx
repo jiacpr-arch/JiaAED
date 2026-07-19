@@ -27,6 +27,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 export const revalidate = 3600;
 
 import { LINE_OA, lineOaUrl } from "@/lib/aed/line";
+import { FOOTER_LINKS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { rentalPlans } from "@/lib/aed/rental";
 import { ProductStructuredData } from "./components/StructuredData";
@@ -1031,26 +1032,21 @@ export default function Home() {
 
       {/* Footer — absorbs the deeper links removed from the navbar */}
       <footer className="bg-black border-t border-gray-800 text-gray-600 text-sm py-8 px-4 text-center">
-        <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-4 text-gray-400">
-          <Link href="/aed/packages" className="hover:text-yellow-400 transition-colors">แพ็กเกจ</Link>
-          <Link href="/aed/subscription" className="hover:text-yellow-400 transition-colors">เช่า AED</Link>
-          <Link href="/aed/rental" className="hover:text-yellow-400 transition-colors">เช่าระยะสั้น</Link>
-          <Link href="/aed/primedic" className="hover:text-yellow-400 transition-colors">PRIMEDIC</Link>
+        <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-4 text-gray-400 max-w-3xl mx-auto">
+          {/* Central nav list = every public page; the two on-page anchors ride along */}
+          {FOOTER_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className="hover:text-yellow-400 transition-colors">
+              {l.label}
+            </Link>
+          ))}
           <a href="#tech" className="hover:text-yellow-400 transition-colors">สเปก</a>
           <a href="#faq" className="hover:text-yellow-400 transition-colors">FAQ</a>
-          <Link href="/docs" className="hover:text-yellow-400 transition-colors">เอกสาร</Link>
-          <Link href="/articles" className="hover:text-yellow-400 transition-colors">บทความ</Link>
-          <Link href="/news" className="hover:text-yellow-400 transition-colors">ข่าว</Link>
         </div>
         <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>
         <p className="mb-1">
           <a href={PHONE_HREF} data-cta="tel_footer" className="text-gray-400 hover:text-yellow-400">
             📞 โทร {PHONE_DISPLAY}
-          </a>{" "}
-          ·{" "}
-          <Link href="/privacy" className="text-gray-400 hover:text-yellow-400">
-            นโยบายความเป็นส่วนตัว
-          </Link>
+          </a>
         </p>
         <p>
           จำหน่าย AED Yuwell / PRIMEDIC HeartSave

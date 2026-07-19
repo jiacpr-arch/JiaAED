@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PhotoStrip } from "@/app/components/PhotoStrip";
+import { SiteFooter } from "@/app/components/SiteFooter";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 import { LatestNews } from "@/app/components/LatestNews";
@@ -552,6 +553,9 @@ export default function AedRentalLanding() {
           <p className="text-xs text-gray-500 mt-3">เจี่ยรักษา — นำเข้าเครื่องมือแพทย์โดยตรง</p>
         </div>
       </section>
+
+      {/* Full sitemap footer — the landing page used to dead-end here */}
+      <SiteFooter regNote={`Yuwell/PRIMEDIC HeartSave — ${regLine(PRIMEDIC_REGULATORY)}`} />
     </div>
   );
 }

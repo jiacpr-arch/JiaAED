@@ -12,6 +12,7 @@ import {
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
+import { FOOTER_GROUPS } from "@/lib/aed/nav";
 import { lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
@@ -503,6 +504,34 @@ export default function YuwellY2Landing() {
           </p>
         </div>
       </section>
+
+      {/* Light-theme sitemap footer — SiteFooter is dark and this page is also
+          iframe-embedded on jia1669.com, so it gets its own white variant. */}
+      <footer className="border-t border-gray-200 bg-white">
+        <div className="max-w-6xl mx-auto px-4 py-10 text-sm text-gray-600">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 mb-8">
+            {FOOTER_GROUPS.map((g) => (
+              <div key={g.title}>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+                  {g.title}
+                </h3>
+                <ul className="space-y-2">
+                  {g.links.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} className="hover:text-red-600 transition-colors">
+                        {l.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} JiaAED · เจี่ยรักษา — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
