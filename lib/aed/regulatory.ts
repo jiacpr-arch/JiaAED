@@ -30,15 +30,18 @@ export const PRIMEDIC_REGULATORY: BrandRegulatory = {
   brand: "PRIMEDIC HeartSave",
   // อย. ครอบคลุมทั้งตระกูล HeartSave Y&YA (Y0/Y8/YA8 + แบต + แผ่น CPR) นำเข้าโดย
   // บ.ยูเวล เมดิคอล (ไทยแลนด์) — ใช้กับทั้ง PRIMEDIC Y0/Y8 และ Yuwell GPS บนเว็บ.
-  // TODO(owner): ยังไม่มี ฆพ. (ใบอนุญาตโฆษณา) — เมื่อได้เลขจริงเติมที่ `adLicense`
-  // แล้ว UI จะแสดง ฆพ. เพิ่มเองอัตโนมัติ (regLine + การ์ดสเปก + JSON-LD).
+  //
+  // ฆพ. (ใบอนุญาตโฆษณา ออกให้ บ.เจี่ยรักษา จำกัด):
+  //   • ฆพ.2475/2569 — HeartSave Y0 + Y2 · ออก 17 ก.ค. 2569 · ใช้ได้ถึง 16 ก.ค. 2572
+  //   • ฆพ.287/2567  — HeartSave Y8 · ใช้ได้ถึง 21 ก.พ. 2570 (คนละใบ — ระบุไว้ใน disclaimer)
+  // ทั้งสองใบระบุสื่อ "เว็บไซต์ www.jia1669.com" — ดู docs/owner-fill-in-checklist.md
   fda: "65-2-2-2-0013415",
-  adLicense: null,
+  adLicense: "2475/2569",
   published: true,
-  pendingNote: "อยู่ระหว่างยืนยันเลขทะเบียน — สอบถามสถานะล่าสุดทาง LINE",
+  pendingNote: "",
   validUntil: "31 ธันวาคม 2569",
   disclaimer:
-    "เครื่อง AED Yuwell/PRIMEDIC HeartSave (Y0/Y8) ขึ้นทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด",
+    "เครื่อง AED Yuwell/PRIMEDIC HeartSave ขึ้นทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด · ใบอนุญาตโฆษณา ฆพ.2475/2569 (HeartSave Y0/Y2) และ ฆพ.287/2567 (HeartSave Y8) โดย บริษัท เจี่ยรักษา จำกัด",
 };
 
 // Human-readable "อย. xxx · ฆพ.yyy" line for a brand, or its pending note.
