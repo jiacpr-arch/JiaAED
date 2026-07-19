@@ -129,6 +129,12 @@ export function RentalSpotlight() {
                 💬 สอบถาม / จองเช่า
               </a>
             </div>
+            <Link
+              href="/aed/rental#rent-to-own"
+              className="block text-center text-sm font-medium text-yellow-400/90 hover:text-yellow-300"
+            >
+              หรือเช่าซื้อ ผ่อน 18 เดือนเป็นเจ้าของ →
+            </Link>
             <p className="text-center text-gray-600 text-xs">
               ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้ · อย. รับรอง
             </p>

@@ -6,7 +6,7 @@
 // Prices are PROVISIONAL (wholesale being finalized). Update here only.
 
 export type AcquisitionPackage = {
-  id: "pkg-premium" | "pkg-start" | "pkg-start-y2" | "pkg-care";
+  id: "pkg-premium" | "pkg-start-y8" | "pkg-start-y2" | "pkg-care";
   kind: "buy" | "rent-to-own" | "managed-rental";
   name: string; // English brand name, e.g. "Safety Premium"
   nameTh: string; // Thai label, e.g. "ซื้อขาด"
@@ -56,29 +56,30 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     imageAlt: "เช่า AED บริการครบวงจร — PRIMEDIC HeartSave",
   },
   {
-    id: "pkg-start",
+    // Replaces the discontinued Amoul i7 pkg-start (มัดจำ 15,000 + 2,500 × 18).
+    id: "pkg-start-y8",
     kind: "rent-to-own",
-    name: "Safety Start",
+    name: "Safety Start — Yuwell Y8",
     nameTh: "เช่าแล้วได้ซื้อ",
-    tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง",
-    priceLabel: "฿2,500/เดือน",
+    tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
+    priceLabel: "฿2,600/เดือน",
     listPriceLabel: null,
-    // Rent-to-own total = 15,000 + 2,500 × 18 = ฿60,000. Sits between cash buy
-    // (฿42,900) and the credit/government list (฿69,000) — a ~40% financing
-    // premium over cash, which is the expected cost of paying monthly. Coherent.
-    priceNote: "มัดจำ ฿15,000 + ผ่อน ฿2,500/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
-    deposit: "฿15,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
+    // Rent-to-own total = 16,000 + 2,600 × 18 = ฿62,800 vs ราคาสด Y8 ฿44,900
+    // (62,800 / 44,900 ≈ 1.40) — สัดส่วนพรีเมียมเดียวกับ pkg-start-y2 (≈1.41)
+    // ตามนโยบายผ่อนของร้าน. Owner approved 2026-07-19.
+    priceNote: "มัดจำ ฿16,000 + ผ่อน ฿2,600/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
+    deposit: "฿16,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
     features: [
-      "ใช้ชุดอุปกรณ์ครบได้ทันที",
+      "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
       "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
       "ครบ 18 เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม",
     ],
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
     badge: "ยอดนิยม",
-    ctaProductHint: "pkg-start",
+    ctaProductHint: "primedic-y8",
     href: "/quote",
-    image: "/images/product-main.png",
-    imageAlt: "เช่าแล้วได้ซื้อ AED Amoul i7",
+    image: "/images/primedic-y8-open.png",
+    imageAlt: "เช่าแล้วได้ซื้อ AED Yuwell/PRIMEDIC HeartSave Y8",
   },
   {
     id: "pkg-start-y2",
@@ -89,7 +90,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     priceLabel: "฿3,400/เดือน",
     listPriceLabel: null,
     // Rent-to-own total = 22,000 + 3,400 × 18 = ฿83,200. สัดส่วนพรีเมียมเทียบราคาสด
-    // (83,200 / 59,999 ≈ 1.39) ใกล้เคียงสัดส่วนของแพ็ก pkg-start เดิม (60,000/42,900 ≈ 1.40)
+    // (83,200 / 59,999 ≈ 1.39) ใกล้เคียงสัดส่วนของแพ็ก pkg-start-y8 (62,800/44,900 ≈ 1.40)
     // — คงความสม่ำเสมอของนโยบายผ่อนระหว่างรุ่น (ปรับตามราคาป้าย Y2 ใหม่ 59,999).
     priceNote: "มัดจำ ฿22,000 + ผ่อน ฿3,400/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
     deposit: "฿22,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",

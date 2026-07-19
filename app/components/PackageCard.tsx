@@ -10,7 +10,13 @@ const KIND_LABEL: Record<AcquisitionPackage["kind"], string> = {
   "managed-rental": "เช่าบริการ",
 };
 
-export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
+export function PackageCard({
+  pkg,
+  lineCta = "package_card",
+}: {
+  pkg: AcquisitionPackage;
+  lineCta?: string;
+}) {
   // Two visual families so the grid scans at a glance: rent = yellow (brand
   // accent), buy = white/silver "ownership". Buy also gets a fallback badge so
   // it never looks recessive next to the badged rental cards.
@@ -90,7 +96,7 @@ export function PackageCard({ pkg }: { pkg: AcquisitionPackage }) {
           href={LINE_OA}
           target="_blank"
           rel="noopener noreferrer"
-          data-line-cta="package_card"
+          data-line-cta={lineCta}
           data-product={pkg.ctaProductHint}
           className={`text-center font-semibold py-3 rounded-full transition-colors ${
             pkg.badge
