@@ -20,6 +20,7 @@ import {
   rentalFaqCategories,
 } from "@/lib/aed/rental";
 import { acquisitionPackages } from "@/lib/aed/packages";
+import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 
 export const revalidate = 3600;
 
@@ -483,6 +484,46 @@ export default function AedRentalLanding() {
               <div className="text-xs text-gray-300 font-semibold">{t.title}</div>
             </div>
           ))}
+        </div>
+
+        {/* ใบ อย. ตัวจริง — scanned certificate, click-through to the full PDF */}
+        <div className="mb-10 bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div className="grid md:grid-cols-[220px_1fr] gap-5 items-center">
+            <a
+              href="/documents/fda-yuwell-aed-65-2-2-2-0013415.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block relative w-full h-64 md:h-72 rounded-xl overflow-hidden bg-white"
+            >
+              <Image
+                src="/images/fda-cert-yuwell-aed.webp"
+                alt="ใบรับแจ้งรายการละเอียดนำเข้าเครื่องมือแพทย์ อย. เลขที่ 65-2-2-2-0013415 — Yuwell AED"
+                fill
+                className="object-contain p-1"
+                sizes="(max-width: 768px) 100vw, 220px"
+              />
+            </a>
+            <div>
+              <h2 className="font-bold text-lg text-white mb-1">
+                🏅 ใบทะเบียน อย. ของจริง — ตรวจสอบได้
+              </h2>
+              <p className="text-sm text-yellow-400 font-semibold mb-2">
+                {regLine(PRIMEDIC_REGULATORY)}
+                {PRIMEDIC_REGULATORY.validUntil && ` · ใช้ได้ถึง ${PRIMEDIC_REGULATORY.validUntil}`}
+              </p>
+              <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                {PRIMEDIC_REGULATORY.disclaimer}
+              </p>
+              <a
+                href="/documents/fda-yuwell-aed-65-2-2-2-0013415.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-yellow-400/10 text-yellow-400 text-sm font-bold px-5 py-2.5 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors"
+              >
+                📄 เปิดดูใบ อย. ฉบับเต็ม (PDF)
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* FAQ — both models, schema markup mirrors exactly these items */}
