@@ -397,6 +397,59 @@ export default function Home() {
             ))}
           </div>
 
+          {/* ใบปลิวโฆษณาทางการ — รูปที่ผ่านการขออนุญาต ฆพ. แล้ว (ตัวรูปโฆษณาจริง
+              มีเลข ฆพ. กำกับในภาพ) ไม่ใช่สแกนเอกสารใบอนุญาต ซึ่งดูได้ที่ /aed/primedic */}
+          <div className="mt-12">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-bold text-white">ใบปลิวทางการ — ได้รับอนุญาตโฆษณาจาก อย. แล้ว</h3>
+              <p className="text-gray-500 text-sm mt-1">
+                ทุกภาพผ่านการขออนุญาตโฆษณาเครื่องมือแพทย์ถูกต้อง — ฆพ.2475/2569 (Y0 / Y2) · ฆพ.287/2567 (Y8)
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  src: "/images/primedic-y2-flyer-khop.jpg",
+                  alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+                  w: 4749,
+                  h: 5174,
+                  href: "/aed/yuwell-y2",
+                  label: "Yuwell Y2 · ฆพ.2475/2569",
+                },
+                {
+                  src: "/images/primedic-y0-flyer-khop.jpg",
+                  alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+                  w: 4727,
+                  h: 5174,
+                  href: "/aed/primedic",
+                  label: "HeartSave Y0 · ฆพ.2475/2569",
+                },
+                {
+                  src: "/images/primedic-y8-flyer-khop.jpg",
+                  alt: "PRIMEDIC HeartSave Y8 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.287/2567",
+                  w: 4724,
+                  h: 5174,
+                  href: "/aed/primedic",
+                  label: "HeartSave Y8 · ฆพ.287/2567",
+                },
+              ].map((f) => (
+                <Link key={f.src} href={f.href} data-cta="flyer_khop_home" className="group">
+                  <div className="rounded-xl overflow-hidden border border-gray-800 bg-white group-hover:border-yellow-400/60 transition-colors">
+                    <Image
+                      src={f.src}
+                      alt={f.alt}
+                      width={f.w}
+                      height={f.h}
+                      sizes="(min-width: 640px) 33vw, 100vw"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <p className="text-center text-xs text-gray-400 mt-2">{f.label}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* PRIMEDIC Y0 / Y8 / Y2 detail — collapsed so the brand choice stays simple */}
           <details className="group mt-12 rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
             <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
