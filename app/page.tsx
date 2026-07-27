@@ -26,7 +26,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-import { LINE_OA, lineOaUrl } from "@/lib/aed/line";
+import { LINE_OA, LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { FOOTER_LINKS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { rentalPlans } from "@/lib/aed/rental";
@@ -1028,7 +1028,7 @@ export default function Home() {
             data-line-cta="footer_cta"
             className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
-            💬 เพิ่มเพื่อน LINE @jiacpr
+            💬 เพิ่มเพื่อน LINE {LINE_OA_ID}
           </a>
         </div>
       </section>

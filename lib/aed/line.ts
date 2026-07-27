@@ -1,8 +1,14 @@
 /**
  * Single source of truth for the LINE Official Account URL.
  * Change the OA handle or default prefill message here — nowhere else.
+ *
+ * ⚠️ ชั่วคราว: กลับมาใช้ Basic ID ของ channel เก่า เพราะ OA @jiacpr ยังไม่ได้
+ * ตั้งค่า Messaging API (webhook/บอท/แจ้งเตือน ทั้งหมดผูกกับ channel เก่า)
+ * — ลิงก์ @jiacpr ที่ปล่อยไป 18 มิ.ย.–27 ก.ค. ทำให้ยอดแอดเป็นศูนย์
+ * เมื่อตั้งค่า channel @jiacpr ครบ (webhook URL + secret/token ใน Vercel)
+ * ค่อยเปลี่ยนค่านี้กลับเป็น "@jiacpr" ที่เดียวจบ
  */
-export const LINE_OA_ID = "@jiacpr";
+export const LINE_OA_ID = "@273fzpzs";
 
 /**
  * Chat URL that opens the OA with a prefilled message.
