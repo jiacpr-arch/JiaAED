@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
+import { LINE_OA_ID } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "นโยบายความเป็นส่วนตัว | JiaAED",
@@ -99,7 +100,7 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-5 space-y-1">
             <li>เจี่ยรักษา (JiaAED)</li>
             <li>อีเมล: jiacpr@gmail.com</li>
-            <li>LINE OA: @jiacpr</li>
+            <li>LINE OA: {LINE_OA_ID}</li>
           </ul>
 
           <p className="mt-10 text-gray-500">

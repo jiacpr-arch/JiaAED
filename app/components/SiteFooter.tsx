@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
 import { FOOTER_GROUPS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
@@ -42,7 +42,7 @@ export function SiteFooter({
         <p className="text-xs text-gray-600 mt-2">
           © {new Date().getFullYear()} JiaAED ·{" "}
           <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="footer" className="hover:text-yellow-400">
-            ติดต่อทาง LINE @jiacpr
+            ติดต่อทาง LINE {LINE_OA_ID}
           </a>{" "}
           ·{" "}
           <a href={PHONE_HREF} data-cta="tel_footer" className="hover:text-yellow-400">

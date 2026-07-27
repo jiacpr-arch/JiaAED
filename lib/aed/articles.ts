@@ -1,3 +1,4 @@
+import { LINE_OA_ID } from "./line";
 export type Article = {
   slug: string;
   title: string;
@@ -267,7 +268,7 @@ AED Amoul i7 มี Self-test อัตโนมัติทั้งแบบ D
 - ระบุจุดวาง AED บนแผนที่งานและบรีฟทีมงานทุกคน
 - จัดทีมที่ผ่านอบรม CPR ประจำจุด — เราจัด [อบรม CPR & AED](/training) ให้ทีมงานก่อนวันงานได้
 
-ดูแผนเช่าอีเวนต์ทั้งหมดที่ [หน้าเช่า AED](/aed/rental) หรือปรึกษาผังจุดวางฟรีทาง LINE @jiacpr`,
+ดูแผนเช่าอีเวนต์ทั้งหมดที่ [หน้าเช่า AED](/aed/rental) หรือปรึกษาผังจุดวางฟรีทาง LINE ${LINE_OA_ID}`,
   },
   {
     slug: "aed-law-thailand",

@@ -13,7 +13,7 @@ import { acquisitionPackages } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { FOOTER_GROUPS } from "@/lib/aed/nav";
-import { lineOaUrl } from "@/lib/aed/line";
+import { LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export const revalidate = 3600;
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   description:
     `AED Yuwell Y2 (You Too) รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ยังไม่รวม VAT) ` +
     "หรือผ่อน ฿3,400/เดือน × 18 เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · " +
-    "โทร 090-979-1212 หรือ LINE @jiacpr",
+    `โทร 090-979-1212 หรือ LINE ${LINE_OA_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
   openGraph: {
@@ -513,7 +513,7 @@ export default function YuwellY2Landing() {
               data-product="primedic-y2"
               className="inline-block bg-[#06C755] text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-[#05a847] shadow-lg shadow-[#06C755]/30"
             >
-              💬 ทัก LINE @jiacpr
+              💬 ทัก LINE {LINE_OA_ID}
             </a>
             <a
               href={PHONE_HREF}
