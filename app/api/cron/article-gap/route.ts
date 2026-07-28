@@ -55,7 +55,7 @@ export async function GET(req: Request) {
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
-    await notifyAnalyticsAlert("🚨 Article-gap: ไม่มี GITHUB_TOKEN");
+    console.warn("[article-gap] skipped — no GITHUB_TOKEN env var");
     return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
   }
   const [owner, repo] = ghRepo.split("/");
@@ -68,17 +68,15 @@ export async function GET(req: Request) {
     result.sample_size = sample.sample.length;
     result.total_messages = sample.total_messages;
 
+    // Routine "started"/"nothing to do" pings are noisy on LINE — log them
+    // server-side only. LINE stays reserved for the finished article below.
     if (!hasEnoughSignal(sample)) {
-      await notifyAnalyticsDigest(
-        `⏸️ Article-gap skip: คำถามจากแชทใน 2 สัปดาห์น้อยเกิน (${sample.sample.length})`,
-      );
+      console.log(`[article-gap] skip: too few chat questions in the last 2 weeks (${sample.sample.length})`);
       await logRun({ ...result, skipped: "small_sample" });
       return NextResponse.json({ ok: true, skipped: "small_sample" });
     }
 
-    await notifyAnalyticsDigest(
-      `📚 Article-gap: วิเคราะห์ ${sample.sample.length} คำถาม กำลังให้ Claude หาช่องว่างความรู้...`,
-    );
+    console.log(`[article-gap] analyzing ${sample.sample.length} questions for knowledge gaps`);
 
     const proposal = await proposeArticle(sample);
     result.proposal = {
