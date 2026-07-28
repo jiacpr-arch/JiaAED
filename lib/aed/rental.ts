@@ -263,3 +263,53 @@ export const rentalFaqCategories: FaqCategory[] = [
     items: [faqRentToOwnVsRental, faqMidContractCancel, faqSwitchPackage],
   },
 ];
+
+// ─── Prompt block สำหรับบอท (LINE bot + web chat) ─────────────────────────────
+// สร้างจากข้อมูลแผนจริงด้านบนทั้งหมด — แก้ราคา/เงื่อนไขที่ data แล้ว prompt
+// ของทั้งสองบอทอัปเดตตามเอง ห้ามพิมพ์ตัวเลขซ้ำในไฟล์ prompt.
+
+export function rentalKnowledgeBlock(): string {
+  const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
+
+  const plans = rentalPlans
+    .map(
+      (p) =>
+        `• ${p.name} — ${thb(p.price)}${p.unit} · มัดจำ ${p.deposit}\n  ${p.features.join(" · ")}`,
+    )
+    .join("\n");
+
+  const events = eventPackages
+    .map((e) => `• ${e.nameTh} (${e.duration}): ${e.priceNote}`)
+    .join("\n");
+
+  const multi = multiUnitPricing
+    .map(
+      (t) =>
+        `• ${t.units}: ${thb(t.pricePerUnit)}/เครื่อง/ปี${t.badge ? ` (${t.badge})` : ""}`,
+    )
+    .join("\n");
+
+  const rto = rentToOwnBreakdowns
+    .map(
+      (b) =>
+        `• ${b.model}: มัดจำ ${thb(b.deposit)} + ${thb(b.monthly)}/เดือน × ${b.months} งวด = รวม ${thb(rentToOwnTotal(b))} จบสัญญาเครื่องเป็นของลูกค้าทันที (เทียบ${b.cashPriceLabel})`,
+    )
+    .join("\n");
+
+  const faq = rentalFaqs.map((f) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
+
+  return `### เช่า AED (รายวัน / รายเดือน / รายปี)
+${plans}
+
+แพ็กอีเวนต์แบบเหมา:
+${events}
+
+ราคารายปีต่อเครื่องเมื่อเช่าหลายเครื่อง:
+${multi}
+
+### เช่าซื้อ (Rent-to-Own) — ผ่อน 18 งวด จบสัญญาเป็นเจ้าของ
+${rto}
+
+### FAQ เรื่องเช่า
+${faq}`;
+}

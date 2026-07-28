@@ -4,6 +4,7 @@ import { knowledgeBlock } from "./knowledge";
 import { documents } from "./documents";
 import { articles } from "./articles";
 import { LINE_OA_ID } from "./line";
+import { rentalKnowledgeBlock } from "./rental";
 
 function productBlock(): string {
   return products
@@ -40,6 +41,13 @@ ${productBlock()}
 ## FAQ ที่ควรรู้
 
 ${faqBlock()}
+
+## บริการเช่า & เช่าซื้อ (มีให้บริการจริง — ห้ามตอบว่ามีขายอย่างเดียว)
+
+${rentalKnowledgeBlock()}
+
+- รายละเอียดเต็ม + ตารางเปรียบเทียบ เช่า/เช่าซื้อ/ซื้อขาด อยู่หน้า [/aed/rental](/aed/rental) — ชวนลูกค้าเปิดหน้านี้เมื่อคุยเรื่องเช่า
+- ถ้าลูกค้าอยากจองเช่า/เช่าซื้อ → ชวนฝากเบอร์ที่ฟอร์ม #contact หรือทัก LINE ${LINE_OA_ID} เพื่อให้ทีมทำสัญญา
 
 ## ข้อมูลเชิงลึก (Knowledge Base)
 
@@ -80,4 +88,4 @@ ${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
 ในข้อความสามารถใช้ลิงก์ markdown แบบ [ข้อความ](#section) หรือ [ข้อความ](/docs) เพื่อนำลูกค้าไปยังส่วนต่างๆ ได้`;
 
 export const WEB_CHAT_GREETING =
-  "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Amoul i7\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือต้องการคำแนะนำเลือกรุ่นที่เหมาะกับสถานที่ของคุณ?";
+  "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยด้านเครื่อง AED ของเจี่ยรักษา\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค เช่า/เช่าซื้อ หรือต้องการคำแนะนำเลือกรุ่นที่เหมาะกับสถานที่ของคุณ?";
