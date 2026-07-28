@@ -81,7 +81,9 @@ export async function GET(req: Request) {
   }
 
   if (!isConfigured()) {
-    await notifyAnalyticsAlert("🚨 Ads Round-2: ไม่มี GOOGLE_ADS_* env vars — ข้าม");
+    // Not-configured is a routine, repeating state (not a one-off incident) —
+    // log it server-side instead of paging LINE every day.
+    console.warn("[ads-round2] skipped — no GOOGLE_ADS_* env vars");
     return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 500 });
   }
 
