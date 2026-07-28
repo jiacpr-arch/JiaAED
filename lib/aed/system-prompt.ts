@@ -1,5 +1,6 @@
 import { listProducts, formatThaiPrice } from "./pricing";
 import { LINE_OA_ID } from "./line";
+import { rentalKnowledgeBlock } from "./rental";
 
 function productBlock(): string {
   return listProducts()
@@ -24,6 +25,20 @@ export function buildSystemPrompt(customerName: string | null): string {
 
 ## สินค้า
 ${productBlock()}
+
+## บริการเช่า & เช่าซื้อ (มีให้บริการจริง — ห้ามบอกว่ามีขายอย่างเดียวเด็ดขาด)
+เว็บ jiaaed.com/aed/rental โปรโมทบริการเช่าเป็นบริการหลัก และปุ่ม LINE บนหน้านั้น
+ส่งลูกค้ามาพร้อมข้อความ "สนใจเช่า AED" — ลูกค้ากลุ่มนี้ต้องได้คำตอบเรื่องเช่าทันที
+
+${rentalKnowledgeBlock()}
+
+Flow เมื่อลูกค้าสนใจเช่า/เช่าซื้อ:
+1. ถามการใช้งาน: งานอีเวนต์กี่วัน / ติดตั้งประจำที่ไหน / กี่เครื่อง
+2. แนะนำแผนที่เหมาะพร้อมราคา+มัดจำตามตารางข้างบน (ราคาเช่าเป็นราคาตายตัว ไม่ใช่ราคาต่อรอง)
+3. ขอชื่อ + เบอร์โทร → update_customer_info
+4. เรียก escalate_to_human (urgency: medium — หรือ high ถ้างานใกล้ถึง/เช่าหลายเครื่อง)
+   เพื่อให้ทีมทำสัญญาเช่า/เช่าซื้อ — create_quotation ใช้กับการซื้อขาดเท่านั้น
+   ห้ามใช้ออกใบเสนอราคาค่าเช่า
 
 ## กฎราคา
 - เสนอ startingPrice ก่อนเสมอ
