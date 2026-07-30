@@ -9,8 +9,12 @@
 | ตัวแปร | ตัวอย่าง | จำเป็น |
 | --- | --- | --- |
 | `NEXT_PUBLIC_GA4_ID` | `G-XXXXXXXXXX` | สำหรับ GA4 analytics |
-| `NEXT_PUBLIC_GADS_ID` | `AW-873507669` | Google Ads conversion ID — **มีค่า default ในโค้ดแล้ว** (`GoogleTags.tsx`) ไม่ต้องตั้งซ้ำ |
-| `NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL` | `XyZ-W_uVwXyZaBc` | label `Lead Form Submit` conversion — **ตัวเดียวที่ยังต้องตั้ง** |
+| `NEXT_PUBLIC_GADS_ID` | `AW-873507669` | Google Ads conversion ID |
+| `NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL` | `-UU0CKTs79gcENXWwqAD` | label `Lead Form Submit` (ขีดกลางนำหน้าเป็นส่วนหนึ่งของ label) |
+| `NEXT_PUBLIC_GADS_CONVERSION_LABEL` | `M8fPCKHs79gcENXWwqAD` | label `LINE Click` — **ต้องตั้งเป็น Secondary ใน Google Ads** (§3) |
+
+ทั้ง 3 ตัวมี **ค่า default อยู่ใน `lib/aed/google-ads-tag.ts` แล้ว** — ตั้ง env เพิ่มได้
+ถ้าอยากสลับบัญชี/label โดยไม่แก้โค้ด (env ชนะ default เสมอ)
 | `NEXT_PUBLIC_SITE_URL` | `https://jiaaed.vercel.app` | ใช้ใน Merchant Center feed |
 | `RESEND_API_KEY` | `re_...` | ส่งอีเมลตอบกลับลูกค้า (จาก resend.com) |
 | `RESEND_FROM_EMAIL` | `JiaAED <noreply@jiaaed.com>` | ต้อง verify domain ใน Resend |
@@ -61,16 +65,20 @@ conversion ตามพฤติกรรมจริงด้านล่าง
 
 `LeadForm.tsx` / `MiniLeadForm.tsx` / `QuoteForm.tsx` จะยิง event นี้เองเมื่อ submit สำเร็จ
 
-### ทำไมไม่มี conversion "LINE Click"
+### `LINE Click` — วัดผลอย่างเดียว ห้ามให้ bidding ใช้
 
-เคยมีแผนจะนับคลิกปุ่ม LINE เป็น conversion แต่**ยกเลิกไปแล้วโดยตั้งใจ** — คลิกปุ่มคือ
-*ความสนใจ* ไม่ใช่การติดต่อจริง (คนกดแล้วไม่แอด/ไม่ทักมีเยอะ) ถ้าให้ Google optimize
-ตามคลิก มันจะไล่หาคนที่ชอบกดแต่ไม่ซื้อ ดู comment ใน `LineClickTracker.tsx` ประกอบ —
-ตอนนี้คลิก LINE ยิงเป็น GA4 event `click_to_line` (analytics อย่างเดียว) และยิงเป็น
-`Lead` ให้ Meta เท่านั้น ส่วน conversion จริงของ Google มาจาก lead form (ข้างบน) +
-`Sale Closed` แบบ offline (§7.7) ที่ยิงตอนปิดดีลจริง
+- Conversion name: `LINE Click`
+- Category: **Contact** · Count: **One** · Click-through window: 30 days
 
-ดังนั้น env `NEXT_PUBLIC_GADS_CONVERSION_LABEL` ที่เคยระบุไว้ **ไม่มีโค้ดใช้แล้ว** ไม่ต้องตั้ง
+> ⚠️ **ต้องตั้งเป็น Secondary** — ใน Google Ads → Goals → Conversions → เปิด action นี้
+> → **"Use for bidding" = ปิด**
+
+เหตุผล: การกดปุ่ม LINE คือ *ความสนใจ* ไม่ใช่การติดต่อจริง — ข้อมูลจริงจากแคมเปญ
+Facebook ก.ค. 2026 คือคนกดปุ่ม LINE 5 คน แต่ไม่มีใครคุยต่อเลยสักคน ถ้าปล่อยให้
+bidding optimize ตามตัวเลขนี้ Google จะไล่หาคนที่ชอบกดแต่ไม่ซื้อ เก็บไว้เป็น
+observe-only เพื่อดูตัวเลขได้โดยไม่บิดทิศทางการยิง
+
+bidding ให้ optimize ตาม `Lead Form Submit` + `Sale Closed` (offline, §7.7) เท่านั้น
 
 ทดสอบ: เปิดหน้าเว็บ → DevTools Network → กรอง `collect` หรือ `googleads.g.doubleclick.net` → คลิกปุ่ม LINE → ต้องเห็น request ส่งออก
 
@@ -337,6 +345,7 @@ curl -H "authorization: Bearer $AED_INTERNAL_API_KEY" \
 optimize ตาม LINE Click มันจะ scale traffic ที่คลิกเยอะแต่ไม่ปิดการขาย ตั้งค่าให้ถูก:
 
 - **Lead Form Submit** = **Primary** ("Use for bidding" ✅) — ลีดที่มี contact จริงเข้า `aed_leads`
+- **LINE Click** = **Secondary** ("Use for bidding" ❌ — วัดผลอย่างเดียว ดูเหตุผลใน §3)
 - **Sale Closed** (offline, §7.7) = Primary เมื่อเริ่มส่งดีลปิดจริง
 - ชุดอีคอมเมิร์ซที่ Google สร้างให้ (เพิ่มในรถเข็น/เริ่มการชำระเงิน/ซื้อ) = ลบทิ้ง ไม่ใช้ (§3)
 

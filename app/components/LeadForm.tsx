@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { products } from "@/lib/aed/products";
 
 import { LINE_OA } from "@/lib/aed/line";
@@ -182,12 +183,9 @@ export function LeadForm() {
           gtag("event", "lead_form_submit", {
             product_id: productId || null,
           });
-          const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
-          const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
-          if (gAdsId && leadLabel) {
-            gtag("event", "conversion", {
-              send_to: `${gAdsId}/${leadLabel}`,
-            });
+          const sendTo = gadsSendTo(GADS_LEAD_CONVERSION_LABEL);
+          if (sendTo) {
+            gtag("event", "conversion", { send_to: sendTo });
           }
         }
 
