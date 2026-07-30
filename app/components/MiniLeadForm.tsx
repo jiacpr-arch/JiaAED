@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 
 type State = "idle" | "submitting" | "success" | "error";
 
@@ -211,12 +212,9 @@ export function MiniLeadForm({
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
         if (typeof gtag === "function") {
           gtag("event", "lead_form_submit", { variant });
-          const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
-          const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
-          if (gAdsId && leadLabel) {
-            gtag("event", "conversion", {
-              send_to: `${gAdsId}/${leadLabel}`,
-            });
+          const sendTo = gadsSendTo(GADS_LEAD_CONVERSION_LABEL);
+          if (sendTo) {
+            gtag("event", "conversion", { send_to: sendTo });
           }
         }
 
