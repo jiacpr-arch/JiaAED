@@ -144,8 +144,10 @@ AED Yuwell Y2 จอสี EKG ดูคุณภาพ CPR สด ๆ ราค
 - **Bidding:** เริ่ม Maximize clicks + งบ ฿150–200/วัน → สลับเป็น Maximize conversions
   เมื่อมี lead ≥15/30 วัน (daily digest จะแจ้งเตือนเองเมื่อถึงเกณฑ์ `bid_strategy_ready`)
 - **Location:** ประเทศไทย · ปิด Display Network + Search Partners
-- **Conversion:** "Lead Form Submit" เป็น primary, "LINE Click" เป็น secondary
-  (ดูวิธีตั้ง label ใน `docs/google-ads-setup.md`)
+- **Conversion:** "Lead Form Submit" เป็น primary (ตัวเดียวฝั่ง browser) — คลิกปุ่ม LINE
+  ไม่นับเป็น conversion ของ Google โดยตั้งใจ และห้ามใช้ชุดอีคอมเมิร์ซที่ Google สร้างให้
+  อัตโนมัติ (เพิ่มในรถเข็น/เริ่มการชำระเงิน) เพราะเว็บไม่มีตะกร้าสินค้า
+  (ดู `docs/google-ads-setup.md` §3)
 - **หมายเหตุ consent:** gtag ฝั่ง browser โหลดหลังผู้ใช้กดยอมรับคุกกี้เท่านั้น —
   ตัวเลข conversion ใน Google จะต่ำกว่าจริงเล็กน้อย ระบบ server-side
   (`recordConversion` ผ่าน gclid) ช่วยอัปโหลดเพิ่มให้อยู่แล้ว

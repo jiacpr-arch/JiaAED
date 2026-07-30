@@ -2,7 +2,9 @@ import Script from "next/script";
 
 export function GoogleTags() {
   const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || "G-4PZZC620E2";
-  const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
+  // Google Ads account 461-594-5872 (Jia1669.com). Defaulted like GA4 above so
+  // the conversion tag ships without depending on a Vercel env var being set.
+  const gAdsId = process.env.NEXT_PUBLIC_GADS_ID || "AW-873507669";
 
   const tagId = ga4Id || gAdsId;
   if (!tagId) return null;
