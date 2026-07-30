@@ -31,17 +31,20 @@ show the AED, not another product.
 | `product-main.png` | AED Amoul i7 unit (front) — discontinued, ads-landing-page only |
 | `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
 
-## 🟢 AED rental campaign creatives (เช่า AED — Amoul)
+## 🟢 AED rental campaign creatives (เช่า AED — Yuwell/PRIMEDIC)
 
 Pricing posters for the AED rental program (landing: `/aed/rental`). VAT not included on the posters.
+2026-07-30: replaced the Amoul-device versions with the owner's Yuwell/PRIMEDIC poster
+(`rentaed2.png` from Drive) — per-plan cards are column crops of the same poster.
+Usable in paid ads (matches ฆพ.2475/2569); the old Amoul versions must NOT be re-used.
 
 | File | Content |
 | --- | --- |
-| `aed-rent-daily.jpg` | เช่ารายวัน/อีเวนต์ ฿1,500 วันแรก (วันถัดไป ฿900/วัน) |
-| `aed-rent-monthly.jpg` | เช่ารายเดือน ฿1,990/เดือน (ขั้นต่ำ 3 เดือน) |
-| `aed-rent-yearly.jpg` | เช่ารายปี ฿22,000/ปี (คุ้มที่สุด) |
-| `aed-rent-all.jpg` | รวม 3 แพ็กเกจ (แนวนอน 3:2) |
-| `aed-rent-all-portrait.jpg` | รวม 3 แพ็กเกจ (แนวตั้ง 3:4) |
+| `aed-rent-daily.jpg` | เช่ารายวัน/อีเวนต์ ฿1,500 วันแรก (วันถัดไป ฿900/วัน) — Yuwell/PRIMEDIC |
+| `aed-rent-monthly.jpg` | เช่ารายเดือน ฿1,990/เดือน (ขั้นต่ำ 3 เดือน) — Yuwell/PRIMEDIC |
+| `aed-rent-yearly.jpg` | เช่ารายปี ฿22,000/ปี (คุ้มที่สุด) — Yuwell/PRIMEDIC |
+| `aed-rent-all.jpg` / `aed-rent-all.webp` | รวม 3 แพ็กเกจ (แนวนอน 3:2) — Yuwell/PRIMEDIC |
+| `aed-rent-all-portrait.jpg` | รวม 3 แพ็กเกจ (แนวตั้ง 3:4) — ⚠️ ยังเป็น Amoul เดิม ห้ามใช้ยิงโฆษณา รอทำเวอร์ชัน Yuwell |
 
 ## 🔴 PRIMEDIC / Yuwell assets
 
