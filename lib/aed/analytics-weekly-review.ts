@@ -207,7 +207,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
   };
 }
 
-const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์การตลาดดิจิทัลที่ช่วยร้าน JiaAED (ขาย AED Amoul i7) ดูข้อมูลรายสัปดาห์แล้วแนะนำ action items
+const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์การตลาดดิจิทัลที่ช่วยร้าน JiaAED (ขาย AED Yuwell Y2 / PRIMEDIC HeartSave) ดูข้อมูลรายสัปดาห์แล้วแนะนำ action items
 
 กฏการตอบ:
 - ภาษาไทยล้วน กระชับ ตัดสินใจได้ทันที

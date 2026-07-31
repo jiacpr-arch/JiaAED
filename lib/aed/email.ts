@@ -3,6 +3,7 @@ import { Resend } from "resend";
 const FROM = process.env.RESEND_FROM_EMAIL || "JiaAED <noreply@jiaaed.com>";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "sales@jiaaed.com";
 import { LINE_OA } from "@/lib/aed/line";
+import { PRIMEDIC_REGULATORY, regLine } from "./regulatory";
 
 function getClient(): Resend | null {
   const key = process.env.RESEND_API_KEY;
@@ -19,7 +20,7 @@ export async function sendLeadAutoReply(p: {
   if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
 
   const greeting = p.fullName ? `คุณ${p.fullName}` : "ลูกค้า";
-  const product = p.productName ? `รุ่น ${p.productName}` : "AED Amoul i7";
+  const product = p.productName ? `รุ่น ${p.productName}` : "AED Yuwell / PRIMEDIC HeartSave";
 
   const subject = `JiaAED — ได้รับข้อมูลของคุณแล้ว`;
   const html = `<!DOCTYPE html>
@@ -33,8 +34,8 @@ export async function sendLeadAutoReply(p: {
   </p>
   <hr style="border:none; border-top:1px solid #eee; margin:24px 0;">
   <p style="font-size:13px; color:#666;">
-    JiaAED by เจี่ยรักษา · ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569<br>
-    เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Amoul i7
+    JiaAED by เจี่ยรักษา · ${regLine(PRIMEDIC_REGULATORY)}<br>
+    เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Yuwell / PRIMEDIC HeartSave
   </p>
 </body>
 </html>`;
@@ -47,7 +48,7 @@ export async function sendLeadAutoReply(p: {
     `หากเร่งด่วน คุยทาง LINE ได้ทันที: ${LINE_OA}`,
     ``,
     `JiaAED by เจี่ยรักษา`,
-    `ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569`,
+    regLine(PRIMEDIC_REGULATORY),
   ].join("\n");
 
   const res = await client.emails.send({

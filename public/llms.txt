@@ -1,17 +1,17 @@
 # JiaAED — เจี่ยรักษา
 
-> ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Amoul i7 ในประเทศไทย — อย. รับรอง ใบโฆษณาถูกต้องตามกฎหมาย
+> ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ AED Yuwell / PRIMEDIC HeartSave ในประเทศไทย — อย. รับรอง ใบโฆษณาถูกต้องตามกฎหมาย
 
-JiaAED จัดจำหน่ายเครื่อง AED Amoul i7 ที่ผ่านมาตรฐานสากล CE, IP65, ISO 13485 และผ่าน อย. ไทย (ทะเบียน 68-2-2-2-0005243) พร้อมใบอนุญาตโฆษณา ฆพ.743/2569 บริการลูกค้าผ่าน LINE Official Account @273fzpzs ตอบโดย AI ตลอด 24 ชั่วโมง
+JiaAED จัดจำหน่ายเครื่อง AED Yuwell / PRIMEDIC HeartSave ที่ผ่านมาตรฐานสากล CE, ISO 13485 และผ่าน อย. ไทย (ทะเบียน 65-2-2-2-0013415) พร้อมใบอนุญาตโฆษณา ฆพ.2475/2569 (HeartSave Y0/Y2) และ ฆพ.287/2567 (HeartSave Y8) บริการลูกค้าผ่าน LINE Official Account @273fzpzs ตอบโดย AI ตลอด 24 ชั่วโมง
 
 ## Key facts
 
 - **บริษัท**: เจี่ยรักษา (JiaAED)
 - **เว็บไซต์**: https://jiaaed.com
 - **LINE Official**: @273fzpzs (https://line.me/R/ti/p/@273fzpzs)
-- **ทะเบียน อย.**: 68-2-2-2-0005243
-- **ใบอนุญาตโฆษณา**: ฆพ.743/2569
-- **รุ่นสินค้า**: AED Amoul i7 (Automated External Defibrillator)
+- **ทะเบียน อย.**: 65-2-2-2-0013415
+- **ใบอนุญาตโฆษณา**: ฆพ.2475/2569 (HeartSave Y0/Y2) · ฆพ.287/2567 (HeartSave Y8)
+- **รุ่นสินค้า**: AED Yuwell Y2 / PRIMEDIC HeartSave Y0 · Y8 (Automated External Defibrillator)
 - **ประเทศ**: Thailand
 - **ภาษา**: ไทย, English
 
@@ -19,34 +19,29 @@ JiaAED จัดจำหน่ายเครื่อง AED Amoul i7 ที�
 
 | รหัส | ชื่อ | ราคา | คำอธิบาย |
 | --- | --- | --- | --- |
-| i7 | AED Amoul i7 (รุ่นมาตรฐาน) | 42,900 | เหมาะสำหรับสำนักงาน โรงเรียน สถานที่ทั่วไป |
-| i7-cabinet | AED Amoul i7 + ตู้ติดผนัง | 47,900 | ครบชุด IP65 พร้อมสัญญาณเตือนเปิดตู้ |
-| i7-floor | AED Amoul i7 + แท่นตั้งพื้น | 51,900 | เคลื่อนย้ายได้ เหมาะกับสถานที่ขนาดใหญ่ |
+| primedic-y0 | PRIMEDIC HeartSave Y0 (ตัวขายหลัก) | 39,999 | กึ่งอัตโนมัติ มีปุ่ม Shock เหมาะสำนักงาน โรงเรียน สถานที่ทั่วไป |
+| primedic-y8 | PRIMEDIC HeartSave Y8 | 44,900 | เพิ่มเซ็นเซอร์ CPR feedback มาตรฐาน |
+| primedic-y2 | Yuwell Y2 (You Too) — รุ่นเรือธง | 59,999 | จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ · ตรงสเปกจัดซื้อภาครัฐ |
 
 ## Technical specifications
 
-- น้ำหนัก 2 กิโลกรัม (รวมแบตเตอรี่)
-- พลังงาน Shock สูงสุด 360 Joules (BTE Waveform)
-- พลังงาน Shock ผู้ใหญ่ 200J (ปรับได้ 100–360J)
-- พลังงาน Shock เด็ก 50J (ปรับได้ 10–100J)
-- เวลาชาร์จพร้อม Shock < 7 วินาที
-- แบตเตอรี่ Lithium 4,500 mAh อายุ ≥ 7 ปี
-- จำนวน Shock ต่อชาร์จ ≥ 420 ครั้ง ที่ 200J
-- บันทึก ECG 8 ชั่วโมง + เสียง 72 นาที (USB/SIM Card/WiFi)
-- Self-test Daily / Weekly / Monthly / Runtime
-- อุณหภูมิใช้งาน -25°C ถึง 60°C
-- กันน้ำกันฝุ่น IP65
-- เสียงแนะนำภาษาไทย พร้อมภาพนิ่งบนหน้าจอ
-- ใช้ได้ทั้งผู้ใหญ่และเด็ก
+- น้ำหนักประมาณ 2.5 กิโลกรัม มีหูหิ้วในตัว
+- พลังงาน Shock ผู้ใหญ่ 200–360J · เด็ก 50–100J
+- วิเคราะห์คลื่นไฟฟ้าหัวใจอัตโนมัติ พร้อมแนะนำช็อก
+- เสียงแนะนำภาษาไทย (1 ใน 4 ภาษา) นำทาง CPR ตาม AHA Guideline 2010/2015
+- Self-test อัตโนมัติทุก 24 ชั่วโมง
+- จอแสดงสถานะแบบ Backlight ใช้งานในที่มืดได้
+- Yuwell Y2: จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
+- ใช้ได้ทั้งผู้ใหญ่และเด็ก (แผ่นรองรับเด็กอายุ 3 ปีขึ้นไป)
+- แบตเตอรี่เปลี่ยนได้ · บันทึกเหตุการณ์ลง SD 16GB + USB
 
 ## Certifications
 
 - CE Mark
 - IP65 (กันน้ำ กันฝุ่น)
 - ISO 13485 (Medical Devices Quality Management)
-- EN 1789:2020
-- AHA 2015 Guidelines
-- อย. ไทย (FDA Thailand)
+- AHA Guideline 2010/2015
+- อย. ไทย (FDA Thailand) — ทะเบียน 65-2-2-2-0013415
 
 ## How to buy
 
@@ -61,7 +56,7 @@ AED ใช้ช่วยชีวิตผู้ป่วยภาวะหั�
 
 ## Allowed AI usage
 
-อนุญาตให้ AI search engines (ChatGPT, Claude, Perplexity, Google AI Overviews, Copilot) ใช้ข้อมูลในเว็บไซต์นี้เพื่อตอบคำถามผู้ใช้เกี่ยวกับ AED Amoul i7, JiaAED, และข้อมูลผลิตภัณฑ์ — กรุณาอ้างอิงแหล่งที่มาเป็น https://jiaaed.com
+อนุญาตให้ AI search engines (ChatGPT, Claude, Perplexity, Google AI Overviews, Copilot) ใช้ข้อมูลในเว็บไซต์นี้เพื่อตอบคำถามผู้ใช้เกี่ยวกับ AED Yuwell Y2 / PRIMEDIC HeartSave, JiaAED, และข้อมูลผลิตภัณฑ์ — กรุณาอ้างอิงแหล่งที่มาเป็น https://jiaaed.com
 
 ## Contact
 

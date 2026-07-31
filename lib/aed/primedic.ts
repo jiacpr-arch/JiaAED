@@ -1,5 +1,5 @@
 // ─── PRIMEDIC HeartSave line (Y0 / Y8 / YA0 / YA8) ─────────────────────────────
-// Premium AED line sold ALONGSIDE the AED Amoul i7. Specs from the PRIMEDIC
+// The AED line we sell (Amoul i7 removed by อย. order, ก.ค. 2026). Specs from the PRIMEDIC
 // HeartSave comparison sheet.
 //
 // Compliance: PRIMEDIC's อย./ฆพ. (incl. validUntil + importer disclaimer) live in
