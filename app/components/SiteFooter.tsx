@@ -3,10 +3,14 @@ import Link from "next/link";
 import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
 import { FOOTER_GROUPS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 
+// Defaults come from the brand we actually sell. They used to be the Amoul i7
+// numbers, which meant every page on the site kept publishing the registration
+// and advertising-licence numbers of a product อย. had suspended.
 export function SiteFooter({
-  fda = "68-2-2-2-0005243",
-  adLicense = "743/2569",
+  fda = PRIMEDIC_REGULATORY.fda ?? undefined,
+  adLicense = PRIMEDIC_REGULATORY.adLicense ?? undefined,
   regNote,
 }: {
   fda?: string;

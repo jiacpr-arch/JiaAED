@@ -18,13 +18,11 @@ export type BrandRegulatory = {
   disclaimer?: string; // full registration/importer statement (legal footnote)
 };
 
-export const AMOUL_REGULATORY: BrandRegulatory = {
-  brand: "Amoul i7",
-  fda: "68-2-2-2-0005243",
-  adLicense: "743/2569",
-  published: true,
-  pendingNote: "",
-};
+// Amoul i7 — REMOVED (ก.ค. 2026). อย. สั่งระงับการโฆษณาเครื่องมือแพทย์รุ่นนี้
+// (ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569) จึงถอดสินค้าและการโฆษณา
+// ทั้งหมดออกจากเว็บ **ห้ามนำเลขทะเบียน/ใบโฆษณาชุดนี้กลับมาแสดงบนเว็บอีก** —
+// การแสดงเลขใบโฆษณาของรุ่นที่ถูกสั่งระงับ ยังถือเป็นการโฆษณา
+// รุ่นที่ขายอยู่ปัจจุบันคือ Yuwell Y2 / PRIMEDIC HeartSave ด้านล่าง
 
 export const PRIMEDIC_REGULATORY: BrandRegulatory = {
   brand: "PRIMEDIC HeartSave",

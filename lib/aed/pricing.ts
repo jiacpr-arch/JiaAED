@@ -46,8 +46,8 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   "pad-adult": {
     id: "pad-adult",
     name: "AED Pad (Adult)",
-    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (Ambul) สำหรับ AED Amoul i7",
-    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ ของแท้ Ambul REF 1.129.00201 ใช้กับ AED Amoul i7",
+    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (วัสดุสิ้นเปลือง)",
+    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ REF 1.129.00201 — อะไหล่สำหรับลูกค้าเดิม ไม่แสดงบนเว็บ",
     msrp: 5_000,
     startingPrice: 5_000,
     bestPrice: 5_000,
@@ -57,9 +57,9 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   },
   battery: {
     id: "battery",
-    name: "AED Battery (Amoul i7)",
-    nameTh: "แบตเตอรี่ AED Amoul i7 (Ambul)",
-    description: "แบตเตอรี่สำรอง/ทดแทน ของแท้ Ambul สำหรับ AED Amoul i7",
+    name: "AED Battery (legacy)",
+    nameTh: "แบตเตอรี่ AED (อะไหล่ลูกค้าเดิม)",
+    description: "แบตเตอรี่สำรอง/ทดแทน — อะไหล่สำหรับลูกค้าเดิม ไม่แสดงบนเว็บ",
     msrp: 7_500,
     startingPrice: 7_500,
     bestPrice: 7_500,
