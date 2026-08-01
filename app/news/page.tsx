@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
+import { PageHero } from "@/app/components/PageHero";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -74,23 +74,12 @@ export default async function NewsPage() {
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <SiteHeader />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-12 px-4">
-        <div className="absolute inset-0 opacity-15">
-          <Image src="/images/lifestyle-cpr.png" alt="" fill className="object-cover object-center" />
-        </div>
-        <div className="relative max-w-5xl mx-auto">
-          <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
-            📰 ข่าว &amp; ความตระหนัก
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black mb-3">
-            ข่าวเรื่องหัวใจหยุดเต้นเฉียบพลันและการกู้ชีพ
-          </h1>
-          <p className="text-gray-400 max-w-2xl">
-            เรารวบรวมข่าวที่เกี่ยวข้องกับภาวะหัวใจหยุดเต้นเฉียบพลัน การทำ CPR และการใช้เครื่อง AED
-            พร้อมมุมให้ความรู้ เพื่อสร้างความตระหนักว่าการช่วยชีวิตในนาทีแรกสำคัญแค่ไหน
-          </p>
-        </div>
-      </section>
+      <PageHero
+        badge="📰 ข่าว & ความตระหนัก"
+        title="ข่าวเรื่องหัวใจหยุดเต้นเฉียบพลันและการกู้ชีพ"
+        subtitle="เรารวบรวมข่าวที่เกี่ยวข้องกับภาวะหัวใจหยุดเต้นเฉียบพลัน การทำ CPR และการใช้เครื่อง AED พร้อมมุมให้ความรู้ เพื่อสร้างความตระหนักว่าการช่วยชีวิตในนาทีแรกสำคัญแค่ไหน"
+        backgroundImage="/images/lifestyle-cpr.png"
+      />
 
       <section className="py-12 px-4">
         <div className="max-w-3xl mx-auto space-y-5">
@@ -103,7 +92,7 @@ export default async function NewsPage() {
           {items.map((n) => (
             <article
               key={n.id}
-              className="block bg-gray-900 border border-gray-800 rounded-xl p-6"
+              className="block bg-gray-900 border border-gray-800 hover:border-yellow-400/30 rounded-xl p-6 transition-colors"
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 {n.topic && (
