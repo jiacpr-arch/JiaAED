@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     title: "เกี่ยวกับเรา | JiaAED",
     description: "ดูแล AED กว่า 500 เครื่อง · 400 องค์กร · 15+ ปี",
     url: "/about",
-    images: ["/images/yuwell-y2-main.jpg"],
+    images: ["/images/og-cover.png"],
     type: "website",
   },
 };

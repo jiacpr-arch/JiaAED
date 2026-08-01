@@ -64,10 +64,12 @@ export const metadata: Metadata = {
       "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · อย. รับรอง",
     images: [
       {
-        url: "/images/yuwell-y2-main.jpg",
-        width: 720,
-        height: 1469,
-        alt: "AED Yuwell Y2 เครื่องกระตุกหัวใจไฟฟ้า",
+        // 1200x630 banner made for link previews — the portrait product shot
+        // that used to sit here got cropped to nothing in LINE/Facebook cards.
+        url: "/images/og-cover.png",
+        width: 1200,
+        height: 630,
+        alt: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขาย ให้เช่า อบรม CPR",
       },
     ],
   },
@@ -76,7 +78,7 @@ export const metadata: Metadata = {
     title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
       "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · อย. รับรอง",
-    images: ["/images/yuwell-y2-main.jpg"],
+    images: ["/images/og-cover.png"],
   },
   robots: { index: true, follow: true },
 };
