@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
+import { PageHero } from "@/app/components/PageHero";
 import {
   documents,
   documentCategoryLabel,
@@ -49,28 +49,13 @@ export default function DocsPage() {
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <SiteHeader />
 
-      <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-12 px-4">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_220px] gap-8 items-center">
-          <div>
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
-              📚 Document Center
-            </div>
-            <h1 className="text-3xl md:text-4xl font-black mb-3">เอกสารดาวน์โหลด</h1>
-            <p className="text-gray-400 max-w-2xl">
-              คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Yuwell / PRIMEDIC HeartSave — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา
-            </p>
-          </div>
-          <div className="hidden md:block rounded-2xl overflow-hidden border border-gray-800 bg-white">
-            <Image
-              src="/images/primedic-y2-open.jpg"
-              alt="เครื่อง AED Yuwell Y2"
-              width={440}
-              height={440}
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-      </section>
+      <PageHero
+        badge="📚 Document Center"
+        title="เอกสารดาวน์โหลด"
+        subtitle="คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Yuwell / PRIMEDIC HeartSave — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา"
+        image="/images/primedic-y2-open.jpg"
+        imageAlt="เครื่อง AED Yuwell Y2"
+      />
 
       <section className="py-12 px-4">
         <div className="max-w-5xl mx-auto space-y-10">

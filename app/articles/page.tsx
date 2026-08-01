@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
+import { PageHero } from "@/app/components/PageHero";
 import { articles, articleCover } from "@/lib/aed/articles";
 
 export const metadata: Metadata = {
@@ -24,17 +25,11 @@ export default function ArticlesIndex() {
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <SiteHeader />
 
-      <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-12 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-yellow-400/20">
-            ✍️ บทความ
-          </div>
-          <h1 className="text-3xl md:text-4xl font-black mb-3">บทความความรู้เกี่ยวกับ AED</h1>
-          <p className="text-gray-400 max-w-2xl">
-            ความรู้พื้นฐาน วิธีใช้ การบำรุงรักษา และมาตรฐานความปลอดภัย
-          </p>
-        </div>
-      </section>
+      <PageHero
+        badge="✍️ บทความ"
+        title="บทความความรู้เกี่ยวกับ AED"
+        subtitle="ความรู้พื้นฐาน วิธีใช้ การบำรุงรักษา และมาตรฐานความปลอดภัย"
+      />
 
       <section className="py-12 px-4">
         <div className="max-w-3xl mx-auto space-y-5">

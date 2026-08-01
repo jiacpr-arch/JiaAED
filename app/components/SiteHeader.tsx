@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LINE_OA } from "@/lib/aed/line";
 import { HEADER_LINKS } from "@/lib/aed/nav";
 import { JiaAedLogo } from "./JiaAedLogo";
+import { MobileMenu } from "./MobileMenu";
 
 export function SiteHeader() {
   return (
@@ -49,21 +50,11 @@ export function SiteHeader() {
           >
             💬 LINE
           </a>
+          {/* Hamburger menu replaces the old scrollable link row on <lg —
+              visitors rarely noticed that row was scrollable. */}
+          <MobileMenu />
         </div>
       </div>
-
-      {/* Mobile/tablet nav row */}
-      <nav className="lg:hidden flex items-center gap-4 overflow-x-auto px-4 pb-2 text-xs text-gray-400">
-        {HEADER_LINKS.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="whitespace-nowrap hover:text-yellow-400 transition-colors"
-          >
-            {l.label}
-          </Link>
-        ))}
-      </nav>
     </header>
   );
 }

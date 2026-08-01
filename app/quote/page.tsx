@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
-import { SectionHeading } from "@/app/components/SectionHeading";
+import { PageHero } from "@/app/components/PageHero";
 import { QuoteForm } from "@/app/components/QuoteForm";
 
 export const revalidate = 3600;
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     title: "ขอใบเสนอราคา AED สำหรับองค์กร | JiaAED",
     description: "รับใบเสนอราคา AED ภายใน 24 ชั่วโมง",
     url: "/quote",
-    images: ["/images/yuwell-y2-main.jpg"],
+    images: ["/images/og-cover.png"],
     type: "website",
   },
 };
@@ -26,14 +26,15 @@ export default function QuotePage() {
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <SiteHeader />
 
+      <PageHero
+        badge="📋 ขอใบเสนอราคา"
+        title="ขอรับข้อเสนอระบบดูแล AED สำหรับองค์กร"
+        subtitle="เพื่อให้เราออกแบบโปรแกรมดูแล AED ที่เหมาะกับองค์กรของท่าน กรุณากรอกข้อมูลเบื้องต้น"
+        chips={["รับใบเสนอราคาภายใน 24 ชม.", "ออกใบกำกับภาษีได้", "รองรับจัดซื้อภาครัฐ"]}
+      />
+
       <section className="max-w-5xl mx-auto px-4 py-12">
-        <SectionHeading
-          as="h1"
-          badge="ขอใบเสนอราคา"
-          title="ขอรับข้อเสนอระบบดูแล AED สำหรับองค์กร"
-          subtitle="เพื่อให้เราออกแบบโปรแกรมดูแล AED ที่เหมาะกับองค์กรของท่าน กรุณากรอกข้อมูลเบื้องต้น"
-        />
-        <div className="mt-8 grid md:grid-cols-[1fr_300px] gap-8 items-start">
+        <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
           <QuoteForm variant="quote_form" />
 
           {/* Why it's safe to leave your details — shown, not just claimed */}

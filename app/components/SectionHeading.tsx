@@ -15,16 +15,16 @@ export function SectionHeading({
   return (
     <div className={align === "center" ? "text-center" : "text-left"}>
       {badge && (
-        <div
-          className={`inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20 ${
-            align === "center" ? "" : ""
-          }`}
-        >
+        <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
           {badge}
         </div>
       )}
       <Tag className="text-2xl md:text-3xl font-black text-white leading-tight">{title}</Tag>
-      {subtitle && <p className="text-gray-400 mt-2 max-w-2xl mx-auto">{subtitle}</p>}
+      {subtitle && (
+        <p className={`text-gray-400 mt-2 max-w-2xl ${align === "center" ? "mx-auto" : ""}`}>
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
