@@ -44,6 +44,10 @@
     {
       "path": "/api/cron/ops-backlog",
       "schedule": "0 6 * * 1"
+    },
+    {
+      "path": "/api/cron/license-expiry",
+      "schedule": "30 6 * * 1"
     }
   ]
 }

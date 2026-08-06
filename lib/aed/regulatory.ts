@@ -51,3 +51,29 @@ export function regLine(reg: BrandRegulatory): string {
   }
   return reg.pendingNote;
 }
+
+// ─── Structured expiry dates, for the weekly license-expiry cron ──────────────
+// BrandRegulatory.validUntil is a single free-text Thai date covering only the
+// อย. registration — the two ฆพ. advertising-license expiries above (2029-07-16
+// and 2027-02-21) exist only in the comment on PRIMEDIC_REGULATORY and were
+// never machine-readable. Displaying an expired ฆพ./อย. number publicly is an
+// advertising-law violation the moment it happens — see the Amoul i7 note above
+// (its ad license was suspended and the product had to be pulled site-wide).
+// This is purely additive: no existing field changes, so every consumer of
+// PRIMEDIC_REGULATORY (StructuredData, SiteFooter, llms.txt, sitemap, etc.) is
+// unaffected.
+
+export type LicenseExpiry = {
+  label: string;
+  validUntil: string; // ISO "YYYY-MM-DD" — parseable, unlike BrandRegulatory.validUntil
+};
+
+// Gated by `published` like every other public assertion of these numbers —
+// while unpublished, nothing is displayed, so there's nothing to alert on.
+export const PRIMEDIC_LICENSE_EXPIRIES: LicenseExpiry[] = PRIMEDIC_REGULATORY.published
+  ? [
+      { label: `อย. ${PRIMEDIC_REGULATORY.fda}`, validUntil: "2026-12-31" },
+      { label: "ฆพ.2475/2569 (HeartSave Y0/Y2)", validUntil: "2029-07-16" },
+      { label: "ฆพ.287/2567 (HeartSave Y8)", validUntil: "2027-02-21" },
+    ]
+  : [];
