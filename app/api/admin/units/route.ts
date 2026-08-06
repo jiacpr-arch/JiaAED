@@ -45,15 +45,12 @@ export async function POST(req: Request) {
   }
 
   const serialNumber = String(body.serial_number ?? "").trim();
-  if (!serialNumber) {
-    return NextResponse.json({ ok: false, error: "no_serial_number" }, { status: 400 });
-  }
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
     .from("aed_units")
     .insert({
-      serial_number: serialNumber,
+      serial_number: serialNumber || null,
       status: body.status || "ว่าง",
       customer_name: emptyToNull(body.customer_name),
       plan_type: emptyToNull(body.plan_type),
@@ -71,11 +68,7 @@ export async function POST(req: Request) {
 
   if (error) {
     console.error("[admin/units][POST] supabase error:", error.message);
-    const dup = error.message.includes("duplicate key");
-    return NextResponse.json(
-      { ok: false, error: dup ? "duplicate_serial_number" : "database_error" },
-      { status: dup ? 409 : 500 },
-    );
+    return NextResponse.json({ ok: false, error: "database_error" }, { status: 500 });
   }
   return NextResponse.json({ ok: true, unit: data });
 }

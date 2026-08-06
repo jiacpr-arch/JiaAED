@@ -5,7 +5,9 @@
 
 export type AedUnit = {
   id: string;
-  serial_number: string;
+  // Optional — real device-registry data often has no serial number (see
+  // supabase/aed_units.sql for why). Fill in later once known.
+  serial_number: string | null;
   status: string;
   customer_name: string | null;
   plan_type: string | null;

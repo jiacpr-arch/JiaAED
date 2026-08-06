@@ -24,7 +24,7 @@ export type UnitExpiryInput = Pick<
 export type UnitExpiryKind = "pad" | "battery";
 
 export type UnitExpiryStatus = {
-  serialNumber: string;
+  serialNumber: string | null;
   customerName: string | null;
   kind: UnitExpiryKind;
   expiryDate: string;
@@ -75,7 +75,10 @@ export function formatUnitExpiryReport(results: UnitExpiryStatus[]): string {
       : `${icon} เครื่องลูกค้า: ยังไม่มีแผ่น/แบตใกล้หมดอายุ`;
 
   const lines = results.map((r) => {
-    const who = r.customerName ? `${r.serialNumber} (${r.customerName})` : r.serialNumber;
+    const who =
+      r.serialNumber && r.customerName
+        ? `${r.serialNumber} (${r.customerName})`
+        : r.serialNumber || r.customerName || "(ไม่ระบุเลขซีเรียล/ลูกค้า)";
     const daysLabel =
       r.daysLeft < 0
         ? `หมดอายุแล้ว ${Math.abs(r.daysLeft)} วัน — เปลี่ยนด่วน!`

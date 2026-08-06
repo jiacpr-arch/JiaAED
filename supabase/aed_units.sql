@@ -9,11 +9,17 @@
 -- /api/cron/unit-expiry-check cron can alert before a pad or battery expires.
 -- Delivers what lib/aed/subscription.ts's PRO/ELITE tiers already market as
 -- "แจ้งเตือนแบต / แผ่นแปะหมดอายุ" — previously copy with no code behind it.
+--
+-- serial_number is intentionally nullable/non-unique: the owner's real
+-- consumable-tracking sheet ("รวม pad batt aed หมดอายุ") has no serial number
+-- column at all — it's one row per pad-or-battery item against a customer
+-- name, not one row per physical unit. Forcing a fabricated serial here would
+-- misrepresent real inventory data, so rows without one just leave it blank.
 
 CREATE TABLE IF NOT EXISTS aed_units (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  -- เลขซีเรียล — unique so the same physical unit can't be registered twice.
-  serial_number         TEXT NOT NULL UNIQUE,
+  -- เลขซีเรียล — optional; fill in later via /admin/units once known.
+  serial_number         TEXT,
   -- สถานะ: ว่าง | ปล่อยเช่า | ซ่อม | สำรองอีเวนต์
   status                TEXT NOT NULL DEFAULT 'ว่าง',
   customer_name         TEXT,
