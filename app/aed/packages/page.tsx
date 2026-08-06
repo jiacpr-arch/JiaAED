@@ -11,6 +11,7 @@ import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PromoBanner } from "@/app/components/PromoBanner";
 import { PhotoStrip } from "@/app/components/PhotoStrip";
+import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { packageFaqCategories } from "@/lib/aed/faqs";
 import { survivorReward } from "@/lib/aed/promotion";
@@ -36,6 +37,12 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "แพ็กเกจ AED", path: "/aed/packages" },
+        ]}
+      />
       <SiteHeader />
 
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">

@@ -12,6 +12,7 @@ import { TrustStats } from "@/app/components/TrustStats";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
+import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 
 export const revalidate = 3600;
@@ -35,6 +36,12 @@ export const metadata: Metadata = {
 export default function SubscriptionPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "เช่าบริการครบวงจร (ดูแลครบ)", path: "/aed/subscription" },
+        ]}
+      />
       <SiteHeader />
 
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">

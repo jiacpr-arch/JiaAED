@@ -9,6 +9,7 @@ import {
   primedicSharedSpecs,
   primedicCertifications,
 } from "@/lib/aed/primedic";
+import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
@@ -161,6 +162,12 @@ export default function YuwellY2Landing() {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       {PRIMEDIC_REGULATORY.published && <Y2StructuredData />}
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "AED Yuwell Y2", path: "/aed/yuwell-y2" },
+        ]}
+      />
 
       {/* Top bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200">
