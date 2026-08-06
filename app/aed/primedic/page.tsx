@@ -16,7 +16,10 @@ import { survivorReward } from "@/lib/aed/promotion";
 export const revalidate = 3600;
 
 import { LINE_OA } from "@/lib/aed/line";
-import { ProductStructuredData } from "@/app/components/StructuredData";
+import {
+  BreadcrumbStructuredData,
+  ProductStructuredData,
+} from "@/app/components/StructuredData";
 
 // Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
 // Live under อย. 65-2-2-2-0013415 + ฆพ.2475/2569 (Y0/Y2) / ฆพ.287/2567 (Y8) —
@@ -33,6 +36,12 @@ export default function PrimedicPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <ProductStructuredData include="primedic" />
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "AED Yuwell / PRIMEDIC HeartSave", path: "/aed/primedic" },
+        ]}
+      />
       <SiteHeader />
 
       <section className="max-w-6xl mx-auto px-4 py-10">
