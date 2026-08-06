@@ -5,6 +5,7 @@ import {
   requiredLlmsTxtStrings,
   runAiSeoHealthCheck,
   formatHealthReport,
+  checkWwwRedirect,
 } from "./ai-seo-health";
 import { primedicModels } from "./primedic";
 
@@ -86,9 +87,20 @@ function healthySite(): Record<string, string> {
   };
 }
 
-function fakeFetch(site: Record<string, string>, downPaths: string[] = []) {
+// www.jiaaed.com redirecting to the root domain, as a fetchImpl override for
+// tests that need to break just this one check.
+function wwwRedirectsCorrectly(): Response {
+  return new Response("", { status: 308, headers: { Location: "https://jiaaed.com/" } });
+}
+
+function fakeFetch(
+  site: Record<string, string>,
+  downPaths: string[] = [],
+  wwwResponse: Response = wwwRedirectsCorrectly(),
+) {
   return (async (input: RequestInfo | URL) => {
     const url = String(input);
+    if (url.startsWith("https://www.")) return wwwResponse;
     const path = url.replace(/^https?:\/\/[^/]+/, "") || "/";
     if (downPaths.includes(path)) {
       return new Response("", { status: 500 });
@@ -134,6 +146,46 @@ describe("runAiSeoHealthCheck", () => {
     const sitemap = report.checks.find((c) => c.name === "sitemap.xml");
     expect(sitemap?.ok).toBe(false);
     expect(sitemap?.detail).toContain("พัง");
+  });
+
+  it("fails when www no longer redirects back to the root domain", async () => {
+    const report = await runAiSeoHealthCheck(
+      fakeFetch(healthySite(), [], new Response("", { status: 200 })),
+    );
+    const www = report.checks.find((c) => c.name === "www redirect");
+    expect(report.ok).toBe(false);
+    expect(www?.ok).toBe(false);
+  });
+});
+
+describe("checkWwwRedirect", () => {
+  it("passes a 3xx redirect pointing back at the root host", async () => {
+    const fetchImpl = (async () =>
+      new Response("", { status: 301, headers: { Location: "https://jiaaed.com/" } })) as typeof fetch;
+    const check = await checkWwwRedirect(fetchImpl);
+    expect(check.ok).toBe(true);
+  });
+
+  it("fails a 200 (no redirect at all)", async () => {
+    const fetchImpl = (async () => new Response("hi", { status: 200 })) as typeof fetch;
+    const check = await checkWwwRedirect(fetchImpl);
+    expect(check.ok).toBe(false);
+  });
+
+  it("fails a redirect that points somewhere other than the root host", async () => {
+    const fetchImpl = (async () =>
+      new Response("", { status: 301, headers: { Location: "https://evil.example.com/" } })) as typeof fetch;
+    const check = await checkWwwRedirect(fetchImpl);
+    expect(check.ok).toBe(false);
+  });
+
+  it("fails when the fetch itself throws", async () => {
+    const fetchImpl = (async () => {
+      throw new Error("DNS lookup failed");
+    }) as typeof fetch;
+    const check = await checkWwwRedirect(fetchImpl);
+    expect(check.ok).toBe(false);
+    expect(check.detail).toContain("DNS lookup failed");
   });
 });
 

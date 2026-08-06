@@ -87,6 +87,35 @@ export function requiredLlmsTxtStrings(): { label: string; needle: string }[] {
   ];
 }
 
+/**
+ * www.<host> must redirect (3xx) back to the root domain — the one-time
+ * "www.jiaaed.com → redirect ไป root" test in docs/domain-migration.md never
+ * got re-checked after the July 2026 domain migration. A misconfigured DNS/
+ * Vercel domain setting would silently strand that URL with no alert.
+ */
+export async function checkWwwRedirect(fetchImpl: typeof fetch): Promise<HealthCheck> {
+  const host = new URL(SITE).host;
+  const wwwUrl = `https://www.${host}`;
+  try {
+    const res = await fetchImpl(wwwUrl, {
+      headers: { "User-Agent": "JiaAED-ai-seo-health/1.0" },
+      redirect: "manual",
+      cache: "no-store",
+    });
+    const location = res.headers.get("location") ?? "";
+    const ok = res.status >= 300 && res.status < 400 && location.includes(host);
+    return {
+      name: "www redirect",
+      ok,
+      detail: ok
+        ? `www.${host} → root (HTTP ${res.status})`
+        : `www.${host} ไม่ redirect กลับ root ถูกต้อง (HTTP ${res.status}${location ? `, location=${location}` : ""})`,
+    };
+  } catch (e) {
+    return { name: "www redirect", ok: false, detail: `fetch ล้มเหลว: ${String(e).slice(0, 100)}` };
+  }
+}
+
 async function fetchText(
   url: string,
   fetchImpl: typeof fetch,
@@ -179,6 +208,9 @@ export async function runAiSeoHealthCheck(
       detail: missing.length === 0 ? "JSON-LD/canonical/OG ครบ" : `หาย: ${missing.join(", ")}`,
     });
   }
+
+  // 5) www subdomain still redirects back to the root domain
+  checks.push(await checkWwwRedirect(fetchImpl));
 
   return { ok: checks.every((c) => c.ok), checks };
 }
