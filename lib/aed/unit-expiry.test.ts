@@ -76,6 +76,16 @@ describe("checkUnitExpiries", () => {
   it("returns empty for no units", () => {
     expect(checkUnitExpiries([], now)).toEqual([]);
   });
+
+  it("carries a null serialNumber through for a unit with no serial on file", () => {
+    // Real data imported from the owner's consumable-tracking sheet has no
+    // serial number column at all — this must not throw or coerce to "null".
+    const results = checkUnitExpiries(
+      [unit({ serial_number: null, pad_expiry_date: "2026-09-01" })],
+      now,
+    );
+    expect(results[0].serialNumber).toBeNull();
+  });
 });
 
 describe("formatUnitExpiryReport", () => {
@@ -112,6 +122,26 @@ describe("formatUnitExpiryReport", () => {
     const text = formatUnitExpiryReport(results);
     expect(text).toContain("หมดอายุแล้ว");
     expect(text).toContain("เปลี่ยนด่วน");
+  });
+
+  it("falls back to customer name alone when there's no serial number", () => {
+    const results = checkUnitExpiries(
+      [unit({ serial_number: null, customer_name: "บริษัททดสอบ", pad_expiry_date: "2026-09-01" })],
+      now,
+    );
+    const text = formatUnitExpiryReport(results);
+    expect(text).toContain("บริษัททดสอบ");
+    expect(text).not.toContain("null");
+  });
+
+  it("falls back to a placeholder when neither serial number nor customer name is on file", () => {
+    const results = checkUnitExpiries(
+      [unit({ serial_number: null, customer_name: null, pad_expiry_date: "2026-09-01" })],
+      now,
+    );
+    const text = formatUnitExpiryReport(results);
+    expect(text).toContain("ไม่ระบุเลขซีเรียล");
+    expect(text).not.toContain("null");
   });
 
   it("counts urgent entries correctly in the header", () => {

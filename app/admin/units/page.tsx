@@ -70,7 +70,7 @@ export default function AdminUnitsPage() {
   const startEdit = (u: AedUnit) => {
     setEditingId(u.id);
     setForm({
-      serial_number: u.serial_number,
+      serial_number: u.serial_number ?? "",
       status: u.status,
       customer_name: u.customer_name ?? "",
       plan_type: u.plan_type ?? "",
@@ -92,7 +92,9 @@ export default function AdminUnitsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.serial_number.trim()) return;
+    // Serial number is optional (see supabase/aed_units.sql) — customer name
+    // is the minimum needed to make a row meaningful.
+    if (!form.serial_number.trim() && !form.customer_name.trim()) return;
     setSaving(true);
     setError(null);
     try {
@@ -105,11 +107,7 @@ export default function AdminUnitsPage() {
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(
-          data.error === "duplicate_serial_number"
-            ? "มีเลขซีเรียลนี้อยู่แล้ว"
-            : `บันทึกล้มเหลว: ${data.error ?? "unknown"}`,
-        );
+        setError(`บันทึกล้มเหลว: ${data.error ?? "unknown"}`);
         return;
       }
       cancelEdit();
@@ -140,15 +138,19 @@ export default function AdminUnitsPage() {
 
   // Client-side reuse of the same pure logic the weekly cron runs, so the
   // list highlights exactly what would trigger a LINE alert — no separate
-  // "is this urgent" rule to keep in sync.
-  const expiryBySerial = new Map<string, { urgent: boolean; label: string }>();
-  for (const status of checkUnitExpiries(units, new Date())) {
-    const existing = expiryBySerial.get(status.serialNumber);
-    if (!existing || (status.urgent && !existing.urgent)) {
-      expiryBySerial.set(status.serialNumber, {
-        urgent: status.urgent,
-        label: status.daysLeft < 0 ? "หมดอายุแล้ว" : `เหลือ ${status.daysLeft} วัน`,
-      });
+  // "is this urgent" rule to keep in sync. Keyed by unit id (not serial
+  // number) since serial numbers are optional and can repeat/be null across
+  // rows imported from the owner's consumable-tracking sheet.
+  const expiryByUnitId = new Map<string, { urgent: boolean; label: string }>();
+  for (const u of units) {
+    for (const status of checkUnitExpiries([u], new Date())) {
+      const existing = expiryByUnitId.get(u.id);
+      if (!existing || (status.urgent && !existing.urgent)) {
+        expiryByUnitId.set(u.id, {
+          urgent: status.urgent,
+          label: status.daysLeft < 0 ? "หมดอายุแล้ว" : `เหลือ ${status.daysLeft} วัน`,
+        });
+      }
     }
   }
 
@@ -203,11 +205,10 @@ export default function AdminUnitsPage() {
               <form onSubmit={handleSave} className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-1">เลขซีเรียล *</label>
+                    <label className="block text-sm font-semibold mb-1">เลขซีเรียล (ถ้ามี)</label>
                     <input
                       value={form.serial_number}
                       onChange={(e) => setForm({ ...form, serial_number: e.target.value })}
-                      required
                       className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
                     />
                   </div>
@@ -320,7 +321,7 @@ export default function AdminUnitsPage() {
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    disabled={saving || !form.serial_number.trim()}
+                    disabled={saving || (!form.serial_number.trim() && !form.customer_name.trim())}
                     className="bg-yellow-400 text-gray-950 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 disabled:opacity-50"
                   >
                     {saving ? "กำลังบันทึก..." : editingId ? "บันทึกการแก้ไข" : "เพิ่มเครื่อง"}
@@ -351,7 +352,7 @@ export default function AdminUnitsPage() {
               )}
               <div className="space-y-3">
                 {units.map((u) => {
-                  const expiry = expiryBySerial.get(u.serial_number);
+                  const expiry = expiryByUnitId.get(u.id);
                   return (
                     <div key={u.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
@@ -370,8 +371,10 @@ export default function AdminUnitsPage() {
                           )}
                         </div>
                         <div className="font-semibold truncate">
-                          {u.serial_number}
-                          {u.customer_name && <span className="text-gray-400 font-normal"> · {u.customer_name}</span>}
+                          {u.serial_number || u.customer_name || "(ไม่ระบุเลขซีเรียล/ลูกค้า)"}
+                          {u.serial_number && u.customer_name && (
+                            <span className="text-gray-400 font-normal"> · {u.customer_name}</span>
+                          )}
                         </div>
                         <div className="text-xs text-gray-500 mt-1 flex gap-3 flex-wrap">
                           {u.plan_type && <span>แผน: {u.plan_type}</span>}
