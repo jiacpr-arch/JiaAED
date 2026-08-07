@@ -38,10 +38,13 @@
 
 ---
 
-## 3) QR code LINE @jiacpr  ✅ เสร็จแล้ว
+## 3) QR code LINE @273fzpzs  ✅ เสร็จแล้ว
 
-- สร้างใหม่ที่ `public/images/line-qr.png` (740×740) ชี้ไป `https://line.me/R/ti/p/@jiacpr`
-- สแกนแล้วเปิดหน้าแอดเพื่อน @jiacpr ทันที — popup เพิ่มเพื่อน LINE บน desktop ใช้รูปนี้
+- `public/images/line-qr.png` (740×740) ชี้ไป `https://line.me/R/ti/p/@273fzpzs`
+  (สร้างใหม่ตอนสลับกลับ channel เก่า — ของเดิมที่ชี้ `@jiacpr` ถูกทับไปแล้ว)
+- สแกนแล้วเปิดหน้าแอดเพื่อน @273fzpzs ทันที — popup เพิ่มเพื่อน LINE บน desktop ใช้รูปนี้
+- ⚠️ ถ้าวันไหนสลับ `LINE_OA_ID` ใน `lib/aed/line.ts` ไป OA อื่น **ต้องสร้าง QR ใหม่ด้วย**
+  (รูปนี้ generate ไม่ได้อัตโนมัติ — sandbox ต่อ `line.me` ไม่ได้)
 - ถ้าเจ้าของมี QR official สวย ๆ จาก LINE OA Manager จะวางทับไฟล์เดิมก็ได้ (ไม่บังคับ)
 
 ---

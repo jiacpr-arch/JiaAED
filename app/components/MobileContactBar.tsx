@@ -1,7 +1,5 @@
-import { lineOaUrl } from "@/lib/aed/line";
+import { LINE_OA } from "@/lib/aed/line";
 import { PHONE_HREF } from "@/lib/aed/contact";
-
-const LINE_URL = lineOaUrl("สนใจ AED สอบถามราคา");
 
 /**
  * Mobile-only sticky bottom bar: LINE (primary) + phone, one tap away on every
@@ -16,7 +14,7 @@ export function MobileContactBar() {
       <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-gray-950/95 backdrop-blur border-t border-gray-800 pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-2 gap-2 px-3 py-2.5">
           <a
-            href={LINE_URL}
+            href={LINE_OA}
             target="_blank"
             rel="noopener noreferrer"
             data-line-cta="mobile_sticky_bar"

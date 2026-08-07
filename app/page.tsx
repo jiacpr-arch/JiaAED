@@ -26,7 +26,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-import { LINE_OA, LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
+import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
 import { FOOTER_LINKS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { rentalPlans } from "@/lib/aed/rental";
@@ -38,10 +38,6 @@ const RENT_FLEX = rentalPlans.find((p) => p.id === "rent-flex")!;
 const RENT_ANNUAL = rentalPlans.find((p) => p.id === "rent-annual")!;
 const BUY_PKG = acquisitionPackages.find((p) => p.id === "pkg-premium")!;
 const ANNUAL_PER_MONTH = Math.round(RENT_ANNUAL.price / 12 / 10) * 10;
-const LINE_RENT_HERO = lineOaUrl("สนใจเช่า AED");
-const LINE_BUY_HERO = lineOaUrl(`สนใจซื้อ AED ${BUY_PKG.priceLabel}`);
-const LINE_RENT_TABLE = lineOaUrl("สนใจเช่า AED ขอรายละเอียดแผนเช่า");
-const LINE_BUY_TABLE = lineOaUrl("สนใจซื้อ AED ขอใบเสนอราคา");
 
 export default function Home() {
   return (
@@ -115,7 +111,7 @@ export default function Home() {
                   ก่อน VAT · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน
                 </span>
                 <a
-                  href={LINE_RENT_HERO}
+                  href={LINE_OA}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-line-cta="hero_rent_card"
@@ -145,7 +141,7 @@ export default function Home() {
                   ราคาเงินสด · ออกใบกำกับภาษีได้
                 </span>
                 <a
-                  href={LINE_BUY_HERO}
+                  href={LINE_OA}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-line-cta="hero_buy_card"
@@ -266,7 +262,7 @@ export default function Home() {
             <RentVsBuyTable />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
               <a
-                href={LINE_RENT_TABLE}
+                href={LINE_OA}
                 target="_blank"
                 rel="noopener noreferrer"
                 data-line-cta="rent_vs_buy_rent"
@@ -276,7 +272,7 @@ export default function Home() {
                 💬 สนใจเช่า — คุยทาง LINE
               </a>
               <a
-                href={LINE_BUY_TABLE}
+                href={LINE_OA}
                 target="_blank"
                 rel="noopener noreferrer"
                 data-line-cta="rent_vs_buy_buy"
