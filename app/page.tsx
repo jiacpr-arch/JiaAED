@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { accessories } from "@/lib/aed/products";
@@ -25,6 +26,13 @@ import { acquisitionPackages } from "@/lib/aed/packages";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
+
+// Title/description/OG are inherited from the root layout; the homepage only
+// needs its own canonical, which layout metadata can't provide without leaking
+// canonical "/" onto every page that doesn't override it.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 import { LINE_OA, LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { FOOTER_LINKS } from "@/lib/aed/nav";
