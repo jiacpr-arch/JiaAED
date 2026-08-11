@@ -6,7 +6,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listCheckRuns } from "@/lib/aed/github-client";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.jiaaed.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://jiaaed.com";
 const HEALTH_PATHS = ["/", "/docs", "/articles"];
 
 export async function sleep(ms: number) {

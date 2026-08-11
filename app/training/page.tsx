@@ -6,6 +6,7 @@ import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import {
   instructorCredential,
   trainingValueProps,
@@ -40,6 +41,12 @@ const PHOTO_CAPTIONS = [
 export default function TrainingPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "อบรม CPR & AED", path: "/training" },
+        ]}
+      />
       <SiteHeader />
 
       <PageHero

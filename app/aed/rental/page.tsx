@@ -11,7 +11,10 @@ import { SectionHeading } from "@/app/components/SectionHeading";
 import { PackageCard } from "@/app/components/PackageCard";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { AcquisitionCompareTable } from "@/app/components/AcquisitionCompareTable";
-import { FaqStructuredData } from "@/app/components/StructuredData";
+import {
+  BreadcrumbStructuredData,
+  FaqStructuredData,
+} from "@/app/components/StructuredData";
 import {
   rentalPlans,
   eventPackages,
@@ -533,6 +536,12 @@ export default function AedRentalLanding() {
           <FaqAccordion categories={rentalFaqCategories} />
         </div>
         <FaqStructuredData items={rentalFaqCategories.flatMap((c) => c.items)} />
+        <BreadcrumbStructuredData
+          items={[
+            { name: "หน้าแรก", path: "/" },
+            { name: "เช่า & เช่าซื้อ AED", path: "/aed/rental" },
+          ]}
+        />
 
         {/* Latest curated news */}
         <LatestNews limit={3} compact />

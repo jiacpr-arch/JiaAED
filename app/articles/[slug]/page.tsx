@@ -6,6 +6,10 @@ import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { articles, findArticle, articleCover } from "@/lib/aed/articles";
 import { renderMarkdown } from "@/lib/aed/markdown";
+import {
+  ArticleStructuredData,
+  BreadcrumbStructuredData,
+} from "@/app/components/StructuredData";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
@@ -27,6 +31,7 @@ export async function generateMetadata(
       type: "article",
       publishedTime: article.publishedAt,
       tags: article.tags,
+      images: [articleCover(article.slug)],
     },
   };
 }
@@ -40,6 +45,20 @@ export default async function ArticlePage(
 
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <ArticleStructuredData
+        slug={article.slug}
+        title={article.title}
+        description={article.description}
+        publishedAt={article.publishedAt}
+        image={articleCover(article.slug)}
+      />
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "บทความ", path: "/articles" },
+          { name: article.title, path: `/articles/${article.slug}` },
+        ]}
+      />
       <SiteHeader />
 
       <article className="py-12 px-4">

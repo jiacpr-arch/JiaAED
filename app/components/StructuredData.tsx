@@ -104,6 +104,77 @@ export function FaqStructuredData({ items }: { items: FAQ[] }) {
   );
 }
 
+/**
+ * BreadcrumbList JSON-LD — helps search/AI engines understand where a page sits
+ * in the site hierarchy. Pass paths relative to the site root (e.g. "/articles").
+ */
+export function BreadcrumbStructuredData({
+  items,
+}: {
+  items: { name: string; path: string }[];
+}) {
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: `${SITE}${item.path}`,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+    />
+  );
+}
+
+/**
+ * Article JSON-LD for /articles/[slug] — datePublished/author/publisher are what
+ * AI answer engines look for when deciding whether an article is citable.
+ */
+export function ArticleStructuredData({
+  slug,
+  title,
+  description,
+  publishedAt,
+  image,
+}: {
+  slug: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  image: string;
+}) {
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description,
+    image: `${SITE}${image}`,
+    datePublished: publishedAt,
+    inLanguage: "th-TH",
+    mainEntityOfPage: `${SITE}/articles/${slug}`,
+    author: { "@type": "Organization", name: ORG_NAME, url: SITE },
+    publisher: {
+      "@type": "Organization",
+      name: ORG_NAME,
+      url: SITE,
+      logo: { "@type": "ImageObject", url: `${SITE}/images/jia-logo.webp` },
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
+    />
+  );
+}
+
 export function ProductStructuredData({
   include = "all",
 }: {
