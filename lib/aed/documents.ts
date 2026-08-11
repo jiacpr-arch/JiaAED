@@ -37,6 +37,30 @@ export const documents: DocumentItem[] = [
     updatedAt: "2025-01-01",
   },
   {
+    id: "aed-y2-specification-2026",
+    title: "คุณลักษณะเฉพาะ AED รุ่น Y2 (สำหรับ TOR/ใบเสนอราคา)",
+    description:
+      "เอกสารสเปคทางเทคนิคแบบละเอียดของ Yuwell/PRIMEDIC HeartSave Y2 (จอสี EKG) สำหรับใช้แนบใบเสนอราคา/TOR ของหน่วยงานราชการและองค์กร",
+    href: "/documents/aed-y2-specification-2026.docx",
+    category: "specification",
+    mime: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    sizeLabel: "18 KB",
+    language: "th",
+    updatedAt: "2026-07-11",
+  },
+  {
+    id: "fda-yuwell-aed",
+    title: "ใบรับแจ้งรายการละเอียด อย. 65-2-2-2-0013415 (Yuwell AED)",
+    description:
+      "ใบรับแจ้งรายการละเอียดนำเข้าเครื่องมือแพทย์จากสำนักงานคณะกรรมการอาหารและยา (อย.) — เครื่องกระตุกหัวใจไฟฟ้าชนิดอัตโนมัติ Yuwell/PRIMEDIC HeartSave นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด · ใช้ได้ถึง 31 ธ.ค. 2569",
+    href: "/documents/fda-yuwell-aed-65-2-2-2-0013415.pdf",
+    category: "certificate",
+    mime: "application/pdf",
+    sizeLabel: "242 KB",
+    language: "th",
+    updatedAt: "2026-07-19",
+  },
+  {
     id: "ce-mark-aed-i7-i9",
     title: "CE Mark — Declaration of Conformity",
     description:

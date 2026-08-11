@@ -62,7 +62,7 @@ export async function readHeadlineAbState(daysBack = 7): Promise<HeadlineAbState
   };
 }
 
-const SYSTEM_PROMPT = `คุณคือนักเขียน headline สำหรับเว็บ JiaAED (ขาย AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า)
+const SYSTEM_PROMPT = `คุณคือนักเขียน headline สำหรับเว็บ JiaAED (ขาย AED Yuwell Y2 / PRIMEDIC HeartSave — เครื่องกระตุกหัวใจไฟฟ้า)
 
 ข้อกำหนด strict:
 - ตอบเป็น JSON เท่านั้น ไม่มี markdown
@@ -73,7 +73,7 @@ const SYSTEM_PROMPT = `คุณคือนักเขียน headline ส�
 - ห้ามใช้คำว่า "อย." "ฆพ." หรือเลขทะเบียนใดๆ (กฎ regulatory)
 - ห้ามอ้างการรักษาหรือรับประกันชีวิต (medical claim restriction)
 - ห้ามใช้ตัวเลข % การรอดชีวิตที่จำเพาะเจาะจง
-- accent ควรเป็นคำหลักที่อยากเน้น (เช่น "AED Amoul i7" หรือ "7 วินาที")
+- accent ควรเป็นคำหลักที่อยากเน้น (เช่น "Yuwell Y2" หรือ "7 วินาที")
 - rationale อธิบายสั้นๆ ว่าทำไม headline นี้น่าจะดึง engagement มากกว่า variant ที่แพ้`;
 
 export type ProposedHeadline = {

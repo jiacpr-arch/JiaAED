@@ -1,3 +1,11 @@
+import { PRIMEDIC_REGULATORY, regLine } from "./regulatory";
+import {
+  faqRentToOwnVsRental,
+  faqMidContractCancel,
+  faqSwitchPackage,
+  type FaqCategory,
+} from "./faqs";
+
 export type RentalPlan = {
   id: string;
   subtitle: string;
@@ -7,6 +15,8 @@ export type RentalPlan = {
   deposit: string;
   features: string[];
   badge: string;
+  // Plan thumbnail (public path) — shared by RentalSpotlight and /aed/rental cards.
+  image: string;
 };
 
 export const rentalPlans: RentalPlan[] = [
@@ -24,6 +34,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
+    image: "/images/aed-rent-daily.jpg",
   },
   {
     id: "rent-annual",
@@ -39,12 +50,13 @@ export const rentalPlans: RentalPlan[] = [
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
     ],
     badge: "คุ้มที่สุด",
+    image: "/images/aed-rent-yearly.jpg",
   },
   {
     id: "rent-flex",
     subtitle: "รายเดือน",
     name: "แผนยืดหยุ่น (FLEX)",
-    price: 2490,
+    price: 1990,
     unit: "/ เดือน",
     deposit: "฿10,000 (นิติบุคคล ฿7,000)",
     features: [
@@ -54,6 +66,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
+    image: "/images/aed-rent-monthly.jpg",
   },
 ];
 
@@ -113,6 +126,106 @@ export const multiUnitPricing: MultiUnitTier[] = [
   { units: "5+ เครื่อง", pricePerUnit: 18000, badge: "ราคาพิเศษองค์กร" },
 ];
 
+// Why renting is safe to say yes to — each point restates a commitment already
+// made in rentalPlans/rentalFaqs (never promise here what those don't back up).
+export type RentalTrustSignal = { icon: string; text: string };
+
+export const rentalTrustSignals: RentalTrustSignal[] = [
+  { icon: "🔁", text: "เครื่องสำรองเปลี่ยนให้ใน 24–48 ชม. ถ้าเครื่องเสีย" },
+  { icon: "🩹", text: "ใช้ช่วยชีวิตจริง — เปลี่ยนแผ่นให้ฟรี" },
+  { icon: "✅", text: regLine(PRIMEDIC_REGULATORY) },
+  { icon: "💰", text: "มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ" },
+];
+
+// ─── เช่าซื้อ (Rent-to-Own) ────────────────────────────────────────────────────
+// ตัวเลข mirror acquisitionPackages (./packages.ts) priceNote — แก้ต้องแก้คู่กัน.
+// ยอดรวมทั้งสัญญา derive ด้วย rentToOwnTotal เสมอ ไม่พิมพ์ซ้ำ.
+
+export type RentToOwnBreakdown = {
+  packageId: "pkg-start-y8" | "pkg-start-y2"; // must exist in acquisitionPackages
+  model: string;
+  deposit: number;
+  monthly: number;
+  months: number;
+  cashPrice: number; // ราคาซื้อสดของรุ่นเดียวกัน (จาก primedicModels)
+  cashPriceLabel: string;
+};
+
+export const rentToOwnTotal = (b: RentToOwnBreakdown) => b.deposit + b.monthly * b.months;
+
+export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
+  {
+    // 16,000 + 2,600 × 18 = ฿62,800 (≈1.40× ราคาสด — owner approved 2026-07-19)
+    packageId: "pkg-start-y8",
+    model: "Yuwell Y8",
+    deposit: 16_000,
+    monthly: 2_600,
+    months: 18,
+    cashPrice: 44_900,
+    cashPriceLabel: "ซื้อสด Y8 ฿44,900",
+  },
+  {
+    // 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999)
+    packageId: "pkg-start-y2",
+    model: "Yuwell Y2",
+    deposit: 22_000,
+    monthly: 3_400,
+    months: 18,
+    cashPrice: 59_999,
+    cashPriceLabel: "ซื้อสด Y2 ฿59,999",
+  },
+];
+
+// ─── ตารางเปรียบเทียบ เช่า / เช่าซื้อ / ซื้อขาด ───────────────────────────────
+// ตัวเลขอ้างจาก rentalPlans (เช่า), rentToOwnBreakdowns (เช่าซื้อ) และ
+// acquisitionPackages pkg-premium (ซื้อขาดเงินสด ฿42,900) — ห้ามใส่ราคาใหม่ที่นี่.
+
+export type AcquisitionCompareRow = {
+  dimension: string;
+  rent: string;
+  rentToOwn: string;
+  buy: string;
+};
+
+export const acquisitionComparison: AcquisitionCompareRow[] = [
+  {
+    dimension: "เงินก้อนแรก",
+    rent: "มัดจำ ฿5,000–10,000 (คืนได้)",
+    rentToOwn: "มัดจำ ฿16,000–22,000 (นับเป็นค่าเครื่อง)",
+    buy: "จ่ายเต็ม เงินสด ฿42,900",
+  },
+  {
+    dimension: "ค่าใช้จ่ายต่อเดือน",
+    rent: "เริ่ม ฿1,990 (รายปีเฉลี่ย ~฿1,830)",
+    rentToOwn: "฿2,600–3,400 × 18 เดือน",
+    buy: "ไม่มี (มีค่าวัสดุสิ้นเปลืองเมื่อหมดอายุ)",
+  },
+  {
+    dimension: "กรรมสิทธิ์เมื่อจบสัญญา",
+    rent: "คืนเครื่อง",
+    rentToOwn: "เครื่องเป็นของท่าน ไม่มีค่าใช้จ่ายเพิ่ม",
+    buy: "เป็นเจ้าของตั้งแต่วันแรก",
+  },
+  {
+    dimension: "การดูแลรักษา",
+    rent: "ทีมเราดูแลตลอดสัญญา",
+    rentToOwn: "ตรวจเช็คเบื้องต้น + ประกันโรงงาน",
+    buy: "ดูแลเอง (เลือกซื้อบริการเสริมได้)",
+  },
+  {
+    dimension: "ระยะสัญญา",
+    rent: "รายวัน · รายเดือน (ขั้นต่ำ 3 เดือน) · รายปี",
+    rentToOwn: "18 เดือน",
+    buy: "—",
+  },
+  {
+    dimension: "เหมาะกับ",
+    rent: "อีเวนต์ · ไซต์งาน · องค์กรที่ไม่อยากลงทุนก้อนใหญ่",
+    rentToOwn: "SME ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
+    buy: "องค์กรที่มีงบลงทุน (CAPEX)",
+  },
+];
+
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
@@ -122,7 +235,7 @@ export const rentalFaqs = [
   {
     question: "แผนยืดหยุ่น (FLEX) มีขั้นต่ำกี่เดือน?",
     answer:
-      "ขั้นต่ำ 3 เดือน เริ่ม ฿2,490/เดือน หากใช้ครบปีแนะนำเปลี่ยนเป็นแผนรายปี (ANNUAL) ฿22,000 จะคุ้มกว่า และค่าเช่าที่จ่ายมาแล้วนำมาหักเป็นส่วนลดได้",
+      "ขั้นต่ำ 3 เดือน เริ่ม ฿1,990/เดือน หากใช้ครบปีแนะนำเปลี่ยนเป็นแผนรายปี (ANNUAL) ฿22,000 จะคุ้มกว่า และค่าเช่าที่จ่ายมาแล้วนำมาหักเป็นส่วนลดได้",
   },
   {
     question: "ถ้าเครื่องชำรุดหรือสูญหายระหว่างเช่าทำอย่างไร?",
@@ -137,6 +250,66 @@ export const rentalFaqs = [
   {
     question: "AED ที่ให้เช่าผ่าน อย. หรือไม่?",
     answer:
-      "ผ่านครับ เป็นรุ่น AED Amoul i7 ทะเบียน อย. 68-2-2-2-0005243 · ใบอนุญาตโฆษณา ฆพ.743/2569 แบตเตอรี่อายุ ≥ 7 ปี แผ่นอิเล็กโทรด 5 ปี มาตรฐาน CE · IP65 กันน้ำกันฝุ่น",
+      "ผ่านครับ เป็นรุ่น AED Yuwell/PRIMEDIC HeartSave Y2 ทะเบียน อย. 65-2-2-2-0013415 มาตรฐาน ISO 13485 · CE แผ่นอิเล็กโทรดแบบใช้แล้วทิ้ง อายุ 3 ปี แบตเตอรี่ LiMnO₂ ใช้ครั้งเดียว (non-rechargeable)",
   },
 ];
+
+// FAQ ของหน้า /aed/rental แบ่งสองหมวด — หมวดเช่าซื้อ reuse copy ที่ owner อนุมัติ
+// แล้วจาก ./faqs.ts (อ้างอิง ไม่ก็อป).
+export const rentalFaqCategories: FaqCategory[] = [
+  { category: "เช่า AED (รายวัน / รายเดือน / รายปี)", items: rentalFaqs },
+  {
+    category: "เช่าซื้อ — เช่าแล้วได้ซื้อ (Rent-to-Own)",
+    items: [faqRentToOwnVsRental, faqMidContractCancel, faqSwitchPackage],
+  },
+];
+
+// ─── Prompt block สำหรับบอท (LINE bot + web chat) ─────────────────────────────
+// สร้างจากข้อมูลแผนจริงด้านบนทั้งหมด — แก้ราคา/เงื่อนไขที่ data แล้ว prompt
+// ของทั้งสองบอทอัปเดตตามเอง ห้ามพิมพ์ตัวเลขซ้ำในไฟล์ prompt.
+
+export function rentalKnowledgeBlock(): string {
+  const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
+
+  const plans = rentalPlans
+    .map(
+      (p) =>
+        `• ${p.name} — ${thb(p.price)}${p.unit} · มัดจำ ${p.deposit}\n  ${p.features.join(" · ")}`,
+    )
+    .join("\n");
+
+  const events = eventPackages
+    .map((e) => `• ${e.nameTh} (${e.duration}): ${e.priceNote}`)
+    .join("\n");
+
+  const multi = multiUnitPricing
+    .map(
+      (t) =>
+        `• ${t.units}: ${thb(t.pricePerUnit)}/เครื่อง/ปี${t.badge ? ` (${t.badge})` : ""}`,
+    )
+    .join("\n");
+
+  const rto = rentToOwnBreakdowns
+    .map(
+      (b) =>
+        `• ${b.model}: มัดจำ ${thb(b.deposit)} + ${thb(b.monthly)}/เดือน × ${b.months} งวด = รวม ${thb(rentToOwnTotal(b))} จบสัญญาเครื่องเป็นของลูกค้าทันที (เทียบ${b.cashPriceLabel})`,
+    )
+    .join("\n");
+
+  const faq = rentalFaqs.map((f) => `Q: ${f.question}\nA: ${f.answer}`).join("\n\n");
+
+  return `### เช่า AED (รายวัน / รายเดือน / รายปี)
+${plans}
+
+แพ็กอีเวนต์แบบเหมา:
+${events}
+
+ราคารายปีต่อเครื่องเมื่อเช่าหลายเครื่อง:
+${multi}
+
+### เช่าซื้อ (Rent-to-Own) — ผ่อน 18 งวด จบสัญญาเป็นเจ้าของ
+${rto}
+
+### FAQ เรื่องเช่า
+${faq}`;
+}

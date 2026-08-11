@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { products } from "@/lib/aed/products";
 
 import { LINE_OA } from "@/lib/aed/line";
@@ -37,14 +38,16 @@ export function LeadForm() {
   const focusedFieldsRef = useRef<Set<string>>(new Set());
 
   function handleFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    // Focus bubbles from every element in the form, including the LINE link
+    // under the submit button — only a named field means "started filling".
+    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).name;
+    if (!fieldName || fieldName === "hp_field") return;
     if (!startedRef.current) {
       startedRef.current = true;
       trackEvent("lead_form_start", { variant: "full" });
     }
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
-    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).name;
-    if (!fieldName || fieldName === "hp_field") return;
     if (focusedFieldsRef.current.has(fieldName)) return;
     focusedFieldsRef.current.add(fieldName);
     trackEvent("lead_form_field_focus", { variant: "full", field: fieldName });
@@ -182,12 +185,9 @@ export function LeadForm() {
           gtag("event", "lead_form_submit", {
             product_id: productId || null,
           });
-          const gAdsId = process.env.NEXT_PUBLIC_GADS_ID;
-          const leadLabel = process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL;
-          if (gAdsId && leadLabel) {
-            gtag("event", "conversion", {
-              send_to: `${gAdsId}/${leadLabel}`,
-            });
+          const sendTo = gadsSendTo(GADS_LEAD_CONVERSION_LABEL);
+          if (sendTo) {
+            gtag("event", "conversion", { send_to: sendTo });
           }
         }
 
@@ -318,6 +318,24 @@ export function LeadForm() {
       >
         {state === "submitting" ? "กำลังส่ง..." : "📨 ฝากเบอร์ — รับใบเสนอราคาใน 24 ชม."}
       </button>
+
+      {/* Chat beats forms for Thai buyers by a wide margin — the weekly review
+          keeps showing hot visitors who never touch the form. Offer the easier
+          path here instead of losing them to a bounce. */}
+      <div className="flex items-center gap-3" aria-hidden="true">
+        <span className="h-px flex-1 bg-gray-800" />
+        <span className="text-[11px] text-gray-500">หรือ</span>
+        <span className="h-px flex-1 bg-gray-800" />
+      </div>
+      <a
+        href={LINE_OA}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-line-cta="lead_form_alt"
+        className="flex items-center justify-center gap-1.5 rounded-full bg-[#06C755] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#05a847]"
+      >
+        💬 คุยกับเราทาง LINE ง่ายกว่า — ตอบทันที
+      </a>
 
       <p className="text-xs text-gray-400 text-center">
         ⚡ ทีมงานเจี่ยรักษาโทรกลับพร้อมใบเสนอราคา + ราคาพิเศษองค์กร · ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น — <a href="/privacy" className="underline hover:text-yellow-400">นโยบายความเป็นส่วนตัว</a>

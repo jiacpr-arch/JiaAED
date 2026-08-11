@@ -43,7 +43,7 @@ export function hasEnoughSignal(sample: QuestionSample): boolean {
   return sample.sample.length >= MIN_QUESTIONS;
 }
 
-const SYSTEM_PROMPT = `คุณคือบรรณาธิการเนื้อหาสำหรับร้าน JiaAED (ขาย AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า)
+const SYSTEM_PROMPT = `คุณคือบรรณาธิการเนื้อหาสำหรับร้าน JiaAED (ขาย AED Yuwell Y2 / PRIMEDIC HeartSave — เครื่องกระตุกหัวใจไฟฟ้า)
 
 หน้าที่: วิเคราะห์คำถามที่ลูกค้าถามในแชทเว็บ และเขียนบทความใหม่ 1 บทความปิดช่องว่างความรู้ที่ยังไม่มีในบทความเดิม
 

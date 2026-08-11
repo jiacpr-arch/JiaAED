@@ -14,6 +14,7 @@ import {
   scheduleFollowup,
   createChatLead,
 } from "./db-queries";
+import { LINE_OA_ID } from "./line";
 import type {
   AedCustomer,
   AedConversation,
@@ -182,7 +183,7 @@ export async function handleCreateQuotation(
     `เลขที่: ${result.documentNumber ?? result.documentId}`,
     `deal_id: ${deal.id}`,
     `ยอดรวม: ${formatThaiPrice(grandTotal)}`,
-    `ขั้นตอนต่อไป: แจ้งลูกค้าให้ติดต่อทีมผ่าน LINE @jiacpr เพื่อนัดชำระเงิน`,
+    `ขั้นตอนต่อไป: แจ้งลูกค้าให้ติดต่อทีมผ่าน LINE ${LINE_OA_ID} เพื่อนัดชำระเงิน`,
   ].join("\n");
 }
 

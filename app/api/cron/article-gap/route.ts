@@ -2,6 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createNotifyBatch } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   hasEnoughSignal,
   insertArticleIntoSource,
@@ -45,6 +46,12 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  // At-least-once cron gate: bail out if a twin invocation already claimed today,
+  // so the article-gap LINE messages (and its PR flow) run at most once.
+  if (!(await claimDailyCronRun("article_gap"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
+  }
+
   const batch = createNotifyBatch();
   const notify = (text: string) => batch.add(text);
   const notifyError = (text: string) => batch.add(text);
@@ -52,8 +59,7 @@ export async function GET(req: Request) {
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
-    notifyError("🚨 Article-gap: ไม่มี GITHUB_TOKEN");
-    await batch.flush().catch((e) => console.error("[article-gap] batch flush failed:", e));
+    console.warn("[article-gap] skipped — no GITHUB_TOKEN env var");
     return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
   }
   const [owner, repo] = ghRepo.split("/");
@@ -66,13 +72,15 @@ export async function GET(req: Request) {
     result.sample_size = sample.sample.length;
     result.total_messages = sample.total_messages;
 
+    // Routine "started"/"nothing to do" pings are noisy on LINE — log them
+    // server-side only. LINE stays reserved for the finished article below.
     if (!hasEnoughSignal(sample)) {
-      notify(`⏸️ Article-gap skip: คำถามจากแชทใน 2 สัปดาห์น้อยเกิน (${sample.sample.length})`);
+      console.log(`[article-gap] skip: too few chat questions in the last 2 weeks (${sample.sample.length})`);
       await logRun({ ...result, skipped: "small_sample" });
       return NextResponse.json({ ok: true, skipped: "small_sample" });
     }
 
-    notify(`📚 Article-gap: วิเคราะห์ ${sample.sample.length} คำถาม กำลังให้ Claude หาช่องว่างความรู้...`);
+    console.log(`[article-gap] analyzing ${sample.sample.length} questions for knowledge gaps`);
 
     const proposal = await proposeArticle(sample);
     result.proposal = {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readHeadlineVariant, readHeroVariant } from "@/lib/aed/ab-variant";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { GADS_LINE_CLICK_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { LineFallbackModal } from "./LineFallbackModal";
 
 declare global {
@@ -40,16 +41,21 @@ export function LineClickTracker() {
           headline_variant: headlineVariant ?? "none",
         });
 
-        // Fire an analytics-only event (NOT a Google Ads conversion). A button
-        // click is intent, not a confirmed friend-add — reporting it as a
-        // conversion trains Google Ads to chase clickers who never add. Real
-        // conversions are reported server-side from actual leads (lead form +
-        // gclid) and quotations (enhanced match), so no signal is lost here.
+        // Report to Google as the `LINE Click` conversion — which is kept
+        // **Secondary** ("Use for bidding" off) in Google Ads on purpose. A button
+        // click is intent, not a confirmed friend-add, so letting bidding optimize
+        // on it would train Google to chase clickers who never add. As an
+        // observe-only action it gives visibility without steering delivery;
+        // bidding runs on Lead Form Submit + the offline Sale Closed upload.
         if (typeof window.gtag === "function") {
           window.gtag("event", "click_to_line", {
             cta_location: location,
             product_id: productId,
           });
+          const sendTo = gadsSendTo(GADS_LINE_CLICK_CONVERSION_LABEL);
+          if (sendTo) {
+            window.gtag("event", "conversion", { send_to: sendTo });
+          }
         }
 
         // Meta, unlike Google, DOES count the LINE click as a `Lead`. Thai buyers

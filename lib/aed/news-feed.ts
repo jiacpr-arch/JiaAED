@@ -148,7 +148,7 @@ export async function filterNew(items: RawNewsItem[]): Promise<RawNewsItem[]> {
   return items.filter((i) => !existing.has(i.guid));
 }
 
-const SYSTEM_PROMPT = `คุณคือบรรณาธิการเนื้อหาให้ร้าน JiaAED (ขายเครื่อง AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ)
+const SYSTEM_PROMPT = `คุณคือบรรณาธิการเนื้อหาให้ร้าน JiaAED (ขายเครื่อง AED Yuwell Y2 / PRIMEDIC HeartSave — เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ)
 
 งาน: ดูพาดหัวข่าวที่ดึงมาจาก Google News แล้ว
 1) คัดเฉพาะข่าวที่ "เกี่ยวข้องจริง" กับหัวใจหยุดเต้นเฉียบพลัน / การกู้ชีพ / CPR / AED / ความปลอดภัยในที่สาธารณะ

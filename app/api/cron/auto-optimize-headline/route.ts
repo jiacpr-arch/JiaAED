@@ -6,6 +6,7 @@ import {
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
 import { createNotifyBatch } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   buildNewHeroHeadlineFile,
   extractHeadline,
@@ -35,6 +36,13 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  // At-least-once cron gate: claim the day before doing anything else and bail
+  // out if a twin invocation already ran, so the PR/merge flow and its LINE
+  // messages run at most once.
+  if (!(await claimDailyCronRun("auto_optimize_headline"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
+  }
+
   const batch = createNotifyBatch();
   const notify = (text: string) => batch.add(text);
   const notifyError = (text: string) => batch.add(text);
@@ -42,8 +50,7 @@ export async function GET(req: Request) {
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
-    notifyError("🚨 Auto-optimizer-headline: ไม่มี GITHUB_TOKEN");
-    await batch.flush().catch((e) => console.error("[auto-optimize-headline] batch flush failed:", e));
+    console.warn("[auto-optimize-headline] skipped — no GITHUB_TOKEN env var");
     return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
   }
   const [owner, repo] = ghRepo.split("/");
@@ -53,22 +60,24 @@ export async function GET(req: Request) {
   const steps = result.steps as string[];
 
   try {
-    notify("🤖 Auto-optimizer-headline เริ่ม — วิเคราะห์ A/B headline");
+    // Routine "started"/"nothing to do" pings are noisy on LINE — log them
+    // server-side only. LINE stays reserved for actual outcomes below.
+    console.log("[auto-optimize-headline] started — analyzing A/B headline");
     steps.push("start");
 
     const ab = await readHeadlineAbState(30);
     result.ab = ab;
 
     if (ab.sample_too_small) {
-      const msg = `⏸️ Headline skip: A/B sample เล็กเกิน (A=${ab.a_views} / B=${ab.b_views}) ต้อง ≥ 100 ต่อ variant (30 วัน)`;
-      notify(msg);
+      console.log(
+        `[auto-optimize-headline] skip: A/B sample too small (A=${ab.a_views} / B=${ab.b_views}), need ≥100/variant over 30d`,
+      );
       steps.push("skip_small");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "small_sample", ab });
     }
     if (Math.abs(ab.a_ctr - ab.b_ctr) < 0.5) {
-      const msg = `⏸️ Headline skip: CTR ใกล้กัน A=${ab.a_ctr}% B=${ab.b_ctr}%`;
-      notify(msg);
+      console.log(`[auto-optimize-headline] skip: CTR too close A=${ab.a_ctr}% B=${ab.b_ctr}%`);
       steps.push("skip_tie");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "tie", ab });
@@ -97,7 +106,7 @@ export async function GET(req: Request) {
     const loserSig = `${loserHeadline.line1}|${loserHeadline.accent}|${loserHeadline.line2}`;
     const winnerSig = `${winnerHeadline.line1}|${winnerHeadline.accent}|${winnerHeadline.line2}`;
     if (sig === loserSig || sig === winnerSig) {
-      notify(`⏸️ AI proposed headline ซ้ำ ข้ามรอบนี้`);
+      console.log("[auto-optimize-headline] skip: AI proposed the same headline again");
       steps.push("skip_duplicate");
       await logRun(result);
       return NextResponse.json({ ok: true, skipped: "duplicate" });

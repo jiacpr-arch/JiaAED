@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -8,6 +8,7 @@ import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
+import { MobileContactBar } from "./components/MobileContactBar";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
 
 const geistSans = Geist({
@@ -20,6 +21,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Thai body font — the previous Arial fallback rendered Thai text cramped and
+// was a big reason the site felt like a wall of text.
+const notoSansThai = Noto_Sans_Thai({
+  variable: "--font-noto-thai",
+  subsets: ["thai", "latin"],
+});
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 
 export const metadata: Metadata = {
@@ -30,11 +38,11 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "เครื่องกระตุกหัวใจไฟฟ้า (AED) 2 แบรนด์ให้เลือก — Amoul i7 และ PRIMEDIC HeartSave (Y0/Y8) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 68-2-2-2-0005243 · ฆพ.743/2569",
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 65-2-2-2-0013415",
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
-    "Amoul i7",
+    "Yuwell Y2",
     "PRIMEDIC HeartSave",
     "PRIMEDIC Y0",
     "PRIMEDIC Y8",
@@ -51,24 +59,26 @@ export const metadata: Metadata = {
     locale: "th_TH",
     url: SITE_URL,
     siteName: "JiaAED",
-    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ให้เลือก · เสียงแนะนำภาษาไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · อย. รับรอง",
     images: [
       {
-        url: "/images/aed-i7-poster.jpg",
-        width: 1179,
-        height: 1651,
-        alt: "AED Amoul i7 เครื่องกระตุกหัวใจไฟฟ้า",
+        // 1200x630 banner made for link previews — the portrait product shot
+        // that used to sit here got cropped to nothing in LINE/Facebook cards.
+        url: "/images/og-cover.png",
+        width: 1200,
+        height: 630,
+        alt: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขาย ให้เช่า อบรม CPR",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "JiaAED — AED Amoul i7 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า 2 แบรนด์ · เสียงไทย · อย. รับรอง",
-    images: ["/images/aed-i7-poster.jpg"],
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · อย. รับรอง",
+    images: ["/images/og-cover.png"],
   },
   robots: { index: true, follow: true },
 };
@@ -84,13 +94,14 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} antialiased`}
       >
         {/* PDPA: trackers (gtag / Meta Pixel / PostHog) live behind the consent gate */}
         <CookieConsent />
         <LineClickTracker />
         <ScrollDepthTracker />
         {children}
+        <MobileContactBar />
         <WebChat />
         <FloatingLineButton />
         <Analytics />

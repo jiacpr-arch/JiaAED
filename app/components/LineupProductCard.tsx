@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { LineupCard } from "@/lib/aed/lineup";
 
 import { LINE_OA } from "@/lib/aed/line";
@@ -97,6 +98,16 @@ export function LineupProductCard({ card }: { card: LineupCard }) {
       >
         สั่งซื้อ / ถามราคา
       </a>
+      {card.detailHref && (
+        <Link
+          href={card.detailHref}
+          data-cta="product_card_detail"
+          data-product={card.dataProduct}
+          className="mt-2 text-center text-sm text-gray-400 hover:text-yellow-400 transition-colors py-1"
+        >
+          ดูรายละเอียดรุ่นนี้ →
+        </Link>
+      )}
     </div>
   );
 }

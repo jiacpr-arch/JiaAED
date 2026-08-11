@@ -54,7 +54,7 @@ export function FloatingLineButton() {
   if (!visible || inlineCtaVisible) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 sm:bottom-6 sm:right-6">
+    <div className="hidden md:block fixed bottom-5 right-5 z-50 sm:bottom-6 sm:right-6">
       <a
         href={LINE_OA}
         target="_blank"

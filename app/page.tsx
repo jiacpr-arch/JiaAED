@@ -1,9 +1,10 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { accessories } from "@/lib/aed/products";
 import { homepageTiers } from "@/lib/aed/lineup";
 import { faqs } from "@/lib/aed/faqs";
-import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
+import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { LeadForm } from "./components/LeadForm";
 import { QuickContact } from "./components/QuickContact";
 import { HeroCta } from "./components/HeroCta";
@@ -18,56 +19,33 @@ import { PackageCard } from "./components/PackageCard";
 import { TrustStats } from "./components/TrustStats";
 import { PromoBanner } from "./components/PromoBanner";
 import { RentalSpotlight } from "./components/RentalSpotlight";
+import { JiaAedLogo } from "./components/JiaAedLogo";
+import { PhotoStrip } from "./components/PhotoStrip";
+import { SplitFeature } from "./components/SplitFeature";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-import { LINE_OA } from "@/lib/aed/line";
+// Title/description/OG are inherited from the root layout; the homepage only
+// needs its own canonical, which layout metadata can't provide without leaking
+// canonical "/" onto every page that doesn't override it.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
+import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
+import { FOOTER_LINKS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
+import { rentalPlans } from "@/lib/aed/rental";
 import { ProductStructuredData } from "./components/StructuredData";
 
-const specs = [
-  { label: "น้ำหนัก", value: "ประมาณ 2.0 กก. (รวมแบตเตอรี่)" },
-  { label: "ผู้ใช้งาน", value: "ผู้ใหญ่ และ เด็ก (<8 ปี หรือ <25 กก.) — สลับโหมดด้วยสวิตช์" },
-  { label: "ภาษาเสียงแนะนำ", value: "5 ภาษา: ไทย · อังกฤษ · จีน · สเปน · อิตาลี" },
-  { label: "พลังงานสูงสุด", value: "360 Joules (BTE Biphasic Waveform)" },
-  { label: "พลังงาน Shock ผู้ใหญ่", value: "Escalating 6 ระดับ: 100 → 150 → 170 → 200 → 300 → 360 J" },
-  { label: "พลังงาน Shock เด็ก", value: "Escalating 7 ระดับ: 10 → 15 → 20 → 30 → 50 → 70 → 100 J" },
-  { label: "การปรับพลังงาน", value: "Auto ตาม Patient Impedance (ผู้ใช้ตั้งค่าเองไม่ได้)" },
-  { label: "เวลาชาร์จพร้อม Shock", value: "< 7 วินาที" },
-  { label: "แบตเตอรี่", value: "Lithium 4,500 mAh · 12V (แบบใช้แล้วทิ้ง ชาร์จใหม่ไม่ได้)" },
-  { label: "อายุแบตเตอรี่", value: "≥ 5 ปี (สแตนด์บายในเครื่อง) · ≥ 7 ปี (เก็บแยกในอุณหภูมิเหมาะสม)" },
-  { label: "จำนวน Shock ต่อชาร์จ", value: "≥ 420 ครั้ง ที่ 200J (ทดสอบมาตรฐาน)" },
-  { label: "บันทึก ECG", value: "≥ 8 ชั่วโมง · เหตุการณ์ ≥ 1,500 รายการ" },
-  { label: "Self-test", value: "อัตโนมัติ — รายวัน / รายสัปดาห์ / รายเดือน" },
-  { label: "อุณหภูมิใช้งาน", value: "-25°C ถึง 60°C" },
-  { label: "การเชื่อมต่อ", value: "USB · Wi-Fi · SIM (4G) — เลือกใช้เมื่อเปิด AED Management Platform" },
-  { label: "โหมดการทำงาน", value: "Standalone (ค่าเริ่มต้น) — ใช้ช่วยชีวิตได้โดยไม่ต้องเชื่อมต่อ" },
-  { label: "มาตรฐาน", value: "CE Mark · ISO 13485 · IP65 · EN 1789:2020 · ILCOR/AHA 2020-2025" },
-  { label: "อุปกรณ์ที่รวมมา", value: "Electrode pads + แบตเตอรี่ + กระเป๋า + คู่มือไทย" },
-];
-
-const adultShocks = [
-  { n: "Shock 1", j: "100 J" },
-  { n: "Shock 2", j: "150 J" },
-  { n: "Shock 3", j: "170 J" },
-  { n: "Shock 4", j: "200 J" },
-  { n: "Shock 5", j: "300 J" },
-  { n: "Shock 6", j: "360 J" },
-  { n: "Shock 7+", j: "360 J (cap max)" },
-];
-
-const pediatricShocks = [
-  { n: "Shock 1", j: "10 J" },
-  { n: "Shock 2", j: "15 J" },
-  { n: "Shock 3", j: "20 J" },
-  { n: "Shock 4", j: "30 J" },
-  { n: "Shock 5", j: "50 J" },
-  { n: "Shock 6", j: "70 J" },
-  { n: "Shock 7", j: "100 J" },
-  { n: "Shock 8+", j: "100 J (cap max)" },
-];
+// Hero renders rent and buy as two equal offers; prices come from the same data
+// the plan/package sections use, so the hero can never drift from them.
+const RENT_FLEX = rentalPlans.find((p) => p.id === "rent-flex")!;
+const RENT_ANNUAL = rentalPlans.find((p) => p.id === "rent-annual")!;
+const BUY_PKG = acquisitionPackages.find((p) => p.id === "pkg-premium")!;
+const ANNUAL_PER_MONTH = Math.round(RENT_ANNUAL.price / 12 / 10) * 10;
 
 export default function Home() {
   return (
@@ -78,15 +56,29 @@ export default function Home() {
       <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">❤️</span>
-            <span className="font-bold text-xl text-yellow-400">JiaAED</span>
+            <JiaAedLogo className="h-8 w-auto" />
           </div>
-          <div className="flex items-center gap-4">
-            <a href="#rent" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">เช่า AED</a>
-            <a href="#how" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden sm:block">วิธีได้เครื่อง</a>
+          <div className="flex items-center gap-3 sm:gap-4">
             <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
             <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">ข้อมูลเครื่อง</a>
-            <Link href="/aed/rental" className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-4 py-2 rounded-full hover:bg-yellow-400/20 transition-colors hidden sm:block">เช่า AED →</Link>
+            {/* เช่า/ซื้อ as one segmented pair, visible at every width — the two
+                offers carry equal weight from the very first glance. */}
+            <div className="flex items-center">
+              <a
+                href="#rent"
+                data-cta="nav_rent"
+                className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-3 sm:px-4 py-2 rounded-l-full hover:bg-yellow-400/20 transition-colors"
+              >
+                เช่า
+              </a>
+              <a
+                href="#how"
+                data-cta="nav_buy"
+                className="bg-white/5 text-gray-200 border border-l-0 border-gray-500/40 text-sm font-semibold px-3 sm:px-4 py-2 rounded-r-full hover:bg-white/10 transition-colors"
+              >
+                ซื้อ
+              </a>
+            </div>
             <a
               href={LINE_OA}
               target="_blank"
@@ -105,34 +97,86 @@ export default function Home() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
           <div>
             <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20 mb-4">
-              ✅ อย. รับรอง · เช่าได้ ไม่ต้องลงทุนก้อนใหญ่ · ออกใบกำกับภาษีได้
+              ✅ อย. รับรอง · เช่าหรือซื้อขาดก็ได้ · ออกใบกำกับภาษีได้
             </span>
             <HeroHeadline />
             <p className="text-gray-400 text-lg mb-4">
               <strong className="text-white">เช่า AED พร้อมใช้</strong> — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร<br />
               เสียงแนะนำภาษาไทย · ใช้ได้ทั้งผู้ใหญ่และเด็ก
             </p>
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-6 bg-yellow-400/5 border border-yellow-400/30 rounded-2xl px-5 py-4 inline-flex">
-              <span className="text-xs text-gray-400">เช่าเริ่มต้น</span>
-              <span className="text-4xl md:text-5xl font-black text-yellow-400">฿2,490</span>
-              <span className="text-lg text-gray-400 font-semibold">/เดือน</span>
-              <span className="text-xs text-gray-500 w-full">ก่อน VAT · แผนรายปีเฉลี่ย ~฿1,830/เดือน · หรือจะซื้อขาด ฿42,900 ก็ได้</span>
+            {/* Rent and buy side by side at equal weight — rent keeps the yellow
+                identity, buy gets the white/silver "ownership" treatment. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5 flex flex-col">
+                <span className="text-xs font-bold text-yellow-400">เช่า — ไม่ต้องลงทุนก้อนใหญ่</span>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl md:text-4xl font-black text-yellow-400">
+                    ฿{RENT_FLEX.price.toLocaleString()}
+                  </span>
+                  <span className="text-sm text-gray-400 font-semibold">/เดือน</span>
+                </div>
+                <span className="text-xs text-gray-500 mt-1 mb-4">
+                  ก่อน VAT · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน
+                </span>
+                <a
+                  href={LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="hero_rent_card"
+                  data-product="rent-flex"
+                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
+                >
+                  💬 สนใจเช่า — ทัก LINE
+                </a>
+                <a
+                  href="#rent"
+                  className="text-center text-xs text-yellow-400/80 hover:text-yellow-300 font-medium mt-2"
+                >
+                  ดูแผนเช่า →
+                </a>
+              </div>
+              <div className="rounded-2xl border border-gray-400/40 bg-white/5 p-5 flex flex-col">
+                <span className="text-xs font-bold text-gray-200">ซื้อขาด — เป็นเจ้าของเต็มตัว</span>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-3xl md:text-4xl font-black text-white">
+                    {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
+                  </span>
+                  {BUY_PKG.listPriceLabel && (
+                    <span className="text-sm text-gray-500 line-through">{BUY_PKG.listPriceLabel}</span>
+                  )}
+                </div>
+                <span className="text-xs text-gray-500 mt-1 mb-4">
+                  ราคาเงินสด · ออกใบกำกับภาษีได้
+                </span>
+                <a
+                  href={LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="hero_buy_card"
+                  data-product="pkg-premium"
+                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
+                >
+                  💬 สนใจซื้อ — ทัก LINE
+                </a>
+                <a
+                  href="#how"
+                  className="text-center text-xs text-gray-300 hover:text-white font-medium mt-2"
+                >
+                  เทียบ 3 วิธี →
+                </a>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <a
-                href="#rent"
-                className="bg-yellow-400 text-yellow-900 font-bold text-lg px-8 py-4 rounded-full hover:bg-yellow-300 transition-colors text-center"
-              >
-                ดูแผนเช่า AED →
-              </a>
               <HeroCta />
             </div>
             <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
           </div>
           {/* Yuwell/PRIMEDIC is the featured brand (owner decision): red machine
-              first with the แนะนำ badge; Amoul stays as the secondary option.
-              The featured image links to the brand page, not LINE — image taps
-              are inspection intent, not chat intent (weekly review 14 Jun). */}
+              first with the แนะนำ badge; Yuwell Y2 (เรือธง) spotlighted alongside
+              it. Amoul i7 removed by อย. order (ก.ค. 2026) — this slot used to be its
+              secondary option. The featured image links to the brand page, not
+              LINE — image taps are inspection intent, not chat intent (weekly
+              review 14 Jun). */}
           <div className="grid grid-cols-2 gap-4">
             <Link
               href="/aed/primedic"
@@ -159,21 +203,21 @@ export default function Home() {
               href={LINE_OA}
               target="_blank"
               rel="noopener noreferrer"
-              data-line-cta="hero_image_amoul"
-              data-product="i7"
+              data-line-cta="hero_image_y2"
+              data-product="primedic-y2"
               className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="Amoul i7 — คลิกเพื่อสอบถามทาง LINE"
+              aria-label="Yuwell Y2 — คลิกเพื่อสอบถามทาง LINE"
             >
               <div className="relative w-full h-56 md:h-64">
                 <Image
-                  src="/images/product-main.png"
-                  alt="AED Amoul i7"
+                  src="/images/yuwell-y2-main.jpg"
+                  alt="AED Yuwell Y2"
                   fill
                   className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
                   priority
                 />
               </div>
-              <span className="mt-2 text-xs font-semibold text-gray-400">Amoul i7 — อีกหนึ่งทางเลือก</span>
+              <span className="mt-2 text-xs font-semibold text-gray-400">Yuwell Y2 — รุ่นเรือธง จอสี EKG</span>
             </a>
           </div>
         </div>
@@ -203,7 +247,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
             {acquisitionPackages.map((pkg) => (
               <PackageCard key={pkg.id} pkg={pkg} />
             ))}
@@ -217,16 +261,36 @@ export default function Home() {
             </Link>
           </p>
 
-          {/* Decision helper — rent vs buy, collapsed to keep the section clean */}
-          <details className="group mt-8 max-w-3xl mx-auto rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-            <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-              <span className="font-semibold text-white">เช่า vs ซื้อ — อันไหนคุ้มกว่าสำหรับคุณ?</span>
-              <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-            </summary>
-            <div className="px-4 pb-5 pt-1">
-              <RentVsBuyTable />
+          {/* Decision helper — rent vs buy, shown in full: this is the single
+              most decision-critical content on the page, so no accordion. */}
+          <div className="mt-10 max-w-3xl mx-auto">
+            <h3 className="text-xl font-bold text-white text-center mb-5">
+              เช่า vs ซื้อ — อันไหนคุ้มกว่าสำหรับคุณ?
+            </h3>
+            <RentVsBuyTable />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
+              <a
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rent_vs_buy_rent"
+                data-product="pkg-care"
+                className="bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors text-center"
+              >
+                💬 สนใจเช่า — คุยทาง LINE
+              </a>
+              <a
+                href={LINE_OA}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-line-cta="rent_vs_buy_buy"
+                data-product="pkg-premium"
+                className="bg-[#06C755] text-white font-bold px-6 py-3 rounded-full hover:bg-[#05a847] transition-colors text-center"
+              >
+                💬 สนใจซื้อ — คุยทาง LINE
+              </a>
             </div>
-          </details>
+          </div>
 
           <div className="text-center mt-8">
             <Link
@@ -244,7 +308,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══ DECISION 2: which brand — Amoul vs PRIMEDIC, with a recommendation ═══ */}
+      {/* ═══ DECISION 2: which model — Y0 vs Y8 vs Y2, with a recommendation ═══ */}
       <section id="brands" className="py-16 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-3">
@@ -269,9 +333,9 @@ export default function Home() {
               </p>
             </div>
             <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
-              <div className="text-yellow-300 font-bold mb-1">เลือก Amoul i7 ถ้า…</div>
+              <div className="text-yellow-300 font-bold mb-1">เลือก PRIMEDIC Y0 ถ้า…</div>
               <p className="text-gray-300 text-sm">
-                อยากได้ <strong className="text-white">ราคาเริ่มต้นเข้าถึงง่าย</strong> + อัตโนมัติเต็มรูปแบบ เสียงไทย 5 ภาษา IP65 กันน้ำ — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
+                อยากได้ <strong className="text-white">ราคาเริ่มต้นเข้าถึงง่าย</strong> กึ่งอัตโนมัติใช้งานง่าย เสียงไทย — เหมาะกับออฟฟิศ/โรงงาน/ที่สาธารณะทั่วไป
               </p>
             </div>
           </div>
@@ -294,10 +358,63 @@ export default function Home() {
             ))}
           </div>
 
-          {/* PRIMEDIC Y0 vs Y8 detail — collapsed so the brand choice stays simple */}
+          {/* ใบปลิวโฆษณาทางการ — รูปที่ผ่านการขออนุญาต ฆพ. แล้ว (ตัวรูปโฆษณาจริง
+              มีเลข ฆพ. กำกับในภาพ) ไม่ใช่สแกนเอกสารใบอนุญาต ซึ่งดูได้ที่ /aed/primedic */}
+          <div className="mt-12">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-bold text-white">ใบปลิวทางการ — ได้รับอนุญาตโฆษณาจาก อย. แล้ว</h3>
+              <p className="text-gray-500 text-sm mt-1">
+                ทุกภาพผ่านการขออนุญาตโฆษณาเครื่องมือแพทย์ถูกต้อง — ฆพ.2475/2569 (Y0 / Y2) · ฆพ.287/2567 (Y8)
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  src: "/images/primedic-y2-flyer-khop.jpg",
+                  alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+                  w: 4749,
+                  h: 5174,
+                  href: "/aed/yuwell-y2",
+                  label: "Yuwell Y2 · ฆพ.2475/2569",
+                },
+                {
+                  src: "/images/primedic-y0-flyer-khop.jpg",
+                  alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+                  w: 4727,
+                  h: 5174,
+                  href: "/aed/primedic",
+                  label: "HeartSave Y0 · ฆพ.2475/2569",
+                },
+                {
+                  src: "/images/primedic-y8-flyer-khop.jpg",
+                  alt: "PRIMEDIC HeartSave Y8 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.287/2567",
+                  w: 4724,
+                  h: 5174,
+                  href: "/aed/primedic",
+                  label: "HeartSave Y8 · ฆพ.287/2567",
+                },
+              ].map((f) => (
+                <Link key={f.src} href={f.href} data-cta="flyer_khop_home" className="group">
+                  <div className="rounded-xl overflow-hidden border border-gray-800 bg-white group-hover:border-yellow-400/60 transition-colors">
+                    <Image
+                      src={f.src}
+                      alt={f.alt}
+                      width={f.w}
+                      height={f.h}
+                      sizes="(min-width: 640px) 33vw, 100vw"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <p className="text-center text-xs text-gray-400 mt-2">{f.label}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* PRIMEDIC Y0 / Y8 / Y2 detail — collapsed so the brand choice stays simple */}
           <details className="group mt-12 rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
             <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-              <span className="font-semibold text-white">เทียบสเปก PRIMEDIC HeartSave — Y0 vs Y8</span>
+              <span className="font-semibold text-white">เทียบสเปก PRIMEDIC HeartSave — Y0 / Y8 / Yuwell Y2</span>
               <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
             </summary>
             <div className="px-4 pb-5 pt-1">
@@ -313,10 +430,10 @@ export default function Home() {
             </div>
           </details>
 
-          {/* Amoul i7 mounting options — ตัวเลือกติดตั้ง (ไม่ใช่ยี่ห้อแยก) */}
+          {/* AED yuwell mounting options — ตัวเลือกติดตั้ง */}
           <div className="mt-12">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ Amoul i7</h3>
+              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ AED yuwell</h3>
               <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿47,900) หรือแท่นตั้งพื้น (฿51,900) — ราคารวมเครื่อง i7 แล้ว</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -329,8 +446,8 @@ export default function Home() {
                 className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
               >
                 <Image
-                  src="/images/aed-floorstand.png"
-                  alt="AED Amoul i7 + แท่นตั้งพื้น"
+                  src="/images/aed-floorstand.webp"
+                  alt="AED yuwell + แท่นตั้งพื้น"
                   width={1536}
                   height={1024}
                   className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
@@ -345,8 +462,8 @@ export default function Home() {
                 className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
               >
                 <Image
-                  src="/images/aed-wallcabinet.png"
-                  alt="AED Amoul i7 + ตู้ติดผนัง"
+                  src="/images/aed-wallcabinet.webp"
+                  alt="AED yuwell + ตู้ติดผนัง"
                   width={1536}
                   height={1024}
                   className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
@@ -377,8 +494,8 @@ export default function Home() {
                 icon: "📜",
                 title: "อย. รับรอง · ใบโฆษณาถูกต้อง",
                 desc: PRIMEDIC_REGULATORY.published
-                  ? `Amoul i7: ${regLine(AMOUL_REGULATORY)} · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)} — ตรวจสอบได้`
-                  : `Amoul i7: ${regLine(AMOUL_REGULATORY)} ตรวจสอบได้ · PRIMEDIC HeartSave: ${PRIMEDIC_REGULATORY.pendingNote}`,
+                  ? `Yuwell / PRIMEDIC HeartSave: ${regLine(PRIMEDIC_REGULATORY)} — ตรวจสอบได้`
+                  : `Yuwell / PRIMEDIC HeartSave: ${PRIMEDIC_REGULATORY.pendingNote}`,
               },
               {
                 icon: "🛠️",
@@ -400,6 +517,22 @@ export default function Home() {
                 <div className="text-gray-400 text-sm leading-relaxed">{t.desc}</div>
               </div>
             ))}
+          </div>
+
+          {/* Real training photos — photographic proof of the after-sales story */}
+          <div className="mt-10">
+            <PhotoStrip
+              photos={[
+                { src: "/images/training-bls-1.jpg", alt: "สาธิต CPR และการใช้ AED นอกสถานที่", caption: "สาธิตการใช้ AED ถึงหน่วยงาน" },
+                { src: "/images/training-bls-2.jpg", alt: "ผู้เข้าอบรม CPR รับใบประกาศ", caption: "อบรมโดยทีม BLS Instructor" },
+                { src: "/images/training-bls-3.jpg", alt: "ฝึกปฏิบัติ CPR กับหุ่นจำลอง", caption: "ฝึกปฏิบัติจริงกับหุ่น CPR" },
+              ]}
+            />
+            <p className="text-center mt-4">
+              <Link href="/training" className="text-yellow-400 hover:text-yellow-300 text-sm font-medium">
+                เราอบรมให้จริงทุกแพ็กเกจ — ดูหลักสูตรอบรม CPR &amp; AED →
+              </Link>
+            </p>
           </div>
 
           {/* Trust stats */}
@@ -426,14 +559,14 @@ export default function Home() {
           <h2 className="text-2xl font-bold text-center mb-2 text-white">เทคโนโลยีครบทุกมิติ</h2>
           <p className="text-center text-gray-500 text-sm mb-8">ออกแบบมาเพื่อช่วยชีวิตในทุกสถานการณ์</p>
           <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/feature-grid.jpg" alt="i-SHOCK i-SAVE i-LOOK i-CARE" width={1080} height={1080} className="w-full h-auto" />
+            <Image src="/images/yuwell-y2-features.webp" alt="Yuwell Y2 — หน้าจอสีแนะนำทุกขั้นตอน พร้อมระบบแนะนำ CPR แบบเรียลไทม์" width={1536} height={1024} className="w-full h-auto" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center text-sm">
             {[
-              { icon: "⚡", name: "i-SHOCK", desc: "360J พร้อมใน 7 วินาที" },
-              { icon: "❤️", name: "i-SAVE", desc: "วิเคราะห์คลื่นหัวใจอัตโนมัติ" },
-              { icon: "🖥️", name: "i-LOOK", desc: "จอแสดงขั้นตอนการใช้งาน" },
-              { icon: "📡", name: "i-CARE", desc: "บันทึก ECG ส่งข้อมูลผ่าน WiFi" },
+              { icon: "🖥️", name: "หน้าจอสี", desc: "แนะนำทุกขั้นตอน เข้าใจง่ายแม้ไม่มีประสบการณ์" },
+              { icon: "❤️", name: "CPR เรียลไทม์", desc: "บอกความลึกและจังหวะการกดหน้าอก" },
+              { icon: "⚡", name: "วิเคราะห์รวดเร็ว", desc: "วิเคราะห์คลื่นหัวใจ พร้อมช็อกแม่นยำ" },
+              { icon: "👨‍👩‍👧", name: "Smart Pad", desc: "แผ่นเดียวใช้ได้ทั้งเด็กและผู้ใหญ่" },
             ].map((f) => (
               <div key={f.name} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl mb-1">{f.icon}</div>
@@ -447,32 +580,29 @@ export default function Home() {
 
       {/* Waterproof */}
       <section className="py-14 px-4 bg-gray-950">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-            <Image src="/images/waterproof.jpeg" alt="AED IP65 กันน้ำ" width={600} height={400} className="w-full h-auto" />
-          </div>
-          <div>
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">🛡️ IP65 CERTIFIED</div>
-            <h2 className="text-3xl font-black mb-4 text-white">กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</h2>
-            <p className="text-gray-400 mb-5">ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C</p>
-            <ul className="space-y-3">
-              {["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"].map(f => (
-                <li key={f} className="flex items-center gap-3 text-gray-300">
-                  <span className="text-yellow-400 font-bold text-lg">✓</span>{f}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="max-w-5xl mx-auto">
+          <SplitFeature
+            image="/images/aed-weather.webp"
+            imageAlt="AED PRIMEDIC ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C"
+            badge="🛡️ IP65 CERTIFIED"
+            title={<>กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</>}
+            intro="ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C"
+            bullets={["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"]}
+          />
         </div>
       </section>
 
       {/* Easy to use + demo video */}
       <section className="py-14 px-4 bg-gray-900">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center mb-12">
-          <div className="order-2 md:order-1">
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">👥 ใช้งานง่าย</div>
-            <h2 className="text-3xl font-black mb-4 text-white">ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</h2>
-            <p className="text-gray-400 mb-6">เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน</p>
+        <div className="max-w-5xl mx-auto mb-12">
+          <SplitFeature
+            image="/images/lifestyle-aed-carry.webp"
+            imageAlt="พร้อมช่วยในทุกวินาที — ใช้งาน AED ง่าย"
+            badge="👥 ใช้งานง่าย"
+            title={<>ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</>}
+            intro="เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน"
+            reverse
+          >
             <a
               href={LINE_OA}
               target="_blank"
@@ -482,10 +612,7 @@ export default function Home() {
             >
               💬 สอบถามราคา
             </a>
-          </div>
-          <div className="order-1 md:order-2 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/lifestyle-man.jpeg" alt="ใช้งาน AED ง่าย" width={600} height={400} className="w-full h-auto" />
-          </div>
+          </SplitFeature>
         </div>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-6">
@@ -493,7 +620,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-3xl font-black text-white mb-2">ดูวิธีการใช้งานเครื่อง AED</h2>
             <p className="text-gray-400 text-sm">ทีละขั้นตอน — ใช้ได้ทันที ไม่ต้องอบรม</p>
           </div>
-          <YouTubeLite videoId="ayov6IVgW7w" title="วิธีการใช้งานเครื่อง AED" />
+          <YouTubeLite videoId="cpM78Zc2RC0" title="วิธีการใช้งานเครื่อง AED" />
         </div>
       </section>
 
@@ -502,247 +629,44 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-block bg-gray-700/40 text-gray-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-gray-600/40">
-              📋 ข้อมูลทางเทคนิคแบบละเอียด
+              📋 ข้อมูลทางเทคนิค · การรับรอง
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">เจาะลึกสเปก & การทำงาน</h2>
-            <p className="text-gray-400 text-sm max-w-2xl mx-auto">สำหรับผู้ที่ต้องการรายละเอียด — กดเปิดหัวข้อที่สนใจได้เลย</p>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">มาตรฐาน &amp; การขึ้นทะเบียน</h2>
+            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+              สเปกเต็มของรุ่นที่จำหน่ายอยู่ (Yuwell Y2 / PRIMEDIC HeartSave) ดูได้ที่หัวข้อ{" "}
+              <a href="#brands" className="text-yellow-400 hover:underline">
+                เลือกยี่ห้อ
+              </a>{" "}
+              ด้านบน หรือหน้า{" "}
+              <Link href="/aed/yuwell-y2" className="text-yellow-400 hover:underline">
+                Yuwell Y2
+              </Link>
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2 justify-center mb-4">
+            {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "ILCOR/AHA 2020-2025"].map((cert) => (
+              <span key={cert} className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
+                ✓ {cert}
+              </span>
+            ))}
+          </div>
+          <div className="mb-8 flex flex-wrap gap-3 justify-center">
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">Yuwell / PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
+                <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
+              </div>
+            )}
+            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
+              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
+                <div className="text-xs text-gray-400 font-semibold">Yuwell / PRIMEDIC — ใบอนุญาตโฆษณา</div>
+                <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
-            {/* Shock protocol */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">⚡ โปรแกรมการช็อก (Escalating Energy Protocol) + Evidence ทางการแพทย์</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm max-w-2xl mx-auto text-center mb-6">
-                  เครื่องของเราใช้ escalating protocol ตาม international guidelines เริ่มต่ำเพื่อลด myocardial damage แล้วเพิ่มเมื่อจำเป็น เป็น standard ที่ AHA recognize
-                </p>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-gray-950 border border-red-400/30 rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-lg text-red-400">ADULT (ผู้ใหญ่) — 6 ระดับ</h3>
-                      <span className="text-xs text-gray-500">100 → 360 J</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {adultShocks.map((s) => (
-                        <li key={s.n} className="flex justify-between items-center bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-sm">
-                          <span className="text-gray-400 font-medium">{s.n}</span>
-                          <span className="text-red-400 font-bold">{s.j}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-xs text-gray-500 mt-3">↑ เพิ่มพลังงานอัตโนมัติเมื่อช็อกครั้งก่อนไม่สำเร็จ</p>
-                  </div>
-
-                  <div className="bg-gray-950 border border-green-400/30 rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-bold text-lg text-green-400">PEDIATRIC (เด็ก) — 7 ระดับ</h3>
-                      <span className="text-xs text-gray-500">10 → 100 J</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {pediatricShocks.map((s) => (
-                        <li key={s.n} className="flex justify-between items-center bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-sm">
-                          <span className="text-gray-400 font-medium">{s.n}</span>
-                          <span className="text-green-400 font-bold">{s.j}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-xs text-gray-500 mt-3">สำหรับเด็ก &lt; 8 ปี หรือน้ำหนัก &lt; 25 กก.</p>
-                  </div>
-                </div>
-
-                {/* Medical Evidence */}
-                <div className="mt-8 bg-gray-950 border border-gray-800 rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <span>📚</span> EVIDENCE ทางการแพทย์
-                  </h3>
-                  <div className="grid md:grid-cols-3 gap-5 text-sm">
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">Guidelines ILCOR/AHA 2020-2025</div>
-                      <ul className="space-y-1.5 text-gray-300">
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Escalating energy = acceptable strategy</span></li>
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Fixed high energy = also acceptable</span></li>
-                        <li className="flex items-start gap-2"><span className="text-green-400">✓</span><span>Both have similar outcomes</span></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">Studies</div>
-                      <ol className="space-y-1.5 text-gray-300 list-decimal list-inside">
-                        <li><span className="font-semibold">BIPHASIC Trial (2007):</span> Escalating ≈ fixed high energy — termination rates ใกล้เคียง</li>
-                        <li><span className="font-semibold">AHA 2020 Guidelines:</span> ทั้ง 2 กลยุทธ์ recommended — ไม่มี superiority</li>
-                        <li><span className="font-semibold">ILCOR 2025 Update:</span> Initial 120-200J biphasic · Subsequent ≥ initial · 360J max</li>
-                      </ol>
-                    </div>
-                    <div>
-                      <div className="text-yellow-400 font-bold mb-2">First Shock Success Rates</div>
-                      <ul className="space-y-1.5 text-gray-300">
-                        <li className="flex justify-between"><span>100J biphasic</span><span className="text-red-400 font-bold">70-80%</span></li>
-                        <li className="flex justify-between"><span>150J biphasic</span><span className="text-red-400 font-bold">80-90%</span></li>
-                        <li className="flex justify-between"><span>200J biphasic</span><span className="text-red-400 font-bold">85-90%</span></li>
-                      </ul>
-                      <div className="mt-3 pt-3 border-t border-gray-800">
-                        <div className="text-xs text-gray-400 mb-1">After 3 shocks</div>
-                        <div className="text-green-400 font-bold">Cumulative success &gt; 95%</div>
-                        <div className="text-xs text-gray-500 mt-1">ส่วนใหญ่ไม่ต้องถึง 360J</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            {/* Connectivity */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">📡 โหมดการทำงาน & การเชื่อมต่อ (Standalone + Optional Connectivity)</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm max-w-2xl mx-auto text-center mb-6">
-                  AED Amoul i7 ทำงานแบบ Standalone เป็นค่าเริ่มต้น ช่วยชีวิตได้ทันทีโดยไม่ต้องเชื่อมต่อใดๆ — Connectivity จะใช้ก็ต่อเมื่อลูกค้าเปิดใช้ AED Management Platform เอง
-                </p>
-                <div className="grid md:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-gray-950 border border-green-400/40 rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl">✅</span>
-                      <div>
-                        <div className="text-xs text-green-400 font-bold uppercase tracking-wide">โหมดที่ 1 (ค่าเริ่มต้น)</div>
-                        <h3 className="font-bold text-lg text-white">Standalone Mode</h3>
-                      </div>
-                    </div>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>เครื่องทำงานเดี่ยว ไม่ส่งข้อมูลขึ้นส่วนกลาง</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ไม่ต้องเปิดใช้ dashboard หรือสมัครอะไรเพิ่ม</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ใช้ช่วยชีวิตได้ปกติทุกอย่าง — Self-test รายวันก็ทำให้เอง</span></li>
-                      <li className="flex items-start gap-2"><span className="text-green-400 mt-0.5">•</span><span>ดึง event log ผ่าน USB เมื่อตรวจสอบเครื่อง</span></li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-gray-950 border border-blue-400/40 rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl">🔗</span>
-                      <div>
-                        <div className="text-xs text-blue-400 font-bold uppercase tracking-wide">โหมดที่ 2 (ตัวเลือก)</div>
-                        <h3 className="font-bold text-lg text-white">Connected Mode</h3>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-400 mb-3">เมื่อต้องการดูข้อมูล ECG ขณะใช้เครื่องแบบ real-time:</p>
-                    <ol className="space-y-2 text-sm text-gray-300 list-decimal list-inside">
-                      <li>เปิดใช้ AED Management Platform</li>
-                      <li>ลงทะเบียนข้อมูลเครื่อง</li>
-                      <li>เลือกช่องทาง: USB / Wi-Fi / SIM 4G</li>
-                    </ol>
-                    <p className="text-xs text-blue-300 mt-3">→ จึงจะเข้าถึงข้อมูลผ่าน dashboard ได้</p>
-                  </div>
-                </div>
-
-                {/* Connectivity channels */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    {
-                      icon: "🔌",
-                      name: "USB",
-                      desc: "ดาวน์โหลด event log ออกได้ — ไม่ส่งอัตโนมัติ เก็บข้อมูลผ่าน USB เมื่อตรวจสอบ",
-                    },
-                    {
-                      icon: "📶",
-                      name: "Wi-Fi",
-                      desc: "ส่งข้อมูลขึ้นแพลตฟอร์มแบบ real-time ในพื้นที่ที่มี Wi-Fi ครอบคลุม",
-                    },
-                    {
-                      icon: "📡",
-                      name: "SIM (4G)",
-                      desc: "ส่งข้อมูลขึ้น real-time ผ่าน 4G cellular — สำหรับพื้นที่ไม่มี Wi-Fi",
-                    },
-                  ].map((c) => (
-                    <div key={c.name} className="bg-gray-950 border border-gray-700 rounded-xl p-5">
-                      <div className="text-3xl mb-2">{c.icon}</div>
-                      <div className="font-bold text-white mb-1">{c.name}</div>
-                      <p className="text-sm text-gray-400 leading-relaxed">{c.desc}</p>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-center text-xs text-gray-500 mt-6">
-                  * รุ่น i7 ยังไม่มี GPS tracking (อยู่ระหว่างการพัฒนากับ supplier) · Wi-Fi/4G มีประโยชน์ก็ต่อเมื่อท่านเปิดใช้แพลตฟอร์ม
-                </p>
-              </div>
-            </details>
-
-            {/* Battery life */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">🔋 อายุการใช้งานแบตเตอรี่</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-gray-400 text-sm text-center mb-6">Lithium 4,500 mAh · 12V · แบบใช้แล้วทิ้ง · &gt; 420 ครั้ง shock ที่ 200J</p>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-gray-950 border border-gray-800 rounded-2xl p-6 text-center">
-                    <div className="text-5xl mb-2">⏱️</div>
-                    <div className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">กรณีสแตนด์บายปกติ</div>
-                    <div className="text-4xl font-black text-yellow-400 mb-1">มากกว่า 5 ปี</div>
-                    <p className="text-sm text-gray-400">(เครื่องออโต้เทสทุกวัน แต่ไม่ได้ส่งรายงานไร้สาย)</p>
-                  </div>
-                  <div className="bg-gray-950 border border-gray-800 rounded-2xl p-6 text-center">
-                    <div className="text-5xl mb-2">📦</div>
-                    <div className="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1">กรณีเก็บแบตเตอรี่</div>
-                    <div className="text-4xl font-black text-yellow-400 mb-1">สูงสุด 7 ปี</div>
-                    <p className="text-sm text-gray-400">(แยกไว้ภายนอกเครื่อง ในอุณหภูมิที่เหมาะสม)</p>
-                  </div>
-                </div>
-              </div>
-            </details>
-
-            {/* Full spec table */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">📑 คุณลักษณะเฉพาะ AED Amoul i7 (ตารางสเปกเต็ม)</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-center text-gray-500 text-sm mb-6">สเปกของรุ่น Amoul i7 · สเปก PRIMEDIC ดูได้ที่หัวข้อ “เลือกยี่ห้อ” ด้านบน</p>
-                <div className="rounded-2xl overflow-hidden border border-gray-700">
-                  {specs.map((s, i) => (
-                    <div key={s.label} className={`flex gap-4 px-6 py-4 ${i % 2 === 0 ? "bg-gray-900" : "bg-gray-800"}`}>
-                      <div className="w-44 flex-shrink-0 text-sm font-semibold text-gray-500">{s.label}</div>
-                      <div className="text-sm text-gray-200">{s.value}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center mt-6">
-                  {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "ILCOR/AHA 2020-2025", "FDA"].map((cert) => (
-                    <span key={cert} className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
-                      ✓ {cert}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-4 flex flex-wrap gap-3 justify-center">
-                  <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                    <div className="text-xs text-gray-400 font-semibold">Amoul i7 — เลขที่ใบรับแจ้ง อย.</div>
-                    <div className="text-sm font-bold text-yellow-400">{AMOUL_REGULATORY.fda}</div>
-                  </div>
-                  <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                    <div className="text-xs text-gray-400 font-semibold">Amoul i7 — ใบอนุญาตโฆษณา</div>
-                    <div className="text-sm font-bold text-yellow-400">ฆพ. {AMOUL_REGULATORY.adLicense}</div>
-                  </div>
-                  {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                      <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
-                      <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
-                    </div>
-                  )}
-                  {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                      <div className="text-xs text-gray-400 font-semibold">PRIMEDIC — ใบอนุญาตโฆษณา</div>
-                      <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </details>
-
             {/* Accessories / spare parts */}
             <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
               <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
@@ -751,7 +675,7 @@ export default function Home() {
               </summary>
               <div className="px-4 pb-6 pt-2">
                 <p className="text-center text-gray-500 mb-8 max-w-2xl mx-auto">
-                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Amoul i7 และ PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
+                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Yuwell / PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                   {accessories.map((a) => (
@@ -820,7 +744,7 @@ export default function Home() {
             data-line-cta="footer_cta"
             className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
           >
-            💬 เพิ่มเพื่อน LINE @jiacpr
+            💬 เพิ่มเพื่อน LINE {LINE_OA_ID}
           </a>
         </div>
       </section>
@@ -855,7 +779,7 @@ export default function Home() {
       <section id="faq" className="py-14 px-4 bg-gray-900 border-t border-gray-800">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">คำถามที่พบบ่อย</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Amoul i7 และ PRIMEDIC HeartSave</p>
+          <p className="text-center text-gray-500 text-sm mb-8">FAQ — AED Yuwell Y2 และ PRIMEDIC HeartSave</p>
           <div className="space-y-3">
             {faqs.map((f) => (
               <details
@@ -877,30 +801,25 @@ export default function Home() {
 
       {/* Footer — absorbs the deeper links removed from the navbar */}
       <footer className="bg-black border-t border-gray-800 text-gray-600 text-sm py-8 px-4 text-center">
-        <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-4 text-gray-400">
-          <Link href="/aed/packages" className="hover:text-yellow-400 transition-colors">แพ็กเกจ</Link>
-          <Link href="/aed/subscription" className="hover:text-yellow-400 transition-colors">เช่า AED</Link>
-          <Link href="/aed/rental" className="hover:text-yellow-400 transition-colors">เช่าระยะสั้น</Link>
-          <Link href="/aed/primedic" className="hover:text-yellow-400 transition-colors">PRIMEDIC</Link>
+        <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-4 text-gray-400 max-w-3xl mx-auto">
+          {/* Central nav list = every public page; the two on-page anchors ride along */}
+          {FOOTER_LINKS.map((l) => (
+            <Link key={l.href} href={l.href} className="hover:text-yellow-400 transition-colors">
+              {l.label}
+            </Link>
+          ))}
           <a href="#tech" className="hover:text-yellow-400 transition-colors">สเปก</a>
           <a href="#faq" className="hover:text-yellow-400 transition-colors">FAQ</a>
-          <Link href="/docs" className="hover:text-yellow-400 transition-colors">เอกสาร</Link>
-          <Link href="/articles" className="hover:text-yellow-400 transition-colors">บทความ</Link>
-          <Link href="/news" className="hover:text-yellow-400 transition-colors">ข่าว</Link>
         </div>
         <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>
         <p className="mb-1">
           <a href={PHONE_HREF} data-cta="tel_footer" className="text-gray-400 hover:text-yellow-400">
             📞 โทร {PHONE_DISPLAY}
-          </a>{" "}
-          ·{" "}
-          <Link href="/privacy" className="text-gray-400 hover:text-yellow-400">
-            นโยบายความเป็นส่วนตัว
-          </Link>
+          </a>
         </p>
         <p>
-          จำหน่าย AED Amoul i7 และ PRIMEDIC HeartSave · Amoul i7: {regLine(AMOUL_REGULATORY)}
-          {PRIMEDIC_REGULATORY.published ? ` · PRIMEDIC: ${regLine(PRIMEDIC_REGULATORY)}` : ""}
+          จำหน่าย AED Yuwell / PRIMEDIC HeartSave
+          {PRIMEDIC_REGULATORY.published ? ` · ${regLine(PRIMEDIC_REGULATORY)}` : ""}
         </p>
         <p className="mt-3 text-xs text-gray-700">© {new Date().getFullYear()} JiaAED. All rights reserved.</p>
       </footer>

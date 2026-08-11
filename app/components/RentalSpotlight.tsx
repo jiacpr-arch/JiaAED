@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { rentalPlans } from "@/lib/aed/rental";
+import { rentalPlans, rentalTrustSignals } from "@/lib/aed/rental";
 
-import { lineOaUrl } from "@/lib/aed/line";
-
-const LINE_OA = lineOaUrl("สนใจเช่า AED");
+// Plain add-friend link, no per-plan prefill: the prefilled chat link skipped
+// the friend-add step and the follow never happened (see lib/aed/line.ts).
+// Which plan the click came from still reaches analytics via data-product.
+import { LINE_OA } from "@/lib/aed/line";
 
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.
@@ -40,7 +41,7 @@ export function RentalSpotlight() {
             className="block rounded-2xl overflow-hidden border border-yellow-400/30 shadow-2xl shadow-yellow-400/10 hover:border-yellow-400/60 transition-colors"
           >
             <Image
-              src="/images/aed-rent-all.jpg"
+              src="/images/aed-rent-all.webp"
               alt="แพ็กเกจเช่า AED — รายวัน / รายเดือน / รายปี"
               width={1200}
               height={800}
@@ -51,33 +52,56 @@ export function RentalSpotlight() {
           {/* Three rental plans at a glance */}
           <div className="space-y-4">
             {rentalPlans.map((p) => (
-              <Link
+              <div
                 key={p.id}
-                href="/aed/rental"
-                className={`flex items-center justify-between gap-4 rounded-2xl border p-5 bg-gray-900 transition-colors ${
+                className={`flex items-center gap-3 rounded-2xl border p-4 bg-gray-900 transition-colors ${
                   p.badge
                     ? "border-yellow-400/60 hover:border-yellow-400"
                     : "border-gray-800 hover:border-yellow-400/40"
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-white">{p.name}</span>
-                    {p.badge && (
-                      <span className="bg-yellow-400 text-yellow-900 text-[10px] font-black px-2 py-0.5 rounded-full">
-                        {p.badge}
-                      </span>
-                    )}
+                {p.image && (
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                  />
+                )}
+                <Link
+                  href="/aed/rental"
+                  className="flex-1 flex items-center justify-between gap-4 min-w-0"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-white">{p.name}</span>
+                      {p.badge && (
+                        <span className="bg-yellow-400 text-yellow-900 text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {p.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-0.5">{p.subtitle}</div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-0.5">{p.subtitle}</div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <div className="text-2xl font-black text-yellow-400">
-                    ฿{p.price.toLocaleString()}
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-2xl font-black text-yellow-400">
+                      ฿{p.price.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500">{p.unit}</div>
                   </div>
-                  <div className="text-xs text-gray-500">{p.unit}</div>
-                </div>
-              </Link>
+                </Link>
+                <a
+                  href={LINE_OA}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-line-cta="home_rent_plan"
+                  data-product={p.id}
+                  className="flex-shrink-0 bg-[#06C755] text-white text-xs font-bold px-3 py-2 rounded-full hover:bg-[#05a847] transition-colors"
+                >
+                  💬 เช่า
+                </a>
+              </div>
             ))}
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -98,10 +122,30 @@ export function RentalSpotlight() {
                 💬 สอบถาม / จองเช่า
               </a>
             </div>
+            <Link
+              href="/aed/rental#rent-to-own"
+              className="block text-center text-sm font-medium text-yellow-400/90 hover:text-yellow-300"
+            >
+              หรือเช่าซื้อ ผ่อน 18 เดือนเป็นเจ้าของ →
+            </Link>
             <p className="text-center text-gray-600 text-xs">
               ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้ · อย. รับรอง
             </p>
           </div>
+        </div>
+
+        {/* Why renting is safe to say yes to — commitments already made in
+            rentalPlans/rentalFaqs, surfaced where the decision happens. */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+          {rentalTrustSignals.map((t) => (
+            <div
+              key={t.text}
+              className="rounded-2xl border border-gray-800 bg-gray-900 p-4 flex items-start gap-2.5"
+            >
+              <span className="text-xl leading-none">{t.icon}</span>
+              <span className="text-xs text-gray-300 leading-relaxed">{t.text}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>

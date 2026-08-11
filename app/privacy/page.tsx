@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
-import { SectionHeading } from "@/app/components/SectionHeading";
+import { PageHero } from "@/app/components/PageHero";
+import { LINE_OA_ID } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "นโยบายความเป็นส่วนตัว | JiaAED",
@@ -22,15 +23,14 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-gray-950 text-white font-sans">
       <SiteHeader />
 
-      <section className="max-w-3xl mx-auto px-4 py-10">
-        <SectionHeading
-          as="h1"
-          badge="⚖️ PDPA"
-          title="นโยบายความเป็นส่วนตัว"
-          subtitle={`เจี่ยรักษา (JiaAED) · ปรับปรุงล่าสุด ${UPDATED}`}
-        />
+      <PageHero
+        badge="⚖️ PDPA"
+        title="นโยบายความเป็นส่วนตัว"
+        subtitle={`เจี่ยรักษา (JiaAED) · ปรับปรุงล่าสุด ${UPDATED}`}
+      />
 
-        <div className="text-gray-300 text-sm leading-relaxed mt-8">
+      <section className="max-w-3xl mx-auto px-4 py-10">
+        <div className="text-gray-300 text-sm leading-relaxed">
           <p>
             เจี่ยรักษา (&quot;JiaAED&quot;, &quot;เรา&quot;) ให้ความสำคัญกับการคุ้มครองข้อมูลส่วนบุคคลของท่านตาม
             พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) นโยบายฉบับนี้อธิบายว่าเราเก็บข้อมูลอะไร
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
           <ul className="list-disc pl-5 space-y-1">
             <li>เจี่ยรักษา (JiaAED)</li>
             <li>อีเมล: jiacpr@gmail.com</li>
-            <li>LINE OA: @jiacpr</li>
+            <li>LINE OA: {LINE_OA_ID}</li>
           </ul>
 
           <p className="mt-10 text-gray-500">

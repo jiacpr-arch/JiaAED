@@ -66,7 +66,7 @@ export async function readAbState(daysBack = 7): Promise<AbState> {
   };
 }
 
-const SYSTEM_PROMPT = `คุณคือนักการตลาดที่ช่วยร้าน JiaAED (ขาย AED Amoul i7 — เครื่องกระตุกหัวใจไฟฟ้า) เขียน CTA copy
+const SYSTEM_PROMPT = `คุณคือนักการตลาดที่ช่วยร้าน JiaAED (ขาย AED Yuwell Y2 / PRIMEDIC HeartSave — เครื่องกระตุกหัวใจไฟฟ้า) เขียน CTA copy
 
 ข้อกำหนด:
 - ตอบเป็น JSON เท่านั้น ไม่มี markdown

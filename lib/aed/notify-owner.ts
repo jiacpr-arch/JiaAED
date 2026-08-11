@@ -1,5 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 
+import { LINE_OA_ID } from "./line";
+
 type LineMessage = Record<string, unknown>;
 
 /**
@@ -132,7 +134,7 @@ export async function notifyNewQuotation(p: {
         infoRow("👤 ลูกค้า", p.customerName ?? "ลูกค้าใหม่"),
         infoRow("📦 สินค้า", `${p.productName} × ${p.quantity} เครื่อง`),
         infoRow("💰 รวม", `${total} (รวม VAT)`),
-        infoRow("💬 ชำระ", "ลูกค้าจะนัดชำระผ่าน LINE @jiacpr"),
+        infoRow("💬 ชำระ", `ลูกค้าจะนัดชำระผ่าน LINE ${LINE_OA_ID}`),
       ],
     },
   };

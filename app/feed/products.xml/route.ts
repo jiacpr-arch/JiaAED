@@ -21,7 +21,7 @@ export async function GET() {
       <g:title>${escape(title)}</g:title>
       <g:description>${escape(desc)}</g:description>
       <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(p.id)}#brands</g:link>
-      <g:image_link>${SITE}/images/product-main.png</g:image_link>
+      <g:image_link>${SITE}/images/yuwell-y2-main.jpg</g:image_link>
       <g:availability>in stock</g:availability>
       <g:price>${p.price.toFixed(2)} THB</g:price>
       <g:condition>new</g:condition>
@@ -58,9 +58,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>${escape(BRAND)} — AED Amoul i7</title>
+    <title>${escape(BRAND)} — AED Yuwell Y2</title>
     <link>${SITE}</link>
-    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Amoul i7 — อย. รับรอง</description>
+    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Yuwell Y2 — อย. รับรอง</description>
 ${items}
 ${accessoryItems}
   </channel>

@@ -54,7 +54,7 @@ export function SpecComparisonTable() {
       </div>
 
       {/* Specs shared by both PRIMEDIC models */}
-      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วม (Y0 และ Y8)</h3>
+      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วม (Y0 / Y8 / Y2)</h3>
       <div className="grid sm:grid-cols-2 gap-2">
         {primedicSharedSpecs.map((s) => (
           <div

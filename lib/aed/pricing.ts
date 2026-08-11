@@ -3,50 +3,51 @@ import type { AedProduct, PriceCalcResult } from "./types";
 // ─── Product catalog ──────────────────────────────────────────────────────────
 
 export const AED_PRODUCTS: Record<string, AedProduct> = {
+  // Amoul i7 discontinued (ก.ค. 2026) — Yuwell Y2 takes over the "i7" SKU slot
+  // (id/faProductCode kept as-is for accounting/lead-form continuity). Pricing
+  // mirrors the "primedic-y2" entry below — same physical product, don't let
+  // the two numbers drift.
   i7: {
     id: "i7",
-    name: "AED Amoul i7",
-    nameTh: "เครื่อง AED Amoul i7",
-    description: "เครื่อง AED Amoul i7 พร้อมแผ่น Pad + แบตเตอรี่",
-    msrp: 70_000,
-    // ราคาขยับขึ้นจาก 39,999 → 42,900 (มิ.ย. 2026): หน้าเว็บ "จ่ายจริงรวม VAT" เดิม
-    // ≈42,799 ต่ำกว่าคู่แข่งถูกสุดในตลาด (Y8 บน Shopee ฿44,888) ซึ่งผิดนโยบาย
-    // "ห้ามตั้งราคาต่ำที่สุดในตลาด" → ตั้งให้พ้นจุดถูกสุดแต่ยังต่ำกว่า Mindray (฿89,000) มาก
-    startingPrice: 42_900,
-    bestPrice: 40_000,
-    minPrice: 37_000,
+    name: "AED Yuwell Y2",
+    nameTh: "เครื่อง AED Yuwell Y2",
+    description: "เครื่อง AED Yuwell Y2 — จอสี EKG + ดู CPR เรียลไทม์ พร้อมแผ่น Pad + แบตเตอรี่",
+    msrp: 89_000,
+    startingPrice: 59_999,
+    bestPrice: 55_900,
+    minPrice: 55_900,
     vatRate: 0.07,
     faProductCode: "AED-I7",
   },
   "i7-cabinet": {
     id: "i7-cabinet",
-    name: "AED Amoul i7 + ตู้แขวนผนัง",
-    nameTh: "เครื่อง AED Amoul i7 พร้อมตู้แขวนผนัง",
-    description: "เครื่อง AED Amoul i7 + ตู้ติดผนังมาตรฐาน พร้อมสัญญาณเตือน",
-    msrp: 80_000,
-    startingPrice: 47_900,
-    bestPrice: 45_000,
-    minPrice: 42_000,
+    name: "AED Yuwell Y2 + ตู้แขวนผนัง",
+    nameTh: "เครื่อง AED Yuwell Y2 พร้อมตู้แขวนผนัง",
+    description: "เครื่อง AED Yuwell Y2 + ตู้ติดผนังมาตรฐาน พร้อมสัญญาณเตือน",
+    msrp: 99_000,
+    startingPrice: 64_900,
+    bestPrice: 61_800,
+    minPrice: 61_800,
     vatRate: 0.07,
     faProductCode: "AED-I7-CAB",
   },
   "i7-floor": {
     id: "i7-floor",
-    name: "AED Amoul i7 + ตู้ตั้งพื้น",
-    nameTh: "เครื่อง AED Amoul i7 พร้อมตู้ตั้งพื้น",
-    description: "เครื่อง AED Amoul i7 + ตู้ตั้งพื้น Stainless สำหรับพื้นที่เปิดโล่ง",
-    msrp: 90_000,
-    startingPrice: 51_900,
-    bestPrice: 49_000,
-    minPrice: 46_000,
+    name: "AED Yuwell Y2 + ตู้ตั้งพื้น",
+    nameTh: "เครื่อง AED Yuwell Y2 พร้อมตู้ตั้งพื้น",
+    description: "เครื่อง AED Yuwell Y2 + ตู้ตั้งพื้น Stainless สำหรับพื้นที่เปิดโล่ง",
+    msrp: 109_000,
+    startingPrice: 68_900,
+    bestPrice: 65_800,
+    minPrice: 65_800,
     vatRate: 0.07,
     faProductCode: "AED-I7-FLR",
   },
   "pad-adult": {
     id: "pad-adult",
     name: "AED Pad (Adult)",
-    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (Ambul) สำหรับ AED Amoul i7",
-    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ ของแท้ Ambul REF 1.129.00201 ใช้กับ AED Amoul i7",
+    nameTh: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ (วัสดุสิ้นเปลือง)",
+    description: "แผ่นนำไฟฟ้า Pad ผู้ใหญ่ REF 1.129.00201 — อะไหล่สำหรับลูกค้าเดิม ไม่แสดงบนเว็บ",
     msrp: 5_000,
     startingPrice: 5_000,
     bestPrice: 5_000,
@@ -56,9 +57,9 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   },
   battery: {
     id: "battery",
-    name: "AED Battery (Amoul i7)",
-    nameTh: "แบตเตอรี่ AED Amoul i7 (Ambul)",
-    description: "แบตเตอรี่สำรอง/ทดแทน ของแท้ Ambul สำหรับ AED Amoul i7",
+    name: "AED Battery (legacy)",
+    nameTh: "แบตเตอรี่ AED (อะไหล่ลูกค้าเดิม)",
+    description: "แบตเตอรี่สำรอง/ทดแทน — อะไหล่สำหรับลูกค้าเดิม ไม่แสดงบนเว็บ",
     msrp: 7_500,
     startingPrice: 7_500,
     bestPrice: 7_500,
@@ -66,18 +67,23 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     vatRate: 0.07,
     faProductCode: "AED-BATT",
   },
-  // ── PRIMEDIC HeartSave (premium line — same supplier cost tier as i7 for Y0) ──
-  // NOTE: PRIMEDIC อย./ฆพ. pending → not in the public products[] grid / Merchant
-  // feed yet (see lib/aed/products.ts). Priced here so the AI sales bot can quote.
+  // ── PRIMEDIC HeartSave (premium line — Y2 also mirrored into the "i7" SKU
+  // slot above now that Amoul i7 is discontinued, see lib/aed/products.ts) ──
+  // NOTE: PRIMEDIC อย. confirmed to cover Y2 (ก.ค. 2026, importer-verified) —
+  // ฆพ.2475/2569 (Y0/Y2) + ฆพ.287/2567 (Y8), see lib/aed/regulatory.ts.
+  // กลยุทธ์ราคาใหม่ (ก.ค. 2026 — ดู docs/yuwell-pricing-strategy-2026-07-09.md):
+  // จุดยืน "เน้นปริมาณ" + Y0/Y8 = ฮาร์ดแวร์เดียวกัน → ให้ Y0 เป็นตัวขายหลัก/โฆษณา
+  // ที่หมุด 39,999 (ราคาที่ Y8 เคยขายดี), เก็บพรีเมียม feedback ไว้ที่ Y8 (44,900)
+  // และเก็บพรีเมียมจอ EKG ไว้ที่ Y2 (59,999). bestPrice = ราคายกล็อต (qty ≥ 5).
   "primedic-y0": {
     id: "primedic-y0",
     name: "PRIMEDIC HeartSave Y0",
     nameTh: "เครื่อง AED PRIMEDIC HeartSave Y0",
     description: "AED กึ่งอัตโนมัติ (มีปุ่ม Shock) เซ็นเซอร์ CPR feedback เป็นตัวเลือก",
     msrp: 70_000,
-    startingPrice: 39_000,
-    bestPrice: 39_000,
-    minPrice: 39_000,
+    startingPrice: 39_999, // ตัวขายหลัก/โฆษณา — ยึดหมุดราคาที่พิสูจน์แล้วว่าขายดี
+    bestPrice: 37_900, // ราคายกล็อต/โครงการ (ทุน 25,000 → ยังมีกำไร)
+    minPrice: 37_900,
     vatRate: 0.07,
     faProductCode: "AED-PMD-Y0",
   },
@@ -87,11 +93,24 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED PRIMEDIC HeartSave Y8",
     description: "AED กึ่งอัตโนมัติ พร้อมเซ็นเซอร์ CPR feedback มาตรฐาน",
     msrp: 70_000,
-    startingPrice: 49_999,
-    bestPrice: 49_999,
-    minPrice: 49_999, // ราคาต่ำสุดที่ขายได้ (owner) — ห้ามต่ำกว่านี้
+    startingPrice: 44_900, // ขั้นกลาง — เก็บค่าฟีเจอร์ feedback (ไม่ชนราคา Y0)
+    bestPrice: 42_900, // ราคายกล็อต (ทุน 23,000)
+    minPrice: 42_900, // ห้ามต่ำกว่านี้
     vatRate: 0.07,
     faProductCode: "AED-PMD-Y8",
+  },
+  "primedic-y2": {
+    id: "primedic-y2",
+    name: "Yuwell Y2 (You Too)",
+    nameTh: "เครื่อง AED Yuwell Y2 — จอ EKG + ดู CPR เรียลไทม์",
+    description:
+      "AED รุ่นเรือธง — จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) พร้อมเซ็นเซอร์ CPR feedback",
+    msrp: 89_000, // เทียบคู่แข่งรุ่นมีจอ (ZOLL/Mindray 72,500–89,000)
+    startingPrice: 59_999, // รุ่นที่ดัน — ถูกกว่าคู่แข่งรุ่นมีจอครึ่งหนึ่ง
+    bestPrice: 55_900, // ราคายกล็อต (ทุน 27,000–30,000)
+    minPrice: 55_900,
+    vatRate: 0.07,
+    faProductCode: "AED-PMD-Y2",
   },
   "yuwell-gps": {
     id: "yuwell-gps",

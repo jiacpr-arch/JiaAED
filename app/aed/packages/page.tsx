@@ -10,6 +10,8 @@ import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PromoBanner } from "@/app/components/PromoBanner";
+import { PhotoStrip } from "@/app/components/PhotoStrip";
+import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { packageFaqCategories } from "@/lib/aed/faqs";
 import { survivorReward } from "@/lib/aed/promotion";
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
     title: "แพ็กเกจ AED + GPS สำหรับองค์กร | JiaAED",
     description: "เลือกแพ็กเกจความปลอดภัย AED ที่เหมาะกับธุรกิจคุณ — ซื้อขาด เช่าแล้วได้ซื้อ หรือเช่าบริการครบวงจร",
     url: "/aed/packages",
-    images: ["/images/product-main.png"],
+    images: ["/images/og-cover.png"],
     type: "website",
   },
 };
@@ -35,6 +37,12 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
+      <BreadcrumbStructuredData
+        items={[
+          { name: "หน้าแรก", path: "/" },
+          { name: "แพ็กเกจ AED", path: "/aed/packages" },
+        ]}
+      />
       <SiteHeader />
 
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
@@ -51,7 +59,7 @@ export default function PackagesPage() {
 
         <PriceViewTracker targetId="packages-price" />
         <p className="text-center text-gray-500 text-sm mt-6 mb-6">ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้</p>
-        <div id="packages-price" className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div id="packages-price" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {acquisitionPackages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />
           ))}
@@ -80,6 +88,18 @@ export default function PackagesPage() {
             ดูแพ็กเกจ ดูแลครบ (BASIC / PRO / ELITE) →
           </Link>
         </div>
+      </section>
+
+      {/* What every package includes — shown in photos, not another list */}
+      <section className="max-w-6xl mx-auto px-4 py-6">
+        <PhotoStrip
+          heightClass="h-44 md:h-56"
+          photos={[
+            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดย BLS Instructor ทุกแพ็กเกจ" },
+            { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
+            { src: "/images/cloud-dashboard.png", alt: "Cloud Dashboard ดูสถานะเครื่อง AED", caption: "Dashboard เช็กความพร้อม 24 ชม." },
+          ]}
+        />
       </section>
 
       {/* Trust */}

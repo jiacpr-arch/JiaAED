@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 
-const LINE_ID = "@jiacpr";
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
+
+const LINE_ID = LINE_OA_ID;
 
 // Shown on desktop when a LINE CTA is clicked. line.me add-friend links only
 // work inside the LINE mobile app, so on a desktop browser the click would

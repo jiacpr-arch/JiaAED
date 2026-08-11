@@ -1,12 +1,16 @@
-// ─── Homepage tier ladder — Amoul i7 + PRIMEDIC sold side by side ──────────────
+// ─── Homepage tier ladder — Yuwell / PRIMEDIC HeartSave lineup ─────────────────
 // Composes the homepage "เลือกตามระดับ" grid by REFERENCING the canonical data
-// (products.ts / primedic.ts). Prices/ids are imported, never re-typed here, so
-// there's one source of truth per brand.
+// (primedic.ts). Prices/ids are imported, never re-typed here, so there's one
+// source of truth per model.
 //
-//   Tier 1 "รุ่นเริ่มต้น (เทียบเท่ากัน)":  Amoul i7  ↔  PRIMEDIC HeartSave Y0
-//   Tier 2 "รุ่นสูงกว่า":                  PRIMEDIC HeartSave Y8  +  Yuwell AED GPS
+// Amoul i7 discontinued (ก.ค. 2026) — Yuwell Y2 replaced it everywhere,
+// including the SKU/lead-form slot it used to occupy (see products.ts). The
+// "Amoul" brand type/styling stay in LineupBrand/LineupProductCard in case a
+// future legacy-support card needs it, but no card uses it anymore.
+//
+//   Tier 1 "รุ่นเริ่มต้น":  PRIMEDIC HeartSave Y0
+//   Tier 2 "รุ่นสูงกว่า":   PRIMEDIC HeartSave Y8  +  Yuwell Y2 (เรือธง)  +  Yuwell AED GPS
 
-import { products } from "./products";
 import { primedicModels, yuwellGpsAed, type PrimedicModel } from "./primedic";
 
 export type LineupBrand = "Amoul" | "PRIMEDIC" | "Yuwell";
@@ -17,13 +21,14 @@ export type LineupCard = {
   name: string;
   subtitle: string;
   price: number; // ก่อน VAT
-  msrp?: number; // ราคาขีดฆ่า (มีเฉพาะ i7)
+  msrp?: number; // ราคาขีดฆ่า (ไม่ได้ตั้งในการ์ดปัจจุบัน — เผื่อไว้)
   image: string;
   description: string;
   features: string[];
   badge: string | null; // ป้ายมุมบน เช่น "แนะนำ"
   highlight: boolean; // true => เน้นกรอบ/ปุ่มสีเหลือง
   dataProduct: string; // data-product attr (ตรงกับ id ใน pricing.ts)
+  detailHref?: string; // หน้ารายละเอียดรุ่น (ถ้ามี) — การ์ดจะแสดงลิงก์ "ดูรายละเอียด"
 };
 
 export type LineupTier = {
@@ -32,50 +37,41 @@ export type LineupTier = {
   cards: LineupCard[];
 };
 
-const i7 = products[0]; // id "i7"
-
-// PRIMEDIC card body, derived from the model's own fields so density matches i7.
-function primedicFeatures(cprFeedback: PrimedicModel["cprFeedback"]): string[] {
+// PRIMEDIC card body, derived from the model's own fields.
+// Y2 (เรือธง) leads with its screen; Y0/Y8 lead with the CPR-feedback difference.
+function primedicFeatures(m: PrimedicModel): string[] {
+  const first =
+    m.id === "primedic-y2"
+      ? "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)"
+      : m.cprFeedback === "standard"
+        ? "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดเรียลไทม์"
+        : "เซ็นเซอร์ CPR feedback เป็นตัวเลือกเสริม (เพิ่มทีหลังได้)";
   return [
     "กึ่งอัตโนมัติ — มีปุ่ม Shock ใช้งานง่าย",
-    cprFeedback === "standard"
-      ? "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดเรียลไทม์"
-      : "เซ็นเซอร์ CPR feedback เป็นตัวเลือกเสริม (เพิ่มทีหลังได้)",
+    first,
     "เสียงนำทาง CPR 4 ภาษา (ไทย/อังกฤษ/จีน/เยอรมัน)",
     "พลังงาน escalating 200 → 300 → 360 J",
   ];
 }
 
 function primedicCard(m: PrimedicModel, subtitle: string): LineupCard {
+  const brand: LineupBrand = m.id === "primedic-y2" ? "Yuwell" : "PRIMEDIC";
   return {
     id: m.id,
-    brand: "PRIMEDIC",
+    brand,
     name: m.name,
     subtitle,
     price: m.price,
     image: m.image,
     description: m.bestFor,
-    features: primedicFeatures(m.cprFeedback),
+    features: primedicFeatures(m),
     badge: m.badge,
     highlight: m.badge != null,
     dataProduct: m.id,
+    // Y2 has its own landing page; the rest share the PRIMEDIC lineup page.
+    detailHref: m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic",
   };
 }
-
-const amoulI7Card: LineupCard = {
-  id: i7.id,
-  brand: "Amoul",
-  name: i7.name,
-  subtitle: i7.subtitle,
-  price: i7.price,
-  msrp: i7.msrp,
-  image: "/images/product-main.png",
-  description: i7.description,
-  features: i7.features,
-  badge: i7.badge,
-  highlight: i7.badge != null,
-  dataProduct: i7.id,
-};
 
 const gpsCard: LineupCard = {
   id: yuwellGpsAed.id,
@@ -93,21 +89,26 @@ const gpsCard: LineupCard = {
 
 export const homepageTiers: LineupTier[] = [
   {
-    label: "รุ่นเริ่มต้น · เทียบเท่ากัน",
-    note: "สเปกระดับเดียวกัน — เลือกตามงบและความชอบ",
-    // Yuwell/PRIMEDIC is the featured brand (owner decision) — red machine leads.
+    label: "รุ่นเริ่มต้น",
+    note: "จุดเริ่มต้นคุ้มค่า ใช้งานง่าย พร้อมใช้ทันที",
     cards: [
       {
         ...primedicCard(primedicModels[0], "กึ่งอัตโนมัติ · รุ่นเริ่มต้น"),
         badge: "⭐ แนะนำ",
         highlight: true,
       },
-      amoulI7Card,
     ],
   },
   {
     label: "รุ่นสูงกว่า · ฟีเจอร์เพิ่ม",
-    note: "เพิ่มเซ็นเซอร์ CPR feedback หรือ GPS ติดตามในตัว",
-    cards: [primedicCard(primedicModels[1], "กึ่งอัตโนมัติ · มี CPR feedback"), gpsCard],
+    note: "เพิ่มเซ็นเซอร์ CPR feedback · จอ EKG ดู CPR สด หรือ GPS ติดตามในตัว",
+    cards: [
+      primedicCard(primedicModels[1], "กึ่งอัตโนมัติ · มี CPR feedback"),
+      {
+        ...primedicCard(primedicModels[2], "จอ EKG · ดู CPR สด · รุ่นเรือธง"),
+        highlight: true,
+      },
+      gpsCard,
+    ],
   },
 ];

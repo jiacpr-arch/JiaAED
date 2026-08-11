@@ -1,7 +1,7 @@
 import { products } from "@/lib/aed/products";
 import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
-import { faqs } from "@/lib/aed/faqs";
-import { AMOUL_REGULATORY, PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
+import { faqs, type FAQ } from "@/lib/aed/faqs";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA } from "@/lib/aed/line";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
@@ -21,9 +21,9 @@ export function StructuredData() {
     name: ORG_NAME,
     alternateName: "JiaAED",
     url: SITE,
-    logo: `${SITE}/images/product-main.png`,
+    logo: `${SITE}/images/jia-logo.webp`,
     description:
-      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Amoul i7 และ PRIMEDIC HeartSave อย. รับรอง",
+      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
@@ -35,17 +35,9 @@ export function StructuredData() {
       addressCountry: "TH",
     },
     identifier: [
-      {
-        "@type": "PropertyValue",
-        name: "FDA Registration (อย.) — Amoul i7",
-        value: AMOUL_REGULATORY.fda,
-      },
-      {
-        "@type": "PropertyValue",
-        name: "Advertising License (ฆพ.) — Amoul i7",
-        value: AMOUL_REGULATORY.adLicense,
-      },
       // PRIMEDIC numbers are emitted only once the owner confirms them (published).
+      // Amoul i7's own อย./ฆพ. identifier is no longer emitted here — it's
+      // discontinued (Yuwell Y2 replaced it, ก.ค. 2026).
       ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
         ? [
             {
@@ -89,6 +81,100 @@ export function StructuredData() {
  * (homepage shows every lineup and the FAQ section; /aed/primedic shows the
  * PRIMEDIC/Yuwell lineup).
  */
+/**
+ * FAQPage JSON-LD for a specific FAQ list — pass exactly the items the page
+ * renders (same policy as above: markup must mirror visible content).
+ */
+export function FaqStructuredData({ items }: { items: FAQ[] }) {
+  const faqPage = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }}
+    />
+  );
+}
+
+/**
+ * BreadcrumbList JSON-LD — helps search/AI engines understand where a page sits
+ * in the site hierarchy. Pass paths relative to the site root (e.g. "/articles").
+ */
+export function BreadcrumbStructuredData({
+  items,
+}: {
+  items: { name: string; path: string }[];
+}) {
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: `${SITE}${item.path}`,
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+    />
+  );
+}
+
+/**
+ * Article JSON-LD for /articles/[slug] — datePublished/author/publisher are what
+ * AI answer engines look for when deciding whether an article is citable.
+ */
+export function ArticleStructuredData({
+  slug,
+  title,
+  description,
+  publishedAt,
+  image,
+}: {
+  slug: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  image: string;
+}) {
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description,
+    image: `${SITE}${image}`,
+    datePublished: publishedAt,
+    inLanguage: "th-TH",
+    mainEntityOfPage: `${SITE}/articles/${slug}`,
+    author: { "@type": "Organization", name: ORG_NAME, url: SITE },
+    publisher: {
+      "@type": "Organization",
+      name: ORG_NAME,
+      url: SITE,
+      logo: { "@type": "ImageObject", url: `${SITE}/images/jia-logo.webp` },
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
+    />
+  );
+}
+
 export function ProductStructuredData({
   include = "all",
 }: {
@@ -99,8 +185,8 @@ export function ProductStructuredData({
     "@type": "Product",
     name: p.name,
     description: `${p.description} ${p.features.join(" ")}`,
-    image: `${SITE}/images/product-main.png`,
-    brand: { "@type": "Brand", name: "Amoul" },
+    image: `${SITE}/images/yuwell-y2-main.jpg`,
+    brand: { "@type": "Brand", name: "Yuwell" },
     sku: p.id,
     category: "Medical Equipment / AED / Defibrillator",
     offers: {

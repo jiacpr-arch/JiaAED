@@ -35,7 +35,13 @@ ALTER TABLE aed_analytics_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service_role_aed_analytics_events" ON aed_analytics_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
--- Optional: daily digest log (so we don't re-send a digest if cron retries)
+-- Daily digest / cron run log. The UNIQUE(digest_date, kind) constraint is the
+-- atomic dedup gate for the notifying crons: Vercel Cron delivery is
+-- at-least-once, so a re-fired tick would re-push the whole digest to LINE.
+-- claimDailyCronRun() (lib/aed/cron-once.ts) INSERTs a marker row per Bangkok
+-- day+kind — the first invocation wins, a duplicate collides here (23505) and
+-- returns early without sending. Same trick as the per-session hot-lead index
+-- above, so this row must be inserted (not upserted) on the claim path.
 CREATE TABLE IF NOT EXISTS aed_analytics_digest_log (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   digest_date DATE NOT NULL,

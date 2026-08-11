@@ -2,6 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createNotifyBatch, notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   fetchAdsReport,
   fetchDeviceReport,
@@ -73,8 +74,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  // At-least-once cron gate: bail out if a twin invocation already claimed today,
+  // so the Ads Round-2 report is pushed to LINE at most once per day.
+  if (!(await claimDailyCronRun("ads_round2"))) {
+    return NextResponse.json({ ok: true, skipped: "already_ran_today" });
+  }
+
   if (!isConfigured()) {
-    await notifyAnalyticsAlert("🚨 Ads Round-2: ไม่มี GOOGLE_ADS_* env vars — ข้าม");
+    // Not-configured is a routine, repeating state (not a one-off incident) —
+    // log it server-side instead of paging LINE every day.
+    console.warn("[ads-round2] skipped — no GOOGLE_ADS_* env vars");
     return NextResponse.json({ ok: false, reason: "not_configured" }, { status: 500 });
   }
 

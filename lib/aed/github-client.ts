@@ -99,6 +99,18 @@ export async function mergePullRequest(
   });
 }
 
+export type OpenPullRequest = {
+  number: number;
+  title: string;
+  html_url: string;
+  head: { ref: string };
+  created_at: string;
+};
+
+export async function listOpenPullRequests(opts: GhOpts): Promise<OpenPullRequest[]> {
+  return gh(opts, `/repos/${opts.owner}/${opts.repo}/pulls?state=open&per_page=50`);
+}
+
 export async function getCombinedStatus(
   opts: GhOpts,
   ref: string,
