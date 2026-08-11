@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chunkForLine, notifyAnalyticsDigest, NOTIFY_BATCH_SEPARATOR } from "@/lib/aed/notify-owner";
+import { chunkForLine, pushToOwner, NOTIFY_BATCH_SEPARATOR } from "@/lib/aed/notify-owner";
 
 // No new message in this long -> whatever's pending is probably one cron
 // cluster that's done firing, so send it.
@@ -38,8 +38,10 @@ export async function flushNotifyQueue(): Promise<{
   }
 
   const combined = rows.map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
+  // Send directly — going through notifyAnalyticsDigest here would re-enqueue
+  // the combined text and the queue would never drain.
   for (const chunk of chunkForLine(combined)) {
-    await notifyAnalyticsDigest(chunk);
+    await pushToOwner(chunk);
   }
 
   const ids = rows.map((r) => r.id);

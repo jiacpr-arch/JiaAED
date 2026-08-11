@@ -50,7 +50,12 @@ async function pushMessages(messages: LineMessage[]): Promise<void> {
   );
 }
 
-async function pushToOwner(text: string): Promise<void> {
+/**
+ * Direct text push, bypassing the notify queue. Exported for the queue
+ * flusher itself (which must not re-enqueue) — everything else should go
+ * through notifyAnalyticsDigest/Alert or createNotifyBatch.
+ */
+export async function pushToOwner(text: string): Promise<void> {
   await pushMessages([{ type: "text", text }]);
 }
 
@@ -307,8 +312,13 @@ export async function notifyProcessingError(p: {
 
 // ─── Analytics digest + alert (plain text) ─────────────────────────────────────
 
+// Routine digests are never urgent — route them through the notify queue so
+// digests from crons firing close together (e.g. daily-digest + weekly-review
+// both at 02:00 UTC on Mondays) merge into one LINE push instead of one
+// bubble per job. Alerts stay direct: a queue flush can lag a few minutes,
+// and failures are exactly when the queue's DB dependency is least reliable.
 export async function notifyAnalyticsDigest(text: string): Promise<void> {
-  await pushToOwner(text);
+  await enqueueNotification(text);
 }
 
 export async function notifyAnalyticsAlert(text: string): Promise<void> {
