@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LINE_OA, LINE_OA_ID, lineOaUrl } from "./line";
+import { LINE_ADD_FRIEND, LINE_OA, LINE_OA_ID, lineOaUrl } from "./line";
 
 // LINE URL scheme spec ("Sending a message to a LINE Official Account"):
 // https://line.me/R/oaMessage/{OA_ID}/?{url-encoded message}
@@ -19,8 +19,26 @@ describe("lineOaUrl", () => {
     expect(url).not.toContain("+");
   });
 
-  it("percent-encodes Thai default message", () => {
-    expect(LINE_OA).toBe(lineOaUrl());
-    expect(LINE_OA).toContain(`/?${encodeURIComponent("สนใจ AED ครับ")}`);
+  it("percent-encodes the Thai default message", () => {
+    expect(lineOaUrl()).toContain(`/?${encodeURIComponent("สนใจ AED ครับ")}`);
+  });
+});
+
+// The follow webhook — greeting message, customer row, owner notification, and
+// the paid-ad conversion itself — only fires from the add-friend link. A CTA
+// pointing at oaMessage leaks the entire funnel (159 clicks → 1 follow in the
+// 30 days before this was changed), so the site-wide CTA must stay on ti/p.
+describe("LINE_ADD_FRIEND", () => {
+  it("uses the ti/p add-friend scheme with the encoded OA id", () => {
+    expect(LINE_ADD_FRIEND).toBe(`https://line.me/R/ti/p/${encodeURIComponent(LINE_OA_ID)}`);
+  });
+
+  it("carries no prefilled message — ti/p takes no query string", () => {
+    expect(LINE_ADD_FRIEND).not.toContain("?");
+  });
+
+  it("is what the site-wide CTA constant resolves to", () => {
+    expect(LINE_OA).toBe(LINE_ADD_FRIEND);
+    expect(LINE_OA).not.toContain("oaMessage");
   });
 });

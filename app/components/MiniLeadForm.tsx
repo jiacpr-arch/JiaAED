@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
+import { LINE_OA } from "@/lib/aed/line";
 
 type State = "idle" | "submitting" | "success" | "error";
 
@@ -39,6 +40,7 @@ const THEMES = {
     error: "text-red-300",
     footer: "text-gray-500",
     footerLink: "hover:text-yellow-400",
+    divider: "bg-gray-800",
   },
   light: {
     success: "border-green-500/40 bg-green-50",
@@ -52,6 +54,7 @@ const THEMES = {
     error: "text-red-600",
     footer: "text-gray-500",
     footerLink: "hover:text-gray-900",
+    divider: "bg-gray-200",
   },
 } as const;
 
@@ -126,14 +129,16 @@ export function MiniLeadForm({
   }, [variant]);
 
   function onFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    // Focus bubbles from anything inside the form — the LINE link below the
+    // submit button included. Only a real input counts as "started filling".
+    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement).name;
+    if (!fieldName || fieldName === "hp_field") return;
     if (!startedRef.current) {
       startedRef.current = true;
       trackEvent("lead_form_start", { variant });
     }
-    const target = e.target as HTMLElement | null;
-    if (!target) return;
-    const fieldName = (target as HTMLInputElement | HTMLTextAreaElement).name;
-    if (!fieldName || fieldName === "hp_field") return;
     if (focusedFieldsRef.current.has(fieldName)) return;
     focusedFieldsRef.current.add(fieldName);
     trackEvent("lead_form_field_focus", { variant, field: fieldName });
@@ -282,7 +287,27 @@ export function MiniLeadForm({
       {state === "error" && errorMsg && (
         <p className={`text-sm mt-2 text-center ${t.error}`}>{errorMsg}</p>
       )}
-      <p className={`text-[11px] mt-2 text-center ${t.footer}`}>
+
+      {/* Thai buyers overwhelmingly prefer chat: the 27 ก.ค.–2 ส.ค. review had 4
+          hot-behaviour visitors and zero form submits. Rather than fight that,
+          offer the chat path right here — the click is still a tracked lead
+          signal (data-line-cta), and it beats a bounce. */}
+      <div className="mt-4 flex items-center gap-3" aria-hidden="true">
+        <span className={`h-px flex-1 ${t.divider}`} />
+        <span className={`text-[11px] ${t.footer}`}>หรือ</span>
+        <span className={`h-px flex-1 ${t.divider}`} />
+      </div>
+      <a
+        href={LINE_OA}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-line-cta={`${variant}_form_alt`}
+        className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-[#06C755] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#05a847]"
+      >
+        💬 คุยกับเราทาง LINE ง่ายกว่า — ตอบทันที
+      </a>
+
+      <p className={`text-[11px] mt-3 text-center ${t.footer}`}>
         ใช้ข้อมูลเพื่อติดต่อเรื่อง AED เท่านั้น ·{" "}
         <a href="/privacy" className={`underline ${t.footerLink}`}>นโยบายความเป็นส่วนตัว</a>
       </p>

@@ -2,17 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { rentalPlans, rentalTrustSignals } from "@/lib/aed/rental";
 
-import { lineOaUrl } from "@/lib/aed/line";
-
-const LINE_OA = lineOaUrl("สนใจเช่า AED");
-
-// Per-plan LINE prefills so the admin knows which plan the chat is about
-// before typing a single question back.
-const PLAN_LINE_URL: Record<string, string> = {
-  "rent-event": lineOaUrl("สนใจเช่า AED รายวัน/อีเวนต์"),
-  "rent-annual": lineOaUrl("สนใจเช่า AED รายปี"),
-  "rent-flex": lineOaUrl("สนใจเช่า AED รายเดือน"),
-};
+// Plain add-friend link, no per-plan prefill: the prefilled chat link skipped
+// the friend-add step and the follow never happened (see lib/aed/line.ts).
+// Which plan the click came from still reaches analytics via data-product.
+import { LINE_OA } from "@/lib/aed/line";
 
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.
@@ -99,7 +92,7 @@ export function RentalSpotlight() {
                   </div>
                 </Link>
                 <a
-                  href={PLAN_LINE_URL[p.id] ?? LINE_OA}
+                  href={LINE_OA}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-line-cta="home_rent_plan"

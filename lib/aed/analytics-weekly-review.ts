@@ -40,7 +40,17 @@ export type WeeklyContext = {
   // line_follow webhook event; without it a review reads LINE as dead when people
   // may be adding as friends and simply not messaging yet.
   line_outcome: { clicks: number; follows: number; chats: number; messages: number };
-  ad_attribution: { gclid_visits: number; utm_visits: number; organic_visits: number };
+  // "visits" (and this breakdown) come from aed_ad_visits, which is beaconed by
+  // GoogleTags — i.e. only AFTER the PDPA cookie banner is accepted. It is a
+  // consented-visit count, not real traffic, and runs far below what Ads Manager
+  // reports. top_sources exists so a review never guesses which ad platform the
+  // traffic came from: Meta shows up as facebook/fb/ig, Google as gclid_visits.
+  ad_attribution: {
+    gclid_visits: number;
+    utm_visits: number;
+    organic_visits: number;
+    top_sources: Array<{ source: string; n: number }>;
+  };
   ab_test: {
     a_views: number;
     a_clicks: number;
@@ -172,6 +182,17 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
   const utm_visits = visitsRows.filter((v) => !v.gclid && !!v.utm_source).length;
   const organic_visits = (visitsThis.count ?? 0) - gclid_visits - utm_visits;
 
+  const sourceCounts = new Map<string, number>();
+  for (const v of visitsRows) {
+    const src = v.gclid ? "google_ads(gclid)" : v.utm_source;
+    if (!src) continue;
+    sourceCounts.set(src, (sourceCounts.get(src) ?? 0) + 1);
+  }
+  const top_sources = [...sourceCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([source, n]) => ({ source, n }));
+
   const leadRows = (leads.data ?? []) as Array<{ gclid: string | null; utm_source: string | null }>;
 
   return {
@@ -190,7 +211,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
       chats: chats.count ?? 0,
       messages: messages.count ?? 0,
     },
-    ad_attribution: { gclid_visits, utm_visits, organic_visits },
+    ad_attribution: { gclid_visits, utm_visits, organic_visits, top_sources },
     ab_test: {
       a_views,
       a_clicks,
@@ -231,7 +252,11 @@ const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์ก
 - ถ้า clicks สูงแต่ follows ต่ำมาก (เช่น คลิก 100+ แต่ follow 0-1) = funnel รั่วระหว่าง "กดปุ่ม → แอดเพื่อน" → ลิงก์/ขั้นตอนแอดมีปัญหา (ลิงก์ผิด, เด้ง fallback บน desktop, รูปสินค้าโดนกดโดยไม่ตั้งใจ) ให้แก้ลิงก์/ขั้นตอน ไม่ใช่เพิ่มปุ่ม
 - ถ้า follows โอเคแต่ chats ต่ำ = คนแอดแล้วเงียบ → ปัญหาคือ welcome message / การตามต่อ ไม่ใช่ตัวลิงก์
 - ดู "top_line_locations": ถ้า location ที่ครองยอดคลิกไม่ใช่ปุ่ม CTA โดยตรง (เช่น "ads_product" = รูปสินค้า) ส่วนใหญ่คือคนแตะรูปเพื่อดูสินค้า ไม่ใช่ตั้งใจแชท — อย่าตีความว่า "คนอยากคุย LINE เยอะ"
-- ดู "top_line_locations": ถ้า location ที่ครองยอดคลิกไม่ใช่ปุ่ม CTA โดยตรง (เช่น "ads_product" = รูปสินค้า) ส่วนใหญ่คือคนแตะรูปเพื่อดูสินค้า ไม่ใช่ตั้งใจแชท — อย่าตีความว่า "คนอยากคุย LINE เยอะ"`;
+
+⚠️ "visits" ไม่ใช่ traffic จริง และโฆษณาหลักไม่ใช่ Google:
+- "visits"/"visits_prev" นับจาก aed_ad_visits ซึ่งยิงหลังผู้ใช้กด "ยอมรับคุกกี้" เท่านั้น (PDPA) → ต่ำกว่ายอดจริงหลายเท่า ส่วน event อื่น (line_click, cta_click) เก็บ first-party ไม่ผ่าน consent → ห้ามเอา % ของ visits ไปเทียบตรงๆ กับ % ของ event แล้วสรุปว่า "คนเข้าเยอะแต่ไม่กด"
+- ก่อนแนะนำเรื่องแพลตฟอร์มโฆษณา ให้ดู "ad_attribution.top_sources" + "gclid_visits" ก่อนเสมอ: ถ้า top_sources เป็น facebook/fb/ig แปลว่าเงินโฆษณาอยู่ที่ Meta → ห้ามแนะนำให้ไปแก้ keyword/audience ของ Google Ads (ถ้า gclid_visits ≈ 0 แปลว่า Google Ads แทบไม่ได้ยิงอยู่)
+- traffic ตกแรงในสัปดาห์เดียว ให้เดาเหตุที่ธรรมดาที่สุดก่อน (แคมเปญโดน pause / งบหมด / เปลี่ยน objective) แล้วบอกเจ้าของให้ไปเช็คใน Ads Manager — อย่าด่วนสรุปว่าเว็บพัง`;
 
 export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
