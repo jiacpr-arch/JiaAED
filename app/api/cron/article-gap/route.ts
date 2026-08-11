@@ -1,7 +1,7 @@
 import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   hasEnoughSignal,
@@ -52,6 +52,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
 
+  const batch = createNotifyBatch();
+  const notify = (text: string) => batch.add(text);
+  const notifyError = (text: string) => batch.add(text);
+
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
   if (!ghToken) {
@@ -90,7 +94,7 @@ export async function GET(req: Request) {
     const newContent = insertArticleIntoSource(file.content, proposal);
 
     if (newContent === file.content) {
-      await notifyAnalyticsAlert("🚨 Article-gap: insert ไม่เปลี่ยน source");
+      notifyError("🚨 Article-gap: insert ไม่เปลี่ยน source");
       await logRun({ ...result, error: "no_change" });
       return NextResponse.json({ ok: false, error: "no_change" });
     }
@@ -138,17 +142,17 @@ Tags: ${proposal.tags.join(", ")}
     });
     result.pr = { number: pr.number, url: pr.html_url };
 
-    await notifyAnalyticsDigest(
-      `📚 บทความใหม่เสนอแล้ว (draft):\n"${proposal.title}"\nREVIEW: ${pr.html_url}`,
-    );
+    notify(`📚 บทความใหม่เสนอแล้ว (draft):\n"${proposal.title}"\nREVIEW: ${pr.html_url}`);
 
     await logRun(result);
     return NextResponse.json({ ok: true, ...result });
   } catch (err) {
     const msg = String(err).slice(0, 300);
     console.error("[article-gap] failed:", err);
-    await notifyAnalyticsAlert(`🚨 Article-gap error:\n${msg}`);
+    notifyError(`🚨 Article-gap error:\n${msg}`);
     await logRun({ ...result, error: msg });
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[article-gap] batch flush failed:", e));
   }
 }

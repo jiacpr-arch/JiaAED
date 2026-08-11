@@ -5,7 +5,7 @@ import {
   healthCheck,
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   readAbState,
@@ -31,22 +31,6 @@ const FILE_PATH = "app/components/HeroCta.tsx";
 const logRun = (payload: Record<string, unknown>) =>
   logOptimizerRun("auto_optimize", payload);
 
-async function notify(text: string) {
-  try {
-    await notifyAnalyticsDigest(text);
-  } catch (e) {
-    console.error("[auto-optimize] notify failed:", e);
-  }
-}
-
-async function notifyError(text: string) {
-  try {
-    await notifyAnalyticsAlert(text);
-  } catch (e) {
-    console.error("[auto-optimize] notifyError failed:", e);
-  }
-}
-
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
@@ -57,6 +41,10 @@ export async function GET(req: Request) {
   if (!(await claimDailyCronRun("auto_optimize"))) {
     return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
+
+  const batch = createNotifyBatch();
+  const notify = (text: string) => batch.add(text);
+  const notifyError = (text: string) => batch.add(text);
 
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
@@ -261,5 +249,7 @@ Rationale: ${proposed.rationale}
     result.error = msg;
     await logRun(result);
     return NextResponse.json({ ok: false, error: msg, ...result }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[auto-optimize] batch flush failed:", e));
   }
 }

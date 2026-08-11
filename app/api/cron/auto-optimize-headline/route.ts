@@ -5,7 +5,7 @@ import {
   healthCheck,
 } from "@/lib/aed/optimizer-run-utils";
 import { NextResponse } from "next/server";
-import { notifyAnalyticsAlert, notifyAnalyticsDigest } from "@/lib/aed/notify-owner";
+import { createNotifyBatch } from "@/lib/aed/notify-owner";
 import { claimDailyCronRun } from "@/lib/aed/cron-once";
 import {
   buildNewHeroHeadlineFile,
@@ -36,12 +36,16 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
-  // At-least-once cron gate: the "start"/"skip" LINE messages below are the
-  // first side effect, so a re-delivered tick would re-push them. Claim the day
-  // before doing anything else and bail out if a twin invocation already ran.
+  // At-least-once cron gate: claim the day before doing anything else and bail
+  // out if a twin invocation already ran, so the PR/merge flow and its LINE
+  // messages run at most once.
   if (!(await claimDailyCronRun("auto_optimize_headline"))) {
     return NextResponse.json({ ok: true, skipped: "already_ran_today" });
   }
+
+  const batch = createNotifyBatch();
+  const notify = (text: string) => batch.add(text);
+  const notifyError = (text: string) => batch.add(text);
 
   const ghToken = process.env.GITHUB_TOKEN;
   const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
@@ -86,7 +90,7 @@ export async function GET(req: Request) {
     result.loser_headline = loserHeadline;
     result.winner_headline = winnerHeadline;
 
-    await notifyAnalyticsDigest(
+    notify(
       `📊 Loser ${ab.loser.toUpperCase()}: "${loserHeadline.line1} | ${loserHeadline.accent} | ${loserHeadline.line2}" (CTR ${ab.loser_ctr.toFixed(1)}%)\n🧠 ขอ headline ใหม่จาก Claude...`,
     );
 
@@ -167,7 +171,7 @@ Rationale: ${proposed.rationale}
     result.pr_number = pr.number;
     result.pr_url = pr.html_url;
 
-    await notifyAnalyticsDigest(
+    notify(
       `🔀 PR #${pr.number} เปิดแล้ว (headline)\n${pr.html_url}`,
     );
 
@@ -175,7 +179,7 @@ Rationale: ${proposed.rationale}
     const checks = await waitForChecks(gh, pr.head.sha);
     result.checks = checks;
     if (!checks.ok) {
-      await notifyAnalyticsAlert(
+      notifyError(
         `🚨 Headline optimizer: checks ไม่ผ่าน (${checks.detail}) PR #${pr.number} ค้างไว้`,
       );
       steps.push("aborted_checks");
@@ -183,13 +187,13 @@ Rationale: ${proposed.rationale}
       return NextResponse.json({ ok: false, stage: "checks_failed", ...result });
     }
 
-    await notifyAnalyticsDigest(`✅ Checks ผ่าน — กำลัง merge headline PR`);
+    notify(`✅ Checks ผ่าน — กำลัง merge headline PR`);
 
     steps.push("merge");
     const mergeRes = await mergePullRequest(gh, pr.number, "squash");
     result.merge = mergeRes;
 
-    await notifyAnalyticsDigest(`🚀 Headline merged — รอ deploy + health check`);
+    notify(`🚀 Headline merged — รอ deploy + health check`);
 
     steps.push("health_check");
     const health = await healthCheck();
@@ -197,7 +201,7 @@ Rationale: ${proposed.rationale}
 
     if (!health.ok) {
       steps.push("revert_attempt");
-      await notifyAnalyticsAlert(
+      notifyError(
         `🚨🚨 Headline merge → health fail: ${health.detail}\nพยายาม revert...`,
       );
       try {
@@ -220,17 +224,17 @@ Rationale: ${proposed.rationale}
         });
         const revertMerge = await mergePullRequest(gh, revertPr.number, "squash");
         result.revert = { pr: revertPr.number, sha: revertMerge.sha };
-        await notifyAnalyticsDigest(`✅ Revert merged (PR #${revertPr.number})`);
+        notify(`✅ Revert merged (PR #${revertPr.number})`);
         steps.push("reverted");
       } catch (revertErr) {
-        await notifyAnalyticsAlert(`💀 Revert headline ล้มเหลว: ${String(revertErr).slice(0, 200)}`);
+        notifyError(`💀 Revert headline ล้มเหลว: ${String(revertErr).slice(0, 200)}`);
         steps.push("revert_failed");
       }
       await logRun(result);
       return NextResponse.json({ ok: false, stage: "health_failed", ...result });
     }
 
-    await notifyAnalyticsDigest(
+    notify(
       `🟢 Headline เสร็จสมบูรณ์!\nVariant ${ab.loser.toUpperCase()} ตอนนี้คือ:\n"${proposed.line1} | ${proposed.accent} | ${proposed.line2}"`,
     );
     steps.push("done");
@@ -239,11 +243,13 @@ Rationale: ${proposed.rationale}
   } catch (err) {
     const msg = String(err).slice(0, 300);
     console.error("[auto-optimize-headline] failed:", err);
-    await notifyAnalyticsAlert(
+    notifyError(
       `🚨 Auto-optimizer-headline error:\n${msg}\nSteps: ${steps.join(" → ")}`,
     );
     result.error = msg;
     await logRun(result);
     return NextResponse.json({ ok: false, error: msg, ...result }, { status: 500 });
+  } finally {
+    await batch.flush().catch((e) => console.error("[auto-optimize-headline] batch flush failed:", e));
   }
 }
