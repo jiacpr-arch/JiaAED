@@ -49,11 +49,11 @@ const ANNUAL_PER_MONTH = Math.round(RENT_ANNUAL.price / 12 / 10) * 10;
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <div className="premium-home min-h-screen bg-gray-950 text-white font-sans">
       <ProductStructuredData />
 
       {/* Navbar — trimmed to the few links a buyer actually needs */}
-      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+      <nav className="premium-nav sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <JiaAedLogo className="h-8 w-auto" />
@@ -93,9 +93,9 @@ export default function Home() {
       </nav>
 
       {/* Hero — one clear message, one price, two next steps */}
-      <section className="bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-16 px-4">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-          <div>
+      <section className="premium-hero bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-16 px-4">
+        <div className="premium-hero-grid max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+          <div className="premium-hero-copy">
             <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20 mb-4">
               ✅ อย. รับรอง · เช่าหรือซื้อขาดก็ได้ · ออกใบกำกับภาษีได้
             </span>
@@ -107,7 +107,7 @@ export default function Home() {
             {/* Rent and buy side by side at equal weight — rent keeps the yellow
                 identity, buy gets the white/silver "ownership" treatment. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              <div className="rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5 flex flex-col">
+              <div className="premium-offer premium-offer-rent rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5 flex flex-col">
                 <span className="text-xs font-bold text-yellow-400">เช่า — ไม่ต้องลงทุนก้อนใหญ่</span>
                 <div className="flex items-baseline gap-1.5 mt-1">
                   <span className="text-3xl md:text-4xl font-black text-yellow-400">
@@ -135,7 +135,7 @@ export default function Home() {
                   ดูแผนเช่า →
                 </a>
               </div>
-              <div className="rounded-2xl border border-gray-400/40 bg-white/5 p-5 flex flex-col">
+              <div className="premium-offer premium-offer-buy rounded-2xl border border-gray-400/40 bg-white/5 p-5 flex flex-col">
                 <span className="text-xs font-bold text-gray-200">ซื้อขาด — เป็นเจ้าของเต็มตัว</span>
                 <div className="flex items-baseline gap-1.5 mt-1">
                   <span className="text-3xl md:text-4xl font-black text-white">
@@ -177,7 +177,7 @@ export default function Home() {
               secondary option. The featured image links to the brand page, not
               LINE — image taps are inspection intent, not chat intent (weekly
               review 14 Jun). */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="premium-product-gallery grid grid-cols-2 gap-4">
             <Link
               href="/aed/primedic"
               data-cta="hero_image_primedic"
@@ -185,7 +185,7 @@ export default function Home() {
               className="relative flex flex-col items-center group cursor-pointer"
               aria-label="Yuwell / PRIMEDIC HeartSave — ดูรุ่นและสเปก"
             >
-              <div className="relative w-full h-56 md:h-64 rounded-xl overflow-hidden bg-white ring-2 ring-red-500/50">
+              <div className="premium-product-frame relative w-full h-56 md:h-64 rounded-xl overflow-hidden bg-white ring-2 ring-red-500/50">
                 <span className="absolute top-2 left-2 z-10 bg-red-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
                   ⭐ แนะนำ
                 </span>
@@ -208,7 +208,7 @@ export default function Home() {
               className="relative flex flex-col items-center group cursor-pointer"
               aria-label="Yuwell Y2 — คลิกเพื่อสอบถามทาง LINE"
             >
-              <div className="relative w-full h-56 md:h-64">
+              <div className="premium-product-frame relative w-full h-56 md:h-64">
                 <Image
                   src="/images/yuwell-y2-main.jpg"
                   alt="AED Yuwell Y2"
@@ -224,9 +224,55 @@ export default function Home() {
       </section>
 
       {/* Quick contact bar — LINE-first (visitors prefer LINE over the form) */}
-      <section className="bg-gray-900 border-y border-gray-800 py-6 px-4">
+      <section className="premium-quick-contact bg-gray-900 border-y border-gray-800 py-6 px-4">
         <div className="max-w-3xl mx-auto">
           <QuickContact />
+        </div>
+      </section>
+
+      {/* Editorial location imagery: these are installation/training concepts,
+          not product packshots. Current sellable models remain sourced from the
+          regulated Yuwell/PRIMEDIC data and cards below. */}
+      <section className="premium-spaces" aria-labelledby="premium-spaces-title">
+        <div className="premium-spaces-heading">
+          <p>Prepared spaces</p>
+          <h2 id="premium-spaces-title">ความพร้อมที่กลมกลืน<br />กับทุกสถานที่</h2>
+          <span>ภาพตัวอย่างแนวทางจัดพื้นที่ AED สำหรับองค์กรและสถานศึกษา</span>
+        </div>
+        <div className="premium-spaces-grid">
+          <article className="premium-space-card premium-space-card-wide">
+            <Image
+              src="/images/jiaaed-lobby-hero.jpg"
+              alt="ภาพตัวอย่างจุดติดตั้ง AED ในอาคารสำนักงานสมัยใหม่"
+              fill
+              sizes="(max-width: 800px) 100vw, 62vw"
+              className="premium-space-image"
+            />
+            <div className="premium-space-shade" />
+            <div className="premium-space-copy"><span>Corporate</span><h3>เห็นง่าย.<br />เข้าถึงทันที.</h3></div>
+          </article>
+          <article className="premium-space-card">
+            <Image
+              src="/images/jiaaed-school.jpg"
+              alt="ภาพตัวอย่างจุดติดตั้ง AED ในพื้นที่ส่วนกลางของโรงเรียน"
+              fill
+              sizes="(max-width: 800px) 100vw, 38vw"
+              className="premium-space-image"
+            />
+            <div className="premium-space-shade" />
+            <div className="premium-space-copy"><span>Education</span><h3>ปลอดภัย<br />ในทุกวัน.</h3></div>
+          </article>
+          <article className="premium-space-card premium-space-card-full">
+            <Image
+              src="/images/jiaaed-training.jpg"
+              alt="ภาพตัวอย่างการฝึก CPR และ AED ในองค์กร"
+              fill
+              sizes="100vw"
+              className="premium-space-image premium-space-image-training"
+            />
+            <div className="premium-space-shade premium-space-shade-right" />
+            <div className="premium-space-copy premium-space-copy-right"><span>Training</span><h3>ฝึกให้มั่นใจ.<br />พร้อมเมื่อจำเป็น.</h3></div>
+          </article>
         </div>
       </section>
 
