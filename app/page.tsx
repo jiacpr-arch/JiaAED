@@ -182,9 +182,9 @@ export default function Home() {
 
       {/* ═══ DECISION 1: how to get an AED — rent / rent-to-own / buy ═══ */}
       <PriceViewTracker />
-      <section id="how" className="py-16 px-4 bg-gray-950 border-t border-gray-900">
+      <section id="how" className="premium-paths py-16 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-3">
+          <div className="premium-section-heading text-center mb-3">
             <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
               ① เลือกวิธีได้เครื่อง
             </div>
@@ -256,15 +256,15 @@ export default function Home() {
       </section>
 
       {/* ═══ DECISION 2: which model — Y0 vs Y8 vs Y2, with a recommendation ═══ */}
-      <section id="brands" className="py-16 px-4 bg-gray-950 border-t border-gray-900">
+      <section id="brands" className="premium-lineup py-16 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-3">
+          <div className="premium-section-heading text-center mb-3">
             <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
               ② เลือกยี่ห้อ
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white">2 ยี่ห้อให้เลือก — เลือกอันไหนดี?</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-white">Yuwell · PRIMEDIC รุ่นไหนเหมาะกับคุณ?</h2>
             <p className="text-gray-400 mt-2 max-w-2xl mx-auto">
-              ทั้งสองยี่ห้อ อย. รับรอง เสียงไทย ใช้ช่วยชีวิตได้จริง — ต่างกันที่สไตล์การใช้งานและฟีเจอร์เสริม
+              ครบตั้งแต่รุ่นเริ่มต้นสำหรับพื้นที่สาธารณะ ไปจนถึงรุ่นเรือธงพร้อมจอ EKG และ CPR feedback
             </p>
           </div>
 
@@ -426,7 +426,7 @@ export default function Home() {
       </section>
 
       {/* Why JiaAED — trust (condensed to the 4 points that matter most) */}
-      <section className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+      <section className="premium-trust py-14 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">ทำไมเลือก JiaAED</h2>
           <p className="text-center text-gray-500 text-sm mb-10">เจี่ยรักษา — ผู้นำเข้าและจัดจำหน่ายเครื่องมือแพทย์</p>
@@ -490,7 +490,7 @@ export default function Home() {
       </section>
 
       {/* Lifestyle banner — emotional divider before the deeper product story */}
-      <section className="relative h-64 md:h-80 overflow-hidden">
+      <section className="premium-life-banner relative h-64 md:h-80 overflow-hidden">
         <Image src="/images/lifestyle-cpr.png" alt="AED ในสถานการณ์จริง" fill className="object-cover object-center" />
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
           <div className="text-center text-white px-4">
@@ -501,7 +501,7 @@ export default function Home() {
       </section>
 
       {/* Get to know the device — features, durability, ease of use, demo */}
-      <section className="py-14 px-4 bg-gray-900">
+      <section className="premium-tech py-14 px-4 bg-gray-900">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">เทคโนโลยีครบทุกมิติ</h2>
           <p className="text-center text-gray-500 text-sm mb-8">ออกแบบมาเพื่อช่วยชีวิตในทุกสถานการณ์</p>
@@ -526,7 +526,7 @@ export default function Home() {
       </section>
 
       {/* Waterproof */}
-      <section className="py-14 px-4 bg-gray-950">
+      <section className="premium-feature premium-feature-weather py-14 px-4 bg-gray-950">
         <div className="max-w-5xl mx-auto">
           <SplitFeature
             image="/images/aed-weather.webp"
@@ -540,7 +540,7 @@ export default function Home() {
       </section>
 
       {/* Easy to use + demo video */}
-      <section className="py-14 px-4 bg-gray-900">
+      <section className="premium-feature premium-feature-easy py-14 px-4 bg-gray-900">
         <div className="max-w-5xl mx-auto mb-12">
           <SplitFeature
             image="/images/lifestyle-aed-carry.webp"
@@ -572,7 +572,7 @@ export default function Home() {
       </section>
 
       {/* ═══ Technical deep-dive — collapsed by default, kept in DOM for SEO ═══ */}
-      <section id="tech" className="py-14 px-4 bg-gray-950 border-t border-gray-900">
+      <section id="tech" className="premium-standards py-14 px-4 bg-gray-950 border-t border-gray-900">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-block bg-gray-700/40 text-gray-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-gray-600/40">
@@ -676,7 +676,7 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 bg-gray-950 text-center relative overflow-hidden">
+      <section className="premium-final-cta py-20 px-4 bg-gray-950 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <Image src="/images/lifestyle-cpr.png" alt="" fill className="object-cover" />
         </div>
@@ -700,7 +700,7 @@ export default function Home() {
       <LatestNews limit={6} />
 
       {/* Lead form — alternative to LINE for ad traffic */}
-      <section id="contact" className="py-14 px-4 bg-gray-950 border-t border-gray-800">
+      <section id="contact" className="premium-contact py-14 px-4 bg-gray-950 border-t border-gray-800">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-center mb-2 text-white">ขอใบเสนอราคา / ติดต่อกลับ</h2>
           <p className="text-center text-gray-500 text-sm mb-2">

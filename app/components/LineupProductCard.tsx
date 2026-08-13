@@ -47,7 +47,7 @@ export function LineupProductCard({ card }: { card: LineupCard }) {
   const accent = BRAND_ACCENT[card.brand];
   return (
     <div
-      className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
+      className={`lineup-card relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
         card.highlight ? accent.border : "border-gray-700"
       }`}
     >

@@ -25,7 +25,7 @@ export function PackageCard({
 
   return (
     <div
-      className={`relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
+      className={`package-card relative rounded-2xl border p-6 flex flex-col bg-gray-900 ${
         pkg.badge
           ? "border-yellow-400/60 shadow-lg shadow-yellow-400/10"
           : isBuy
