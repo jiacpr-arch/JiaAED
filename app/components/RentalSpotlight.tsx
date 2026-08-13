@@ -13,10 +13,10 @@ export function RentalSpotlight() {
   return (
     <section
       id="rent"
-      className="py-16 px-4 bg-gradient-to-b from-yellow-950/40 via-gray-950 to-gray-950 border-y border-yellow-400/20"
+      className="rental-story py-16 px-4 bg-gradient-to-b from-yellow-950/40 via-gray-950 to-gray-950 border-y border-yellow-400/20"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
+        <div className="rental-story-heading text-center mb-8">
           <div className="inline-block bg-yellow-400 text-yellow-900 text-xs font-black px-4 py-1.5 rounded-full mb-4">
             ⭐ ทางเลือกยอดนิยม — เช่า AED
           </div>
@@ -30,7 +30,7 @@ export function RentalSpotlight() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
+        <div className="rental-story-grid grid lg:grid-cols-2 gap-8 items-center">
           {/* Rental poster — real campaign creative */}
           <a
             href={LINE_OA}
@@ -38,7 +38,7 @@ export function RentalSpotlight() {
             rel="noopener noreferrer"
             data-line-cta="home_rent_poster"
             data-product="rent-flex"
-            className="block rounded-2xl overflow-hidden border border-yellow-400/30 shadow-2xl shadow-yellow-400/10 hover:border-yellow-400/60 transition-colors"
+            className="rental-story-image block rounded-2xl overflow-hidden border border-yellow-400/30 shadow-2xl shadow-yellow-400/10 hover:border-yellow-400/60 transition-colors"
           >
             <Image
               src="/images/aed-rent-all.webp"
@@ -50,7 +50,7 @@ export function RentalSpotlight() {
           </a>
 
           {/* Three rental plans at a glance */}
-          <div className="space-y-4">
+          <div className="rental-story-plans space-y-4">
             {rentalPlans.map((p) => (
               <div
                 key={p.id}
@@ -136,7 +136,7 @@ export function RentalSpotlight() {
 
         {/* Why renting is safe to say yes to — commitments already made in
             rentalPlans/rentalFaqs, surfaced where the decision happens. */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
+        <div className="rental-story-trust grid grid-cols-2 md:grid-cols-4 gap-3 mt-10">
           {rentalTrustSignals.map((t) => (
             <div
               key={t.text}
