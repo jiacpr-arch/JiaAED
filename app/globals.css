@@ -810,6 +810,44 @@ html {
 .premium-paths > div > div:has(table) table { color: #333; }
 .premium-paths > div > div:has(table) a { border-radius: 0.25rem !important; }
 
+/* Decision table: explicit light-theme contrast instead of inherited dark utilities. */
+.premium-paths .rent-buy-table { border-color: #c9c6be !important; }
+.premium-paths .rent-buy-table thead tr { background: #171717 !important; }
+.premium-paths .rent-buy-table thead th { color: #fff !important; font-size: 0.93rem; }
+.premium-paths .rent-buy-table thead th:nth-child(2) { background: #292929 !important; }
+.premium-paths .rent-buy-table tbody tr { background: #fff !important; }
+.premium-paths .rent-buy-table tbody tr:nth-child(even) { background: #f0eee8 !important; }
+.premium-paths .rent-buy-table tbody th,
+.premium-paths .rent-buy-table tbody td { color: #292825 !important; border-top: 1px solid #d7d4cc; line-height: 1.55; }
+.premium-paths .rent-buy-table tbody td:nth-child(2) { background: rgba(255, 193, 7, 0.1) !important; color: #171717 !important; font-weight: 600; }
+.premium-paths .rent-buy-table tbody td:nth-child(3) { color: #4e4b45 !important; }
+.premium-paths .rent-buy-table tbody td span { color: #008a3d !important; font-size: 1rem; font-weight: 900; }
+
+/* Promotional hero reused across AED pages. */
+.promo-banner {
+  background: linear-gradient(118deg, #090d16 0%, #111b2e 57%, #2a1e00 100%) !important;
+  border: 1px solid rgba(255, 194, 0, 0.72) !important;
+  border-radius: 0.45rem !important;
+  box-shadow: 0 25px 75px rgba(9, 13, 22, 0.22);
+  isolation: isolate;
+  padding: clamp(2rem, 5vw, 4.5rem) !important;
+}
+.promo-banner::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 80% 15%, rgba(255, 194, 0, 0.2), transparent 31%); pointer-events: none; }
+.promo-banner-glow { position: absolute; width: 28rem; height: 28rem; right: -9rem; bottom: -16rem; border-radius: 50%; background: #ffc400; filter: blur(90px); opacity: 0.2; }
+.promo-banner-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.55fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+.promo-banner-badge { background: #ffc400 !important; color: #211700 !important; letter-spacing: 0.03em; }
+.promo-banner-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.3em; font-size: clamp(2.2rem, 4.2vw, 4.8rem) !important; letter-spacing: -0.045em; line-height: 1.02; }
+.promo-banner-title strong { color: #ffc400; display: block; font-size: 1.08em; width: 100%; }
+.promo-banner-subtitle { color: #e3e7ee !important; font-size: clamp(1rem, 1.35vw, 1.2rem) !important; line-height: 1.75; }
+.promo-banner-points li { color: #f0f2f6 !important; font-size: 0.95rem !important; line-height: 1.55; }
+.promo-banner-action a { border-radius: 999px !important; box-shadow: 0 12px 34px rgba(6, 199, 85, 0.3); min-height: 3.25rem; }
+.promo-banner-action p { color: #aeb6c5 !important; }
+.promo-banner-prize { border-left: 1px solid rgba(255,255,255,0.2); color: #fff; display: flex; flex-direction: column; padding-left: clamp(2rem, 4vw, 4rem); text-align: center; }
+.promo-banner-prize > span { color: #ffc400; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+.promo-banner-prize strong { color: #ffc400; font-size: clamp(3.7rem, 7vw, 7.2rem); letter-spacing: -0.075em; line-height: 0.95; white-space: nowrap; }
+.promo-banner-prize strong small { font-size: 0.42em; vertical-align: 0.55em; }
+.promo-banner-prize em { color: #fff; font-size: 1rem; font-style: normal; font-weight: 700; margin-top: 0.8rem; }
+
 .premium-lineup {
   background: #090909 !important;
   border: 0 !important;
@@ -935,6 +973,16 @@ html {
 .premium-contact p { color: #6d6a63 !important; }
 
 @media (max-width: 760px) {
+  .premium-paths > div > div:has(table) { padding: 1.1rem !important; }
+  .premium-paths .rent-buy-table table { font-size: 0.8rem; }
+  .premium-paths .rent-buy-table :where(th, td) { padding: 0.8rem !important; }
+  .promo-banner { padding: 1.5rem !important; }
+  .promo-banner-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+  .promo-banner-title { font-size: clamp(2.15rem, 12vw, 3.3rem) !important; }
+  .promo-banner-prize { border-left: 0; border-top: 1px solid rgba(255,255,255,0.2); padding: 1.6rem 0 0; }
+  .promo-banner-prize strong { font-size: clamp(4rem, 20vw, 6.2rem); }
+  .promo-banner-action { align-items: stretch !important; }
+  .promo-banner-action a { text-align: center; width: 100%; }
   .premium-section-heading h2 { font-size: clamp(2.6rem, 13vw, 4rem) !important; }
   .premium-paths, .premium-lineup, .premium-trust, .premium-tech, .premium-feature, .premium-standards, .premium-contact { padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
   .premium-paths > div > .grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; }
