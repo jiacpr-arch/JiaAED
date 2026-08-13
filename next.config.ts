@@ -1,12 +1,6 @@
 import type { NextConfig } from "next";
 import path from "path";
 
-// Canonical host is the apex domain (no www) — see docs/domain-migration.md.
-// www.jiaaed.com is attached to the same Vercel project, so without an
-// app-level redirect it serves the whole site as a duplicate host.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
-const SITE_HOST = new URL(SITE_URL).host;
-
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -23,19 +17,6 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Scope file tracing to this project only (prevents crawling parent dirs)
   outputFileTracingRoot: path.join(__dirname),
-  async redirects() {
-    // Guard: if the canonical host were ever www itself, redirecting
-    // www.www.* would be nonsense — emit nothing.
-    if (SITE_HOST.startsWith("www.")) return [];
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: `www.${SITE_HOST}` }],
-        destination: `${SITE_URL}/:path*`,
-        permanent: true,
-      },
-    ];
-  },
   async headers() {
     return [
       {
