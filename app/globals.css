@@ -388,12 +388,137 @@ html {
    full-viewport hierarchy. Kept homepage-scoped so admin and content pages do
    not inherit the campaign treatment. */
 .premium-home .premium-nav {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.64), transparent) !important;
+  background: rgba(8, 8, 8, 0.68) !important;
   border: 0 !important;
-  backdrop-filter: none;
+  backdrop-filter: blur(18px) saturate(135%);
   min-height: 76px;
   padding: 0.45rem 0;
 }
+
+.premium-quick-contact {
+  padding: 1rem var(--jia-pad) !important;
+}
+
+.quick-contact-panel {
+  align-items: center;
+  background: transparent !important;
+  border: 0 !important;
+  display: grid;
+  gap: 1.25rem 2rem;
+  grid-template-columns: minmax(16rem, 1fr) minmax(28rem, 1.45fr);
+  padding: 0.75rem 0 !important;
+}
+
+.quick-contact-copy {
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.quick-contact-actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1.2fr 1fr;
+}
+
+.quick-contact-actions > a {
+  align-items: center;
+  border-radius: 0.25rem !important;
+  display: flex;
+  font-size: 0.9rem !important;
+  justify-content: center;
+  margin: 0 !important;
+  min-height: 3.15rem;
+  padding: 0.7rem 1rem !important;
+}
+
+.rental-story {
+  background: #eceae4 !important;
+  border: 0 !important;
+  color: #101010;
+  padding: clamp(6rem, 10vw, 10rem) var(--jia-pad) !important;
+}
+
+.rental-story > div { max-width: 92rem; }
+
+.rental-story-heading {
+  margin-bottom: clamp(3rem, 6vw, 6rem) !important;
+  text-align: left !important;
+}
+
+.rental-story-heading > div:first-child {
+  background: transparent !important;
+  color: #74716b !important;
+  font-size: 0.67rem !important;
+  letter-spacing: 0.18em;
+  padding: 0 !important;
+  text-transform: uppercase;
+}
+
+.rental-story-heading h2 {
+  color: #101010 !important;
+  font-size: clamp(2.8rem, 5.8vw, 6.5rem) !important;
+  font-weight: 540 !important;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  max-width: 68rem;
+}
+
+.rental-story-heading h2 span { color: #bd251f !important; }
+
+.rental-story-heading p {
+  color: #66635d !important;
+  font-size: 1rem;
+  margin-left: 0 !important;
+  max-width: 46rem;
+  text-align: left;
+}
+
+.rental-story-heading p strong { color: #161616 !important; }
+
+.rental-story-grid {
+  gap: clamp(2rem, 5vw, 6rem) !important;
+  grid-template-columns: 1.25fr 0.9fr !important;
+}
+
+.rental-story-image {
+  border: 0 !important;
+  border-radius: 0.35rem !important;
+  box-shadow: none !important;
+}
+
+.rental-story-plans > div {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid #c9c6bd !important;
+  border-radius: 0 !important;
+  padding: 1.1rem 0 !important;
+}
+
+.rental-story-plans :where(.text-white, .text-gray-300) { color: #191919 !important; }
+.rental-story-plans :where(.text-gray-500, .text-gray-600) { color: #77736c !important; }
+.rental-story-plans .text-yellow-400 { color: #bd251f !important; }
+
+.rental-story-plans > div > a:last-child,
+.rental-story-plans > a {
+  border-radius: 0.25rem !important;
+}
+
+.rental-story-trust {
+  border-top: 1px solid #c9c6bd;
+  gap: 0 !important;
+  margin-top: clamp(4rem, 7vw, 7rem) !important;
+}
+
+.rental-story-trust > div {
+  background: transparent !important;
+  border: 0 !important;
+  border-right: 1px solid #c9c6bd !important;
+  border-radius: 0 !important;
+  padding: 1.5rem !important;
+}
+
+.rental-story-trust > div:last-child { border-right: 0 !important; }
+.rental-story-trust span:last-child { color: #55524c !important; }
 
 .premium-home .premium-nav > div {
   max-width: none;
@@ -584,4 +709,16 @@ html {
 
   .premium-hero-actions > span { grid-column: 1; }
   .premium-scroll-cue { display: none; }
+
+  .premium-quick-contact { padding: 1.5rem 1.35rem !important; }
+  .quick-contact-panel { display: block; }
+  .quick-contact-copy { margin-bottom: 1rem !important; text-align: center !important; }
+  .quick-contact-actions { grid-template-columns: 1fr; }
+
+  .rental-story { padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
+  .rental-story-heading h2 { font-size: clamp(2.6rem, 13vw, 4rem) !important; }
+  .rental-story-grid { display: flex !important; flex-direction: column; }
+  .rental-story-trust { grid-template-columns: 1fr 1fr !important; }
+  .rental-story-trust > div:nth-child(2) { border-right: 0 !important; }
+  .rental-story-trust > div { border-bottom: 1px solid #c9c6bd !important; }
 }
