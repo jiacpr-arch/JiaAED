@@ -70,10 +70,14 @@ describe("evaluateNegotiation", () => {
   });
 
   it("approves between minPrice and bestPrice but counters at minPrice", () => {
-    const mid = Math.round((AED_PRODUCTS.i7.minPrice + AED_PRODUCTS.i7.bestPrice) / 2);
-    const r = evaluateNegotiation("i7", 1, mid);
+    // Use a product whose negotiation range is non-zero. Most core AED SKUs
+    // intentionally keep bestPrice === minPrice, so they cannot exercise this
+    // branch without accidentally testing the boundary above instead.
+    const product = AED_PRODUCTS["yuwell-gps"];
+    const mid = Math.round((product.minPrice + product.bestPrice) / 2);
+    const r = evaluateNegotiation(product.id, 1, mid);
     expect(r.approved).toBe(true);
-    expect(r.counterOffer).toBe(AED_PRODUCTS.i7.minPrice);
+    expect(r.counterOffer).toBe(product.minPrice);
     expect(r.needsEscalation).toBe(false);
   });
 

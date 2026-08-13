@@ -41,8 +41,8 @@ export function CookieConsent() {
       )}
 
       {ready && consent === null && (
-        <div className="fixed bottom-0 inset-x-0 z-[60] p-3 sm:p-4">
-          <div className="max-w-3xl mx-auto bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-4 sm:p-5">
+        <div className="fixed bottom-0 inset-x-0 z-[60] p-3 sm:inset-x-auto sm:left-4 sm:w-[28rem] sm:p-0 sm:pb-4">
+          <div className="mx-auto bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-4">
             <p className="text-sm text-gray-300 leading-relaxed">
               🍪 เว็บไซต์นี้ใช้คุกกี้เพื่อวิเคราะห์การใช้งานและปรับปรุงการโฆษณา
               อ่านรายละเอียดใน{" "}

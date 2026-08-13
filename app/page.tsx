@@ -7,7 +7,6 @@ import { faqs } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { LeadForm } from "./components/LeadForm";
 import { QuickContact } from "./components/QuickContact";
-import { HeroCta } from "./components/HeroCta";
 import { HeroHeadline } from "./components/HeroHeadline";
 import { LineupProductCard } from "./components/LineupProductCard";
 import { SpecComparisonTable } from "./components/SpecComparisonTable";
@@ -52,15 +51,16 @@ export default function Home() {
     <div className="premium-home min-h-screen bg-gray-950 text-white font-sans">
       <ProductStructuredData />
 
-      {/* Navbar — trimmed to the few links a buyer actually needs */}
-      <nav className="premium-nav sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
+      {/* Transparent over-image navigation inspired by premium product sites. */}
+      <nav className="premium-nav fixed top-0 inset-x-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <JiaAedLogo className="h-8 w-auto" />
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
-            <a href="#brands" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">เลือกยี่ห้อ</a>
-            <a href="#tech" className="text-sm text-gray-400 hover:text-yellow-400 transition-colors hidden md:block">ข้อมูลเครื่อง</a>
+            <a href="#brands" className="text-sm text-white/80 hover:text-white transition-colors hidden md:block">รุ่น AED</a>
+            <a href="#rent" className="text-sm text-white/80 hover:text-white transition-colors hidden md:block">เช่า AED</a>
+            <a href="/training" className="text-sm text-white/80 hover:text-white transition-colors hidden lg:block">อบรม</a>
             {/* เช่า/ซื้อ as one segmented pair, visible at every width — the two
                 offers carry equal weight from the very first glance. */}
             <div className="flex items-center">
@@ -92,135 +92,36 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero — one clear message, one price, two next steps */}
-      <section className="premium-hero bg-gradient-to-br from-gray-950 via-gray-900 to-yellow-950 py-16 px-4">
-        <div className="premium-hero-grid max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
-          <div className="premium-hero-copy">
-            <span className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20 mb-4">
-              ✅ อย. รับรอง · เช่าหรือซื้อขาดก็ได้ · ออกใบกำกับภาษีได้
-            </span>
-            <HeroHeadline />
-            <p className="text-gray-400 text-lg mb-4">
-              <strong className="text-white">เช่า AED พร้อมใช้</strong> — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร<br />
-              เสียงแนะนำภาษาไทย · ใช้ได้ทั้งผู้ใหญ่และเด็ก
-            </p>
-            {/* Rent and buy side by side at equal weight — rent keeps the yellow
-                identity, buy gets the white/silver "ownership" treatment. */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              <div className="premium-offer premium-offer-rent rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5 flex flex-col">
-                <span className="text-xs font-bold text-yellow-400">เช่า — ไม่ต้องลงทุนก้อนใหญ่</span>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-3xl md:text-4xl font-black text-yellow-400">
-                    ฿{RENT_FLEX.price.toLocaleString()}
-                  </span>
-                  <span className="text-sm text-gray-400 font-semibold">/เดือน</span>
-                </div>
-                <span className="text-xs text-gray-500 mt-1 mb-4">
-                  ก่อน VAT · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน
-                </span>
-                <a
-                  href={LINE_OA}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-line-cta="hero_rent_card"
-                  data-product="rent-flex"
-                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
-                >
-                  💬 สนใจเช่า — ทัก LINE
-                </a>
-                <a
-                  href="#rent"
-                  className="text-center text-xs text-yellow-400/80 hover:text-yellow-300 font-medium mt-2"
-                >
-                  ดูแผนเช่า →
-                </a>
-              </div>
-              <div className="premium-offer premium-offer-buy rounded-2xl border border-gray-400/40 bg-white/5 p-5 flex flex-col">
-                <span className="text-xs font-bold text-gray-200">ซื้อขาด — เป็นเจ้าของเต็มตัว</span>
-                <div className="flex items-baseline gap-1.5 mt-1">
-                  <span className="text-3xl md:text-4xl font-black text-white">
-                    {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
-                  </span>
-                  {BUY_PKG.listPriceLabel && (
-                    <span className="text-sm text-gray-500 line-through">{BUY_PKG.listPriceLabel}</span>
-                  )}
-                </div>
-                <span className="text-xs text-gray-500 mt-1 mb-4">
-                  ราคาเงินสด · ออกใบกำกับภาษีได้
-                </span>
-                <a
-                  href={LINE_OA}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-line-cta="hero_buy_card"
-                  data-product="pkg-premium"
-                  className="mt-auto bg-[#06C755] text-white font-bold text-sm px-4 py-2.5 rounded-full hover:bg-[#05a847] transition-colors text-center"
-                >
-                  💬 สนใจซื้อ — ทัก LINE
-                </a>
-                <a
-                  href="#how"
-                  className="text-center text-xs text-gray-300 hover:text-white font-medium mt-2"
-                >
-                  เทียบ 3 วิธี →
-                </a>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 mb-6">
-              <HeroCta />
-            </div>
-            <p className="text-gray-500 text-sm">ตอบทันที 24 ชั่วโมง • ออกใบเสนอราคา/ใบกำกับภาษีได้เลย</p>
-          </div>
-          {/* Yuwell/PRIMEDIC is the featured brand (owner decision): red machine
-              first with the แนะนำ badge; Yuwell Y2 (เรือธง) spotlighted alongside
-              it. Amoul i7 removed by อย. order (ก.ค. 2026) — this slot used to be its
-              secondary option. The featured image links to the brand page, not
-              LINE — image taps are inspection intent, not chat intent (weekly
-              review 14 Jun). */}
-          <div className="premium-product-gallery grid grid-cols-2 gap-4">
-            <Link
-              href="/aed/primedic"
-              data-cta="hero_image_primedic"
-              data-product="primedic-y8"
-              className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="Yuwell / PRIMEDIC HeartSave — ดูรุ่นและสเปก"
-            >
-              <div className="premium-product-frame relative w-full h-56 md:h-64 rounded-xl overflow-hidden bg-white ring-2 ring-red-500/50">
-                <span className="absolute top-2 left-2 z-10 bg-red-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
-                  ⭐ แนะนำ
-                </span>
-                <Image
-                  src="/images/primedic-heartsave.png"
-                  alt="Yuwell PRIMEDIC HeartSave AED"
-                  fill
-                  className="object-contain p-3 transition-transform group-hover:scale-105"
-                  priority
-                />
-              </div>
-              <span className="mt-2 text-xs font-semibold text-red-400">Yuwell · PRIMEDIC HeartSave</span>
-            </Link>
-            <a
-              href={LINE_OA}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-line-cta="hero_image_y2"
-              data-product="primedic-y2"
-              className="relative flex flex-col items-center group cursor-pointer"
-              aria-label="Yuwell Y2 — คลิกเพื่อสอบถามทาง LINE"
-            >
-              <div className="premium-product-frame relative w-full h-56 md:h-64">
-                <Image
-                  src="/images/yuwell-y2-main.jpg"
-                  alt="AED Yuwell Y2"
-                  fill
-                  className="object-contain drop-shadow-2xl transition-transform group-hover:scale-105"
-                  priority
-                />
-              </div>
-              <span className="mt-2 text-xs font-semibold text-gray-400">Yuwell Y2 — รุ่นเรือธง จอสี EKG</span>
-            </a>
-          </div>
+      {/* Full-viewport cinematic hero: premium medical editorial × clear commerce. */}
+      <section className="premium-hero" aria-labelledby="hero-title">
+        <Image
+          src="/images/jiaaed-hero-2026.png"
+          alt="ทีมงานฝึก CPR และเตรียมเครื่อง AED ในองค์กร"
+          fill
+          priority
+          sizes="100vw"
+          className="premium-hero-image"
+        />
+        <div className="premium-hero-shade" />
+        <div className="premium-hero-copy">
+          <span>Authorized Yuwell AED representative · Thailand</span>
+          <div id="hero-title"><HeroHeadline /></div>
+          <p>เครื่อง AED พร้อมติดตั้ง อบรม และทีมดูแลครบวงจร<br />เพื่อให้ทุกคนพร้อมช่วยชีวิต เมื่อทุกวินาทีมีความหมาย</p>
         </div>
+
+        <div className="premium-hero-actions" aria-label="ตัวเลือกเช่าหรือซื้อ AED">
+          <a href="#rent" data-cta="hero_rent" className="premium-action premium-action-primary">
+            เช่า AED ฿{RENT_FLEX.price.toLocaleString()}/เดือน
+          </a>
+          <a href="#how" data-cta="hero_buy" className="premium-action premium-action-secondary">
+            ซื้อขาด {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
+          </a>
+          <span>อย. รับรอง · ออกใบกำกับภาษีได้ · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน</span>
+        </div>
+
+        <a href="#brands" className="premium-scroll-cue" aria-label="เลื่อนดูรุ่น AED">
+          <span>Explore</span><span aria-hidden="true">↓</span>
+        </a>
       </section>
 
       {/* Quick contact bar — LINE-first (visitors prefer LINE over the form) */}
