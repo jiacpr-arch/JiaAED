@@ -29,7 +29,7 @@ export function SplitFeature({
     bulletTone === "red" ? "text-red-400" : bulletTone === "green" ? "text-green-400" : "text-yellow-400";
 
   return (
-    <div className="grid md:grid-cols-2 gap-8 items-center">
+    <div className="split-feature grid md:grid-cols-2 gap-8 items-center">
       <div
         className={`rounded-2xl overflow-hidden shadow-2xl border border-gray-800 ${reverse ? "md:order-2" : ""}`}
       >
