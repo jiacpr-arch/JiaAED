@@ -1048,8 +1048,12 @@ html {
 }
 .premium-trust > div > .grid > div:nth-child(odd) { padding-right: 2rem !important; }
 .premium-trust > div > .grid > div:nth-child(even) { border-left: 1px solid #c7c4bc !important; padding-left: 2rem !important; }
-.premium-trust .grid :where(.text-white) { color: #111 !important; }
-.premium-trust .grid :where(.text-gray-400) { color: #66635d !important; }
+/* Scoped to the trust-points grid only (direct child of .premium-trust > div) —
+   an unscoped `.grid` descendant selector here also matched PhotoStrip's own
+   inner grid and turned its white photo captions near-black, making them
+   unreadable against the dark gradient overlay. */
+.premium-trust > div > .grid > div :where(.text-white) { color: #111 !important; }
+.premium-trust > div > .grid > div :where(.text-gray-400) { color: #66635d !important; }
 
 .premium-life-banner { height: min(72svh, 52rem) !important; }
 .premium-life-banner img { transition: transform 1.2s ease; }
