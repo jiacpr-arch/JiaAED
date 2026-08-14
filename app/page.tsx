@@ -131,52 +131,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Editorial location imagery: these are installation/training concepts,
-          not product packshots. Current sellable models remain sourced from the
-          regulated Yuwell/PRIMEDIC data and cards below. */}
-      <section className="premium-spaces" aria-labelledby="premium-spaces-title">
-        <div className="premium-spaces-heading">
-          <p>Prepared spaces</p>
-          <h2 id="premium-spaces-title">ความพร้อมที่กลมกลืน<br />กับทุกสถานที่</h2>
-          <span>ภาพตัวอย่างแนวทางจัดพื้นที่ AED สำหรับองค์กรและสถานศึกษา</span>
-        </div>
-        <div className="premium-spaces-grid">
-          <article className="premium-space-card premium-space-card-wide">
-            <Image
-              src="/images/jiaaed-lobby-hero.jpg"
-              alt="ภาพตัวอย่างจุดติดตั้ง AED ในอาคารสำนักงานสมัยใหม่"
-              fill
-              sizes="(max-width: 800px) 100vw, 62vw"
-              className="premium-space-image"
-            />
-            <div className="premium-space-shade" />
-            <div className="premium-space-copy"><span>Corporate</span><h3>เห็นง่าย.<br />เข้าถึงทันที.</h3></div>
-          </article>
-          <article className="premium-space-card">
-            <Image
-              src="/images/jiaaed-school.jpg"
-              alt="ภาพตัวอย่างจุดติดตั้ง AED ในพื้นที่ส่วนกลางของโรงเรียน"
-              fill
-              sizes="(max-width: 800px) 100vw, 38vw"
-              className="premium-space-image"
-            />
-            <div className="premium-space-shade" />
-            <div className="premium-space-copy"><span>Education</span><h3>ปลอดภัย<br />ในทุกวัน.</h3></div>
-          </article>
-          <article className="premium-space-card premium-space-card-full">
-            <Image
-              src="/images/jiaaed-training.jpg"
-              alt="ภาพตัวอย่างการฝึก CPR และ AED ในองค์กร"
-              fill
-              sizes="100vw"
-              className="premium-space-image premium-space-image-training"
-            />
-            <div className="premium-space-shade premium-space-shade-right" />
-            <div className="premium-space-copy premium-space-copy-right"><span>Training</span><h3>ฝึกให้มั่นใจ.<br />พร้อมเมื่อจำเป็น.</h3></div>
-          </article>
-        </div>
-      </section>
-
       {/* ═══ RENTAL SPOTLIGHT — the primary offer, shown before buy/own ═══ */}
       <RentalSpotlight />
 
@@ -486,6 +440,51 @@ export default function Home() {
           <div className="mt-12">
             <TrustStats />
           </div>
+        </div>
+      </section>
+
+      {/* Editorial location imagery: installation/training concepts rather
+          than product packshots. Sellable models remain the regulated cards. */}
+      <section className="premium-spaces" aria-labelledby="premium-spaces-title">
+        <div className="premium-spaces-heading">
+          <p>Prepared spaces</p>
+          <h2 id="premium-spaces-title">ความพร้อมที่กลมกลืน<br />กับทุกสถานที่</h2>
+          <span>ภาพตัวอย่างแนวทางจัดพื้นที่ AED สำหรับองค์กรและสถานศึกษา</span>
+        </div>
+        <div className="premium-spaces-grid">
+          <article className="premium-space-card premium-space-card-wide">
+            <Image
+              src="/images/jiaaed-lobby-hero.jpg"
+              alt="ภาพตัวอย่างจุดติดตั้ง AED ในอาคารสำนักงานสมัยใหม่"
+              fill
+              sizes="(max-width: 800px) 100vw, 62vw"
+              className="premium-space-image"
+            />
+            <div className="premium-space-shade" />
+            <div className="premium-space-copy"><span>Corporate</span><h3>เห็นง่าย.<br />เข้าถึงทันที.</h3></div>
+          </article>
+          <article className="premium-space-card">
+            <Image
+              src="/images/jiaaed-school.jpg"
+              alt="ภาพตัวอย่างจุดติดตั้ง AED ในพื้นที่ส่วนกลางของโรงเรียน"
+              fill
+              sizes="(max-width: 800px) 100vw, 38vw"
+              className="premium-space-image"
+            />
+            <div className="premium-space-shade" />
+            <div className="premium-space-copy"><span>Education</span><h3>ปลอดภัย<br />ในทุกวัน.</h3></div>
+          </article>
+          <article className="premium-space-card premium-space-card-full">
+            <Image
+              src="/images/jiaaed-training.jpg"
+              alt="ภาพตัวอย่างการฝึก CPR และ AED ในองค์กร"
+              fill
+              sizes="100vw"
+              className="premium-space-image premium-space-image-training"
+            />
+            <div className="premium-space-shade premium-space-shade-right" />
+            <div className="premium-space-copy premium-space-copy-right"><span>Training</span><h3>ฝึกให้มั่นใจ.<br />พร้อมเมื่อจำเป็น.</h3></div>
+          </article>
         </div>
       </section>
 
