@@ -5,8 +5,8 @@ import { getOrAssignHeadlineVariant, type HeadlineVariant } from "@/lib/aed/ab-v
 import { trackEvent } from "@/lib/aed/analytics-client";
 
 const COPY: Record<HeadlineVariant, { line1: string; accent: string; line2: string }> = {
-  a: { line1: "หัวใจหยุดเต้น", accent: "Yuwell · PRIMEDIC HeartSave", line2: "ช่วยได้ก่อนรถพยาบาลมา" },
-  b: { line1: "ช่วยชีวิตได้ใน 7 วินาที", accent: "Yuwell Y2 · PRIMEDIC HeartSave", line2: "พร้อมใช้ทันที" },
+  a: { line1: "พร้อมช่วยชีวิต", accent: "ก่อนรถพยาบาลมา", line2: "" },
+  b: { line1: "ทุกวินาทีสำคัญ", accent: "AED ที่ทุกคนใช้ได้", line2: "" },
 };
 
 export function HeroHeadline() {
@@ -25,15 +25,8 @@ export function HeroHeadline() {
       className="text-4xl md:text-5xl font-black mb-4 leading-tight"
     >
       {c.line1}<br />
-      {/* Both remaining models are the Yuwell/PRIMEDIC family — red casing. */}
-      {c.accent.split(" · ").map((part, i) => (
-        <span key={part}>
-          {i > 0 && <span className="text-gray-500"> · </span>}
-          <span className="text-red-400">{part}</span>
-        </span>
-      ))}
-      <br />
-      {c.line2}
+      <span className="text-red-400">{c.accent}</span>
+      {c.line2 && <><br />{c.line2}</>}
     </h1>
   );
 }

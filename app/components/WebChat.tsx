@@ -178,18 +178,18 @@ export function WebChat() {
         type="button"
         onClick={toggle}
         aria-label={open ? "ปิดแชท" : "เปิดแชท AI"}
-        className={`fixed bottom-20 md:bottom-5 right-5 z-50 rounded-full shadow-2xl transition-all ${
+        className={`web-chat-launcher fixed bottom-20 md:bottom-5 right-5 z-50 shadow-2xl transition-all ${
           open
-            ? "bg-gray-800 hover:bg-gray-700 w-12 h-12"
-            : "bg-yellow-400 hover:bg-yellow-300 px-5 py-3 flex items-center gap-2"
+            ? "web-chat-launcher-open"
+            : "web-chat-launcher-closed"
         }`}
       >
         {open ? (
-          <span className="text-white text-xl">✕</span>
+          <span aria-hidden="true">✕</span>
         ) : (
           <>
-            <span className="text-2xl">💬</span>
-            <span className="font-bold text-yellow-900 hidden sm:inline">ถาม AI เจี่ย</span>
+            <span className="web-chat-pulse" aria-hidden="true" />
+            <span>JIA AI</span>
           </>
         )}
       </button>

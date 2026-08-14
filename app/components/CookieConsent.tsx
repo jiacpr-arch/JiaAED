@@ -41,25 +41,26 @@ export function CookieConsent() {
       )}
 
       {ready && consent === null && (
-        <div className="fixed bottom-0 inset-x-0 z-[60] p-3 sm:inset-x-auto sm:left-4 sm:w-[28rem] sm:p-0 sm:pb-4">
-          <div className="mx-auto bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-4">
-            <p className="text-sm text-gray-300 leading-relaxed">
-              🍪 เว็บไซต์นี้ใช้คุกกี้เพื่อวิเคราะห์การใช้งานและปรับปรุงการโฆษณา
+        <div className="cookie-consent-shell">
+          <div className="cookie-consent-card">
+            <p className="cookie-consent-label">ความเป็นส่วนตัว</p>
+            <p className="cookie-consent-copy">
+              เราใช้คุกกี้เพื่อวิเคราะห์การใช้งานและปรับปรุงประสบการณ์ของคุณ
               อ่านรายละเอียดใน{" "}
-              <a href="/privacy" className="text-yellow-400 underline hover:text-yellow-300">
+              <a href="/privacy">
                 นโยบายความเป็นส่วนตัว
               </a>
             </p>
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="cookie-consent-actions">
               <button
                 onClick={() => choose("granted")}
-                className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-sm px-5 py-2 rounded-full"
+                className="cookie-consent-accept"
               >
                 ยอมรับทั้งหมด
               </button>
               <button
                 onClick={() => choose("denied")}
-                className="border border-gray-600 hover:border-gray-400 text-gray-300 text-sm px-5 py-2 rounded-full"
+                className="cookie-consent-essential"
               >
                 ใช้เท่าที่จำเป็น
               </button>
