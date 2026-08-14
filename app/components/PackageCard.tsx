@@ -35,7 +35,7 @@ export function PackageCard({
     >
       {displayBadge && (
         <div
-          className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full ${
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 z-10 text-xs font-bold px-4 py-1 rounded-full ${
             pkg.badge ? "bg-yellow-400 text-yellow-900" : "bg-gray-200 text-gray-900"
           }`}
         >

@@ -53,7 +53,7 @@ export function LineupProductCard({ card }: { card: LineupCard }) {
     >
       {card.badge && (
         <div
-          className={`absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold px-4 py-1 rounded-full ${accent.badge}`}
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 z-10 text-xs font-bold px-4 py-1 rounded-full ${accent.badge}`}
         >
           {card.badge}
         </div>
