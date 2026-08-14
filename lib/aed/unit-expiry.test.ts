@@ -13,6 +13,7 @@ function unit(overrides: Partial<UnitExpiryInput> = {}): UnitExpiryInput {
   return {
     serial_number: "AMI7-001",
     customer_name: "ร้านทดสอบ",
+    product_model: null,
     pad_expiry_date: null,
     battery_expiry_date: null,
     ...overrides,
@@ -115,6 +116,24 @@ describe("formatUnitExpiryReport", () => {
     const text = formatUnitExpiryReport(results);
     expect(text).toContain("แผ่นอิเล็กโทรด");
     expect(text).toContain("แบตเตอรี่");
+  });
+
+  it("names the exact part to order when the unit has a product model", () => {
+    // Recovered from the owner's sheet by
+    // supabase/aed_units_product_model.sql — staff order by this string, not
+    // by the generic แผ่น/แบต label.
+    const results = checkUnitExpiries(
+      [unit({ product_model: "pad zoll", pad_expiry_date: "2026-09-01" })],
+      now,
+    );
+    expect(formatUnitExpiryReport(results)).toContain("แผ่นอิเล็กโทรด (pad zoll)");
+  });
+
+  it("omits the parenthetical when no product model is on file", () => {
+    const results = checkUnitExpiries([unit({ pad_expiry_date: "2026-09-01" })], now);
+    const text = formatUnitExpiryReport(results);
+    expect(text).toContain("แผ่นอิเล็กโทรด เหลือ");
+    expect(text).not.toContain("(null)");
   });
 
   it("flags an expired one with an explicit replace-now instruction", () => {

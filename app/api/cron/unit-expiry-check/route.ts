@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     // electrode set yet have nothing to alert on.
     const { data, error } = await supabase
       .from("aed_units")
-      .select("serial_number,customer_name,pad_expiry_date,battery_expiry_date")
+      .select("serial_number,customer_name,product_model,pad_expiry_date,battery_expiry_date")
       .or("pad_expiry_date.not.is.null,battery_expiry_date.not.is.null");
 
     if (error) {
