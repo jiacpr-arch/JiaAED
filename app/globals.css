@@ -902,7 +902,6 @@ html {
   border-radius: 0.35rem !important;
   box-shadow: none !important;
   color: #111;
-  overflow: hidden;
   padding: 1.35rem !important;
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
@@ -912,8 +911,10 @@ html {
   transform: translateY(-5px);
 }
 
+/* Round the full-bleed image to the card's own corners — the card no longer
+   uses overflow:hidden (it clipped the floating "แนะนำ" badge). */
 .premium-paths .package-card > div:has(img) {
-  border-radius: 0 !important;
+  border-radius: 0.35rem 0.35rem 0 0 !important;
   margin: -1.35rem -1.35rem 1.25rem !important;
 }
 
@@ -1004,15 +1005,19 @@ html {
   border-color: rgba(255,255,255,0.12) !important;
   border-radius: 0.35rem !important;
   box-shadow: none !important;
-  overflow: hidden;
   padding: 1.5rem !important;
 }
 
+/* Full-bleed product image at the top of the card. order:-1 lifts it above
+   the brand chip (which precedes it in the DOM) so the chip isn't covered,
+   and the rounded top corners replace the card-level overflow:hidden that
+   used to clip the floating "แนะนำ" badge. */
 .premium-lineup .lineup-card > div:has(img) {
   background: #f2f0ea !important;
-  border-radius: 0 !important;
+  border-radius: 0.35rem 0.35rem 0 0 !important;
   height: clamp(15rem, 27vw, 24rem) !important;
   margin: -1.5rem -1.5rem 1.4rem;
+  order: -1;
   width: auto !important;
 }
 
@@ -1110,7 +1115,9 @@ html {
   .promo-banner-action a { text-align: center; width: 100%; }
   .premium-section-heading h2 { font-size: clamp(2.6rem, 13vw, 4rem) !important; }
   .premium-paths, .premium-lineup, .premium-trust, .premium-tech, .premium-feature, .premium-standards, .premium-contact { padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
-  .premium-paths > div > .grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; }
+  /* padding-top keeps the badges that float above each card (-top-3) visible
+     inside the horizontally scrolling carousel, which clips vertically. */
+  .premium-paths > div > .grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; padding-top: 0.85rem; }
   .premium-paths .package-card { flex: 0 0 88%; scroll-snap-align: center; }
   .premium-lineup .premium-section-heading + .grid > div { border-bottom: 1px solid rgba(255,255,255,0.14) !important; border-left: 0 !important; padding: 1.3rem 0 !important; }
   .premium-trust > div > .grid { display: block !important; }
