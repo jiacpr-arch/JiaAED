@@ -23,6 +23,10 @@ CREATE TABLE IF NOT EXISTS aed_units (
   -- สถานะ: ว่าง | ปล่อยเช่า | ซ่อม | สำรองอีเวนต์
   status                TEXT NOT NULL DEFAULT 'ว่าง',
   customer_name         TEXT,
+  -- สินค้า — รุ่นแผ่น/แบตที่ติดตั้งจริง เช่น 'pad zoll', 'batt a15'.
+  -- Added later by supabase/aed_units_product_model.sql; kept here so a fresh
+  -- run of this file produces the same shape.
+  product_model         TEXT,
   -- ประเภท: รายปี | รายเดือน | รายวัน | (ว่างไว้สำหรับเครื่องที่ซื้อขาด)
   plan_type             TEXT,
   start_date            DATE,
