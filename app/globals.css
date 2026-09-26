@@ -91,8 +91,8 @@ html {
   background: transparent !important;
   border: 0 !important;
   color: rgba(255, 255, 255, 0.55) !important;
-  font-size: 0.67rem !important;
-  letter-spacing: 0.16em;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.08em;
   padding-left: 0 !important;
   text-transform: uppercase;
 }
@@ -100,8 +100,8 @@ html {
 .premium-hero-copy h1 {
   font-size: clamp(3.4rem, 6vw, 7rem) !important;
   font-weight: 580 !important;
-  letter-spacing: -0.055em;
-  line-height: 0.97 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.12 !important;
   margin-top: 1.4rem;
 }
 
@@ -166,7 +166,7 @@ html {
 }
 
 .premium-product-gallery > a > span:last-child {
-  font-size: 0.66rem !important;
+  font-size: 0.75rem !important;
   letter-spacing: 0.05em;
   line-height: 1.5;
   max-width: 13rem;
@@ -193,9 +193,9 @@ html {
 
 .premium-spaces-heading > p,
 .premium-space-copy > span {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.19em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
@@ -207,8 +207,8 @@ html {
 .premium-spaces-heading h2 {
   font-size: clamp(2.9rem, 5.8vw, 6.5rem);
   font-weight: 580;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
   margin: 0;
 }
 
@@ -276,7 +276,7 @@ html {
 .premium-space-copy h3 {
   font-size: clamp(2rem, 3.7vw, 4.7rem);
   font-weight: 570;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.02em;
   line-height: 1.02;
   margin: 0.8rem 0 0;
 }
@@ -324,9 +324,9 @@ html {
 
 .cookie-consent-label {
   color: white;
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.08em;
   margin: 0 0 0.35rem;
   text-transform: uppercase;
 }
@@ -353,7 +353,7 @@ html {
 .cookie-consent-actions button {
   border-radius: 0.3rem;
   cursor: pointer;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 650;
   min-height: 2.75rem;
   padding: 0 0.85rem;
@@ -383,7 +383,7 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 0.35rem;
   display: flex;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 720;
   justify-content: center;
   letter-spacing: 0.09em;
@@ -573,8 +573,8 @@ html {
 .rental-story-heading > div:first-child {
   background: transparent !important;
   color: #74716b !important;
-  font-size: 0.67rem !important;
-  letter-spacing: 0.18em;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.08em;
   padding: 0 !important;
   text-transform: uppercase;
 }
@@ -583,8 +583,8 @@ html {
   color: #101010 !important;
   font-size: clamp(2.8rem, 5.8vw, 6.5rem) !important;
   font-weight: 540 !important;
-  letter-spacing: -0.055em;
-  line-height: 0.98;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
   max-width: 68rem;
 }
 
@@ -693,9 +693,9 @@ html {
 .premium-home .premium-hero-copy > span:first-child {
   color: rgba(255, 255, 255, 0.72) !important;
   display: block;
-  font-size: 0.68rem !important;
+  font-size: 0.75rem !important;
   font-weight: 650;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.08em;
   margin-bottom: 1.4rem;
   text-transform: uppercase;
 }
@@ -704,8 +704,8 @@ html {
   color: #fff;
   font-size: clamp(3.1rem, 5.6vw, 6.6rem) !important;
   font-weight: 520 !important;
-  letter-spacing: -0.06em;
-  line-height: 0.96 !important;
+  letter-spacing: -0.02em;
+  line-height: 1.12 !important;
   margin: 0;
   max-width: 52rem;
   text-wrap: balance;
@@ -725,14 +725,10 @@ html {
 
 .premium-hero-actions {
   align-items: center;
-  bottom: clamp(2rem, 5.5vh, 4.5rem);
   display: grid;
   gap: 0.7rem 0.85rem;
-  grid-template-columns: minmax(14rem, 20rem) minmax(14rem, 20rem);
-  left: 50%;
-  position: absolute;
-  transform: translateX(-50%);
-  z-index: 3;
+  grid-template-columns: repeat(2, minmax(0, 17rem));
+  margin-top: 2.2rem;
 }
 
 .premium-action {
@@ -750,9 +746,11 @@ html {
 .premium-action:hover { transform: translateY(-2px); }
 
 .premium-action-primary {
-  background: rgba(255, 255, 255, 0.94);
-  color: #111;
+  background: #ffc400;
+  color: #1a1400;
 }
+
+.premium-action-primary:hover { background: #ffd23f; }
 
 .premium-action-secondary {
   backdrop-filter: blur(14px);
@@ -762,10 +760,9 @@ html {
 }
 
 .premium-hero-actions > span {
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
   grid-column: 1 / -1;
-  text-align: center;
 }
 
 .premium-scroll-cue {
@@ -774,9 +771,9 @@ html {
   color: rgba(255, 255, 255, 0.7);
   display: flex;
   flex-direction: column;
-  font-size: 0.58rem;
+  font-size: 0.75rem;
   gap: 0.2rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.08em;
   position: absolute;
   right: clamp(1.5rem, 3vw, 3rem);
   text-transform: uppercase;
@@ -816,8 +813,7 @@ html {
   }
 
   .premium-home .premium-hero-copy h1 {
-    font-size: clamp(2.7rem, 12vw, 4.3rem) !important;
-    max-width: 12ch;
+    font-size: clamp(2.4rem, 10.5vw, 4.3rem) !important;
   }
 
   .premium-home .premium-hero-copy > p {
@@ -826,10 +822,9 @@ html {
   }
 
   .premium-hero-actions {
-    bottom: 10.5rem;
     gap: 0.65rem;
     grid-template-columns: minmax(0, 1fr);
-    width: calc(100% - 2.7rem);
+    margin-top: 1.8rem;
   }
 
   .premium-hero-actions > span { grid-column: 1; }
@@ -859,8 +854,8 @@ html {
   background: transparent !important;
   border: 0 !important;
   color: #77736c !important;
-  font-size: 0.66rem !important;
-  letter-spacing: 0.18em;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.08em;
   padding: 0 !important;
   text-transform: uppercase;
 }
@@ -868,8 +863,8 @@ html {
 .premium-section-heading h2 {
   font-size: clamp(2.8rem, 5.5vw, 6.2rem) !important;
   font-weight: 540 !important;
-  letter-spacing: -0.055em;
-  line-height: 1;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
   max-width: 65rem;
 }
 
@@ -948,6 +943,15 @@ html {
 .premium-paths .rent-buy-table tbody td:nth-child(2) { background: rgba(255, 193, 7, 0.1) !important; color: #171717 !important; font-weight: 600; }
 .premium-paths .rent-buy-table tbody td:nth-child(3) { color: #4e4b45 !important; }
 .premium-paths .rent-buy-table tbody td span { color: #008a3d !important; font-size: 1rem; font-weight: 900; }
+.premium-paths .rent-buy-cards li { background: #fff !important; border-color: #d7d4cc !important; }
+.premium-paths .rent-buy-cards li > p { color: #171717 !important; }
+.premium-paths .rent-buy-cards-rent { background: rgba(255, 193, 7, 0.14) !important; }
+.premium-paths .rent-buy-cards-rent dt { color: #8a6500 !important; }
+.premium-paths .rent-buy-cards-rent dd { color: #171717 !important; font-weight: 600; }
+.premium-paths .rent-buy-cards-rent dd span { color: #008a3d !important; }
+.premium-paths .rent-buy-cards-buy { background: #f0eee8 !important; }
+.premium-paths .rent-buy-cards-buy dt { color: #6b6861 !important; }
+.premium-paths .rent-buy-cards-buy dd { color: #4e4b45 !important; }
 
 /* Promotional hero reused across AED pages. */
 .promo-banner {
@@ -962,14 +966,14 @@ html {
 .promo-banner-glow { position: absolute; width: 28rem; height: 28rem; right: -9rem; bottom: -16rem; border-radius: 50%; background: #ffc400; filter: blur(90px); opacity: 0.2; }
 .promo-banner-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 0.55fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
 .promo-banner-badge { background: #ffc400 !important; color: #211700 !important; letter-spacing: 0.03em; }
-.promo-banner-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.3em; font-size: clamp(2.2rem, 4.2vw, 4.8rem) !important; letter-spacing: -0.045em; line-height: 1.02; }
+.promo-banner-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.3em; font-size: clamp(2.2rem, 4.2vw, 4.8rem) !important; letter-spacing: -0.02em; line-height: 1.12; }
 .promo-banner-title strong { color: #ffc400; display: block; font-size: 1.08em; width: 100%; }
 .promo-banner-subtitle { color: #e3e7ee !important; font-size: clamp(1rem, 1.35vw, 1.2rem) !important; line-height: 1.75; }
 .promo-banner-points li { color: #f0f2f6 !important; font-size: 0.95rem !important; line-height: 1.55; }
 .promo-banner-action a { border-radius: 999px !important; box-shadow: 0 12px 34px rgba(6, 199, 85, 0.3); min-height: 3.25rem; }
 .promo-banner-action p { color: #aeb6c5 !important; }
 .promo-banner-prize { border-left: 1px solid rgba(255,255,255,0.2); color: #fff; display: flex; flex-direction: column; padding-left: clamp(2rem, 4vw, 4rem); text-align: center; }
-.promo-banner-prize > span { color: #ffc400; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; }
+.promo-banner-prize > span { color: #ffc400; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .promo-banner-prize strong { color: #ffc400; font-size: clamp(3.7rem, 7vw, 7.2rem); letter-spacing: -0.075em; line-height: 0.95; white-space: nowrap; }
 .promo-banner-prize strong small { font-size: 0.42em; vertical-align: 0.55em; }
 .promo-banner-prize em { color: #fff; font-size: 1rem; font-style: normal; font-weight: 700; margin-top: 0.8rem; }
@@ -1036,7 +1040,7 @@ html {
 }
 
 .premium-trust > div { max-width: 92rem; }
-.premium-trust h2 { color: #111 !important; font-size: clamp(2.8rem, 5vw, 5.5rem) !important; font-weight: 540 !important; letter-spacing: -0.05em; }
+.premium-trust h2 { color: #111 !important; font-size: clamp(2.8rem, 5vw, 5.5rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; }
 .premium-trust > div > p { color: #6c6962 !important; }
 .premium-trust > div > .grid { gap: 0 !important; border-top: 1px solid #c7c4bc; }
 .premium-trust > div > .grid > div {
@@ -1058,14 +1062,14 @@ html {
 .premium-life-banner { height: min(72svh, 52rem) !important; }
 .premium-life-banner img { transition: transform 1.2s ease; }
 .premium-life-banner:hover img { transform: scale(1.025); }
-.premium-life-banner p:first-child { font-size: clamp(3rem, 6vw, 7rem) !important; font-weight: 520 !important; letter-spacing: -0.055em; }
+.premium-life-banner p:first-child { font-size: clamp(3rem, 6vw, 7rem) !important; font-weight: 520 !important; letter-spacing: -0.02em; }
 
 .premium-tech {
   background: #090909 !important;
   padding: clamp(7rem, 11vw, 11rem) var(--jia-pad) !important;
 }
 .premium-tech > div { max-width: 92rem; }
-.premium-tech h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.05em; }
+.premium-tech h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; }
 .premium-tech > div > div:has(> img) { border: 0 !important; border-radius: 0.35rem !important; }
 .premium-tech > div > .grid > div { background: transparent !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,0.16) !important; border-radius: 0 !important; padding: 1.5rem 0 !important; text-align: left; }
 
@@ -1075,7 +1079,7 @@ html {
 .premium-feature > div { max-width: 92rem; }
 .premium-feature .split-feature { gap: clamp(3rem, 8vw, 9rem) !important; }
 .premium-feature .split-feature > div:first-child { border: 0 !important; border-radius: 0.35rem !important; box-shadow: none !important; }
-.premium-feature .split-feature h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.055em; line-height: 1; }
+.premium-feature .split-feature h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; line-height: 1.12; }
 .premium-feature .split-feature a { border-radius: 0.25rem !important; }
 
 .premium-standards {
@@ -1094,7 +1098,7 @@ html {
 
 .premium-final-cta { min-height: 70svh; align-items: center; display: flex; }
 .premium-final-cta > div:last-child { max-width: 58rem; }
-.premium-final-cta h2 { font-size: clamp(3rem, 6vw, 6.5rem) !important; font-weight: 520 !important; letter-spacing: -0.06em; line-height: 1; }
+.premium-final-cta h2 { font-size: clamp(3rem, 6vw, 6.5rem) !important; font-weight: 520 !important; letter-spacing: -0.02em; line-height: 1.12; }
 .premium-final-cta a { border-radius: 0.25rem !important; }
 
 .premium-contact {
@@ -1103,7 +1107,7 @@ html {
   color: #111;
   padding: clamp(6rem, 9vw, 9rem) var(--jia-pad) !important;
 }
-.premium-contact h2 { color: #111 !important; font-size: clamp(2.6rem, 4.5vw, 4.8rem) !important; font-weight: 540 !important; letter-spacing: -0.05em; }
+.premium-contact h2 { color: #111 !important; font-size: clamp(2.6rem, 4.5vw, 4.8rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; }
 .premium-contact p { color: #6d6a63 !important; }
 
 @media (max-width: 760px) {
@@ -1113,8 +1117,8 @@ html {
   .promo-banner { padding: 1.5rem !important; }
   .promo-banner-grid { grid-template-columns: 1fr; gap: 1.75rem; }
   .promo-banner-title { font-size: clamp(2.15rem, 12vw, 3.3rem) !important; }
-  .promo-banner-prize { border-left: 0; border-top: 1px solid rgba(255,255,255,0.2); padding: 1.6rem 0 0; }
-  .promo-banner-prize strong { font-size: clamp(4rem, 20vw, 6.2rem); }
+  /* The title already carries ฿10,000 — on one column the prize panel just repeats it. */
+  .promo-banner-prize { display: none; }
   .promo-banner-action { align-items: stretch !important; }
   .promo-banner-action a { text-align: center; width: 100%; }
   .premium-section-heading h2 { font-size: clamp(2.6rem, 13vw, 4rem) !important; }
@@ -1129,4 +1133,12 @@ html {
   .premium-life-banner { height: 72svh !important; }
   .premium-feature .split-feature { gap: 2rem !important; }
   .premium-final-cta { min-height: 78svh; }
+}
+
+/* Thai has no spaces between words, so big display headings otherwise break
+   with a lone word on the last line ("ทาง", "รับ"). */
+.premium-home :where(h1, h2, h3),
+.premium-section-heading h2,
+.promo-banner-title {
+  text-wrap: balance;
 }

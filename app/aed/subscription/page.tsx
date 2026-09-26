@@ -14,6 +14,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
+import { trustedBy } from "@/lib/aed/trust";
 
 export const revalidate = 3600;
 
@@ -125,7 +126,7 @@ export default function SubscriptionPage() {
 
       {/* Trust */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <SectionHeading title="องค์กรกว่า 100 แห่งเลือกใช้บริการเช่า AED กับ JIA CPR" />
+        <SectionHeading title={trustedBy} />
         <div className="mt-6">
           <TrustStats />
         </div>

@@ -73,7 +73,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   // ฆพ.2475/2569 (Y0/Y2) + ฆพ.287/2567 (Y8), see lib/aed/regulatory.ts.
   // กลยุทธ์ราคาใหม่ (ก.ค. 2026 — ดู docs/yuwell-pricing-strategy-2026-07-09.md):
   // จุดยืน "เน้นปริมาณ" + Y0/Y8 = ฮาร์ดแวร์เดียวกัน → ให้ Y0 เป็นตัวขายหลัก/โฆษณา
-  // ที่หมุด 39,999 (ราคาที่ Y8 เคยขายดี), เก็บพรีเมียม feedback ไว้ที่ Y8 (44,900)
+  // ที่ 39,000 (ลดจากหมุดเดิม 39,999), เก็บพรีเมียม feedback ไว้ที่ Y8 (44,900)
   // และเก็บพรีเมียมจอ EKG ไว้ที่ Y2 (59,999). bestPrice = ราคายกล็อต (qty ≥ 5).
   "primedic-y0": {
     id: "primedic-y0",
@@ -81,7 +81,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED PRIMEDIC HeartSave Y0",
     description: "AED กึ่งอัตโนมัติ (มีปุ่ม Shock) เซ็นเซอร์ CPR feedback เป็นตัวเลือก",
     msrp: 70_000,
-    startingPrice: 39_999, // ตัวขายหลัก/โฆษณา — ยึดหมุดราคาที่พิสูจน์แล้วว่าขายดี
+    startingPrice: 39_000, // ตัวขายหลัก/โฆษณา — ต้องตรงกับ primedicModels ใน lib/aed/primedic.ts
     bestPrice: 37_900, // ราคายกล็อต/โครงการ (ทุน 25,000 → ยังมีกำไร)
     minPrice: 37_900,
     vatRate: 0.07,

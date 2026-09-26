@@ -7,6 +7,9 @@ import { rentalPlans, rentalTrustSignals } from "@/lib/aed/rental";
 // Which plan the click came from still reaches analytics via data-product.
 import { LINE_OA } from "@/lib/aed/line";
 
+// Site-wide "starting from" rental price = the FLEX monthly plan.
+const RENT_FROM = rentalPlans.find((p) => p.id === "rent-flex")!.price;
+
 // Homepage hero band that makes renting (เช่า AED) the headline offer — shown
 // directly under the hero so a visitor sees rental before the buy/own options.
 export function RentalSpotlight() {
@@ -21,12 +24,12 @@ export function RentalSpotlight() {
             ⭐ ทางเลือกยอดนิยม — เช่า AED
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-white">
-            เช่า AED พร้อมใช้ — <span className="text-yellow-400">ไม่ต้องลงทุนก้อนใหญ่</span>
+            เช่า AED พร้อมใช้ — <span className="inline-block text-yellow-400">ไม่ต้องลงทุนก้อนใหญ่</span>
           </h2>
           <p className="text-gray-400 mt-3 max-w-2xl mx-auto">
             จ่ายเบา ๆ รายเดือน/รายปี รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
-            ตรวจแบต-แผ่นให้ มีเครื่องสำรองถ้าเสีย — เริ่มเพียง{" "}
-            <strong className="text-yellow-400">~฿1,830/เดือน</strong> (แผนรายปี)
+            ตรวจแบต-แผ่นให้ มีเครื่องสำรองถ้าเสีย — เริ่มต้น{" "}
+            <strong className="text-yellow-400">฿{RENT_FROM.toLocaleString()}/เดือน</strong>
           </p>
         </div>
 
