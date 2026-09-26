@@ -9,7 +9,7 @@ export const trustStats: { value: string; label: string }[] = [
 ];
 
 export const trustedBy =
-  "องค์กรกว่า 100 แห่งเลือกใช้บริการดูแล AED กับ JIA CPR";
+  "องค์กรกว่า 400 แห่งเลือกใช้บริการดูแล AED กับ JIA CPR";
 
 // Related regulations / standards note ("กฎหมายที่เกี่ยวข้อง").
 export const relatedRegulations: { title: string; detail: string }[] = [

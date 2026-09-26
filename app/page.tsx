@@ -42,9 +42,7 @@ import { ProductStructuredData } from "./components/StructuredData";
 // Hero renders rent and buy as two equal offers; prices come from the same data
 // the plan/package sections use, so the hero can never drift from them.
 const RENT_FLEX = rentalPlans.find((p) => p.id === "rent-flex")!;
-const RENT_ANNUAL = rentalPlans.find((p) => p.id === "rent-annual")!;
 const BUY_PKG = acquisitionPackages.find((p) => p.id === "pkg-premium")!;
-const ANNUAL_PER_MONTH = Math.round(RENT_ANNUAL.price / 12 / 10) * 10;
 
 export default function Home() {
   return (
@@ -117,7 +115,7 @@ export default function Home() {
             <a href="#how" data-cta="hero_buy" className="premium-action premium-action-secondary">
               ซื้อขาด {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
             </a>
-            <span>อย. รับรอง · ออกใบกำกับภาษีได้ · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน</span>
+            <span>อย. รับรอง · ออกใบกำกับภาษีได้ · รวมส่ง ติดตั้ง อบรม</span>
           </div>
         </div>
 

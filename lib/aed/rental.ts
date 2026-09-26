@@ -196,7 +196,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
   },
   {
     dimension: "ค่าใช้จ่ายต่อเดือน",
-    rent: "เริ่ม ฿1,990 (รายปีเฉลี่ย ~฿1,830)",
+    rent: "เริ่ม ฿1,990/เดือน",
     rentToOwn: "฿2,600–3,400 × 18 เดือน",
     buy: "ไม่มี (มีค่าวัสดุสิ้นเปลืองเมื่อหมดอายุ)",
   },
