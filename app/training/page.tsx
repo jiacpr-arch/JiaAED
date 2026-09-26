@@ -172,7 +172,7 @@ export default function TrainingPage() {
               href="/aed/subscription"
               className="text-center bg-yellow-400/10 text-yellow-400 font-bold text-sm px-5 py-2.5 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20 transition-colors"
             >
-              บริการเช่ารายเดือน →
+              บริการดูแล AED ครบวงจร →
             </Link>
           </div>
         </div>

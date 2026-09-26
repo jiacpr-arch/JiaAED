@@ -5,10 +5,33 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Site palette. Tailwind's stock "gray" is blue-tinted, which is what made
+   every inner page read navy next to the homepage's neutral black/paper
+   editorial look. Re-pointing the gray tokens here re-themes all ~600
+   gray-* utilities at once; the scale runs from the homepage paper
+   (#f3f1eb) down to its black (#070707). Radii are tightened the same way
+   so cards sit closer to the homepage's squarer panels. */
+@theme {
+  --color-gray-50: #f7f6f2;
+  --color-gray-100: #efede7;
+  --color-gray-200: #e2dfd8;
+  --color-gray-300: #cbc8c0;
+  --color-gray-400: #a3a09a;
+  --color-gray-500: #85827c;
+  --color-gray-600: #5e5c57;
+  --color-gray-700: #3b3a37;
+  --color-gray-800: #272624;
+  --color-gray-900: #161615;
+  --color-gray-950: #0b0b0a;
+  --radius-xl: 0.6rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
+}
+
 /* The site is dark-only by design (every page hardcodes the gray-950 theme),
    so the body base matches it instead of flipping on prefers-color-scheme. */
 body {
-  background: #030712;
+  background: #0b0b0a;
   color: #ededed;
   font-family: var(--font-noto-thai), var(--font-geist-sans), Arial, Helvetica, sans-serif;
   line-height: 1.65;
@@ -955,7 +978,7 @@ html {
 
 /* Promotional hero reused across AED pages. */
 .promo-banner {
-  background: linear-gradient(118deg, #090d16 0%, #111b2e 57%, #2a1e00 100%) !important;
+  background: linear-gradient(118deg, #0b0b0a 0%, #171614 57%, #2a1e00 100%) !important;
   border: 1px solid rgba(255, 194, 0, 0.72) !important;
   border-radius: 0.45rem !important;
   box-shadow: 0 25px 75px rgba(9, 13, 22, 0.22);

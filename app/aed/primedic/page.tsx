@@ -252,7 +252,7 @@ export default function PrimedicPage() {
           </Link>{" "}
           หรือ{" "}
           <Link href="/aed/subscription" className="text-yellow-400 hover:text-yellow-300 font-medium">
-            บริการเช่ารายเดือน
+            บริการดูแล AED ครบวงจร
           </Link>
         </p>
       </section>

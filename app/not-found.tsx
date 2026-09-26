@@ -37,7 +37,7 @@ export default function NotFound() {
           </div>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-10 text-sm text-gray-500">
             <Link href="/aed/packages" className="hover:text-yellow-400 transition-colors">แพ็กเกจ AED</Link>
-            <Link href="/aed/subscription" className="hover:text-yellow-400 transition-colors">เช่า AED</Link>
+            <Link href="/aed/rental" className="hover:text-yellow-400 transition-colors">เช่า AED</Link>
             <Link href="/training" className="hover:text-yellow-400 transition-colors">อบรม CPR</Link>
             <Link href="/docs" className="hover:text-yellow-400 transition-colors">เอกสาร</Link>
           </div>
