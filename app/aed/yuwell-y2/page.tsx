@@ -88,24 +88,20 @@ const govSpecChecklist: { spec: string; evidence: string }[] = [
   },
 ];
 
-const keyFeatures: { icon: string; title: string; desc: string }[] = [
+const keyFeatures: { title: string; desc: string }[] = [
   {
-    icon: "🖥️",
     title: "จอสี EKG — ดูคุณภาพ CPR สด ๆ",
     desc: "แสดงความเร็ว / ความลึก / การปล่อยสุด (full recoil) และคลื่น EKG เรียลไทม์ ปรับท่าปั๊มได้ทันที",
   },
   {
-    icon: "🗣️",
     title: "เสียงนำทางภาษาไทย",
     desc: "แนะนำทีละขั้นตอน คนไม่เคยฝึกก็ใช้ได้ (เลือกได้ 4 ภาษา)",
   },
   {
-    icon: "⚡",
     title: "วิเคราะห์เร็ว พร้อมช็อกใน ≤ 5 วินาที",
     desc: "วิเคราะห์คลื่นหัวใจถึงชาร์จ 200J พร้อมช็อกภายใน ≤ 5 วินาที — ทุกวินาทีคือชีวิต",
   },
   {
-    icon: "👨‍👩‍👧",
     title: "ใช้ได้ทั้งเด็กและผู้ใหญ่",
     desc: "ปุ่มสลับโหมดเด็กในตัว — เด็ก 50–100J / ผู้ใหญ่ 200–360J",
   },
@@ -120,12 +116,13 @@ const FEATURED_KHOP_FLYER = {
   height: 5174,
 };
 
+const SPEC_PREVIEW_ROWS = 8;
+
 const gallery: { src: string; alt: string }[] = [
   { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)" },
   { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
-  // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า ฿59,000
-  // ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคา ฿59,999
-  { src: "/images/yuwell-y2-features.webp", alt: "Yuwell Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทุกวัย" },
+  // Clean photos only: text posters/infographics don't read at tile size.
+  // primedic-y2-vital-launch.webp is also out — it bakes in the old ฿59,000.
   { src: "/images/yuwell-y2-main.jpg", alt: "Yuwell Y2 — ตัวเครื่องเปิดฝาพร้อมใช้งาน" },
 ];
 
@@ -206,10 +203,10 @@ export default function YuwellY2Landing() {
       <section className="max-w-6xl mx-auto px-4 py-10 md:py-14">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
-            <div className="inline-block bg-red-50 text-red-700 border border-red-100 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            <p className="text-red-600 text-xs md:text-sm font-semibold tracking-wide mb-4">
               เรือธง · จอสี EKG · You Too
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight mb-4">
+            </p>
+            <h1 className="text-4xl md:text-6xl font-semibold tracking-[-0.02em] leading-[1.12] mb-5">
               AED Yuwell Y2
               <br />
               <span className="text-red-600">เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</span>
@@ -266,15 +263,19 @@ export default function YuwellY2Landing() {
       {/* Key features */}
       <section className="bg-gray-50 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+          <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">
             ทำไมต้อง <span className="text-red-600">Yuwell Y2</span>
           </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {keyFeatures.map((f) => (
-              <div key={f.title} className="bg-white border border-gray-200 rounded-2xl p-6">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-1">{f.title}</h3>
-                <p className="text-sm text-gray-600">{f.desc}</p>
+          {/* Numbered points instead of emoji icons; two columns even on phones
+              so the four reasons fit in roughly one screen. */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {keyFeatures.map((f, i) => (
+              <div key={f.title} className="bg-white border border-gray-200 rounded-2xl p-4 md:p-6">
+                <div className="text-red-600 text-sm font-semibold tabular-nums mb-2">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 className="font-bold text-gray-900 text-sm md:text-base leading-snug mb-1">{f.title}</h3>
+                <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -283,24 +284,9 @@ export default function YuwellY2Landing() {
 
       {/* Gallery */}
       <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">รูปสินค้าจริง</h2>
+        <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">รูปสินค้าจริง</h2>
 
-        {/* ใบปลิวทางการ ฆพ.2475/2569 — โชว์ใหญ่เด่นเป็นพิเศษ อ่านเลขใบอนุญาตได้ชัด */}
-        <div className="max-w-md mx-auto mb-6">
-          <div className="rounded-2xl overflow-hidden border-2 border-red-100 bg-white shadow-sm">
-            <Image
-              src={FEATURED_KHOP_FLYER.src}
-              alt={FEATURED_KHOP_FLYER.alt}
-              width={FEATURED_KHOP_FLYER.width}
-              height={FEATURED_KHOP_FLYER.height}
-              className="w-full h-auto"
-              sizes="(max-width: 768px) 100vw, 448px"
-            />
-          </div>
-          <p className="text-center text-xs text-gray-500 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {gallery.map((img) => (
             <div
               key={img.src}
@@ -310,8 +296,8 @@ export default function YuwellY2Landing() {
                 src={img.src}
                 alt={img.alt}
                 fill
-                className="object-cover"
-                sizes="(max-width: 768px) 50vw, 33vw"
+                className="object-contain p-2 md:p-6"
+                sizes="33vw"
               />
             </div>
           ))}
@@ -322,10 +308,10 @@ export default function YuwellY2Landing() {
       <section className="bg-gray-50 border-y border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <div className="text-center mb-8">
-            <div className="inline-block bg-green-50 text-green-700 border border-green-200 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-              🏛️ สำหรับหน่วยงานราชการ / อปท. / โรงพยาบาล
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold">
+            <p className="text-green-700 text-xs md:text-sm font-semibold tracking-wide mb-3">
+              สำหรับหน่วยงานราชการ / อปท. / โรงพยาบาล
+            </p>
+            <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
               ตรงสเปกจัดซื้อภาครัฐ <span className="text-green-600">ครบทุกข้อ</span>
             </h2>
             <p className="text-gray-500 text-sm mt-2">
@@ -365,11 +351,12 @@ export default function YuwellY2Landing() {
 
       {/* Detailed spec table */}
       <section className="max-w-4xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">ข้อมูลจำเพาะ (Technical Data)</h2>
+        <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">ข้อมูลจำเพาะ (Technical Data)</h2>
+        {/* Headline specs up front; the full sheet stays in the DOM (SEO) but folded. */}
         <div className="border border-gray-200 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-gray-100">
-              {primedicSharedSpecs.map((s) => (
+              {primedicSharedSpecs.slice(0, SPEC_PREVIEW_ROWS).map((s) => (
                 <tr key={s.label}>
                   <td className="py-3 px-4 md:px-5 text-gray-500 w-1/2 align-top">{s.label}</td>
                   <td className="py-3 px-4 md:px-5 text-gray-900 font-medium">{s.value}</td>
@@ -377,6 +364,24 @@ export default function YuwellY2Landing() {
               ))}
             </tbody>
           </table>
+          {primedicSharedSpecs.length > SPEC_PREVIEW_ROWS && (
+            <details className="group border-t border-gray-100">
+              <summary className="cursor-pointer list-none px-4 md:px-5 py-3 text-sm font-semibold text-red-600 hover:bg-gray-50 flex justify-between items-center">
+                <span>ดูสเปกทั้งหมด ({primedicSharedSpecs.length} รายการ)</span>
+                <span className="text-lg transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <table className="w-full text-sm">
+                <tbody className="divide-y divide-gray-100 border-t border-gray-100">
+                  {primedicSharedSpecs.slice(SPEC_PREVIEW_ROWS).map((s) => (
+                    <tr key={s.label}>
+                      <td className="py-3 px-4 md:px-5 text-gray-500 w-1/2 align-top">{s.label}</td>
+                      <td className="py-3 px-4 md:px-5 text-gray-900 font-medium">{s.value}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
+          )}
         </div>
       </section>
 
@@ -384,7 +389,7 @@ export default function YuwellY2Landing() {
       <section className="bg-gray-50 border-y border-gray-100">
         <div className="max-w-4xl mx-auto px-4 py-12">
           <PriceViewTracker targetId="y2-price" />
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">เลือกวิธีชำระที่สะดวก</h2>
+          <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-2">เลือกวิธีชำระที่สะดวก</h2>
           <p className="text-center text-gray-500 text-sm mb-8">
             ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้ · รองรับจัดซื้อภาครัฐ
           </p>
@@ -452,7 +457,7 @@ export default function YuwellY2Landing() {
 
       {/* Certifications */}
       <section className="max-w-4xl mx-auto px-4 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">มาตรฐานและการรับรอง</h2>
+        <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">มาตรฐานและการรับรอง</h2>
         <div className="grid grid-cols-3 gap-3 md:gap-4">
           {primedicCertifications.map((c) => (
             <div key={c.label} className="border border-gray-200 rounded-2xl px-3 py-5 text-center">
@@ -464,6 +469,21 @@ export default function YuwellY2Landing() {
         {PRIMEDIC_REGULATORY.disclaimer && (
           <p className="text-xs text-gray-400 text-center mt-4">{PRIMEDIC_REGULATORY.disclaimer}</p>
         )}
+
+        {/* ใบปลิวทางการ ฆพ.2475/2569 — อยู่คู่กับข้อมูลใบอนุญาต แสดงขนาดใหญ่ให้อ่านเลขใบอนุญาตได้ชัด */}
+        <div className="max-w-md mx-auto mt-8">
+          <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white">
+            <Image
+              src={FEATURED_KHOP_FLYER.src}
+              alt={FEATURED_KHOP_FLYER.alt}
+              width={FEATURED_KHOP_FLYER.width}
+              height={FEATURED_KHOP_FLYER.height}
+              className="w-full h-auto"
+              sizes="(max-width: 768px) 100vw, 448px"
+            />
+          </div>
+          <p className="text-center text-xs text-gray-500 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
+        </div>
         <div className="text-center mt-4">
           <a
             href="/documents/khop-2475-2569-y0-y2.jpg"
@@ -488,7 +508,7 @@ export default function YuwellY2Landing() {
 
       {/* FAQ */}
       <section className="max-w-3xl mx-auto px-4 pb-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">คำถามที่พบบ่อย</h2>
+        <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">คำถามที่พบบ่อย</h2>
         <div className="space-y-3">
           {faqs.slice(0, 7).map((f) => (
             <details key={f.question} className="border border-gray-200 rounded-xl p-4 group">
@@ -505,7 +525,7 @@ export default function YuwellY2Landing() {
       {/* Final CTA */}
       <section className="bg-gray-50 border-t border-gray-100">
         <div className="max-w-3xl mx-auto px-4 py-12 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">
+          <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance mb-2">
             พร้อมส่ง พร้อมเอกสารครบ — สอบถามได้เลย
           </h2>
           <p className="text-gray-500 text-sm mb-6">

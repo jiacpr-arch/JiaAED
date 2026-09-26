@@ -68,7 +68,7 @@ export default function AboutPage() {
         badge="🏥 เกี่ยวกับเรา"
         title="ปกป้องชีวิต พร้อมบริหารทรัพย์สิน"
         subtitle={trustedBy}
-        backgroundImage="/images/lifestyle-cpr.png"
+        backgroundImage="/images/jiaaed-hero-2026.png"
         chips={[
           "นำเข้าและจัดจำหน่ายโดยตรง ไม่ผ่านคนกลาง",
           "ทะเบียน อย. ตรวจสอบได้",
@@ -158,7 +158,7 @@ export default function AboutPage() {
             photos={[
               { src: "/images/training-bls-1.jpg", alt: "สาธิตการใช้ AED นอกสถานที่", caption: "สาธิตการใช้ AED ถึงหน่วยงาน" },
               { src: "/images/training-bls-3.jpg", alt: "ฝึกปฏิบัติ CPR กับหุ่นจำลอง", caption: "อบรม CPR โดย BLS Instructor" },
-              { src: "/images/aed-floorstand.webp", alt: "จุดติดตั้งเครื่อง AED พร้อมตู้ตั้งพื้น", caption: "ติดตั้งจุดวาง AED ให้พร้อมใช้" },
+              { src: "/images/jiaaed-lobby-hero.jpg", alt: "ภาพตัวอย่างจุดติดตั้ง AED ในอาคารสำนักงาน", caption: "ติดตั้งจุดวาง AED ให้พร้อมใช้" },
             ]}
           />
         </div>

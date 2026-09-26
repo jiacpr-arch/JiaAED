@@ -44,8 +44,8 @@ export function RentalSpotlight() {
             className="rental-story-image block rounded-2xl overflow-hidden border border-yellow-400/30 shadow-2xl shadow-yellow-400/10 hover:border-yellow-400/60 transition-colors"
           >
             <Image
-              src="/images/aed-rent-all.webp"
-              alt="แพ็กเกจเช่า AED — รายวัน / รายเดือน / รายปี"
+              src="/images/primedic-kit.png"
+              alt="เครื่อง AED ที่ให้เช่า พร้อมแผ่นอิเล็กโทรด — เช่ารายวัน / รายเดือน / รายปี"
               width={1200}
               height={800}
               className="w-full h-auto"
@@ -69,7 +69,7 @@ export function RentalSpotlight() {
                     alt={p.name}
                     width={64}
                     height={64}
-                    className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                    className="w-16 h-16 rounded-xl object-contain bg-white p-1 flex-shrink-0"
                   />
                 )}
                 <Link

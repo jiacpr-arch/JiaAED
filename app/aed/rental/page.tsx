@@ -175,8 +175,8 @@ export default function AedRentalLanding() {
           <div className="grid md:grid-cols-[240px_1fr] gap-5 items-center">
             <div className="relative w-full h-40 md:h-full min-h-32 rounded-xl overflow-hidden">
               <Image
-                src="/images/lifestyle-cpr.png"
-                alt="สถานการณ์ฉุกเฉินที่ AED ต้องพร้อมใช้"
+                src="/images/training-bls-1.jpg"
+                alt="ทีมงานสาธิตการใช้ AED และ CPR ถึงหน่วยงาน"
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 240px"
@@ -224,12 +224,12 @@ export default function AedRentalLanding() {
                   {p.badge}
                 </div>
               )}
-              <div className="relative h-36 -mx-6 -mt-6 mb-4 rounded-t-2xl overflow-hidden">
+              <div className="relative h-36 -mx-6 -mt-6 mb-4 rounded-t-2xl overflow-hidden bg-white">
                 <Image
                   src={p.image}
                   alt={p.name}
                   fill
-                  className="object-cover"
+                  className="object-contain p-3"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>

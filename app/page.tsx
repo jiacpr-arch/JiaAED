@@ -464,8 +464,8 @@ export default function Home() {
       <section className="premium-feature premium-feature-easy py-14 px-4 bg-gray-900">
         <div className="max-w-5xl mx-auto mb-12">
           <SplitFeature
-            image="/images/lifestyle-aed-carry.webp"
-            imageAlt="พร้อมช่วยในทุกวินาที — ใช้งาน AED ง่าย"
+            image="/images/yuwell-y2-main.jpg"
+            imageAlt="Yuwell Y2 — หน้าจอและเสียงแนะนำการใช้งานทีละขั้นตอน"
             badge="👥 ใช้งานง่าย"
             title={<>ไม่ต้องฝึก<br />ก็ใช้ได้ทันที</>}
             intro="เสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ทุกคนในองค์กรสามารถใช้ได้ทันทีที่เกิดเหตุฉุกเฉิน"

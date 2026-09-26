@@ -318,14 +318,14 @@ export function findArticle(slug: string): Article | undefined {
 // New articles without an entry fall back to the default lifestyle shot.
 const ARTICLE_COVER: Record<string, string> = {
   "what-is-aed": "/images/primedic-y2-open.jpg",
-  "how-to-use-aed": "/images/lifestyle-cpr.png",
-  "aed-maintenance-checklist": "/images/accessory-battery.jpg",
-  "aed-standards-certifications": "/images/feature-grid.jpg",
-  "aed-price-guide": "/images/aed-rent-all.webp",
-  "aed-rental-running-events": "/images/aed-rent-daily.jpg",
-  "aed-law-thailand": "/images/aed-floorstand.webp",
+  "how-to-use-aed": "/images/training-bls-1.jpg",
+  "aed-maintenance-checklist": "/images/primedic-battery-nrl01c.png",
+  "aed-standards-certifications": "/images/primedic-heartsave.png",
+  "aed-price-guide": "/images/primedic-y-series.png",
+  "aed-rental-running-events": "/images/primedic-kit.png",
+  "aed-law-thailand": "/images/jiaaed-lobby-hero.jpg",
 };
 
 export function articleCover(slug: string): string {
-  return ARTICLE_COVER[slug] ?? "/images/lifestyle-man.webp";
+  return ARTICLE_COVER[slug] ?? "/images/primedic-y2-open.jpg";
 }
