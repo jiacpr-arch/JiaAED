@@ -7,7 +7,7 @@ import { MobileMenu } from "./MobileMenu";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 bg-gray-950/95 backdrop-blur border-b border-gray-800">
+    <header className="sticky top-0 z-40 bg-[#070707]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           <JiaAedLogo className="h-8 w-auto" />
@@ -15,9 +15,9 @@ export function SiteHeader() {
 
         {/* Full nav needs lg — 7 links overflow the md range, where the
             scrollable row below covers navigation instead. */}
-        <nav className="hidden lg:flex items-center gap-5 text-sm text-gray-300">
+        <nav className="hidden lg:flex items-center gap-6 text-sm text-white/75">
           {HEADER_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="hover:text-yellow-400 transition-colors">
+            <Link key={l.href} href={l.href} className="hover:text-white transition-colors">
               {l.label}
             </Link>
           ))}

@@ -62,8 +62,8 @@ const includedSteps = [
 export default function AedRentalLanding() {
   return (
     <div className="min-h-screen bg-gray-950 text-white font-sans">
-      {/* Minimal top bar */}
-      <header className="bg-gray-950 border-b border-gray-800">
+      {/* Minimal top bar (ad landing: no nav on purpose) — same glass look as SiteHeader */}
+      <header className="sticky top-0 z-40 bg-[#070707]/80 backdrop-blur-xl backdrop-saturate-150 border-b border-white/10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <JiaAedLogo className="h-8 w-auto" />
@@ -90,17 +90,17 @@ export default function AedRentalLanding() {
         {/* Hero — copy + CTAs left, product photo right on desktop */}
         <div className="grid md:grid-cols-[1fr_300px] gap-8 items-center mb-8">
           <div>
-            <div className="inline-block bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full mb-3 border border-yellow-400/20">
-              🏅 ทะเบียน อย. 65-2-2-2-0013415
-            </div>
+            <p className="text-yellow-400 text-xs md:text-sm font-semibold tracking-wide mb-4">
+              ทะเบียน อย. 65-2-2-2-0013415
+            </p>
 
-            <h1 className="text-3xl md:text-4xl font-black leading-tight mb-3">
+            <h1 className="text-4xl md:text-6xl font-semibold leading-[1.12] tracking-[-0.02em] mb-5">
               เช่า AED พร้อมใช้
               <br />
               <span className="text-yellow-400">เริ่ม ฿1,990/เดือน</span>
             </h1>
 
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-5">
               แผนอีเวนต์ · แผนยืดหยุ่น · แผนรายปี — รวมส่ง ติดตั้ง อบรม และทีมดูแลครบวงจร
               ไม่ต้องลงทุนก้อนใหญ่ หรือ<span className="text-yellow-400 font-semibold">เช่าซื้อ
               (Rent-to-Own)</span> ผ่อนครบ 18 เดือน เครื่องเป็นของคุณ
