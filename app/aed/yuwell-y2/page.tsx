@@ -88,24 +88,20 @@ const govSpecChecklist: { spec: string; evidence: string }[] = [
   },
 ];
 
-const keyFeatures: { icon: string; title: string; desc: string }[] = [
+const keyFeatures: { title: string; desc: string }[] = [
   {
-    icon: "🖥️",
     title: "จอสี EKG — ดูคุณภาพ CPR สด ๆ",
     desc: "แสดงความเร็ว / ความลึก / การปล่อยสุด (full recoil) และคลื่น EKG เรียลไทม์ ปรับท่าปั๊มได้ทันที",
   },
   {
-    icon: "🗣️",
     title: "เสียงนำทางภาษาไทย",
     desc: "แนะนำทีละขั้นตอน คนไม่เคยฝึกก็ใช้ได้ (เลือกได้ 4 ภาษา)",
   },
   {
-    icon: "⚡",
     title: "วิเคราะห์เร็ว พร้อมช็อกใน ≤ 5 วินาที",
     desc: "วิเคราะห์คลื่นหัวใจถึงชาร์จ 200J พร้อมช็อกภายใน ≤ 5 วินาที — ทุกวินาทีคือชีวิต",
   },
   {
-    icon: "👨‍👩‍👧",
     title: "ใช้ได้ทั้งเด็กและผู้ใหญ่",
     desc: "ปุ่มสลับโหมดเด็กในตัว — เด็ก 50–100J / ผู้ใหญ่ 200–360J",
   },
@@ -270,12 +266,16 @@ export default function YuwellY2Landing() {
           <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">
             ทำไมต้อง <span className="text-red-600">Yuwell Y2</span>
           </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {keyFeatures.map((f) => (
-              <div key={f.title} className="bg-white border border-gray-200 rounded-2xl p-6">
-                <div className="text-3xl mb-3">{f.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-1">{f.title}</h3>
-                <p className="text-sm text-gray-600">{f.desc}</p>
+          {/* Numbered points instead of emoji icons; two columns even on phones
+              so the four reasons fit in roughly one screen. */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {keyFeatures.map((f, i) => (
+              <div key={f.title} className="bg-white border border-gray-200 rounded-2xl p-4 md:p-6">
+                <div className="text-red-600 text-sm font-semibold tabular-nums mb-2">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+                <h3 className="font-bold text-gray-900 text-sm md:text-base leading-snug mb-1">{f.title}</h3>
+                <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -286,7 +286,7 @@ export default function YuwellY2Landing() {
       <section className="max-w-6xl mx-auto px-4 py-12">
         <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">รูปสินค้าจริง</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {gallery.map((img) => (
             <div
               key={img.src}
@@ -296,8 +296,8 @@ export default function YuwellY2Landing() {
                 src={img.src}
                 alt={img.alt}
                 fill
-                className="object-contain p-6"
-                sizes="(max-width: 640px) 100vw, 33vw"
+                className="object-contain p-2 md:p-6"
+                sizes="33vw"
               />
             </div>
           ))}
