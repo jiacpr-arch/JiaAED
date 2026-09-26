@@ -21,13 +21,13 @@ export const revalidate = 3600;
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "เช่า AED รายเดือน — ดูแลครบวงจร เริ่ม ฿2,990/เดือน | JiaAED",
+  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน | JiaAED",
   description:
-    "บริการเช่า AED สำหรับองค์กร พร้อมระบบดูแลครบวงจร — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
+    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
   openGraph: {
-    title: "เช่า AED รายเดือน ดูแลครบวงจร | JiaAED",
-    description: "Safety Care — เช่า AED พร้อมทีมดูแล ระบบ GPS และ Cloud Dashboard มั่นใจเครื่องพร้อมใช้ 24 ชม.",
+    title: "บริการดูแล AED ครบวงจร (Safety Care) | JiaAED",
+    description: "Safety Care — บริการดูแล AED รวมเครื่อง พร้อมทีมดูแล ระบบ GPS และ Cloud Dashboard มั่นใจเครื่องพร้อมใช้ 24 ชม.",
     url: "/aed/subscription",
     images: ["/images/og-cover.png"],
     type: "website",
@@ -46,13 +46,14 @@ export default function SubscriptionPage() {
       <SiteHeader />
 
       <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        ☁️ เช่า AED ดูแลครบวงจร — เริ่ม ฿2,990/เดือน ดูแลครบวงจรโดยทีมผู้เชี่ยวชาญ
+        ☁️ บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน · ต้องการแค่เช่าเครื่อง?{" "}
+        <Link href="/aed/rental" className="underline underline-offset-2">เช่า AED เริ่ม ฿1,990/เดือน →</Link>
       </div>
 
       <section className="max-w-6xl mx-auto px-4 py-10">
         <SectionHeading
           as="h1"
-          badge="Safety Care — เช่าบริการครบวงจร"
+          badge="Safety Care — บริการดูแล AED ครบวงจร"
           title="ระบบดูแล AED อัจฉริยะ สำหรับองค์กรยุคใหม่"
           subtitle='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'
         />
@@ -134,7 +135,7 @@ export default function SubscriptionPage() {
 
       {/* Lead form */}
       <section className="max-w-2xl mx-auto px-4 py-10">
-        <SectionHeading title="ขอใบเสนอราคาเช่า AED สำหรับองค์กร" subtitle="ให้เราออกแบบโปรแกรมดูแล AED ที่เหมาะกับองค์กรของท่าน" />
+        <SectionHeading title="ขอใบเสนอราคาบริการดูแล AED สำหรับองค์กร" subtitle="ให้เราออกแบบโปรแกรมดูแล AED ที่เหมาะกับองค์กรของท่าน" />
         <div className="mt-6">
           <MiniLeadForm variant="subscription_mini" />
         </div>
@@ -148,7 +149,7 @@ export default function SubscriptionPage() {
 
       {/* FAQ */}
       <section className="max-w-3xl mx-auto px-4 py-10">
-        <SectionHeading title="คำถามที่พบบ่อย — เช่า AED" />
+        <SectionHeading title="คำถามที่พบบ่อย — บริการดูแล AED ครบวงจร" />
         <div className="mt-6">
           <FaqAccordion categories={subscriptionFaqCategories} />
         </div>

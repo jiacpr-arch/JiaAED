@@ -41,7 +41,7 @@ const SERVICES = [
     title: "เช่าบริการครบวงจร",
     desc: "GPS + Cloud Dashboard แจ้งเตือนแบต/แผ่นหมดอายุ พร้อมเครื่องสำรองถ้าเสีย",
     href: "/aed/subscription",
-    label: "ดูบริการเช่า",
+    label: "ดูบริการดูแลครบวงจร",
   },
   {
     icon: "🎓",
