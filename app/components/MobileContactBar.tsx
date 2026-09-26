@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { LINE_OA } from "@/lib/aed/line";
 import { PHONE_HREF } from "@/lib/aed/contact";
 
@@ -5,13 +8,32 @@ import { PHONE_HREF } from "@/lib/aed/contact";
  * Mobile-only sticky bottom bar: LINE (primary) + phone, one tap away on every
  * page. On mobile it replaces FloatingLineButton (hidden md:block there); the
  * WebChat bubble is lifted above this bar via bottom-20 md:bottom-5.
+ *
+ * Hidden until the visitor scrolls past most of the first screen: every hero
+ * already carries its own LINE/phone CTAs, and stacking the bar on top of them
+ * put 6–7 competing buttons in the first viewport.
  */
 export function MobileContactBar() {
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const update = () => setShown(window.scrollY > window.innerHeight * 0.6);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
   return (
     <>
       {/* Spacer so page content (footer) isn't hidden behind the fixed bar */}
       <div className="h-16 md:hidden" aria-hidden="true" />
-      <div className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-gray-950/95 backdrop-blur border-t border-gray-800 pb-[env(safe-area-inset-bottom)]">
+      <div
+        className={`fixed bottom-0 inset-x-0 z-40 md:hidden bg-gray-950/95 backdrop-blur border-t border-gray-800 pb-[env(safe-area-inset-bottom)] transition-transform duration-300 ${
+          shown ? "translate-y-0" : "translate-y-full"
+        }`}
+        aria-hidden={!shown}
+        inert={!shown}
+      >
         <div className="grid grid-cols-2 gap-2 px-3 py-2.5">
           <a
             href={LINE_OA}

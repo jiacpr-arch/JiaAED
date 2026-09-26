@@ -10,7 +10,7 @@ import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
-import { primedicCertifications } from "@/lib/aed/primedic";
+import { primedicCertifications, primedicModels } from "@/lib/aed/primedic";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
@@ -24,10 +24,14 @@ import {
 // Indexing follows the PRIMEDIC registration gate (PRIMEDIC_REGULATORY.published).
 // Live under อย. 65-2-2-2-0013415 + ฆพ.2475/2569 (Y0/Y2) / ฆพ.287/2567 (Y8) —
 // numbers live in lib/aed/regulatory.ts.
+const modelPrice = Object.fromEntries(
+  primedicModels.map((m) => [m.id, `฿${m.price.toLocaleString("en-US")}`]),
+) as Record<(typeof primedicModels)[number]["id"], string>;
+
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม | JiaAED",
   description:
-    "ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (฿39,999), Y8 (฿44,900) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (฿59,999) จอสี EKG ดูคุณภาพ CPR สด ๆ",
+    `ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (${modelPrice["primedic-y0"]}), Y8 (${modelPrice["primedic-y8"]}) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (${modelPrice["primedic-y2"]}) จอสี EKG ดูคุณภาพ CPR สด ๆ`,
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -71,9 +75,9 @@ export default function PrimedicPage() {
             <ul className="space-y-2">
               {(
                 [
-                  { model: "Y0", price: "฿39,999", diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
-                  { model: "Y8", price: "฿44,900", diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
-                  { model: "Yuwell Y2", price: "฿59,999", diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
+                  { model: "Y0", price: modelPrice["primedic-y0"], diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
+                  { model: "Y8", price: modelPrice["primedic-y8"], diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
+                  { model: "Yuwell Y2", price: modelPrice["primedic-y2"], diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
                 ] as { model: string; price: string; diff: string; href?: string }[]
               ).map((m) => (
                 <li key={m.model} className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900 px-4 py-3">

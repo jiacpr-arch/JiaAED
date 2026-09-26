@@ -104,19 +104,21 @@ export default function Home() {
         />
         <div className="premium-hero-shade" />
         <div className="premium-hero-copy">
-          <span>Authorized Yuwell AED representative · Thailand</span>
+          <span>ตัวแทนจำหน่าย Yuwell AED อย่างเป็นทางการ</span>
           <div id="hero-title"><HeroHeadline /></div>
           <p>เครื่อง AED พร้อมติดตั้ง อบรม และทีมดูแลครบวงจร<br />เพื่อให้ทุกคนพร้อมช่วยชีวิต เมื่อทุกวินาทีมีความหมาย</p>
-        </div>
 
-        <div className="premium-hero-actions" aria-label="ตัวเลือกเช่าหรือซื้อ AED">
-          <a href="#rent" data-cta="hero_rent" className="premium-action premium-action-primary">
-            เช่า AED ฿{RENT_FLEX.price.toLocaleString()}/เดือน
-          </a>
-          <a href="#how" data-cta="hero_buy" className="premium-action premium-action-secondary">
-            ซื้อขาด {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
-          </a>
-          <span>อย. รับรอง · ออกใบกำกับภาษีได้ · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน</span>
+          {/* CTAs sit in the copy column so they read as the next step after
+              the headline instead of floating centred over the photo. */}
+          <div className="premium-hero-actions" aria-label="ตัวเลือกเช่าหรือซื้อ AED">
+            <a href="#rent" data-cta="hero_rent" className="premium-action premium-action-primary">
+              เช่า AED ฿{RENT_FLEX.price.toLocaleString()}/เดือน
+            </a>
+            <a href="#how" data-cta="hero_buy" className="premium-action premium-action-secondary">
+              ซื้อขาด {BUY_PKG.priceLabel.replace(/^เงินสด\s*/, "")}
+            </a>
+            <span>อย. รับรอง · ออกใบกำกับภาษีได้ · แผนรายปีเฉลี่ย ~฿{ANNUAL_PER_MONTH.toLocaleString()}/เดือน</span>
+          </div>
         </div>
 
         <a href="#brands" className="premium-scroll-cue" aria-label="เลื่อนดูรุ่น AED">
