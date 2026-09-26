@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
+import { LINE_OA } from "@/lib/aed/line";
 import { FOOTER_LINKS } from "@/lib/aed/nav";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { rentalPlans } from "@/lib/aed/rental";
@@ -259,58 +259,14 @@ export default function Home() {
             ))}
           </div>
 
-          {/* ใบปลิวโฆษณาทางการ — รูปที่ผ่านการขออนุญาต ฆพ. แล้ว (ตัวรูปโฆษณาจริง
-              มีเลข ฆพ. กำกับในภาพ) ไม่ใช่สแกนเอกสารใบอนุญาต ซึ่งดูได้ที่ /aed/primedic */}
-          <div className="mt-12">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-white">ใบปลิวทางการ — ได้รับอนุญาตโฆษณาจาก อย. แล้ว</h3>
-              <p className="text-gray-500 text-sm mt-1">
-                ทุกภาพผ่านการขออนุญาตโฆษณาเครื่องมือแพทย์ถูกต้อง — ฆพ.2475/2569 (Y0 / Y2) · ฆพ.287/2567 (Y8)
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                {
-                  src: "/images/primedic-y2-flyer-khop.jpg",
-                  alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
-                  w: 4749,
-                  h: 5174,
-                  href: "/aed/yuwell-y2",
-                  label: "Yuwell Y2 · ฆพ.2475/2569",
-                },
-                {
-                  src: "/images/primedic-y0-flyer-khop.jpg",
-                  alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
-                  w: 4727,
-                  h: 5174,
-                  href: "/aed/primedic",
-                  label: "HeartSave Y0 · ฆพ.2475/2569",
-                },
-                {
-                  src: "/images/primedic-y8-flyer-khop.jpg",
-                  alt: "PRIMEDIC HeartSave Y8 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.287/2567",
-                  w: 4724,
-                  h: 5174,
-                  href: "/aed/primedic",
-                  label: "HeartSave Y8 · ฆพ.287/2567",
-                },
-              ].map((f) => (
-                <Link key={f.src} href={f.href} data-cta="flyer_khop_home" className="group">
-                  <div className="rounded-xl overflow-hidden border border-gray-800 bg-white group-hover:border-yellow-400/60 transition-colors">
-                    <Image
-                      src={f.src}
-                      alt={f.alt}
-                      width={f.w}
-                      height={f.h}
-                      sizes="(min-width: 640px) 33vw, 100vw"
-                      className="w-full h-auto"
-                    />
-                  </div>
-                  <p className="text-center text-xs text-gray-400 mt-2">{f.label}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          {/* Licence line — the approved flyers themselves live on /aed/primedic
+              (they were three near-identical posters here). */}
+          <p className="mt-10 text-center text-sm text-gray-400">
+            ได้รับอนุญาตโฆษณาเครื่องมือแพทย์ถูกต้อง — ฆพ.2475/2569 (Y0 / Y2) · ฆพ.287/2567 (Y8) ·{" "}
+            <Link href="/aed/primedic" className="text-yellow-400 hover:text-yellow-300 underline">
+              ดูใบปลิวทางการ
+            </Link>
+          </p>
 
           {/* PRIMEDIC Y0 / Y8 / Y2 detail — collapsed so the brand choice stays simple */}
           <details className="group mt-12 rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
@@ -331,47 +287,63 @@ export default function Home() {
             </div>
           </details>
 
-          {/* AED yuwell mounting options — ตัวเลือกติดตั้ง */}
-          <div className="mt-12">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-bold text-white">ตัวเลือกติดตั้งสำหรับ AED yuwell</h3>
-              <p className="text-gray-500 text-sm mt-1">เพิ่มตู้ติดผนัง (฿47,900) หรือแท่นตั้งพื้น (฿51,900) — ราคารวมเครื่อง i7 แล้ว</p>
+          {/* Accessories / spare parts */}
+          <details className="group mt-4 rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
+            <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
+              <span className="font-semibold text-white">🔋 อุปกรณ์เสริม · ตู้ · อบรม CPR&amp;AED &amp; อะไหล่</span>
+              <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <div className="px-4 pb-6 pt-2">
+              <p className="text-center text-gray-500 mb-8 max-w-2xl mx-auto">
+                ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Yuwell / PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                {accessories.map((a) => (
+                  <div
+                    key={a.id}
+                    className="relative rounded-2xl border border-gray-700 p-6 flex flex-col bg-gray-950"
+                  >
+                    <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-white">
+                      <Image src={a.image} alt={a.name} fill className="object-contain p-3" />
+                    </div>
+                    <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{a.subtitle}</div>
+                    <h3 className="font-bold text-lg text-white mt-1 mb-3">{a.name}</h3>
+                    <div className="mb-3">
+                      {a.price != null ? (
+                        <>
+                          <div className="text-3xl font-bold text-yellow-400">฿{a.price.toLocaleString()}</div>
+                          <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-2xl font-bold text-gray-400">{a.priceLabel ?? "สอบถามราคา"}</div>
+                          <div className="text-gray-600 text-xs">ราคาจะอัปเดตเร็วๆ นี้</div>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-gray-400 text-sm mb-4">{a.description}</p>
+                    <ul className="space-y-1 mb-6 flex-1">
+                      {a.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                          <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
+                        </li>
+                      ))}
+                    </ul>
+                    <a
+                      href={LINE_OA}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-line-cta="accessory_card"
+                      data-product={a.id}
+                      className="text-center font-semibold py-3 rounded-full transition-colors bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
+                    >
+                      สั่งซื้อ / ถามราคา
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <a
-                href={LINE_OA}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-line-cta="banner_floorstand"
-                data-product="i7-floor"
-                className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
-              >
-                <Image
-                  src="/images/aed-floorstand.webp"
-                  alt="AED yuwell + แท่นตั้งพื้น"
-                  width={1536}
-                  height={1024}
-                  className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
-                />
-              </a>
-              <a
-                href={LINE_OA}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-line-cta="banner_wallcabinet"
-                data-product="i7-cabinet"
-                className="group rounded-2xl overflow-hidden border border-gray-800 bg-white hover:border-yellow-400/60 hover:shadow-2xl hover:shadow-yellow-400/10 transition-all"
-              >
-                <Image
-                  src="/images/aed-wallcabinet.webp"
-                  alt="AED yuwell + ตู้ติดผนัง"
-                  width={1536}
-                  height={1024}
-                  className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
-                />
-              </a>
-            </div>
-          </div>
+          </details>
 
           <p className="text-center text-gray-600 text-sm mt-8">
             * ราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ — สอบถามทาง LINE ได้เลย
@@ -488,56 +460,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Lifestyle banner — emotional divider before the deeper product story */}
-      <section className="premium-life-banner relative h-64 md:h-80 overflow-hidden">
-        <Image src="/images/lifestyle-cpr.png" alt="AED ในสถานการณ์จริง" fill className="object-cover object-center" />
-        <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <p className="text-2xl md:text-4xl font-black">ทุกวินาทีคือ<span className="text-red-400">ชีวิต</span></p>
-            <p className="text-gray-300 mt-2 text-lg">Shock พร้อมใน 7 วินาที ลดการเสียชีวิตได้ <span className="text-red-400 font-bold">70%</span></p>
-          </div>
-        </div>
-      </section>
-
-      {/* Get to know the device — features, durability, ease of use, demo */}
-      <section className="premium-tech py-14 px-4 bg-gray-900">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-2 text-white">เทคโนโลยีครบทุกมิติ</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">ออกแบบมาเพื่อช่วยชีวิตในทุกสถานการณ์</p>
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-            <Image src="/images/yuwell-y2-features.webp" alt="Yuwell Y2 — หน้าจอสีแนะนำทุกขั้นตอน พร้อมระบบแนะนำ CPR แบบเรียลไทม์" width={1536} height={1024} className="w-full h-auto" />
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center text-sm">
-            {[
-              { icon: "🖥️", name: "หน้าจอสี", desc: "แนะนำทุกขั้นตอน เข้าใจง่ายแม้ไม่มีประสบการณ์" },
-              { icon: "❤️", name: "CPR เรียลไทม์", desc: "บอกความลึกและจังหวะการกดหน้าอก" },
-              { icon: "⚡", name: "วิเคราะห์รวดเร็ว", desc: "วิเคราะห์คลื่นหัวใจ พร้อมช็อกแม่นยำ" },
-              { icon: "👨‍👩‍👧", name: "Smart Pad", desc: "แผ่นเดียวใช้ได้ทั้งเด็กและผู้ใหญ่" },
-            ].map((f) => (
-              <div key={f.name} className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-                <div className="text-2xl mb-1">{f.icon}</div>
-                <div className="font-bold text-yellow-400">{f.name}</div>
-                <div className="text-gray-400 text-xs mt-1">{f.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Waterproof */}
-      <section className="premium-feature premium-feature-weather py-14 px-4 bg-gray-950">
-        <div className="max-w-5xl mx-auto">
-          <SplitFeature
-            image="/images/aed-weather.webp"
-            imageAlt="AED PRIMEDIC ทนทุกสภาพอากาศ ตั้งแต่ -25°C ถึง 60°C"
-            badge="🛡️ IP65 CERTIFIED"
-            title={<>กันน้ำ กันฝุ่น<br />พร้อมทุกสภาพแวดล้อม</>}
-            intro="ผ่านมาตรฐาน IP65 ทนต่อละอองน้ำและฝุ่น ใช้งานได้ทั้งในอาคารและกลางแจ้ง อุณหภูมิ -25°C ถึง 60°C"
-            bullets={["กันน้ำ กันฝุ่น IP65", "อุณหภูมิ -25°C ถึง 60°C", "Self-test อัตโนมัติทุกวัน", "แบตเตอรี่อายุ ≥ 7 ปี"]}
-          />
-        </div>
-      </section>
-
       {/* Easy to use + demo video */}
       <section className="premium-feature premium-feature-easy py-14 px-4 bg-gray-900">
         <div className="max-w-5xl mx-auto mb-12">
@@ -567,131 +489,6 @@ export default function Home() {
             <p className="text-gray-400 text-sm">ทีละขั้นตอน — ใช้ได้ทันที ไม่ต้องอบรม</p>
           </div>
           <YouTubeLite videoId="cpM78Zc2RC0" title="วิธีการใช้งานเครื่อง AED" />
-        </div>
-      </section>
-
-      {/* ═══ Technical deep-dive — collapsed by default, kept in DOM for SEO ═══ */}
-      <section id="tech" className="premium-standards py-14 px-4 bg-gray-950 border-t border-gray-900">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="inline-block bg-gray-700/40 text-gray-300 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-gray-600/40">
-              📋 ข้อมูลทางเทคนิค · การรับรอง
-            </div>
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">มาตรฐาน &amp; การขึ้นทะเบียน</h2>
-            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
-              สเปกเต็มของรุ่นที่จำหน่ายอยู่ (Yuwell Y2 / PRIMEDIC HeartSave) ดูได้ที่หัวข้อ{" "}
-              <a href="#brands" className="text-yellow-400 hover:underline">
-                เลือกยี่ห้อ
-              </a>{" "}
-              ด้านบน หรือหน้า{" "}
-              <Link href="/aed/yuwell-y2" className="text-yellow-400 hover:underline">
-                Yuwell Y2
-              </Link>
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 justify-center mb-4">
-            {["CE Mark", "IP65", "ISO 13485", "EN 1789:2020", "ILCOR/AHA 2020-2025"].map((cert) => (
-              <span key={cert} className="bg-yellow-400/10 text-yellow-400 text-xs font-semibold px-3 py-1 rounded-full border border-yellow-400/20">
-                ✓ {cert}
-              </span>
-            ))}
-          </div>
-          <div className="mb-8 flex flex-wrap gap-3 justify-center">
-            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda && (
-              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                <div className="text-xs text-gray-400 font-semibold">Yuwell / PRIMEDIC — เลขที่ใบรับแจ้ง อย.</div>
-                <div className="text-sm font-bold text-yellow-400">{PRIMEDIC_REGULATORY.fda}</div>
-              </div>
-            )}
-            {PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.adLicense && (
-              <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-center">
-                <div className="text-xs text-gray-400 font-semibold">Yuwell / PRIMEDIC — ใบอนุญาตโฆษณา</div>
-                <div className="text-sm font-bold text-yellow-400">ฆพ. {PRIMEDIC_REGULATORY.adLicense}</div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            {/* Accessories / spare parts */}
-            <details className="group rounded-2xl border border-gray-800 bg-gray-900 overflow-hidden">
-              <summary className="cursor-pointer list-none px-5 py-4 flex justify-between items-center gap-4 hover:bg-gray-800/50 transition-colors">
-                <span className="font-semibold text-white">🔋 อุปกรณ์เสริม · ตู้ · อบรม CPR&amp;AED &amp; อะไหล่</span>
-                <span className="text-yellow-400 text-xl transition-transform group-open:rotate-45">+</span>
-              </summary>
-              <div className="px-4 pb-6 pt-2">
-                <p className="text-center text-gray-500 mb-8 max-w-2xl mx-auto">
-                  ครบทั้งตู้จัดเก็บ คอร์สอบรม CPR &amp; AED สอนถึงที่ ชุดอุปกรณ์ฝึกสอน และอะไหล่ของแท้ (แผ่น Pad / แบตเตอรี่) สำหรับ AED Yuwell / PRIMEDIC HeartSave — สั่งซื้อหรือสอบถามราคาได้ทาง LINE
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                  {accessories.map((a) => (
-                    <div
-                      key={a.id}
-                      className="relative rounded-2xl border border-gray-700 p-6 flex flex-col bg-gray-950"
-                    >
-                      <div className="relative w-full h-44 mb-4 rounded-xl overflow-hidden bg-white">
-                        <Image src={a.image} alt={a.name} fill className="object-contain p-3" />
-                      </div>
-                      <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{a.subtitle}</div>
-                      <h3 className="font-bold text-lg text-white mt-1 mb-3">{a.name}</h3>
-                      <div className="mb-3">
-                        {a.price != null ? (
-                          <>
-                            <div className="text-3xl font-bold text-yellow-400">฿{a.price.toLocaleString()}</div>
-                            <div className="text-gray-600 text-xs">ราคาเริ่มต้น (ยังไม่รวม VAT)</div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="text-2xl font-bold text-gray-400">{a.priceLabel ?? "สอบถามราคา"}</div>
-                            <div className="text-gray-600 text-xs">ราคาจะอัปเดตเร็วๆ นี้</div>
-                          </>
-                        )}
-                      </div>
-                      <p className="text-gray-400 text-sm mb-4">{a.description}</p>
-                      <ul className="space-y-1 mb-6 flex-1">
-                        {a.features.map((f) => (
-                          <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                            <span className="text-yellow-400 flex-shrink-0">✓</span>{f}
-                          </li>
-                        ))}
-                      </ul>
-                      <a
-                        href={LINE_OA}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        data-line-cta="accessory_card"
-                        data-product={a.id}
-                        className="text-center font-semibold py-3 rounded-full transition-colors bg-gray-800 text-gray-200 hover:bg-gray-700 border border-gray-700"
-                      >
-                        สั่งซื้อ / ถามราคา
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </details>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="premium-final-cta py-20 px-4 bg-gray-950 text-center relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <Image src="/images/lifestyle-cpr.png" alt="" fill className="object-cover" />
-        </div>
-        <div className="relative max-w-xl mx-auto">
-          <div className="text-red-400 text-4xl mb-4">❤️</div>
-          <h2 className="text-3xl font-black mb-3 text-white">พร้อมปกป้องชีวิตแล้วใช่ไหม?</h2>
-          <p className="text-gray-500 mb-8">คุยกับ AI เจี่ยทาง LINE — ตอบทันที ออกใบเสนอราคาได้เลย</p>
-          <a
-            href={LINE_OA}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-line-cta="footer_cta"
-            className="inline-block bg-[#06C755] text-white font-bold text-xl px-10 py-4 rounded-full hover:bg-[#05a847] transition-colors shadow-2xl"
-          >
-            💬 เพิ่มเพื่อน LINE {LINE_OA_ID}
-          </a>
         </div>
       </section>
 
@@ -754,7 +551,7 @@ export default function Home() {
               {l.label}
             </Link>
           ))}
-          <a href="#tech" className="hover:text-yellow-400 transition-colors">สเปก</a>
+          <a href="#brands" className="hover:text-yellow-400 transition-colors">สเปก</a>
           <a href="#faq" className="hover:text-yellow-400 transition-colors">FAQ</a>
         </div>
         <p className="font-semibold text-gray-300 mb-1">JiaAED by เจี่ยรักษา</p>

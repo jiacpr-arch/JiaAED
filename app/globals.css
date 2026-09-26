@@ -249,14 +249,14 @@ html {
 }
 
 .premium-space-card {
-  min-height: clamp(34rem, 51vw, 48rem);
+  min-height: clamp(22rem, 34vw, 32rem);
   overflow: hidden;
   position: relative;
 }
 
 .premium-space-card-full {
   grid-column: 1 / -1;
-  min-height: clamp(38rem, 58vw, 54rem);
+  min-height: clamp(24rem, 40vw, 36rem);
 }
 
 .premium-space-image {
@@ -462,7 +462,7 @@ html {
 
   .premium-space-card,
   .premium-space-card-full {
-    min-height: 74svh;
+    min-height: 56svh;
   }
 
   .premium-space-copy-right {
@@ -507,7 +507,7 @@ html {
 
   .premium-space-card,
   .premium-space-card-full {
-    min-height: 70svh;
+    min-height: 52svh;
   }
 
   .cookie-consent-shell {
@@ -1082,20 +1082,6 @@ html {
 .premium-trust > div > .grid > div :where(.text-white) { color: #111 !important; }
 .premium-trust > div > .grid > div :where(.text-gray-400) { color: #66635d !important; }
 
-.premium-life-banner { height: min(72svh, 52rem) !important; }
-.premium-life-banner img { transition: transform 1.2s ease; }
-.premium-life-banner:hover img { transform: scale(1.025); }
-.premium-life-banner p:first-child { font-size: clamp(3rem, 6vw, 7rem) !important; font-weight: 520 !important; letter-spacing: -0.02em; }
-
-.premium-tech {
-  background: #090909 !important;
-  padding: clamp(7rem, 11vw, 11rem) var(--jia-pad) !important;
-}
-.premium-tech > div { max-width: 92rem; }
-.premium-tech h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; }
-.premium-tech > div > div:has(> img) { border: 0 !important; border-radius: 0.35rem !important; }
-.premium-tech > div > .grid > div { background: transparent !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,0.16) !important; border-radius: 0 !important; padding: 1.5rem 0 !important; text-align: left; }
-
 .premium-feature {
   padding: clamp(7rem, 11vw, 11rem) var(--jia-pad) !important;
 }
@@ -1104,25 +1090,6 @@ html {
 .premium-feature .split-feature > div:first-child { border: 0 !important; border-radius: 0.35rem !important; box-shadow: none !important; }
 .premium-feature .split-feature h2 { font-size: clamp(2.8rem, 5vw, 5.8rem) !important; font-weight: 540 !important; letter-spacing: -0.02em; line-height: 1.12; }
 .premium-feature .split-feature a { border-radius: 0.25rem !important; }
-
-.premium-standards {
-  background: #efede7 !important;
-  border: 0 !important;
-  color: #111;
-  padding: clamp(6rem, 9vw, 9rem) var(--jia-pad) !important;
-}
-.premium-standards > div { max-width: 76rem; }
-.premium-standards h2,
-.premium-standards summary span:first-child { color: #111 !important; }
-.premium-standards p { color: #68655f !important; }
-.premium-standards details,
-.premium-standards details > div > div { background: #fff !important; border-color: #d5d2ca !important; }
-.premium-standards details { border-radius: 0.35rem !important; }
-
-.premium-final-cta { min-height: 70svh; align-items: center; display: flex; }
-.premium-final-cta > div:last-child { max-width: 58rem; }
-.premium-final-cta h2 { font-size: clamp(3rem, 6vw, 6.5rem) !important; font-weight: 520 !important; letter-spacing: -0.02em; line-height: 1.12; }
-.premium-final-cta a { border-radius: 0.25rem !important; }
 
 .premium-contact {
   background: #f4f2ed !important;
@@ -1145,7 +1112,7 @@ html {
   .promo-banner-action { align-items: stretch !important; }
   .promo-banner-action a { text-align: center; width: 100%; }
   .premium-section-heading h2 { font-size: clamp(2.6rem, 13vw, 4rem) !important; }
-  .premium-paths, .premium-lineup, .premium-trust, .premium-tech, .premium-feature, .premium-standards, .premium-contact { padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
+  .premium-paths, .premium-lineup, .premium-trust, .premium-feature, .premium-contact { padding-left: 1.35rem !important; padding-right: 1.35rem !important; }
   /* padding-top keeps the badges that float above each card (-top-3) visible
      inside the horizontally scrolling carousel, which clips vertically. */
   .premium-paths > div > .grid { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; padding-top: 0.85rem; }
@@ -1153,9 +1120,7 @@ html {
   .premium-lineup .premium-section-heading + .grid > div { border-bottom: 1px solid rgba(255,255,255,0.14) !important; border-left: 0 !important; padding: 1.3rem 0 !important; }
   .premium-trust > div > .grid { display: block !important; }
   .premium-trust > div > .grid > div { border-left: 0 !important; padding: 1.5rem 0 !important; }
-  .premium-life-banner { height: 72svh !important; }
   .premium-feature .split-feature { gap: 2rem !important; }
-  .premium-final-cta { min-height: 78svh; }
 }
 
 /* Thai has no spaces between words, so big display headings otherwise break
