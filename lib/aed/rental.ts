@@ -34,7 +34,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
-    image: "/images/aed-rent-daily.jpg",
+    image: "/images/primedic-kit.png",
   },
   {
     id: "rent-annual",
@@ -50,7 +50,7 @@ export const rentalPlans: RentalPlan[] = [
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
     ],
     badge: "คุ้มที่สุด",
-    image: "/images/aed-rent-yearly.jpg",
+    image: "/images/primedic-y2-open.jpg",
   },
   {
     id: "rent-flex",
@@ -66,7 +66,7 @@ export const rentalPlans: RentalPlan[] = [
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
     ],
     badge: "",
-    image: "/images/aed-rent-monthly.jpg",
+    image: "/images/yuwell-y2-main.jpg",
   },
 ];
 

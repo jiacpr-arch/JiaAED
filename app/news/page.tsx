@@ -78,7 +78,7 @@ export default async function NewsPage() {
         badge="📰 ข่าว & ความตระหนัก"
         title="ข่าวเรื่องหัวใจหยุดเต้นเฉียบพลันและการกู้ชีพ"
         subtitle="เรารวบรวมข่าวที่เกี่ยวข้องกับภาวะหัวใจหยุดเต้นเฉียบพลัน การทำ CPR และการใช้เครื่อง AED พร้อมมุมให้ความรู้ เพื่อสร้างความตระหนักว่าการช่วยชีวิตในนาทีแรกสำคัญแค่ไหน"
-        backgroundImage="/images/lifestyle-cpr.png"
+        backgroundImage="/images/jiaaed-hero-2026.png"
       />
 
       <section className="py-12 px-4">

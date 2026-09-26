@@ -113,7 +113,7 @@ export const accessories: Accessory[] = [
     name: "ตู้แขวนผนัง AED (พร้อมสัญญาณเตือน)",
     subtitle: "ตู้จัดเก็บ",
     price: 5900,
-    image: "/images/aed-wallcabinet.png",
+    image: "/images/aed-wallcabinet.webp",
     description:
       "ตู้ติดผนังมาตรฐานสำหรับเก็บเครื่อง AED พร้อมสัญญาณเตือนเมื่อเปิดตู้ ช่วยให้มองเห็นชัดและหยิบใช้ได้ทันทีเมื่อเกิดเหตุ",
     features: [
@@ -127,7 +127,7 @@ export const accessories: Accessory[] = [
     name: "ตู้ตั้งพื้น AED (Stainless)",
     subtitle: "ตู้จัดเก็บ",
     price: 9900,
-    image: "/images/aed-floorstand.png",
+    image: "/images/aed-floorstand.webp",
     description:
       "แท่น/ตู้ตั้งพื้นสแตนเลส สำหรับพื้นที่เปิดโล่งหรือจุดที่ติดผนังไม่ได้ เคลื่อนย้ายและมองเห็นได้ชัดเจน",
     features: [
