@@ -1,0 +1,21 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
+import { primedicModels } from "@/lib/aed/primedic";
+import { LINE_OA } from "@/lib/aed/line";
+import { PriceViewTracker } from "@/app/components/PriceViewTracker";
+import { accessories } from "@/lib/aed/products";
+
+export const metadata: Metadata = { title: "ซื้อเครื่อง AED — เทียบ HeartSave Y0, Y8 และ Yuwell Y2", description: "เทียบราคาและฟังก์ชันเครื่อง AED 3 รุ่น พร้อมทีมช่วยเลือกและขอใบเสนอราคา", alternates: { canonical: "/aed" } };
+const fit = ["พื้นที่ทั่วไป · สำนักงาน · ร้านค้า", "โรงเรียน · ฟิตเนส · โรงงาน", "คลินิก · หน่วยกู้ชีพ"];
+
+export default function AedProductsPage() {
+  return <MarketPage>
+    <MarketHero eyebrow="BUY / COMPARE / DECIDE" title="เครื่อง AED ที่เหมาะกับหน้างานคุณ." description="ดูความต่างของรุ่น ราคา และฟังก์ชันที่จำเป็นในหน้าเดียว ก่อนคุยกับทีมงานเรื่องการติดตั้งและจัดซื้อ" image="/images/jiaaed-lobby-hero.jpg"><MarketButton href="#compare">เทียบรุ่นและราคา</MarketButton><MarketButton href="/quote" secondary>ขอใบเสนอราคา</MarketButton></MarketHero>
+    <section id="compare" className="market-section market-section-cream"><div className="market-container"><PriceViewTracker targetId="compare" /><div className="market-section-head"><div><p className="market-eyebrow">CHOOSE YOUR MODEL</p><h2>เลือกรุ่นได้ใน 1 นาที.</h2></div><p>ทุกรุ่นมีเสียงแนะนำภาษาไทยและปุ่มช็อกแบบกึ่งอัตโนมัติ จุดต่างหลักคือระบบช่วยทำ CPR และการแสดงผลบนจอ</p></div><div className="market-grid-3">{primedicModels.map((m, i) => <article className="market-card" key={m.id}><div className="market-card-photo"><Image src={m.image} alt={`เครื่อง AED ${m.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" /></div><div className="market-card-body"><span className="market-card-kicker">{i === 0 ? "เริ่มต้น" : i === 1 ? "แนะนำ" : "รุ่นจอสี"}</span><h3>{m.name}</h3><p>{fit[i]}</p><div className="market-price"><small>เริ่มต้น</small><strong>฿{m.price.toLocaleString()}</strong><span>ก่อน VAT</span></div><ul><li>{m.keyDiff}</li><li>เสียงนำทางภาษาไทย</li></ul><Link href={i === 2 ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link">ดูรายละเอียดรุ่น <span aria-hidden="true">↗</span></Link></div></article>)}</div><p className="market-note">ราคาก่อน VAT อาจเปลี่ยนตามชุดอุปกรณ์และเงื่อนไขจัดซื้อ ขอใบเสนอราคาเพื่อยืนยันราคาและขอบเขตบริการ</p></div></section>
+    <section className="market-section"><div className="market-container"><div className="market-section-head"><div><p className="market-eyebrow">AT A GLANCE</p><h2>สรุป 3 รุ่นในตารางเดียว.</h2></div></div><div className="market-table-wrap"><table className="market-table"><thead><tr><th>สิ่งที่เทียบ</th>{primedicModels.map((m) => <th key={m.id}>{m.name}</th>)}</tr></thead><tbody><tr><th>ราคาเริ่มต้น ก่อน VAT</th>{primedicModels.map((m) => <td key={m.id}>฿{m.price.toLocaleString()}</td>)}</tr><tr><th>เสียงแนะนำภาษาไทย</th><td>มี</td><td>มี</td><td>มี</td></tr><tr><th>CPR feedback</th><td>อุปกรณ์เสริม</td><td>มีในรุ่น</td><td>มีในรุ่น</td></tr><tr><th>จอสี EKG / ข้อมูล CPR</th><td>—</td><td>—</td><td>มี</td></tr><tr><th>เหมาะกับ</th>{fit.map((x) => <td key={x}>{x}</td>)}</tr></tbody></table></div><div className="market-mini-nav"><Link href="/docs">ดูเอกสารและสเปก ↗</Link><a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="products_help">ถามทีมงานทาง LINE ↗</a></div></div></section>
+    <section id="accessories" className="market-section market-section-cream"><div className="market-container"><div className="market-section-head"><div><p className="market-eyebrow">COMPLETE THE SETUP</p><h2>อุปกรณ์และบริการเสริม.</h2></div><p>เลือกตู้จัดเก็บหรือการอบรมให้เหมาะกับจุดติดตั้งและทีมงาน</p></div><div className="market-feature-grid">{accessories.filter((a) => a.price != null).map((a) => <article className="market-feature" key={a.id}><b>{a.name}</b><p>{a.description}</p><p><strong>เริ่ม ฿{a.price?.toLocaleString()}</strong> ก่อน VAT</p><Link href="/quote" className="market-text-link">สอบถามและขอราคา ↗</Link></article>)}</div></div></section>
+    <MarketLead title="ไม่แน่ใจว่าจะซื้อรุ่นไหน?" description="บอกสถานที่ จำนวนเครื่อง และงบประมาณคร่าว ๆ ทีมงานช่วยคัดรุ่นให้ตรงกับการใช้งาน" />
+  </MarketPage>;
+}

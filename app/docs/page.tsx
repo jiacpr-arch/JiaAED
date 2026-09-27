@@ -1,118 +1,18 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
-import { PageHero } from "@/app/components/PageHero";
-import {
-  documents,
-  documentCategoryLabel,
-  documentCategoryIcon,
-  type DocumentItem,
-} from "@/lib/aed/documents";
+import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
+import { documents } from "@/lib/aed/documents";
 
-export const metadata: Metadata = {
-  title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
-  description:
-    "ดาวน์โหลดสเปคทางเทคนิคสำหรับ TOR/ใบเสนอราคา ใบทะเบียน อย. และใบรับรองมาตรฐานของ AED Yuwell / PRIMEDIC HeartSave",
-  alternates: { canonical: "/docs" },
-  openGraph: {
-    title: "เอกสารดาวน์โหลด — คู่มือ สเปค ใบรับรอง | JiaAED",
-    description: "ดาวน์โหลดคู่มือการใช้งาน AED, สเปคสำหรับ TOR/ใบเสนอราคา และใบรับรองมาตรฐาน",
-    images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254, alt: "AED Yuwell Y2" }],
-  },
-};
+export const metadata: Metadata = { title: "เอกสาร AED สำหรับการจัดซื้อและตรวจสอบ", description: "ดาวน์โหลดสเปก AED Yuwell Y2 และเอกสารทะเบียน อย. สำหรับประกอบการจัดซื้อ", alternates: { canonical: "/docs" } };
 
-const ORDER: DocumentItem["category"][] = [
-  "manual",
-  "specification",
-  "brochure",
-  "certificate",
-  "other",
-];
-
-function group(): Record<DocumentItem["category"], DocumentItem[]> {
-  const out = {} as Record<DocumentItem["category"], DocumentItem[]>;
-  for (const c of ORDER) out[c] = [];
-  for (const d of documents) out[d.category].push(d);
-  return out;
-}
-
-function fileTypeLabel(mime: DocumentItem["mime"]): string {
-  if (mime === "application/pdf") return "PDF";
-  return "DOCX";
-}
+// Public purchase documents must refer to currently sold products. Historical
+// i7/i9 and Ambulanc certificates remain in the catalog for existing records.
+const currentDocuments = documents.filter((d) => ["aed-y2-specification-2026", "fda-yuwell-aed"].includes(d.id));
 
 export default function DocsPage() {
-  const grouped = group();
-
-  return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <SiteHeader />
-
-      <PageHero
-        badge="📚 Document Center"
-        title="เอกสารดาวน์โหลด"
-        subtitle="คุณลักษณะเฉพาะ (TOR-ready) และใบรับรองมาตรฐานของ AED Yuwell / PRIMEDIC HeartSave — สำหรับใช้งานจริง การจัดซื้อภาครัฐ หรือแนบใบเสนอราคา"
-        image="/images/primedic-y2-open.jpg"
-        imageAlt="เครื่อง AED Yuwell Y2"
-      />
-
-      <section className="py-12 px-4">
-        <div className="max-w-5xl mx-auto space-y-10">
-          {ORDER.filter((c) => grouped[c].length > 0).map((cat) => (
-            <div key={cat}>
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <span>{documentCategoryIcon[cat]}</span>
-                <span>{documentCategoryLabel[cat]}</span>
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {grouped[cat].map((d) => (
-                  <a
-                    key={d.id}
-                    href={d.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-doc-download={d.id}
-                    data-doc-category={d.category}
-                    className="block bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-yellow-400/40 rounded-xl p-5 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className="font-bold text-white">{d.title}</h3>
-                      <span className="shrink-0 text-[10px] font-bold bg-yellow-400/10 text-yellow-400 px-2 py-1 rounded border border-yellow-400/20">
-                        {fileTypeLabel(d.mime)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-400 mb-3 leading-relaxed">{d.description}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>
-                        {d.sizeLabel} · {d.language.toUpperCase()} · อัปเดต {d.updatedAt}
-                      </span>
-                      <span className="text-yellow-400 font-semibold">ดาวน์โหลด →</span>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-12 px-4 border-t border-gray-800">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-xl font-bold text-white mb-3">ต้องการเอกสารอื่นๆ?</h2>
-          <p className="text-gray-400 mb-6">
-            ใบรับรองเพิ่มเติม รายการอุปกรณ์เสริม หรือเอกสารสำหรับโครงการจัดซื้อ — ทีมงานยินดีจัดส่งให้
-          </p>
-          <Link
-            href="/#contact"
-            className="inline-block bg-yellow-400 text-gray-950 font-bold px-6 py-3 rounded-full hover:bg-yellow-300 transition-colors"
-          >
-            ติดต่อทีมงาน
-          </Link>
-        </div>
-      </section>
-
-      <SiteFooter />
-    </div>
-  );
+  return <MarketPage>
+    <MarketHero eyebrow="DOCUMENT CENTER" title="เอกสารพร้อมใช้ สำหรับการจัดซื้อ." description="ดาวน์โหลดสเปกสินค้าและเอกสารทะเบียน อย. ของรุ่นที่จำหน่ายอยู่ หรือติดต่อทีมงานหากต้องใช้ชุดเอกสารสำหรับโครงการเฉพาะ" image="/images/primedic-y2-open.jpg"><MarketButton href="#downloads">ดูเอกสาร</MarketButton><MarketButton href="/quote" secondary>ขอใบเสนอราคา</MarketButton></MarketHero>
+    <section className="market-section market-section-cream" id="downloads"><div className="market-container"><div className="market-section-head"><div><p className="market-eyebrow">READY TO DOWNLOAD</p><h2>ไฟล์ที่ใช้บ่อย.</h2></div><p>ตรวจสอบชื่อรุ่นและวันที่ในเอกสารก่อนนำไปประกอบ TOR หรือใบเสนอราคา</p></div><div className="market-doc-list">{currentDocuments.map((d) => <a className="market-doc" href={d.href} key={d.id} target="_blank" rel="noopener noreferrer" data-doc-download={d.id} data-doc-category={d.category}><b>{d.title}</b><p>{d.description}</p><span>{d.mime === "application/pdf" ? "PDF" : "DOCX"} · {d.sizeLabel} · ดาวน์โหลด ↗</span></a>)}</div></div></section>
+    <section className="market-section"><div className="market-container market-faq"><div><p className="market-eyebrow">NEED MORE?</p><h2>ต้องการเอกสารอื่น?</h2></div><div><p className="market-muted">แจ้งรุ่น หน่วยงาน และรายการเอกสารที่ต้องใช้ เช่น สเปกเต็ม ใบรับรอง หรือรายการอุปกรณ์เสริม ทีมงานจะจัดชุดเอกสารให้ตรงโครงการ</p><div className="market-mini-nav"><a href="/quote">ส่งคำขอเอกสาร ↗</a><a href="/aed">เทียบรุ่น AED</a></div></div></div></section>
+    <MarketLead title="เอกสารพร้อมแล้ว ขอราคาได้เลย." description="ทีมงานช่วยจับคู่สเปกและรายการอุปกรณ์ให้ตรงกับโครงการจัดซื้อ" />
+  </MarketPage>;
 }

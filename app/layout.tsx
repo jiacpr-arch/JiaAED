@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
+import "./market.css";
 import { CookieConsent } from "./components/CookieConsent";
 import { LineClickTracker } from "./components/LineClickTracker";
 import { StructuredData } from "./components/StructuredData";

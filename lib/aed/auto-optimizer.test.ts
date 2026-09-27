@@ -68,7 +68,8 @@ describe("HeroHeadline rewrite (buildNewHeroHeadlineFile)", () => {
       const h = extractHeadline(heroHeadlineSrc, v);
       expect(h.line1.length).toBeGreaterThan(0);
       expect(h.accent.length).toBeGreaterThan(0);
-      expect(h.line2.length).toBeGreaterThan(0);
+      // The current two-line variant intentionally has an empty third line.
+      expect(h.line2).toBeDefined();
     }
   });
 

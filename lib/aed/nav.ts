@@ -8,6 +8,7 @@ export type NavGroup = { title: string; links: NavLink[] };
 
 // Desktop/mobile header nav — short labels, buyer-first order.
 export const HEADER_LINKS: NavLink[] = [
+  { href: "/aed", label: "ซื้อ AED" },
   { href: "/aed/packages", label: "แพ็กเกจ" },
   { href: "/aed/rental", label: "เช่า & เช่าซื้อ" },
   { href: "/aed/subscription", label: "ดูแลครบวงจร" },
@@ -23,6 +24,7 @@ export const FOOTER_GROUPS: NavGroup[] = [
   {
     title: "สินค้า AED",
     links: [
+      { href: "/aed", label: "เทียบรุ่นและราคา AED" },
       { href: "/aed/yuwell-y2", label: "Yuwell Y2 (เรือธง จอ EKG)" },
       { href: "/aed/primedic", label: "PRIMEDIC HeartSave" },
       { href: "/aed/packages", label: "แพ็กเกจ AED + GPS" },

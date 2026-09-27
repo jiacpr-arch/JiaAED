@@ -129,7 +129,7 @@ export default async function NewsPage() {
             ช่วยเพิ่มโอกาสรอดได้
           </p>
           <Link
-            href="/#brands"
+            href="/#models"
             className="inline-block bg-yellow-400 text-gray-950 font-bold px-6 py-2.5 rounded-full hover:bg-yellow-300 transition-colors"
           >
             ดูเครื่อง AED
