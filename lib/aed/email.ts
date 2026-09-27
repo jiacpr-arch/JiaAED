@@ -66,3 +66,89 @@ export async function sendLeadAutoReply(p: {
   }
   return { ok: true };
 }
+
+// Recipients for new-lead alerts (comma/space separated). Runs alongside the
+// LINE push in notify-owner.ts so a lead still reaches the owner if LINE fails.
+function getOwnerEmails(): string[] {
+  const raw = process.env.AED_OWNER_NOTIFY_EMAILS || "jiacpr@gmail.com";
+  return [...new Set(raw.split(/[,\s]+/).map((e) => e.trim()).filter(Boolean))];
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+export async function sendLeadOwnerNotification(p: {
+  leadId: string;
+  source: string;
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
+  company: string | null;
+  productName: string | null;
+  unitCount: string | null;
+  message: string | null;
+  adSource: string;
+  pageUrl: string | null;
+}): Promise<{ ok: boolean; reason?: string }> {
+  const client = getClient();
+  if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
+  const to = getOwnerEmails();
+  if (to.length === 0) return { ok: false, reason: "no owner email" };
+
+  const when = new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
+  const rows: [string, string | null][] = [
+    ["ชื่อ", p.fullName],
+    ["เบอร์โทร", p.phone],
+    ["อีเมล", p.email],
+    ["บริษัท", p.company],
+    ["รุ่นที่สนใจ", p.productName],
+    ["จำนวนเครื่อง", p.unitCount],
+    ["ข้อความ", p.message],
+    ["ฟอร์ม", p.source],
+    ["ที่มา", p.adSource],
+    ["หน้าเว็บ", p.pageUrl],
+    ["เวลา", when],
+    ["Lead ID", p.leadId],
+  ];
+  const filled = rows.filter((r): r is [string, string] => !!r[1]);
+
+  const who = p.company || p.fullName || p.phone || p.email || "ลูกค้า";
+  const subject = `🎯 Lead ใหม่ (${p.source}) — ${who}`;
+  const html = `<!DOCTYPE html>
+<html lang="th">
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width:560px; margin:0 auto; padding:24px; color:#1a1a1a;">
+  <h2 style="color:#b8860b; margin-top:0;">🎯 Lead ใหม่จากเว็บไซต์</h2>
+  <table style="border-collapse:collapse; width:100%; font-size:14px;">
+    ${filled
+      .map(
+        ([k, v]) =>
+          `<tr><td style="padding:6px 8px; color:#666; vertical-align:top; white-space:nowrap;">${k}</td><td style="padding:6px 8px; white-space:pre-wrap;">${escapeHtml(v)}</td></tr>`,
+      )
+      .join("\n    ")}
+  </table>
+</body>
+</html>`;
+  const text = [`Lead ใหม่จากเว็บไซต์`, ``, ...filled.map(([k, v]) => `${k}: ${v}`)].join("\n");
+
+  const res = await client.emails.send({
+    from: FROM,
+    to,
+    // Hitting "reply" answers the customer directly when they left an email.
+    replyTo: p.email || REPLY_TO,
+    subject,
+    html,
+    text,
+  });
+
+  if (res.error) {
+    console.error("[AED] owner lead email failed:", res.error);
+    return { ok: false, reason: String(res.error.message || res.error) };
+  }
+  return { ok: true };
+}

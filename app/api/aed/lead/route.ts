@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
-import { sendLeadAutoReply } from "@/lib/aed/email";
+import { sendLeadAutoReply, sendLeadOwnerNotification } from "@/lib/aed/email";
 import { recordConversion } from "@/lib/aed/conversion";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
 import { products } from "@/lib/aed/products";
@@ -156,6 +156,31 @@ export async function POST(req: Request) {
       utmSource,
       utmCampaign,
     }).catch((e) => console.error("[AED] notify failed:", e)),
+  );
+
+  // Email copy of the lead to the owner — a second channel alongside LINE.
+  waitUntil(
+    sendLeadOwnerNotification({
+      leadId: data.id,
+      source,
+      fullName,
+      phone,
+      email,
+      company,
+      productName: productName ?? productId,
+      unitCount,
+      message,
+      adSource: gclid
+        ? "Google Ads"
+        : utmSource
+        ? `${utmSource}${utmCampaign ? ` / ${utmCampaign}` : ""}`
+        : "organic / direct",
+      pageUrl,
+    })
+      .then((r) => {
+        if (!r.ok) console.warn("[AED] owner lead email skipped:", r.reason);
+      })
+      .catch((e) => console.error("[AED] owner lead email failed:", e)),
   );
 
   // Report the lead to Google Ads (gclid click-conversion, or enhanced match on
