@@ -20,6 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const docsEntry: MetadataRoute.Sitemap = [
     {
+      url: `${SITE}/aed`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${SITE}/aed/packages`,
       lastModified: now,
       changeFrequency: "weekly",

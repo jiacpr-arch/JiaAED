@@ -147,7 +147,7 @@ export async function proposeNewHeadline(args: {
 
 const VARIANT_BLOCK_RE = (variant: "a" | "b") =>
   new RegExp(
-    `(\\s${variant}:\\s*\\{\\s*line1:\\s*)"([^"]+)"(,\\s*accent:\\s*)"([^"]+)"(,\\s*line2:\\s*)"([^"]+)"`,
+    `(\\s${variant}:\\s*\\{\\s*line1:\\s*)"([^"]+)"(,\\s*accent:\\s*)"([^"]+)"(,\\s*line2:\\s*)"([^"]*)"`,
   );
 
 export function extractHeadline(file: string, variant: "a" | "b"): {

@@ -20,7 +20,7 @@ export async function GET() {
       <g:id>${escape(p.id)}</g:id>
       <g:title>${escape(title)}</g:title>
       <g:description>${escape(desc)}</g:description>
-      <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(p.id)}#brands</g:link>
+      <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(p.id)}#models</g:link>
       <g:image_link>${SITE}/images/yuwell-y2-main.jpg</g:image_link>
       <g:availability>in stock</g:availability>
       <g:price>${p.price.toFixed(2)} THB</g:price>
@@ -42,7 +42,7 @@ export async function GET() {
       <g:id>${escape(a.id)}</g:id>
       <g:title>${escape(title)}</g:title>
       <g:description>${escape(desc)}</g:description>
-      <g:link>${SITE}/?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(a.id)}#accessories</g:link>
+      <g:link>${SITE}/aed?utm_source=google&amp;utm_medium=cpc&amp;product=${encodeURIComponent(a.id)}#accessories</g:link>
       <g:image_link>${SITE}${a.image}</g:image_link>
       <g:availability>in stock</g:availability>
       <g:price>${a.price.toFixed(2)} THB</g:price>

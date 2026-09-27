@@ -178,7 +178,7 @@ export function ArticleStructuredData({
 export function ProductStructuredData({
   include = "all",
 }: {
-  include?: "all" | "primedic";
+  include?: "all" | "primedic" | "homepage";
 }) {
   const productSchemas = products.map((p) => ({
     "@context": "https://schema.org",
@@ -191,7 +191,7 @@ export function ProductStructuredData({
     category: "Medical Equipment / AED / Defibrillator",
     offers: {
       "@type": "Offer",
-      url: `${SITE}/#brands`,
+      url: `${SITE}/#models`,
       priceCurrency: "THB",
       price: p.price,
       availability: "https://schema.org/InStock",
@@ -206,12 +206,12 @@ export function ProductStructuredData({
       name: m.name,
       description: `${m.summary} ${m.keyDiff} ${m.bestFor}`,
       image: `${SITE}${m.image}`,
-      brand: { "@type": "Brand", name: "PRIMEDIC" },
+      brand: { "@type": "Brand", name: m.id === "primedic-y2" ? "Yuwell" : "PRIMEDIC" },
       sku: m.id,
       category: "Medical Equipment / AED / Defibrillator",
       offers: {
         "@type": "Offer",
-        url: `${SITE}/aed/primedic`,
+        url: `${SITE}${m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"}`,
         priceCurrency: "THB",
         price: m.price,
         availability: "https://schema.org/InStock",
@@ -248,8 +248,9 @@ export function ProductStructuredData({
     })),
   };
 
-  const blob =
-    include === "primedic"
+  const blob = include === "homepage"
+    ? primedicSchemas.slice(0, primedicModels.length)
+    : include === "primedic"
       ? primedicSchemas
       : [faqPage, ...productSchemas, ...primedicSchemas];
 

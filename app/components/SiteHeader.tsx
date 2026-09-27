@@ -27,14 +27,14 @@ export function SiteHeader() {
           {/* Same เช่า/ซื้อ pair as the homepage nav — equal-weight offers everywhere */}
           <div className="hidden sm:flex items-center">
             <Link
-              href="/#rent"
+              href="/aed/rental"
               data-cta="nav_rent"
               className="bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 text-sm font-semibold px-3 py-2 rounded-l-full hover:bg-yellow-400/20 transition-colors"
             >
               เช่า
             </Link>
             <Link
-              href="/#how"
+              href="/aed"
               data-cta="nav_buy"
               className="bg-white/5 text-gray-200 border border-l-0 border-gray-500/40 text-sm font-semibold px-3 py-2 rounded-r-full hover:bg-white/10 transition-colors"
             >
