@@ -17,6 +17,18 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Scope file tracing to this project only (prevents crawling parent dirs)
   outputFileTracingRoot: path.join(__dirname),
+  async redirects() {
+    // www.jiaaed.com is attached to the Vercel project but was serving the
+    // site with HTTP 200 (duplicate host). Force it back to the root domain.
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.jiaaed.com" }],
+        destination: "https://jiaaed.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
