@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { MarketButton, MarketHero, MarketLead, MarketPage } from "./components/MarketShell";
-import { ProductStructuredData } from "./components/StructuredData";
+import { FaqStructuredData, ProductStructuredData } from "./components/StructuredData";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 import { MiniLeadForm } from "./components/MiniLeadForm";
 import { primedicModels } from "@/lib/aed/primedic";
@@ -28,9 +28,18 @@ const features: Record<string, string[]> = {
   "primedic-y2": ["จอสีแสดง EKG และข้อมูล CPR", "เซ็นเซอร์ CPR feedback ในรุ่น"],
 };
 
+// Rendered as the visible FAQ section AND as FAQPage JSON-LD, so the markup
+// always mirrors what's on the page (the weekly AI SEO check asserts it).
+const homeFaqs: { question: string; answer: string; link?: { href: string; label: string } }[] = [
+  { question: "ราคาในหน้านี้รวม VAT แล้วหรือยัง?", answer: "ยังไม่รวม VAT ราคาขึ้นอยู่กับรุ่น ชุดอุปกรณ์ และเงื่อนไขการจัดซื้อ ขอใบเสนอราคาที่ระบุรายการทั้งหมดได้ทาง LINE หรือแบบฟอร์ม" },
+  { question: "มีเอกสารสำหรับการจัดซื้อหรือไม่?", answer: "JiaAED ออกใบเสนอราคาและใบกำกับภาษีได้ เอกสารทะเบียน อย. และสเปกสินค้าอยู่ในหน้า", link: { href: "/docs", label: "เอกสารดาวน์โหลด" } },
+  { question: "ซื้อแล้วมีการสอนใช้เครื่องไหม?", answer: "มีบริการติดตั้งและอบรม CPR & AED ถึงหน่วยงาน ให้ทีมงานยืนยันขอบเขตและพื้นที่ให้บริการในใบเสนอราคา" },
+];
+
 export default function Home() {
   return <MarketPage>
     <ProductStructuredData include="homepage" />
+    <FaqStructuredData items={homeFaqs.map((f) => ({ question: f.question, answer: f.link ? `${f.answer} ${f.link.label}` : f.answer }))} />
     <MarketHero eyebrow="AED สำหรับองค์กรและพื้นที่สาธารณะ" title={"ซื้อเครื่อง AED\nให้พร้อมใช้จริง."} description="เปรียบเทียบรุ่นและราคาได้ในหน้าเดียว พร้อมทีมช่วยเลือกเครื่อง จัดส่ง ติดตั้ง และอบรมการใช้ AED ถึงหน่วยงาน" image="/images/jiaaed-hero-2026.png">
       <MarketButton href="#models" lineCta="hero_models">ดูรุ่นและราคา</MarketButton>
       <MarketButton href="/quote" lineCta="hero_quote" secondary>ขอใบเสนอราคา</MarketButton>
@@ -52,7 +61,7 @@ export default function Home() {
     <div className="market-help"><div className="market-container market-help-inner"><strong>ยังไม่แน่ใจว่ารุ่นไหนเหมาะ?</strong><p>บอกประเภทสถานที่และงบประมาณ ทีมงานช่วยแนะนำรุ่นที่ตรงการใช้งาน</p><a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="home_model_help">ปรึกษาผ่าน LINE ↗</a></div></div>
     <section className="market-section"><div className="market-container market-split"><div className="market-split-photo"><Image src="/images/training-bls-1.jpg" alt="ทีมวิทยากรสอนการทำ CPR แบบลงมือจริง" fill sizes="(max-width: 700px) 100vw, 45vw" /></div><div><p className="market-eyebrow">MORE THAN A DEVICE</p><h2>ได้เครื่อง.<br /><em>ได้ความพร้อม.</em></h2><p>การซื้อ AED ไม่ควรจบที่กล่องสินค้า ทีม JiaAED ช่วยให้องค์กรเลือกจุดติดตั้ง และฝึกทีมให้รู้จักเครื่องก่อนถึงเวลาจำเป็น</p><div className="market-step-list"><div className="market-step"><b>01</b><strong>เลือกเครื่องให้ตรงงาน</strong><span>เทียบรุ่นและฟังก์ชันตามพื้นที่ งบ และคนในทีม</span></div><div className="market-step"><b>02</b><strong>จัดส่งและติดตั้ง</strong><span>เตรียมจุดวางเครื่องให้มองเห็นและหยิบใช้สะดวก</span></div><div className="market-step"><b>03</b><strong>อบรม CPR &amp; AED</strong><span>ฝึกการใช้งานกับทีมงานถึงสถานที่</span></div></div><Link className="market-text-link" href="/training">ดูรายละเอียดการอบรม ↗</Link></div></div></section>
     <section className="market-section market-section-cream"><div className="market-container market-section-head"><div><p className="market-eyebrow">EASY TO START</p><h2>เริ่มจากคำถามเดียว<br /><em>“ติดตั้งที่ไหน?”</em></h2></div><div><p className="market-muted">ส่งประเภทสถานที่ จำนวนจุดติดตั้ง และงบประมาณคร่าว ๆ แล้วรับคำแนะนำรุ่นพร้อมใบเสนอราคาที่ตรงความต้องการ</p><div className="market-mini-nav"><Link href="/quote">กรอกแบบฟอร์ม ↗</Link><a href={PHONE_HREF} data-cta="home_phone">โทร {PHONE_DISPLAY}</a><Link href="/aed/rental">ดูทางเลือกเช่า AED</Link></div></div></div></section>
-    <section className="market-section"><div className="market-container market-faq"><div><p className="market-eyebrow">QUICK ANSWERS</p><h2>ก่อนตัดสินใจซื้อ.</h2><p className="market-muted">คำตอบสั้น ๆ สำหรับการจัดซื้อเครื่อง AED ในองค์กร</p></div><div><details><summary>ราคาในหน้านี้รวม VAT แล้วหรือยัง?</summary><p>ยังไม่รวม VAT ราคาขึ้นอยู่กับรุ่น ชุดอุปกรณ์ และเงื่อนไขการจัดซื้อ ขอใบเสนอราคาที่ระบุรายการทั้งหมดได้ทาง LINE หรือแบบฟอร์ม</p></details><details><summary>มีเอกสารสำหรับการจัดซื้อหรือไม่?</summary><p>JiaAED ออกใบเสนอราคาและใบกำกับภาษีได้ เอกสารทะเบียน อย. และสเปกสินค้าอยู่ในหน้า <Link href="/docs" className="market-text-link">เอกสารดาวน์โหลด</Link></p></details><details><summary>ซื้อแล้วมีการสอนใช้เครื่องไหม?</summary><p>มีบริการติดตั้งและอบรม CPR &amp; AED ถึงหน่วยงาน ให้ทีมงานยืนยันขอบเขตและพื้นที่ให้บริการในใบเสนอราคา</p></details></div></div></section>
+    <section className="market-section"><div className="market-container market-faq"><div><p className="market-eyebrow">QUICK ANSWERS</p><h2>ก่อนตัดสินใจซื้อ.</h2><p className="market-muted">คำตอบสั้น ๆ สำหรับการจัดซื้อเครื่อง AED ในองค์กร</p></div><div>{homeFaqs.map((f) => <details key={f.question}><summary>{f.question}</summary><p>{f.answer}{f.link && <> <Link href={f.link.href} className="market-text-link">{f.link.label}</Link></>}</p></details>)}</div></div></section>
     <section className="market-section market-section-cream" id="contact"><div className="market-container market-form-section"><div><p className="market-eyebrow">LET’S TALK</p><h2>ให้ทีมงาน<br />ติดต่อกลับ.</h2><p>ฝากเบอร์ไว้ แล้วบอกประเภทสถานที่หรือรุ่นที่สนใจ ทีมงานจะช่วยคัดทางเลือกที่เหมาะให้</p></div><div><MiniLeadForm variant="home_purchase_redesign" theme="light" title="ฝากเบอร์ ทีมงานโทรกลับ" subtitle="หรือขอใบเสนอราคาแบบละเอียดได้ในหน้าแบบฟอร์ม" /></div></div></section>
     <MarketLead />
   </MarketPage>;

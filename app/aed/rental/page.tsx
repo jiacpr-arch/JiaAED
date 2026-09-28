@@ -3,20 +3,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
+import { BreadcrumbStructuredData, FaqStructuredData } from "@/app/components/StructuredData";
 import { rentalPlans, rentToOwnBreakdowns, rentToOwnTotal } from "@/lib/aed/rental";
 import { LINE_OA } from "@/lib/aed/line";
 
 export const revalidate = 3600;
 export const metadata: Metadata = { title: "เช่าและเช่าซื้อ AED — ราคา แผนบริการ และเงื่อนไข", description: "เปรียบเทียบแผนเช่า AED รายวัน รายเดือน รายปี และเช่าซื้อ 18 เดือน พร้อมราคาและเงื่อนไขสำคัญ", alternates: { canonical: "/aed/rental" } };
 
+// Rendered as the visible FAQ section AND as FAQPage JSON-LD, so the markup
+// always mirrors what's on the page (the weekly AI SEO check asserts it).
+const rentalFaqs = [
+  { question: "เช่ารายเดือนขั้นต่ำกี่เดือน?", answer: "แผน FLEX ขั้นต่ำ 3 เดือน ส่วนแผนอีเวนต์และรายปีมีระยะเวลาตามชื่อแผน" },
+  { question: "ต้องวางมัดจำเท่าไร?", answer: "มัดจำขึ้นอยู่กับแผนและประเภทลูกค้า รายละเอียดแสดงในแต่ละแผนด้านบน" },
+  { question: "เช่ากับเช่าซื้อต่างกันอย่างไร?", answer: "แผนเช่าจบสัญญาแล้วคืนเครื่อง ส่วนเช่าซื้อผ่อนครบ 18 เดือนแล้วเครื่องเป็นของคุณ" },
+];
+
 export default function RentalPage() {
   const flex = rentalPlans.find((p) => p.id === "rent-flex")!;
   return <MarketPage>
+    <FaqStructuredData items={rentalFaqs} />
+    <BreadcrumbStructuredData items={[{ name: "หน้าแรก", path: "/" }, { name: "AED", path: "/aed" }, { name: "เช่า AED", path: "/aed/rental" }]} />
     <MarketHero eyebrow="AED RENTAL / RENT TO OWN" title="เช่า AED พร้อมใช้ ในงบที่วางแผนได้." description="เลือกระยะเวลาตามหน้างาน ตั้งแต่อีเวนต์ถึงสัญญารายปี หรือเช่าซื้อเพื่อเป็นเจ้าของเมื่อครบสัญญา" image="/images/jiaaed-lobby-hero.jpg"><MarketButton href="#plans">ดูแผนเช่า</MarketButton><MarketButton href="/quote" secondary>ขอใบเสนอราคา</MarketButton><p className="market-hero-price">แผนรายเดือนเริ่ม ฿{flex.price.toLocaleString()}/เดือน</p></MarketHero>
     <div className="market-trust"><div className="market-container market-trust-inner"><span><b>✓</b> แผนรายวัน · เดือน · ปี</span><span><b>✓</b> มีแผนเช่าซื้อ</span><span><b>✓</b> พร้อมแผ่นและแบตเตอรี่</span><span><b>✓</b> คุยเงื่อนไขก่อนตกลง</span></div></div>
     <section id="plans" className="market-section market-section-cream"><div className="market-container"><div className="market-section-head"><div><p className="market-eyebrow">RENTAL OPTIONS</p><h2>เลือกตามระยะเวลาที่ใช้.</h2></div><p>ตัวเลขและเงื่อนไขด้านล่างมาจากแผนบริการปัจจุบัน ขอใบเสนอราคาเพื่อยืนยันค่าใช้จ่ายรวมตามพื้นที่จัดส่ง</p></div><div className="market-grid-3">{rentalPlans.map((p) => <article className={`market-card ${p.badge ? "market-card-featured" : ""}`} key={p.id}><div className="market-card-photo"><Image src={p.image} alt={`เครื่อง AED สำหรับ${p.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{p.badge && <span className="market-card-tag">{p.badge}</span>}</div><div className="market-card-body"><span className="market-card-kicker">{p.subtitle}</span><h3>{p.name}</h3><div className="market-price"><small>เริ่มต้น</small><strong>฿{p.price.toLocaleString()}</strong><span>{p.unit}</span></div><ul>{p.features.map((f) => <li key={f}>{f}</li>)}</ul><p>มัดจำ: {p.deposit}</p><a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta={`rent_${p.id}`} data-product={p.id} className="market-card-link">ถามรายละเอียดแผนนี้ <span aria-hidden="true">↗</span></a></div></article>)}</div></div></section>
     <section className="market-section" id="rent-to-own"><div className="market-container"><div className="market-section-head"><div><p className="market-eyebrow">RENT TO OWN</p><h2>ผ่อนครบ แล้วเป็นเจ้าของ.</h2></div><p>อีกทางเลือกสำหรับองค์กรที่ต้องการแบ่งจ่าย พร้อมรู้ยอดรวมตลอดสัญญาก่อนตัดสินใจ</p></div><div className="market-grid-3">{rentToOwnBreakdowns.map((p) => <article className="market-feature" key={p.packageId}><b>{p.model}</b><p>มัดจำ ฿{p.deposit.toLocaleString()} + ฿{p.monthly.toLocaleString()}/เดือน × {p.months} เดือน</p><p>รวมทั้งสัญญา <strong>฿{rentToOwnTotal(p).toLocaleString()}</strong> · {p.cashPriceLabel}</p><Link href="/quote" className="market-text-link">ขอเงื่อนไขและใบเสนอราคา ↗</Link></article>)}</div><p className="market-note">เมื่อชำระครบสัญญา เครื่องเป็นของผู้เช่าซื้อ เงื่อนไขบริการและภาษีให้ยืนยันในใบเสนอราคา</p></div></section>
-    <section className="market-section market-section-cream"><div className="market-container market-faq"><div><p className="market-eyebrow">BEFORE YOU DECIDE</p><h2>คำถามเรื่องการเช่า.</h2></div><div><details><summary>เช่ารายเดือนขั้นต่ำกี่เดือน?</summary><p>แผน FLEX ขั้นต่ำ 3 เดือน ส่วนแผนอีเวนต์และรายปีมีระยะเวลาตามชื่อแผน</p></details><details><summary>ต้องวางมัดจำเท่าไร?</summary><p>มัดจำขึ้นอยู่กับแผนและประเภทลูกค้า รายละเอียดแสดงในแต่ละแผนด้านบน</p></details><details><summary>เช่ากับเช่าซื้อต่างกันอย่างไร?</summary><p>แผนเช่าจบสัญญาแล้วคืนเครื่อง ส่วนเช่าซื้อผ่อนครบ 18 เดือนแล้วเครื่องเป็นของคุณ</p></details></div></div></section>
+    <section className="market-section market-section-cream"><div className="market-container market-faq"><div><p className="market-eyebrow">BEFORE YOU DECIDE</p><h2>คำถามเรื่องการเช่า.</h2></div><div>{rentalFaqs.map((f) => <details key={f.question}><summary>{f.question}</summary><p>{f.answer}</p></details>)}</div></div></section>
     <section className="market-section"><div className="market-container market-form-section"><div><p className="market-eyebrow">LET’S PLAN</p><h2>บอกวันและสถานที่<br />ทีมงานช่วยเลือกแผน.</h2><p>ฝากเบอร์ให้ติดต่อกลับ หรือส่งรายละเอียดหน้างานผ่านแบบฟอร์ม</p><div className="market-mini-nav"><Link href="/quote">กรอกแบบฟอร์มละเอียด ↗</Link><Link href="/aed">เทียบรุ่นสำหรับซื้อ</Link></div></div><MiniLeadForm variant="rental_redesign" theme="light" title="ฝากเบอร์ ทีมงานโทรกลับ" /></div></section>
     <MarketLead title="พร้อมเช่า AED สำหรับหน้างาน?" description="ทีมงานช่วยสรุปแผน ราคา มัดจำ และค่าใช้จ่ายรวมก่อนตัดสินใจ" />
   </MarketPage>;
