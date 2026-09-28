@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const COLUMNS =
-  "id,serial_number,status,customer_name,plan_type,start_date,end_date,rent_amount,deposit_amount,pad_expiry_date,battery_expiry_date,next_inspection_date,notes,created_at,updated_at";
+  "id,serial_number,status,customer_name,product_model,plan_type,start_date,end_date,rent_amount,deposit_amount,pad_expiry_date,battery_expiry_date,next_inspection_date,notes,created_at,updated_at";
 
 function unauthorized() {
   return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
@@ -53,6 +53,7 @@ export async function POST(req: Request) {
       serial_number: serialNumber || null,
       status: body.status || "ว่าง",
       customer_name: emptyToNull(body.customer_name),
+      product_model: emptyToNull(body.product_model),
       plan_type: emptyToNull(body.plan_type),
       start_date: emptyToNull(body.start_date),
       end_date: emptyToNull(body.end_date),
@@ -90,6 +91,7 @@ export async function PATCH(req: Request) {
     "serial_number",
     "status",
     "customer_name",
+    "product_model",
     "plan_type",
     "start_date",
     "end_date",

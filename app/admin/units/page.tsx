@@ -12,6 +12,7 @@ const EMPTY_FORM = {
   serial_number: "",
   status: UNIT_STATUSES[0] as string,
   customer_name: "",
+  product_model: "",
   plan_type: "",
   start_date: "",
   end_date: "",
@@ -73,6 +74,7 @@ export default function AdminUnitsPage() {
       serial_number: u.serial_number ?? "",
       status: u.status,
       customer_name: u.customer_name ?? "",
+      product_model: u.product_model ?? "",
       plan_type: u.plan_type ?? "",
       start_date: u.start_date ?? "",
       end_date: u.end_date ?? "",
@@ -135,6 +137,8 @@ export default function AdminUnitsPage() {
     setToken("");
     setUnits([]);
   };
+
+  const knownProductModels = [...new Set(units.map((u) => u.product_model).filter(Boolean))].sort() as string[];
 
   // Client-side reuse of the same pure logic the weekly cron runs, so the
   // list highlights exactly what would trigger a LINE alert — no separate
@@ -231,6 +235,23 @@ export default function AdminUnitsPage() {
                       onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
                       className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-1">สินค้า (รุ่นแผ่น/แบต)</label>
+                    <input
+                      value={form.product_model}
+                      onChange={(e) => setForm({ ...form, product_model: e.target.value })}
+                      list="product-models"
+                      placeholder="เช่น pad zoll, batt a15"
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
+                    />
+                    {/* Suggest models already in the registry so the same part
+                        doesn't end up spelled three different ways. */}
+                    <datalist id="product-models">
+                      {knownProductModels.map((m) => (
+                        <option key={m} value={m} />
+                      ))}
+                    </datalist>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-1">ประเภทแผน</label>
@@ -377,6 +398,7 @@ export default function AdminUnitsPage() {
                           )}
                         </div>
                         <div className="text-xs text-gray-500 mt-1 flex gap-3 flex-wrap">
+                          {u.product_model && <span>สินค้า: {u.product_model}</span>}
                           {u.plan_type && <span>แผน: {u.plan_type}</span>}
                           {u.pad_expiry_date && <span>แผ่นหมด: {u.pad_expiry_date}</span>}
                           {u.battery_expiry_date && <span>แบตหมด: {u.battery_expiry_date}</span>}

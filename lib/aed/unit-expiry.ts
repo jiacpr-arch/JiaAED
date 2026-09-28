@@ -18,7 +18,7 @@ const URGENT_THRESHOLD_DAYS = 60; // same cutoff as license-expiry.ts and the
 // so the cron's partial `select()` satisfies this without an unsafe cast.
 export type UnitExpiryInput = Pick<
   AedUnit,
-  "serial_number" | "customer_name" | "pad_expiry_date" | "battery_expiry_date"
+  "serial_number" | "customer_name" | "product_model" | "pad_expiry_date" | "battery_expiry_date"
 >;
 
 export type UnitExpiryKind = "pad" | "battery";
@@ -26,6 +26,7 @@ export type UnitExpiryKind = "pad" | "battery";
 export type UnitExpiryStatus = {
   serialNumber: string | null;
   customerName: string | null;
+  productModel: string | null;
   kind: UnitExpiryKind;
   expiryDate: string;
   daysLeft: number;
@@ -52,6 +53,7 @@ export function checkUnitExpiries(units: UnitExpiryInput[], now: Date): UnitExpi
       results.push({
         serialNumber: unit.serial_number,
         customerName: unit.customer_name,
+        productModel: unit.product_model,
         kind,
         expiryDate,
         daysLeft,
@@ -83,7 +85,11 @@ export function formatUnitExpiryReport(results: UnitExpiryStatus[]): string {
       r.daysLeft < 0
         ? `หมดอายุแล้ว ${Math.abs(r.daysLeft)} วัน — เปลี่ยนด่วน!`
         : `เหลือ ${r.daysLeft} วัน (ถึง ${r.expiryDate})`;
-    return `${r.urgent ? "🔴" : "✓"} ${who} — ${KIND_LABEL[r.kind]} ${daysLabel}`;
+    // The model comes straight from the owner's sheet ("pad zoll", "batt a15")
+    // — it's what staff need to order the right replacement, so surface it
+    // next to the generic แผ่น/แบต label rather than leaving it in the DB.
+    const what = r.productModel ? `${KIND_LABEL[r.kind]} (${r.productModel})` : KIND_LABEL[r.kind];
+    return `${r.urgent ? "🔴" : "✓"} ${who} — ${what} ${daysLabel}`;
   });
 
   return [header, "", ...lines].join("\n");

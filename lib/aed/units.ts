@@ -10,6 +10,10 @@ export type AedUnit = {
   serial_number: string | null;
   status: string;
   customer_name: string | null;
+  // สินค้า — the consumable actually fitted, verbatim from the owner's sheet
+  // ("pad zoll", "batt a15", …). Optional: a row added by hand may not know it
+  // yet. See supabase/aed_units_product_model.sql for where the values came from.
+  product_model: string | null;
   plan_type: string | null;
   start_date: string | null;
   end_date: string | null;
