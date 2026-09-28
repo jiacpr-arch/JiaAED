@@ -120,7 +120,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     msrp: 60_000,
     startingPrice: 60_000,
     bestPrice: 60_000,
-    minPrice: 58_000,
+    minPrice: 58_000, // ทุน 35,000 → ขั้นต่ำยังเหลือกำไร 23,000
     vatRate: 0.07,
     faProductCode: "AED-YW-GPS",
   },
