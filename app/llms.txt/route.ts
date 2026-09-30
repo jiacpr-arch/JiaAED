@@ -169,7 +169,7 @@ ${specs}
 
 - อย. ไทย (FDA Thailand) — ทะเบียน ${reg.fda}
 - CE Mark · ISO 13485 (Medical Devices Quality Management)
-- IP65 (กันน้ำ กันฝุ่น) · AHA Guideline 2010/2015
+- IP55 (กันละอองน้ำและฝุ่น) · AHA Guideline 2010/2015
 
 ## FAQ
 

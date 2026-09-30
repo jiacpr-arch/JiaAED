@@ -4,9 +4,8 @@ import { documents } from "@/lib/aed/documents";
 
 export const metadata: Metadata = { title: "เอกสาร AED สำหรับการจัดซื้อและตรวจสอบ", description: "ดาวน์โหลดสเปก AED Yuwell Y2 และเอกสารทะเบียน อย. สำหรับประกอบการจัดซื้อ", alternates: { canonical: "/docs" } };
 
-// Public purchase documents must refer to currently sold products. Historical
-// i7/i9 and Ambulanc certificates remain in the catalog for existing records.
-const currentDocuments = documents.filter((d) => ["aed-y2-specification-2026", "fda-yuwell-aed"].includes(d.id));
+// The catalog only holds documents for currently sold models (see lib/aed/documents.ts).
+const currentDocuments = documents;
 
 export default function DocsPage() {
   return <MarketPage>
