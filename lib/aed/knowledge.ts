@@ -2,12 +2,10 @@ import { LINE_OA_ID } from "./line";
 /**
  * Authoritative knowledge base for the AI sales assistant.
  *
- * Content here is grounded in the real documents shipped under /public/documents:
- *  - คู่มือการใช้งาน AED i7/i9 ภาษาไทย (Rev.01)
- *  - คุณลักษณะเฉพาะ AED รุ่น i7 (Rev.2025 v1.1)
- *  - CE Mark Declaration of Conformity (2024-08-24)
- *  - ISO 13485:2016 Certificate (MD 743586, exp 2027-09-19)
- *  - EN 1789:2020 SGS Test Report (SZES231200758104)
+ * Content here is grounded in the documents shipped under /public/documents
+ * (Y2 spec sheet, อย. 65-2-2-2-0013415) and lib/aed/regulatory.ts. The old
+ * Amoul i7 manual/certificates (incl. EN 1789) were removed with the product,
+ * so their claims must not come back here.
  *
  * The AI may quote these facts verbatim — they are official.
  */
@@ -63,7 +61,7 @@ export const knowledgeArticles: KnowledgeArticle[] = [
     title: "การจัดซื้อภาครัฐ / TOR",
     content: `สำหรับหน่วยงานราชการที่ต้องการจัดซื้อ:
 - มีเอกสารคุณลักษณะเฉพาะ (TOR-ready spec) ดาวน์โหลดเป็น .docx ได้ที่ [/docs](/docs)
-- มาตรฐานที่อ้างอิงในสเปค: AHA CPR Guideline 2015, CE Mark, IP65, ISO 13485, EN 1789:2020
+- มาตรฐานที่อ้างอิงในสเปค: AHA CPR Guideline 2010/2015, CE, ISO 13485
 - ผู้เสนอราคามีบุคลากรที่ผ่านการอบรม BLS จากสถาบันมาตรฐานสากล (เช่น ERTS Limited)
 - ออกใบเสนอราคา ใบกำกับภาษี ใบส่งของในนามนิติบุคคล/ราชการได้
 - ให้ส่วนลดสำหรับ order ≥ 5 เครื่อง — สอบถามทีมขายผ่าน LINE หรือ [ฟอร์ม](/#contact)`,
@@ -72,11 +70,10 @@ export const knowledgeArticles: KnowledgeArticle[] = [
     id: "use-cases",
     title: "สถานที่ที่เหมาะกับการติดตั้ง",
     content: `- โรงพยาบาล คลินิก ศูนย์การแพทย์
-- รถพยาบาล (รับรอง EN 1789:2020)
 - สำนักงาน อาคารพาณิชย์ คอนโด
 - โรงเรียน มหาวิทยาลัย
 - โรงงาน โกดัง สถานประกอบการ
-- ฟิตเนส สนามกีฬา สระว่ายน้ำ (IP65 กันน้ำ)
+- ฟิตเนส สนามกีฬา สระว่ายน้ำ (IP55 กันละอองน้ำและฝุ่น)
 - โรงแรม รีสอร์ต ร้านอาหาร
 - ห้างสรรพสินค้า สนามบิน สถานีรถไฟ
 - หน่วยงานราชการ องค์การปกครองส่วนท้องถิ่น`,
