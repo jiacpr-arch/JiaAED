@@ -131,14 +131,17 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
       .select("gclid, utm_source")
       .gte("created_at", week.from)
       .lte("created_at", week.to),
+    // LINE only — web-chat transcripts share these tables (channel "web").
     supabase
       .from("aed_conversations")
       .select("*", { count: "exact", head: true })
+      .eq("channel", "line")
       .gte("created_at", week.from)
       .lte("created_at", week.to),
     supabase
       .from("aed_messages")
-      .select("*", { count: "exact", head: true })
+      .select("id, aed_conversations!inner(channel)", { count: "exact", head: true })
+      .eq("aed_conversations.channel", "line")
       .gte("created_at", week.from)
       .lte("created_at", week.to),
   ]);
