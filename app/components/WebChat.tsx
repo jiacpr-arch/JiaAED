@@ -5,6 +5,7 @@ import { trackEvent as sharedTrack } from "@/lib/aed/analytics-client";
 
 import { LINE_OA } from "@/lib/aed/line";
 const STORAGE_KEY = "jiaaed_web_chat_v1";
+const SESSION_KEY = "jiaaed_web_chat_session";
 const GREETING =
   "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Yuwell / PRIMEDIC HeartSave\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือคำแนะนำเลือกรุ่น?";
 
@@ -23,6 +24,29 @@ function loadHistory(): Msg[] {
   } catch {
     return [];
   }
+}
+
+// Random id the server uses to group this browser's turns into one
+// conversation in aed_conversations (channel "web"). Regenerated on reset so
+// "เริ่มใหม่" starts a new transcript.
+function newSessionId(): string {
+  const id = crypto.randomUUID();
+  try {
+    localStorage.setItem(SESSION_KEY, id);
+  } catch {
+    /* private mode — the id just won't survive a reload */
+  }
+  return id;
+}
+
+function loadSessionId(): string {
+  try {
+    const stored = localStorage.getItem(SESSION_KEY);
+    if (stored) return stored;
+  } catch {
+    /* ignore */
+  }
+  return newSessionId();
 }
 
 function saveHistory(history: Msg[]) {
@@ -82,6 +106,7 @@ export function WebChat() {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const sessionIdRef = useRef<string | null>(null);
 
   // Hydrate from localStorage after mount
   useEffect(() => {
@@ -133,6 +158,7 @@ export function WebChat() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           messages: next.filter((m) => !(m.role === "assistant" && m.content === GREETING)),
+          sessionId: (sessionIdRef.current ??= loadSessionId()),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {
@@ -168,6 +194,7 @@ export function WebChat() {
     } catch {
       /* ignore */
     }
+    sessionIdRef.current = newSessionId();
     trackEvent("web_chat_reset");
   }
 

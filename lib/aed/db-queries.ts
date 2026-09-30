@@ -58,7 +58,7 @@ export async function recordLineFollow(): Promise<void> {
 // ─── Conversations ────────────────────────────────────────────────────────────
 
 export async function getOrCreateConversation(
-  customerId: string,
+  customerId: string | null,
   channel: string,
   channelThreadId: string,
 ): Promise<AedConversation> {

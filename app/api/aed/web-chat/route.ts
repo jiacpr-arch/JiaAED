@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { WEB_CHAT_SYSTEM_PROMPT } from "@/lib/aed/web-chat-prompt";
+import { logWebChatMessage, parseSessionId } from "@/lib/aed/web-chat-log";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -73,6 +74,8 @@ type ChatMsg = { role: Role; content: string };
 
 type Body = {
   messages?: ChatMsg[];
+  /** Random per-browser UUID from WebChat.tsx; keys the transcript in the DB. */
+  sessionId?: unknown;
 };
 
 function sanitize(messages: ChatMsg[]): ChatMsg[] {
@@ -132,6 +135,10 @@ export async function POST(req: Request) {
     );
   }
 
+  // Saved before the model call so a failed turn still leaves a record.
+  const sessionId = parseSessionId(body.sessionId);
+  await logWebChatMessage(sessionId, "inbound", messages[messages.length - 1].content);
+
   const client = new Anthropic({ apiKey });
 
   try {
@@ -160,6 +167,8 @@ export async function POST(req: Request) {
         { status: 502 },
       );
     }
+
+    await logWebChatMessage(sessionId, "outbound", reply);
 
     return NextResponse.json({
       ok: true,
