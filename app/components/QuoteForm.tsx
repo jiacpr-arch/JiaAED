@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
@@ -168,6 +169,7 @@ export function QuoteForm({
 
       submittedRef.current = true;
       if (!json.skipped) {
+        pixelLeadCreated();
         trackEvent("lead_form_submit", { variant, product_id: productId || "none" });
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
         if (typeof gtag === "function") {

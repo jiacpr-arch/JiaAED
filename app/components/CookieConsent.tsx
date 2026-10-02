@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { setPixelConsent } from "../openai-ads";
+import { OpenAIAds } from "./OpenAIAds";
 import { GoogleTags } from "./GoogleTags";
 import { MetaPixel } from "./MetaPixel";
 import { PostHogInit } from "./PostHogInit";
@@ -20,13 +22,15 @@ export function CookieConsent() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch { /* Storage is optional. */ }
     if (saved === "granted" || saved === "denied") setConsent(saved);
     setReady(true);
   }, []);
 
   const choose = (value: Exclude<Consent, null>) => {
-    localStorage.setItem(STORAGE_KEY, value);
+    try { localStorage.setItem(STORAGE_KEY, value); } catch { /* Storage is optional. */ }
+    if (value === "denied") setPixelConsent(false);
     setConsent(value);
   };
 
@@ -34,6 +38,7 @@ export function CookieConsent() {
     <>
       {consent === "granted" && (
         <>
+          <OpenAIAds />
           <GoogleTags />
           <MetaPixel />
           <PostHogInit />
@@ -45,7 +50,7 @@ export function CookieConsent() {
           <div className="cookie-consent-card">
             <p className="cookie-consent-label">ความเป็นส่วนตัว</p>
             <p className="cookie-consent-copy">
-              เราใช้คุกกี้เพื่อวิเคราะห์การใช้งานและปรับปรุงประสบการณ์ของคุณ
+              เราใช้คุกกี้และ OpenAI Pixel เพื่อวัดการเข้าชม การกดติดต่อ และการส่งคำขอสำเร็จ โดยไม่ส่งรายละเอียดฟอร์มหรือข้อมูลส่วนบุคคล
               อ่านรายละเอียดใน{" "}
               <a href="/privacy">
                 นโยบายความเป็นส่วนตัว

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
@@ -212,6 +213,7 @@ export function MiniLeadForm({
       }
 
       if (!json.skipped) {
+        pixelLeadCreated();
         trackEvent("lead_form_submit", { variant, product_id: "none" });
 
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;

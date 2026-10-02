@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-const UPDATED = "4 กรกฎาคม 2569";
+const UPDATED = "2 ตุลาคม 2569";
 
 function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xl font-bold text-white mt-10 mb-3">{children}</h2>;
@@ -69,6 +69,7 @@ export default function PrivacyPage() {
             <li>LINE — ช่องทางสนทนาและแจ้งเตือน</li>
             <li>Google (Analytics / Ads) — วิเคราะห์การใช้งานและวัดผลโฆษณา*</li>
             <li>Meta (Facebook/Instagram Pixel &amp; Conversions API) — วัดผลโฆษณา*</li>
+            <li>OpenAI Pixel — วัดการเข้าชม การกด LINE/โทรศัพท์ และคำขอที่ส่งสำเร็จ โดยไม่แนบข้อมูลส่วนบุคคลหรือรายละเอียดฟอร์ม*</li>
             <li>PostHog — วิเคราะห์พฤติกรรมการใช้งานเว็บไซต์*</li>
           </ul>
           <p className="text-gray-500 mt-2">* ทำงานเฉพาะเมื่อท่านยอมรับคุกกี้เท่านั้น</p>
@@ -77,7 +78,7 @@ export default function PrivacyPage() {
           <p>
             เมื่อเข้าชมเว็บไซต์ครั้งแรก ท่านสามารถเลือก &quot;ยอมรับทั้งหมด&quot; หรือ
             &quot;ใช้เท่าที่จำเป็น&quot; ได้จากแบนเนอร์คุกกี้ — หากเลือกใช้เท่าที่จำเป็น
-            ระบบวิเคราะห์และพิกเซลโฆษณา (Google, Meta, PostHog) จะไม่ถูกโหลด
+            ระบบวิเคราะห์และพิกเซลโฆษณา (Google, Meta, PostHog, OpenAI) จะไม่ถูกโหลด
             ท่านเปลี่ยนใจภายหลังได้โดยล้างข้อมูลเว็บไซต์ (localStorage) ของเบราว์เซอร์แล้วเลือกใหม่
           </p>
 

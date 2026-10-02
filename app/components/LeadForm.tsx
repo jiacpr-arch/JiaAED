@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
@@ -178,6 +179,7 @@ export function LeadForm() {
       // Only count submissions that actually stored a lead. Honeypot/bot trips
       // return ok:true with `skipped`, and must not fire a phantom conversion.
       if (!json.skipped) {
+        pixelLeadCreated();
         trackEvent("lead_form_submit", { variant: "full", product_id: productId || "none" });
 
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
