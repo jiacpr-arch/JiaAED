@@ -1,8 +1,7 @@
+import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { FeatureMatrix } from "@/app/components/FeatureMatrix";
 import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
@@ -36,27 +35,19 @@ export const metadata: Metadata = {
 
 export default function SubscriptionPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <MarketPage>
+      <MarketHero eyebrow="Safety Care — บริการดูแล AED ครบวงจร" title={"ระบบดูแล AED\nพร้อมใช้ตลอดสัญญา."} description='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <div className="market-content">
       <BreadcrumbStructuredData
         items={[
           { name: "หน้าแรก", path: "/" },
           { name: "เช่าบริการครบวงจร (ดูแลครบ)", path: "/aed/subscription" },
         ]}
       />
-      <SiteHeader />
 
-      <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        ☁️ บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน · ต้องการแค่เช่าเครื่อง?{" "}
-        <Link href="/aed/rental" className="underline underline-offset-2">เช่า AED เริ่ม ฿1,990/เดือน →</Link>
-      </div>
+
 
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <SectionHeading
-          as="h1"
-          badge="Safety Care — บริการดูแล AED ครบวงจร"
-          title="ระบบดูแล AED อัจฉริยะ สำหรับองค์กรยุคใหม่"
-          subtitle='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'
-        />
 
         {/* GPS AED + Cloud Dashboard flyer + the 4 things the service actually does */}
         <div className="mt-8 grid md:grid-cols-2 gap-8 items-center">
@@ -169,7 +160,7 @@ export default function SubscriptionPage() {
         </a>
       </section>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

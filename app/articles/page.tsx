@@ -1,8 +1,7 @@
+import { MarketPage } from "@/app/components/MarketShell";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { PageHero } from "@/app/components/PageHero";
 import { articles, articleCover } from "@/lib/aed/articles";
 
@@ -22,8 +21,8 @@ export default function ArticlesIndex() {
   const sorted = [...articles].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <SiteHeader />
+    <MarketPage>
+      <div className="market-content">
 
       <PageHero
         badge="✍️ บทความ"
@@ -69,7 +68,7 @@ export default function ArticlesIndex() {
         </div>
       </section>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

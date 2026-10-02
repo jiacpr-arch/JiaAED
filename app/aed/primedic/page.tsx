@@ -1,8 +1,7 @@
+import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { SpecComparisonTable } from "@/app/components/SpecComparisonTable";
 import { PrimedicLineup } from "@/app/components/PrimedicLineup";
@@ -38,7 +37,9 @@ export const metadata: Metadata = {
 
 export default function PrimedicPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <MarketPage>
+      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"PRIMEDIC HeartSave\nY0 / Y8 / Yuwell Y2."} description="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback — รุ่นเรือธง Y2 มีจอ EKG ดูคุณภาพ CPR สด ๆ"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <div className="market-content">
       <ProductStructuredData include="primedic" />
       <BreadcrumbStructuredData
         items={[
@@ -46,15 +47,8 @@ export default function PrimedicPage() {
           { name: "AED Yuwell / PRIMEDIC HeartSave", path: "/aed/primedic" },
         ]}
       />
-      <SiteHeader />
 
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <SectionHeading
-          as="h1"
-          badge="✨ ไลน์พรีเมียม"
-          title="PRIMEDIC HeartSave — Y0 / Y8 / Yuwell Y2"
-          subtitle="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback — รุ่นเรือธง Y2 มีจอ EKG ดูคุณภาพ CPR สด ๆ"
-        />
 
         <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
           <div className="relative w-full h-72 rounded-2xl overflow-hidden border border-gray-800 bg-white">
@@ -257,7 +251,7 @@ export default function PrimedicPage() {
         </p>
       </section>
 
-      <SiteFooter regNote={`PRIMEDIC HeartSave — ${regLine(PRIMEDIC_REGULATORY)}`} />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

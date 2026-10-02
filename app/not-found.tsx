@@ -1,14 +1,14 @@
+import { MarketPage } from "@/app/components/MarketShell";
 import Link from "next/link";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { LINE_OA } from "@/lib/aed/line";
 
 // Branded 404 — before this, dead links landed on Next's bare white default
 // with no nav and no way back into the site.
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans flex flex-col">
-      <SiteHeader />
+    <MarketPage>
+      <div className="market-content">
+
 
       <main className="flex-1 flex items-center justify-center px-4 py-20">
         <div className="max-w-lg text-center">
@@ -44,7 +44,8 @@ export default function NotFound() {
         </div>
       </main>
 
-      <SiteFooter />
-    </div>
+
+          </div>
+    </MarketPage>
   );
 }
