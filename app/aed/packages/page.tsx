@@ -1,7 +1,6 @@
+import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { PackageCard } from "@/app/components/PackageCard";
 import { TrustStats } from "@/app/components/TrustStats";
@@ -36,26 +35,19 @@ export const metadata: Metadata = {
 
 export default function PackagesPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <MarketPage>
+      <MarketHero eyebrow="แพ็กเกจมาตรฐาน" title={"3 วิธีได้ AED มาใช้\nสำหรับองค์กรของคุณ."} description="ทั้งแบบขายขาด, เช่าแล้วได้ซื้อ (Rent-to-Own) และบริการเช่าครบวงจร พร้อมระบบ GPS ในแพ็กเกจเดียว"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <div className="market-content">
       <BreadcrumbStructuredData
         items={[
           { name: "หน้าแรก", path: "/" },
           { name: "แพ็กเกจ AED", path: "/aed/packages" },
         ]}
       />
-      <SiteHeader />
 
-      <div className="bg-yellow-400 text-yellow-900 text-center py-2 font-bold text-sm">
-        🛟 เช่า-ซื้อ AED + GPS ครบวงจร — เลือกแพ็กเกจที่เหมาะกับองค์กรคุณ
-      </div>
+
 
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <SectionHeading
-          as="h1"
-          badge="แพ็กเกจมาตรฐาน"
-          title="3 วิธีได้ AED มาใช้ — สำหรับทุกความต้องการของธุรกิจ"
-          subtitle="ทั้งแบบขายขาด, เช่าแล้วได้ซื้อ (Rent-to-Own) และบริการเช่าครบวงจร พร้อมระบบ GPS ในแพ็กเกจเดียว"
-        />
 
         <PriceViewTracker targetId="packages-price" />
         <p className="text-center text-gray-500 text-sm mt-6 mb-6">ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้</p>
@@ -146,7 +138,7 @@ export default function PackagesPage() {
         </a>
       </section>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

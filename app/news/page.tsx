@@ -1,7 +1,6 @@
+import { MarketPage } from "@/app/components/MarketShell";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { PageHero } from "@/app/components/PageHero";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -71,8 +70,8 @@ export default async function NewsPage() {
   const items = await getNews();
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <SiteHeader />
+    <MarketPage>
+      <div className="market-content">
 
       <PageHero
         badge="📰 ข่าว & ความตระหนัก"
@@ -142,7 +141,7 @@ export default async function NewsPage() {
         </p>
       </section>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

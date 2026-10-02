@@ -1,9 +1,8 @@
+import { MarketPage } from "@/app/components/MarketShell";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { articles, findArticle, articleCover } from "@/lib/aed/articles";
 import { renderMarkdown } from "@/lib/aed/markdown";
 import {
@@ -44,7 +43,8 @@ export default async function ArticlePage(
   if (!article) notFound();
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
+    <MarketPage>
+      <div className="market-content">
       <ArticleStructuredData
         slug={article.slug}
         title={article.title}
@@ -59,7 +59,6 @@ export default async function ArticlePage(
           { name: article.title, path: `/articles/${article.slug}` },
         ]}
       />
-      <SiteHeader />
 
       <article className="py-12 px-4">
         <div className="max-w-3xl mx-auto">
@@ -101,7 +100,7 @@ export default async function ArticlePage(
               ← บทความอื่นๆ
             </Link>
             <Link
-              href="/#contact"
+              href="/quote"
               className="bg-yellow-400 text-gray-950 font-bold px-5 py-2.5 rounded-full hover:bg-yellow-300 transition-colors text-sm"
             >
               ขอใบเสนอราคา →
@@ -110,7 +109,7 @@ export default async function ArticlePage(
         </div>
       </article>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }

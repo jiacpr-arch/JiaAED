@@ -31,7 +31,7 @@ export function MarketFooter() {
       <div className="market-container market-footer-grid">
         <div><Link href="/" className="market-brand"><span>JIA</span><b>AED</b></Link><p>เครื่อง AED พร้อมบริการสำหรับองค์กร<br />โดย เจี่ยรักษา</p></div>
         <div><strong>สำรวจเว็บไซต์</strong><Link href="/aed">ซื้อเครื่อง AED</Link><Link href="/aed/packages">แพ็กเกจ AED</Link><Link href="/aed/rental">เช่าและเช่าซื้อ AED</Link><Link href="/aed/subscription">บริการดูแล AED</Link><Link href="/training">อบรม CPR &amp; AED</Link><Link href="/about">เกี่ยวกับเรา</Link><Link href="/docs">เอกสารดาวน์โหลด</Link></div>
-        <div><strong>ติดต่อและข้อมูล</strong><Link href="/quote">ขอใบเสนอราคา ↗</Link><a href={LINE_OA} data-line-cta="market_footer" target="_blank" rel="noopener noreferrer">LINE JiaAED ↗</a><a href={PHONE_HREF} data-cta="tel_market_footer">{PHONE_DISPLAY}</a><Link href="/articles">บทความ</Link><Link href="/privacy">นโยบายความเป็นส่วนตัว</Link></div>
+        <div><strong>ติดต่อและข้อมูล</strong><Link href="/quote">ขอใบเสนอราคา ↗</Link><a href={LINE_OA} data-line-cta="market_footer" target="_blank" rel="noopener noreferrer">LINE JiaAED ↗</a><a href={PHONE_HREF} data-cta="tel_market_footer">{PHONE_DISPLAY}</a><Link href="/articles">บทความ</Link><Link href="/news">ข่าว</Link><Link href="/privacy">นโยบายความเป็นส่วนตัว</Link></div>
       </div>
       <div className="market-container market-footer-bottom"><span>© {new Date().getFullYear()} JiaAED · เจี่ยรักษา</span><span>{PRIMEDIC_REGULATORY.published ? `อย. ${PRIMEDIC_REGULATORY.fda} · ฆพ.2475/2569 (Y0/Y2) · ฆพ.287/2567 (Y8)` : PRIMEDIC_REGULATORY.pendingNote}</span><span>เครื่องมือแพทย์ โปรดอ่านคำเตือนและศึกษาวิธีใช้</span></div>
     </footer>

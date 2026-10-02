@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
-import { JiaAedLogo } from "@/app/components/JiaAedLogo";
+import { MarketPage, MarketButton } from "@/app/components/MarketShell";
 import {
   primedicModels,
   primedicSharedSpecs,
@@ -13,7 +12,6 @@ import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
-import { FOOTER_GROUPS } from "@/lib/aed/nav";
 import { LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
@@ -157,7 +155,7 @@ function Y2StructuredData() {
 
 export default function YuwellY2Landing() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
+    <MarketPage>
       {PRIMEDIC_REGULATORY.published && <Y2StructuredData />}
       <BreadcrumbStructuredData
         items={[
@@ -166,100 +164,20 @@ export default function YuwellY2Landing() {
         ]}
       />
 
-      {/* Top bar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-          <Link href="/" className="flex items-center gap-2">
-            <JiaAedLogo className="h-8 w-auto" variant="dark" />
-          </Link>
-          <div className="flex items-center gap-2">
-            <a
-              href={PHONE_HREF}
-              data-cta="tel_y2_navbar"
-              className="hidden sm:block text-sm font-semibold text-gray-700 hover:text-gray-900 px-3 py-2"
-            >
-              📞 {PHONE_DISPLAY}
-            </a>
-            <a
-              href={LINE_Y2}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-line-cta="y2_navbar"
-              data-product="primedic-y2"
-              className="bg-[#06C755] text-white text-sm font-bold px-4 py-2 rounded-full hover:bg-[#05a847]"
-            >
-              💬 LINE
-            </a>
+      <section className="market-product-hero">
+        <div className="market-container market-product-grid">
+          <div><p className="market-eyebrow">เรือธง · จอสี EKG · You Too</p>
+            <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
+            <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
+            <div className="market-product-price"><strong>{Y2_PRICE}</strong><span>ยังไม่รวม VAT</span></div>
+            <p>หรือผ่อน {y2Installment.priceLabel} × 18 เดือน (มัดจำ ฿22,000) แล้วเป็นเจ้าของ</p>
+            <div className="market-actions"><MarketButton href={LINE_Y2} lineCta="y2_hero" product="primedic-y2">สอบถาม / ขอใบเสนอราคา</MarketButton><MarketButton href={PHONE_HREF} secondary>โทร {PHONE_DISPLAY}</MarketButton></div>
           </div>
-        </div>
-      </header>
-
-      {/* Reassurance strip */}
-      <div className="bg-gray-50 border-b border-gray-200 text-center py-2 px-4 text-xs text-gray-600">
-        🏅 รุ่นเรือธง · อย. {PRIMEDIC_REGULATORY.fda} · CE / ISO 13485 · ออกใบกำกับภาษีได้ · รองรับจัดซื้อภาครัฐ
-      </div>
-
-      {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 py-10 md:py-14">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <div>
-            <p className="text-red-600 text-xs md:text-sm font-semibold tracking-wide mb-4">
-              เรือธง · จอสี EKG · You Too
-            </p>
-            <h1 className="text-4xl md:text-6xl font-semibold tracking-[-0.02em] leading-[1.12] mb-5">
-              AED Yuwell Y2
-              <br />
-              <span className="text-red-600">เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</span>
-            </h1>
-            <p className="text-gray-600 mb-6">
-              {y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.
-            </p>
-
-            <div className="mb-6">
-              <div className="flex items-end gap-2">
-                <span className="text-5xl font-black text-gray-900">{Y2_PRICE}</span>
-                <span className="text-sm text-gray-500 mb-2">ยังไม่รวม VAT</span>
-              </div>
-              <p className="text-sm text-gray-600 mt-1">
-                หรือ <span className="font-bold text-red-600">ผ่อน {y2Installment.priceLabel}</span> × 18 เดือน
-                (มัดจำ ฿22,000) แล้วเป็นเจ้าของ
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 max-w-md">
-              <a
-                href={LINE_Y2}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-line-cta="y2_hero"
-                data-product="primedic-y2"
-                className="block bg-[#06C755] text-white font-bold text-xl px-8 py-4 rounded-full hover:bg-[#05a847] text-center shadow-lg shadow-[#06C755]/30"
-              >
-                💬 สอบถาม / ขอใบเสนอราคาทาง LINE
-              </a>
-              <a
-                href={PHONE_HREF}
-                data-cta="tel_y2_hero"
-                className="block border-2 border-gray-300 hover:border-gray-900 text-gray-900 font-bold text-lg px-8 py-3.5 rounded-full text-center transition-colors"
-              >
-                📞 โทรเลย {PHONE_DISPLAY}
-              </a>
-            </div>
-          </div>
-
-          <div className="relative w-full h-72 sm:h-96 md:h-[28rem] bg-gray-50 rounded-3xl border border-gray-100">
-            <Image
-              src="/images/primedic-y2-open.jpg"
-              alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด"
-              fill
-              className="object-contain p-6"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            />
-          </div>
+          <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
         </div>
       </section>
-
+      <div className="market-trust"><div className="market-container market-trust-inner"><span>อย. {PRIMEDIC_REGULATORY.fda}</span><span>CE / ISO 13485</span><span>ออกใบกำกับภาษีได้</span><span>รองรับจัดซื้อภาครัฐ</span></div></div>
+      <div className="market-content market-content-y2">
       {/* Key features */}
       <section className="bg-gray-50 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-12">
@@ -556,33 +474,7 @@ export default function YuwellY2Landing() {
         </div>
       </section>
 
-      {/* Light-theme sitemap footer — SiteFooter is dark and this page is also
-          iframe-embedded on jia1669.com, so it gets its own white variant. */}
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-4 py-10 text-sm text-gray-600">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-8 mb-8">
-            {FOOTER_GROUPS.map((g) => (
-              <div key={g.title}>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
-                  {g.title}
-                </h3>
-                <ul className="space-y-2">
-                  {g.links.map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} className="hover:text-red-600 transition-colors">
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} JiaAED · เจี่ยรักษา — นำเข้าและจัดจำหน่ายเครื่องมือแพทย์โดยตรง
-          </p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </MarketPage>
   );
 }

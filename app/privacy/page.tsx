@@ -1,7 +1,6 @@
+import { MarketPage } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/app/components/SiteHeader";
-import { SiteFooter } from "@/app/components/SiteFooter";
 import { PageHero } from "@/app/components/PageHero";
 import { LINE_OA_ID } from "@/lib/aed/line";
 
@@ -20,8 +19,8 @@ function H2({ children }: { children: React.ReactNode }) {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <SiteHeader />
+    <MarketPage>
+      <div className="market-content">
 
       <PageHero
         badge="⚖️ PDPA"
@@ -112,7 +111,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <SiteFooter />
-    </div>
+      </div>
+    </MarketPage>
   );
 }
