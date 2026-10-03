@@ -4,12 +4,12 @@ import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 import { LINE_OA } from "@/lib/aed/line";
 
 // Clean product photos per model; the approved (ฆพ.) flyers are shown in their
-// own section on /aed/primedic. GPS keeps its flyer until a clean photo exists.
+// own section on /aed/primedic.
 const imgById: Record<string, string> = {
   "primedic-y0": "/images/primedic-y-series.png",
   "primedic-y8": "/images/primedic-y8-open.png",
   "primedic-y2": "/images/primedic-y2-open.jpg",
-  "yuwell-gps": "/images/yuwell-gps-flyer.png",
+  "yuwell-gps": "/images/yuwell-gps-aed.webp",
 };
 
 type Card = {
