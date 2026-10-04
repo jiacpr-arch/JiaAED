@@ -82,10 +82,9 @@ export const yuwellGpsAed = {
   id: "yuwell-gps",
   name: "Yuwell AED — GPS ในตัว",
   price: 60_000, // before VAT
-  // Real Yuwell GPS artwork (the same flyer the lineup card + subscription hero
-  // use). Previously pointed at a PRIMEDIC photo, which leaked into the Google
-  // product JSON-LD (StructuredData) and lineup.ts as a mismatched image.
-  image: "/images/yuwell-gps-flyer.png",
+  // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds
+  // the Google product JSON-LD (StructuredData) and lineup.ts.
+  image: "/images/yuwell-gps-aed.webp",
   keyDiff: "มี GPS + ติดตามตำแหน่ง/สถานะออนไลน์ในตัวเครื่อง",
   bestFor: "องค์กรหลายสาขา · ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ตลอดเวลา",
   description:
