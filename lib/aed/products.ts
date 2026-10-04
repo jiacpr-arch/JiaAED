@@ -113,7 +113,7 @@ export const accessories: Accessory[] = [
     name: "ตู้แขวนผนัง AED (พร้อมสัญญาณเตือน)",
     subtitle: "ตู้จัดเก็บ",
     price: 5900,
-    image: "/images/aed-wallcabinet.webp",
+    image: "/images/jia-wall-cabinet.webp",
     description:
       "ตู้ติดผนังมาตรฐานสำหรับเก็บเครื่อง AED พร้อมสัญญาณเตือนเมื่อเปิดตู้ ช่วยให้มองเห็นชัดและหยิบใช้ได้ทันทีเมื่อเกิดเหตุ",
     features: [
