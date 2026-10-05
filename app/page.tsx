@@ -43,6 +43,7 @@ export default function Home() {
     <MarketHero eyebrow="AED สำหรับองค์กรและพื้นที่สาธารณะ" title={"ซื้อเครื่อง AED\nให้พร้อมใช้จริง."} description="เปรียบเทียบรุ่นและราคาได้ในหน้าเดียว พร้อมทีมช่วยเลือกเครื่อง จัดส่ง ติดตั้ง และอบรมการใช้ AED ถึงหน่วยงาน" image="/images/jiaaed-hero-2026.png">
       <MarketButton href="#models" lineCta="hero_models">ดูรุ่นและราคา</MarketButton>
       <MarketButton href="/quote" lineCta="hero_quote" secondary>ขอใบเสนอราคา</MarketButton>
+      <MarketButton href={LINE_OA} lineCta="hero_line" secondary>ทัก LINE ตอบทันที</MarketButton>
       <p className="market-hero-price">ราคาเริ่มต้น <strong>฿{Math.min(...primedicModels.map((m) => m.price)).toLocaleString()}</strong> ก่อน VAT</p>
     </MarketHero>
     <div className="market-trust"><div className="market-container market-trust-inner">
