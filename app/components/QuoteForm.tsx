@@ -38,6 +38,7 @@ export function QuoteForm({
 }) {
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showMore, setShowMore] = useState(false);
   const startedRef = useRef(false);
   const submittedRef = useRef(false);
   const viewedRef = useRef(false);
@@ -227,45 +228,60 @@ export function QuoteForm({
         </label>
       </div>
 
-      <Field label="ชื่อองค์กร / บริษัท" name="company" placeholder="บริษัท..." />
+      <p className="text-sm text-yellow-300/90 text-center">⏱ ใช้เวลาแค่ 30 วินาที — กรอกแค่เบอร์โทรก็พอ</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="ชื่อผู้ติดต่อ" name="fullName" placeholder="คุณ..." />
         <Field label="เบอร์โทร" name="phone" type="tel" placeholder="08x-xxx-xxxx" inputMode="tel" autoComplete="tel" />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="อีเมล" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
-        <div>
-          <label htmlFor="unitCount" className="block text-sm font-semibold text-gray-300 mb-2">
-            จำนวนเครื่อง AED ที่ต้องการ
-          </label>
-          <select
-            id="unitCount"
-            name="unitCount"
-            defaultValue=""
-            className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-          >
-            <option value="">— เลือก —</option>
-            {UNIT_OPTIONS.map((u) => (
-              <option key={u} value={u}>
-                {u}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Field label="ชื่อผู้ติดต่อ" name="fullName" placeholder="คุณ..." />
       </div>
 
-      <div>
-        <label htmlFor="message" className="block text-sm font-semibold text-gray-300 mb-2">
-          รายละเอียดเพิ่มเติม / ความต้องการพิเศษ
-        </label>
-        <textarea
-          id="message"
-          name="message"
-          rows={3}
-          placeholder="เช่น ต้องการแพ็กเกจไหน, จุดติดตั้ง, นัดสำรวจพื้นที่ ฯลฯ"
-          className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none resize-y"
-        />
-      </div>
+      {/* Weekly review: 63 form views -> 1 start. Only phone is needed to call
+          back; the rest is progressive-disclosure so it reads as a short ask. */}
+      {showMore ? (
+        <div className="space-y-4">
+          <Field label="ชื่อองค์กร / บริษัท (ถ้ามี)" name="company" placeholder="บริษัท..." />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="อีเมล (ถ้ามี)" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
+            <div>
+              <label htmlFor="unitCount" className="block text-sm font-semibold text-gray-300 mb-2">
+                จำนวนเครื่อง AED ที่ต้องการ
+              </label>
+              <select
+                id="unitCount"
+                name="unitCount"
+                defaultValue=""
+                className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
+              >
+                <option value="">— เลือก —</option>
+                {UNIT_OPTIONS.map((u) => (
+                  <option key={u} value={u}>
+                    {u}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="message" className="block text-sm font-semibold text-gray-300 mb-2">
+              รายละเอียดเพิ่มเติม / ที่อยู่จุดติดตั้ง
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={3}
+              placeholder="เช่น ต้องการแพ็กเกจไหน, จุดติดตั้ง, นัดสำรวจพื้นที่ ฯลฯ"
+              className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none resize-y"
+            />
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setShowMore(true)}
+          className="text-sm text-yellow-400/80 hover:text-yellow-300 font-medium"
+        >
+          ➕ เพิ่มรายละเอียด (บริษัท · อีเมล · จำนวนเครื่อง)
+        </button>
+      )}
 
       {state === "error" && errorMsg && (
         <div className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
