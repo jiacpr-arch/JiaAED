@@ -232,7 +232,7 @@ webhook `/api/aed/webhook/line` ตอน event `follow`) แล้ว redeploy
 
 ## 7.6 Web chat widget (เจี่ย AI บน landing page)
 
-Floating chat bubble มุมขวาล่างของทุกหน้า — ใช้ Claude (claude-sonnet-4-6) ตอบคำถามแบบเดียวกับ LINE bot แต่ scope แคบกว่า:
+Floating chat bubble มุมขวาล่างของทุกหน้า — ใช้ Claude (claude-sonnet-5-5) ตอบคำถามแบบเดียวกับ LINE bot แต่ scope แคบกว่า:
 
 - **ทำได้**: ตอบคำถามสเปค ราคาเริ่มต้น การติดตั้ง การรับประกัน FAQ
 - **ทำไม่ได้** (จงใจ): ตกลงราคาสุดท้าย / ต่อรอง / สร้างใบเสนอราคา / ออกใบกำกับภาษี — ทั้งหมดให้ส่งไป LINE bot หรือ contact form

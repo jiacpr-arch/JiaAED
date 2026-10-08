@@ -35,7 +35,7 @@ CREATE POLICY "service_role_growth_tenants" ON growth_tenants
 --       "funnel": ["engaged_session", "lead_form_start", "lead_form_submit"],
 --       "minVisitsForAlert": 50
 --     },
---     "llm": { "model": "claude-sonnet-4-5", "maxTokens": 1024, "systemPrompt": "คุณคือนักวิเคราะห์การตลาดของ PharmRoo ..." }
+--     "llm": { "model": "claude-sonnet-5-5", "maxTokens": 1024, "systemPrompt": "คุณคือนักวิเคราะห์การตลาดของ PharmRoo ..." }
 --   }'::jsonb
 -- );
 --
@@ -70,6 +70,6 @@ CREATE POLICY "service_role_growth_tenants" ON growth_tenants
 --       "funnel": ["engaged_session", "lead_form_start", "lead_form_submit"],
 --       "minVisitsForAlert": 50
 --     },
---     "llm": { "model": "claude-sonnet-4-5", "maxTokens": 1024, "systemPrompt": "คุณคือนักวิเคราะห์การตลาดของ JiaAED ..." }
+--     "llm": { "model": "claude-sonnet-5-5", "maxTokens": 1024, "systemPrompt": "คุณคือนักวิเคราะห์การตลาดของ JiaAED ..." }
 --   }'::jsonb
 -- );
