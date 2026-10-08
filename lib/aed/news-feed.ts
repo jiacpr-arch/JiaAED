@@ -32,7 +32,7 @@ export const NEWS_QUERIES = [
 const MAX_CANDIDATES = 50;
 const MAX_INSERT_PER_RUN = 12;
 
-const MODEL = "claude-sonnet-4-5";
+const MODEL = "claude-sonnet-5-5";
 
 export type RawNewsItem = {
   guid: string;

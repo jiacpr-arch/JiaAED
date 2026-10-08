@@ -130,7 +130,7 @@ export async function runAI(
     iterations++;
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5",
+      model: "claude-sonnet-5-5",
       max_tokens: 1024,
       system: systemPrompt,
       tools: AED_TOOLS,

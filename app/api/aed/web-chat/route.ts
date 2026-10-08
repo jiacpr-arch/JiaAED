@@ -6,7 +6,7 @@ import { logWebChatMessage, parseSessionId } from "@/lib/aed/web-chat-log";
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const MODEL = "claude-sonnet-4-6";
+const MODEL = "claude-sonnet-5-5";
 const MAX_TURNS = 30;
 const MAX_INPUT_CHARS = 4000;
 

@@ -270,7 +270,7 @@ export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> 
   const userPayload = JSON.stringify(ctx, null, 2);
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5",
+    model: "claude-sonnet-5-5",
     max_tokens: 1024,
     system: SYSTEM_PROMPT,
     messages: [

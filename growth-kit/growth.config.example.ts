@@ -53,7 +53,7 @@ export const config: GrowthConfig = {
 
   llm: {
     apiKey: process.env.ANTHROPIC_API_KEY ?? "",
-    model: "claude-sonnet-4-5",
+    model: "claude-sonnet-5-5",
     maxTokens: 1024,
     systemPrompt: [
       "คุณคือนักวิเคราะห์การตลาดดิจิทัลที่ช่วยร้าน PharmRoo ดูข้อมูลแล้วแนะนำ action items",

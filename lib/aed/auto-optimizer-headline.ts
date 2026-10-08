@@ -111,7 +111,7 @@ export async function proposeNewHeadline(args: {
   ].join("\n");
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-5",
+    model: "claude-sonnet-5-5",
     max_tokens: 512,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: prompt }],
