@@ -43,7 +43,7 @@ import { dirname, resolve } from "path";
   }
 })();
 
-const ADS_BASE = "https://googleads.googleapis.com/v17";
+const ADS_BASE = "https://googleads.googleapis.com/v26";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 
 const GOOD_CPL = 200;

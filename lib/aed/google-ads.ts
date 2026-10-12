@@ -1,7 +1,9 @@
 import { createHash } from "crypto";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
-const ADS_BASE = "https://googleads.googleapis.com/v17";
+// Google Ads sunsets each API version ~1 year after release and then answers
+// with an HTML 404 page — bump this when the cron reports `ads_api_404: <!DOCTYPE`.
+const ADS_BASE = "https://googleads.googleapis.com/v26";
 
 export type ConversionInput = {
   conversionActionId: string;
