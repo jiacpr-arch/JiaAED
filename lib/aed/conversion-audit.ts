@@ -98,15 +98,28 @@ export function formatConversionAuditReport(result: ConversionAuditResult): stri
     .sort((a, b) => b[1] - a[1])
     .map(([status, count]) => `• ${status}: ${count}`);
 
-  const advice =
-    !ok
-      ? [
-          "",
-          result.statusBreakdown.skipped_no_creds > 0 || result.statusBreakdown.skipped_no_action_id > 0
-            ? "⚠️ ระบบยังไม่ได้ตั้งค่า Google Ads API ครบ (ดู docs/google-ads-setup.md)"
-            : "⚠️ ลีดจำนวนมากไม่มี gclid/email/phone ตรงกับที่รายงานสำเร็จ — ตรวจการเชื่อม webhook",
-        ]
-      : [];
+  const noActionId = result.statusBreakdown.skipped_no_action_id > 0;
+  const noCreds = result.statusBreakdown.skipped_no_creds > 0;
+  const advice: string[] = [];
+  if (!ok) {
+    advice.push("");
+    if (noActionId) {
+      advice.push(
+        "⚠️ ยังไม่ได้ตั้ง GOOGLE_ADS_CONVERSION_ACTION_ID ใน Vercel — สร้าง conversion action " +
+          "'Sale Closed' แล้วเอาเลข ctId จาก URL มาใส่ (docs/google-ads-setup.md §7.7)",
+      );
+    }
+    if (noCreds) {
+      advice.push(
+        "⚠️ GOOGLE_ADS_* (DEVELOPER_TOKEN, CUSTOMER_ID, CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) ยังไม่ครบ",
+      );
+    }
+    if (!noActionId && !noCreds) {
+      advice.push(
+        "⚠️ ลีดจำนวนมากไม่มี gclid/email/phone ตรงกับที่รายงานสำเร็จ — ตรวจการเชื่อม webhook",
+      );
+    }
+  }
 
   return [header, "", ...breakdownLines, ...advice].join("\n");
 }

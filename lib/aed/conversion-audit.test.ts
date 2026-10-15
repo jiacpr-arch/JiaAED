@@ -113,6 +113,16 @@ describe("isConversionAuditOk / formatConversionAuditReport", () => {
       [{ status: "skipped_no_creds", gclid: null, email_hash: null, phone_hash: null }],
     );
     const text = formatConversionAuditReport(result);
-    expect(text).toContain("ยังไม่ได้ตั้งค่า Google Ads API");
+    expect(text).toContain("GOOGLE_ADS_*");
+  });
+
+  it("calls out the missing conversion action id specifically", () => {
+    const result = auditConversions(
+      [{ id: "1", gclid: "g1", email: null, phone: null }],
+      [{ status: "skipped_no_action_id", gclid: null, email_hash: null, phone_hash: null }],
+    );
+    const text = formatConversionAuditReport(result);
+    expect(text).toContain("GOOGLE_ADS_CONVERSION_ACTION_ID");
+    expect(text).not.toContain("GOOGLE_ADS_*");
   });
 });
