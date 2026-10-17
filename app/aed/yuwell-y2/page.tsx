@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
   description:
     `AED Yuwell Y2 (You Too) รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ยังไม่รวม VAT) ` +
-    "หรือผ่อน ฿3,400/เดือน × 18 เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · " +
+    `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · ` +
     `โทร 090-979-1212 หรือ LINE ${LINE_OA_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },

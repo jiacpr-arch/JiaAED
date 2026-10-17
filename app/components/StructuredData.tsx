@@ -24,7 +24,9 @@ export function StructuredData() {
     url: SITE,
     logo: `${SITE}/images/jia-logo.webp`,
     description:
-      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
+      // Distributor, not importer — Yuwell Medical (Thailand) is the registered
+      // importer (see lib/aed/regulatory.ts).
+      "ผู้จัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",

@@ -70,7 +70,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   // ── PRIMEDIC HeartSave (premium line — Y2 also mirrored into the "i7" SKU
   // slot above now that Amoul i7 is discontinued, see lib/aed/products.ts) ──
   // NOTE: PRIMEDIC อย. confirmed to cover Y2 (ก.ค. 2026, importer-verified) —
-  // ฆพ.2475/2569 (Y0/Y2) + ฆพ.287/2567 (Y8), see lib/aed/regulatory.ts.
+  // the อย./ฆพ. numbers live only in lib/aed/regulatory.ts.
   // กลยุทธ์ราคาใหม่ (ก.ค. 2026 — ดู docs/yuwell-pricing-strategy-2026-07-09.md):
   // จุดยืน "เน้นปริมาณ" + Y0/Y8 = ฮาร์ดแวร์เดียวกัน → ให้ Y0 เป็นตัวขายหลัก/โฆษณา
   // ที่ 39,000 (ลดจากหมุดเดิม 39,999), เก็บพรีเมียม feedback ไว้ที่ Y8 (44,900)

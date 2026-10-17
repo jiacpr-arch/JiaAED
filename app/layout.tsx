@@ -11,6 +11,7 @@ import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
 import { MobileContactBar } from "./components/MobileContactBar";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 
 // Thai body font — the previous Arial fallback rendered Thai text cramped and
 // was a big reason the site felt like a wall of text. Its "latin" subset also
@@ -30,7 +31,8 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 65-2-2-2-0013415",
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย" +
+    (PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · ทะเบียน อย. ${PRIMEDIC_REGULATORY.fda}` : ""),
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",

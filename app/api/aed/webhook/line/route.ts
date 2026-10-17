@@ -14,6 +14,7 @@ import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow, notifyHotConversation, notifyProcessingError } from "@/lib/aed/notify-owner";
 import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
 import { replyOrPush } from "@/lib/aed/line-messaging";
+import { primedicModels } from "@/lib/aed/primedic";
 import type { LineEvent } from "@/lib/aed/types";
 
 export const runtime = "nodejs";
@@ -93,7 +94,7 @@ async function processEvents(events: LineEvent[]): Promise<void> {
       const welcomeMsg = [
         "สวัสดีครับ! 🙏 ผมเจี่ย ผู้ช่วยขาย AED จาก เจี่ยรักษา ครับ",
         "",
-        "เราขาย AED Yuwell / PRIMEDIC HeartSave เครื่องช่วยชีวิตคุณภาพสูง ราคาเริ่มต้น ฿39,000 ครับ",
+        `เราขาย AED Yuwell / PRIMEDIC HeartSave เครื่องช่วยชีวิตคุณภาพสูง ราคาเริ่มต้น ฿${Math.min(...primedicModels.map((m) => m.price)).toLocaleString("en-US")} ครับ`,
         "",
         "สนใจสอบถามข้อมูล หรือต้องการใบเสนอราคาได้เลยนะครับ 😊",
       ].join("\n");
