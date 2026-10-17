@@ -142,16 +142,6 @@ export async function GET(req: Request) {
 
   const lineClicks = events.filter((e) => e.event_name === "line_click");
   const docDownloads = events.filter((e) => e.event_name === "doc_download");
-  const heroViews = events.filter((e) => e.event_name === "hero_cta_view");
-
-  const a_views = heroViews.filter((e) => (e.properties?.variant as string) === "a").length;
-  const b_views = heroViews.filter((e) => (e.properties?.variant as string) === "b").length;
-  const a_clicks = lineClicks.filter(
-    (e) => (e.properties?.hero_variant as string) === "a" && (e.properties?.location as string) === "hero",
-  ).length;
-  const b_clicks = lineClicks.filter(
-    (e) => (e.properties?.hero_variant as string) === "b" && (e.properties?.location as string) === "hero",
-  ).length;
 
   const dailyMap = new Map<string, { visitors: number; line_clicks: number; leads: number; form_submits: number }>();
   for (let i = days - 1; i >= 0; i--) {
@@ -211,14 +201,6 @@ export async function GET(req: Request) {
       location: x.key,
       n: x.n,
     })),
-    ab: {
-      a_views,
-      a_clicks,
-      a_ctr: pct(a_clicks, a_views),
-      b_views,
-      b_clicks,
-      b_ctr: pct(b_clicks, b_views),
-    },
     recent_leads: leads.map((l) => ({
       id: l.id,
       full_name: l.full_name,

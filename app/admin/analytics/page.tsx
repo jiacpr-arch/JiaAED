@@ -32,14 +32,6 @@ type DashboardData = {
   top_referrers: Array<{ host: string; n: number }>;
   top_docs: Array<{ doc_id: string; n: number }>;
   top_line_locations: Array<{ location: string; n: number }>;
-  ab: {
-    a_views: number;
-    a_clicks: number;
-    a_ctr: number;
-    b_views: number;
-    b_clicks: number;
-    b_ctr: number;
-  };
   recent_leads: Array<{
     id: string;
     full_name: string | null;
@@ -196,16 +188,6 @@ export default function AdminAnalyticsPage() {
               <Funnel data={data.funnel} />
             </section>
 
-            {data.ab.a_views + data.ab.b_views > 0 && (
-              <section>
-                <h2 className="text-lg font-bold mb-3">🧪 A/B Test (Hero CTA)</h2>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <AbCard variant="A" copy='💬 คุยกับ AI เจี่ย — ฟรี!' views={data.ab.a_views} clicks={data.ab.a_clicks} ctr={data.ab.a_ctr} />
-                  <AbCard variant="B" copy='📋 ขอใบเสนอราคา ฟรี!' views={data.ab.b_views} clicks={data.ab.b_clicks} ctr={data.ab.b_ctr} winner={data.ab.b_ctr > data.ab.a_ctr} />
-                </div>
-              </section>
-            )}
-
             <div className="grid md:grid-cols-2 gap-6">
               <TopList title="หน้าที่คนเข้าเยอะ" items={data.top_pages.map((p) => ({ label: p.path, n: p.n }))} />
               <TopList title="คนมาจากไหน (referrer)" items={data.top_referrers.map((r) => ({ label: r.host, n: r.n }))} emptyText="ส่วนใหญ่ direct / hidden" />
@@ -329,21 +311,6 @@ function Funnel({ data }: { data: DashboardData["funnel"] }) {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function AbCard({ variant, copy, views, clicks, ctr, winner }: { variant: string; copy: string; views: number; clicks: number; ctr: number; winner?: boolean }) {
-  return (
-    <div className={`rounded-2xl border p-4 ${winner ? "border-green-400/60 bg-green-400/5" : "border-gray-800 bg-gray-900"}`}>
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-bold">Variant {variant} {winner && <span className="text-xs bg-green-400 text-gray-950 px-2 py-0.5 rounded ml-2">🏆 Winner</span>}</span>
-        <span className="text-2xl font-bold text-yellow-400">{ctr}%</span>
-      </div>
-      <p className="text-sm text-gray-400 mb-3">{copy}</p>
-      <div className="text-xs text-gray-500">
-        {clicks} clicks / {views} views
-      </div>
     </div>
   );
 }

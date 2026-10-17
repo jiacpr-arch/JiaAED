@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
-import { readHeadlineVariant, readHeroVariant } from "@/lib/aed/ab-variant";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { GADS_LINE_CLICK_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { LineFallbackModal } from "./LineFallbackModal";
@@ -31,14 +30,9 @@ export function LineClickTracker() {
       if (lineAnchor) {
         const location = lineAnchor.dataset.lineCta || "unknown";
         const productId = lineAnchor.dataset.product || null;
-        const heroVariant = readHeroVariant();
-        const headlineVariant = readHeadlineVariant();
-
         trackEvent("line_click", {
           location,
           product_id: productId ?? "none",
-          hero_variant: heroVariant ?? "none",
-          headline_variant: headlineVariant ?? "none",
         });
 
         // Report to Google as the `LINE Click` conversion — which is kept
