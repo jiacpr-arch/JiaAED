@@ -107,16 +107,15 @@ export interface OrchestratorResult {
 // Stop starting new model calls after this long, so the turn always ends with
 // a reply inside the webhook's maxDuration instead of being killed mid-loop.
 const TURN_BUDGET_MS = 150_000;
+const CALL_TIMEOUT_MS = 45_000;
+// Not worth starting a model call with less time than this left.
+const MIN_CALL_MS = 10_000;
 
 export async function runAI(
   userMessage: string,
   ctx: ToolContext,
 ): Promise<OrchestratorResult> {
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-    timeout: 45_000,
-    maxRetries: 1,
-  });
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const toolsUsed: AiToolCall[] = [];
   const startedAt = Date.now();
 
@@ -143,16 +142,26 @@ export async function runAI(
   let iterations = 0;
   const MAX_ITERATIONS = 8;
 
-  while (iterations < MAX_ITERATIONS && Date.now() - startedAt < TURN_BUDGET_MS) {
+  while (iterations < MAX_ITERATIONS) {
+    const remaining = TURN_BUDGET_MS - (Date.now() - startedAt);
+    if (remaining < MIN_CALL_MS) break;
     iterations++;
 
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-5-5",
-      max_tokens: 1024,
-      system: systemPrompt,
-      tools: AED_TOOLS,
-      messages,
-    });
+    const response = await anthropic.messages.create(
+      {
+        model: "claude-sonnet-5-5",
+        max_tokens: 1024,
+        system: systemPrompt,
+        tools: AED_TOOLS,
+        messages,
+      },
+      // Bound each call (and its retry) by what's left of the turn budget, so
+      // a slow API can't push the turn past the webhook's maxDuration.
+      {
+        timeout: Math.min(CALL_TIMEOUT_MS, remaining),
+        maxRetries: remaining > 2 * CALL_TIMEOUT_MS ? 1 : 0,
+      },
+    );
 
     // Collect text blocks
     const textBlocks = response.content.filter((b): b is Anthropic.TextBlock => b.type === "text");

@@ -19,9 +19,12 @@ export const maxDuration = 120;
 //
 // A follow-up is dropped instead of sent when it's gone stale (the customer
 // would get "still interested?" days late — this also covers the backlog that
-// piled up before this cron existed) or when the customer has already written
-// again since it was scheduled (the conversation moved on).
+// piled up before this cron existed), when the customer is mid-conversation
+// (wrote in the last few hours — a nudge would talk over a live chat; a quick
+// "ครับ" right after the bot's reply the day before doesn't count), or when
+// the same chat already got one in this run.
 const STALE_AFTER_MS = 48 * 60 * 60 * 1000;
+const ACTIVE_CHAT_MS = 6 * 60 * 60 * 1000;
 const MAX_TEXT = 1000;
 
 export async function GET(req: Request) {
@@ -29,7 +32,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
-  const result = { sent: 0, skipped_stale: 0, skipped_replied: 0, skipped_no_line: 0, failed: 0 };
+  const result = { sent: 0, skipped_stale: 0, skipped_active: 0, skipped_no_line: 0, failed: 0 };
+  const sentTo = new Set<string>();
 
   try {
     const due = await getPendingFollowups();
@@ -38,8 +42,12 @@ export async function GET(req: Request) {
         if (await setFollowupStatus(f.id, "skipped")) result.skipped_stale++;
         continue;
       }
-      if (f.conversation_id && (await hasInboundSince(f.conversation_id, f.created_at))) {
-        if (await setFollowupStatus(f.id, "skipped")) result.skipped_replied++;
+      if (
+        f.conversation_id &&
+        (sentTo.has(f.conversation_id) ||
+          (await hasInboundSince(f.conversation_id, new Date(Date.now() - ACTIVE_CHAT_MS).toISOString())))
+      ) {
+        if (await setFollowupStatus(f.id, "skipped")) result.skipped_active++;
         continue;
       }
       const lineUserId = f.customer_id ? await getCustomerLineUserId(f.customer_id) : null;
@@ -58,6 +66,7 @@ export async function GET(req: Request) {
         continue;
       }
       result.sent++;
+      if (f.conversation_id) sentTo.add(f.conversation_id);
       // Keep the transcript complete so the bot has context if they reply.
       if (f.conversation_id) {
         await saveMessage(f.conversation_id, "outbound", "ai", text).catch((e) =>

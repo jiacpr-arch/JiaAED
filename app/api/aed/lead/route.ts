@@ -29,9 +29,9 @@ export const runtime = "nodejs";
 // script, and every stored lead fans out to a LINE push, two emails and two ad
 // platforms. Kept generous so a busy office sharing one IP still gets through.
 const LEADS_PER_IP_PER_HOUR = 8;
-// The same form sent again with the same contact and message within this
-// window = a double-submit or a re-send from the success screen: answer with
-// the first lead and repeat no side effects.
+// The exact same submission again within this window (every field equal) = a
+// double-click or a re-send from the success screen: answer with the first
+// lead and repeat no side effects. Anything that differs is a new lead.
 const DUPLICATE_WINDOW_MS = 10 * MINUTE;
 // Site-wide hourly volume past which we stop pushing LINE alerts and sending
 // auto-replies (the owner email still goes out) — this business sees a few
@@ -138,7 +138,17 @@ export async function POST(req: Request) {
 
   // `skipped` tells the form not to fire a second conversion for the repeat.
   const duplicateOf = await findRecentLead({ phone, email }, DUPLICATE_WINDOW_MS, {
-    sameAs: { source, message },
+    sameAs: {
+      source,
+      full_name: fullName,
+      phone,
+      email,
+      company_name: company,
+      product_id: productId,
+      unit_count: unitCount,
+      message,
+      page_url: pageUrl,
+    },
   });
   if (duplicateOf) {
     return NextResponse.json({ ok: true, skipped: "duplicate", leadId: duplicateOf });
@@ -264,8 +274,9 @@ export async function POST(req: Request) {
 
   // One auto-reply per address per day: the recipient is whatever was typed,
   // so without this the form can mail-bomb a third party from our domain.
+  // Abandoned-form beacons don't send mail, so they don't count.
   if (email && !flooding) {
-    const sentToday = await countRecent("aed_leads", [["email", email]], DAY);
+    const sentToday = await countRecent("aed_leads", [["email", email]], DAY, { excludePartial: true });
     if (!overLimit(sentToday, 2)) {
       waitUntil(
         sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>

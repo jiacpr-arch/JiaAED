@@ -108,6 +108,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
         .select("event_name, properties, page_url")
         .gte("created_at", week.from)
         .lte("created_at", week.to)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ).then((data) => ({ data })),
@@ -117,6 +118,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
         .select("event_name")
         .gte("created_at", prevWeek.from)
         .lt("created_at", week.from)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ).then((data) => ({ data })),
@@ -126,6 +128,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
         .select("gclid, utm_source")
         .gte("created_at", week.from)
         .lte("created_at", week.to)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ).then((data) => ({ data, count: data.length })),
@@ -141,6 +144,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
         .gte("created_at", week.from)
         .lte("created_at", week.to)
         .not("source", "like", "partial%")
+        .order("created_at")
         .order("id")
         .range(a, b),
     ).then((data) => ({ data })),
