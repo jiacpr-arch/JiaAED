@@ -29,9 +29,10 @@ is about those defibrillators — the image must show them, not another product.
 
 | File | Content |
 | --- | --- |
-| `product-main.png` | AED Amoul i7 unit (front) — still named in docs/google-ads-setup.md and docs/meta-ads-setup.md; replace it there before reusing those guides |
-| `aed-i7-poster.jpg` | AED Amoul i7 poster |
-| `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
+Deleted from `public/images/` (Oct 2026) so they're no longer served from
+jiaaed.com: `product-main.png` (Amoul i7 unit, front), `aed-i7-poster.jpg`,
+`aed-i7-2.jpg` (Amoul i7 posters) and the Amoul version of
+`aed-rent-all-portrait.jpg`. Recover them from git history only for records.
 
 ## 🟢 AED rental campaign creatives (เช่า AED — Yuwell/PRIMEDIC)
 
@@ -48,7 +49,6 @@ re-export the posters if a rental price changes.
 | `aed-rent-monthly.jpg` | เช่ารายเดือน ฿1,990/เดือน (ขั้นต่ำ 3 เดือน) — Yuwell/PRIMEDIC |
 | `aed-rent-yearly.jpg` | เช่ารายปี ฿22,000/ปี (คุ้มที่สุด) — Yuwell/PRIMEDIC |
 | `aed-rent-all.jpg` / `aed-rent-all.webp` | รวม 3 แพ็กเกจ (แนวนอน 3:2) — Yuwell/PRIMEDIC |
-| `aed-rent-all-portrait.jpg` | รวม 3 แพ็กเกจ (แนวตั้ง 3:4) — ⚠️ ยังเป็น Amoul เดิม ห้ามใช้ยิงโฆษณา รอทำเวอร์ชัน Yuwell |
 
 ## 🔴 PRIMEDIC / Yuwell assets
 
