@@ -115,6 +115,9 @@ const MIN_CALL_MS = 10_000;
 // Kept back from the caller's deadline for the last tool round (FlowAccount,
 // LINE notify) and sending/saving the reply after the loop.
 const POST_LOOP_RESERVE_MS = 50_000;
+// A tool isn't started with less than this left before the caller's deadline
+// (the slowest, create_quotation, can take ~45s at its upstream timeouts).
+const MIN_TOOL_MS = 45_000;
 
 // What to tell the customer when the model fails after tools already ran —
 // built from what those tools did, so a quotation or escalation that went
@@ -220,7 +223,12 @@ export async function runAI(
 
     if (response.stop_reason === "end_turn" || toolUseBlocks.length === 0) {
       const reply = textBlocks.map((b) => b.text).join("").trim();
-      return { reply: reply || "ขออภัย ไม่สามารถตอบได้ในขณะนี้ กรุณาลองใหม่อีกครั้งครับ", toolsUsed };
+      // An empty turn (or a refusal) after tools ran must not tell the customer
+      // to "try again" — that can re-issue a quotation that already went out.
+      if (!reply || response.stop_reason === "refusal") {
+        return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+      }
+      return { reply, toolsUsed };
     }
 
     // Add assistant response to messages
@@ -228,11 +236,21 @@ export async function runAI(
 
     // Execute each tool call
     const toolResults: Anthropic.ToolResultBlockParam[] = [];
+    let outOfTime = false;
     for (const toolUse of toolUseBlocks) {
+      // Out of time for this delivery: don't start more external calls; the
+      // owner is alerted (incomplete) and follows up by hand.
+      if (opts.deadline !== undefined && opts.deadline - Date.now() < MIN_TOOL_MS) {
+        outOfTime = true;
+        toolResults.push({ type: "tool_result", tool_use_id: toolUse.id, content: "ข้าม — หมดเวลา ทีมงานจะดำเนินการต่อ" });
+        continue;
+      }
       const result = await executeToolCall(toolUse.name, toolUse.input as Record<string, unknown>, ctx);
       toolsUsed.push({ name: toolUse.name, input: toolUse.input as Record<string, unknown>, result });
       toolResults.push({ type: "tool_result", tool_use_id: toolUse.id, content: String(result) });
     }
+
+    if (outOfTime) return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
 
     // Add tool results
     messages.push({ role: "user", content: toolResults });

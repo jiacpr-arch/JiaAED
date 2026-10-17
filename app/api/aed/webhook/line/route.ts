@@ -80,6 +80,10 @@ export async function POST(request: NextRequest) {
 // ─── Event processor ──────────────────────────────────────────────────────────
 
 async function processEvents(events: LineEvent[], deadline: number): Promise<void> {
+  // Messages that arrived after the time ran out: acknowledged to the
+  // customer, then reported to the owner in ONE alert after the loop rather
+  // than a push per message eating into what little time is left.
+  const deferred: Array<{ lineUserId: string; userText: string }> = [];
   for (const event of events) {
     const lineUserId = event.source?.userId;
     if (!lineUserId) continue;
@@ -147,11 +151,7 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
       // the owner answer by hand rather than being killed mid-turn.
       if (deadline - Date.now() < MIN_TURN_MS) {
         replied = await replyOrPush(target, "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏");
-        await notifyProcessingError({
-          lineUserId,
-          userText,
-          error: new Error("ข้อความหลายรายการในรอบเดียว — บอทตอบไม่ทัน กรุณาตอบลูกค้าเอง"),
-        }).catch(() => null);
+        deferred.push({ lineUserId, userText });
         continue;
       }
 
@@ -210,5 +210,17 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
         await replyOrPush(target, "ขออภัยครับ เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ 🙏");
       }
     }
+  }
+
+  if (deferred.length > 0) {
+    const first = deferred[0];
+    await notifyProcessingError({
+      lineUserId: first.lineUserId,
+      userText: deferred.map((d) => d.userText).join(" | ").slice(0, 200),
+      error: new Error(
+        `ข้อความ ${deferred.length} รายการมาในรอบเดียวกันจนบอทตอบไม่ทัน (ลูกค้าได้ข้อความรับเรื่องแล้ว) — กรุณาตอบเอง` +
+          (new Set(deferred.map((d) => d.lineUserId)).size > 1 ? " · มีลูกค้ามากกว่า 1 ราย ดูใน LINE OA" : ""),
+      ),
+    }).catch(() => null);
   }
 }

@@ -11,7 +11,8 @@ vi.mock("@/lib/aed/notify-owner", async (importOriginal) => ({
   pushTextsToOwner: mocks.pushTextsToOwner,
 }));
 
-import { flushNotifyQueue, packRows } from "./notify-queue";
+import { flushNotifyQueue, groupMessages, packRows } from "./notify-queue";
+import { chunkForLine, LINE_TEXT_LIMIT } from "./notify-owner";
 
 type Row = { id: number; text: string; created_at: string; sent: boolean; sent_at: string | null };
 
@@ -113,5 +114,22 @@ describe("flushNotifyQueue", () => {
     expect(rows.find((r) => r.id === 1)!.sent).toBe(true);
     expect(rows.find((r) => r.id === 2)!.sent).toBe(false);
     expect(rows.find((r) => r.id === 9)!.sent).toBe(true); // stale: dropped, not retried
+  });
+});
+
+describe("groupMessages / chunkForLine", () => {
+  it("doesn't spend a whole message on a header before one long list", () => {
+    const report = "📋 header\n\n" + Array.from({ length: 300 }, (_, i) => `unit ${i} pad 2027-01-01`).join("\n");
+    const chunks = chunkForLine(report);
+    expect(chunks[0].length).toBeGreaterThan(LINE_TEXT_LIMIT / 2);
+    expect(chunks.every((c) => c.length <= LINE_TEXT_LIMIT)).toBe(true);
+  });
+
+  it("caps a group at one push request (5 messages) and says what was cut", () => {
+    const huge = Array.from({ length: 2000 }, (_, i) => `line ${i} ${"x".repeat(40)}`).join("\n");
+    const msgs = groupMessages(huge);
+    expect(msgs).toHaveLength(5);
+    expect(msgs[4]).toMatch(/ตัดส่วนที่เหลือ/);
+    expect(msgs.every((m) => m.length <= LINE_TEXT_LIMIT)).toBe(true);
   });
 });

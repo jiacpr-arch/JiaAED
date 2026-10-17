@@ -1,5 +1,11 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chunkForLine, pushTextsToOwner, LINE_TEXT_LIMIT, NOTIFY_BATCH_SEPARATOR } from "@/lib/aed/notify-owner";
+import {
+  chunkForLine,
+  pushTextsToOwner,
+  LINE_TEXT_LIMIT,
+  MAX_MESSAGES_PER_PUSH,
+  NOTIFY_BATCH_SEPARATOR,
+} from "@/lib/aed/notify-owner";
 
 // No new message in this long -> whatever's pending is probably one cron
 // cluster that's done firing, so send it.
@@ -18,9 +24,23 @@ type QueueRow = { id: number; text: string; created_at: string };
  * Pack queued rows, in order, into LINE messages made of whole rows, so each
  * push delivers a known set of rows and a failure part-way through only hands
  * back the rows that weren't sent. A single row longer than one message gets a
- * group of its own; its chunkForLine pieces go out in one push request (up to
- * 5 messages, ~24k chars), so it too is delivered whole or not at all.
+ * group of its own; its chunkForLine pieces go out in one push request (see
+ * groupMessages), so it too is delivered whole or not at all.
  */
+/**
+ * The LINE messages for one group — never more than one push request's worth,
+ * so a group is delivered whole or not at all. Text past that is cut with a
+ * note (only a runaway report gets there: 5 messages hold ~20k+ chars).
+ */
+export function groupMessages(text: string): string[] {
+  const chunks = chunkForLine(text);
+  if (chunks.length <= MAX_MESSAGES_PER_PUSH) return chunks;
+  const kept = chunks.slice(0, MAX_MESSAGES_PER_PUSH);
+  const note = `\n\n… (ตัดส่วนที่เหลืออีก ${chunks.length - MAX_MESSAGES_PER_PUSH} ข้อความ — ดูข้อมูลเต็มในหน้า admin)`;
+  kept[kept.length - 1] = kept[kept.length - 1].slice(0, LINE_TEXT_LIMIT - note.length) + note;
+  return kept;
+}
+
 export function packRows<T extends { text: string }>(rows: T[], limit = LINE_TEXT_LIMIT): T[][] {
   const groups: T[][] = [];
   let current: T[] = [];
@@ -91,7 +111,7 @@ export async function flushNotifyQueue(): Promise<{
   const groups = packRows(fresh);
   for (let g = 0; g < groups.length; g++) {
     const text = groups[g].map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
-    if (await pushTextsToOwner(chunkForLine(text))) continue;
+    if (await pushTextsToOwner(groupMessages(text))) continue;
 
     // LINE refused or timed out (429/5xx, missing token): hand back the rows
     // not yet delivered so the next run retries them — but not the groups

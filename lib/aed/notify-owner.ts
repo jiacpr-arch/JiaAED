@@ -74,12 +74,12 @@ export async function pushToOwner(text: string): Promise<boolean> {
   return pushMessages([{ type: "text", text }]);
 }
 
-const MAX_MESSAGES_PER_PUSH = 5; // LINE push API limit
+export const MAX_MESSAGES_PER_PUSH = 5; // LINE push API limit
 
 /**
  * Push several texts as one LINE request per 5, so a reader gets them together
- * and (per admin) either all of a request arrives or none of it does. Only text
- * past 5 × 4,900 chars needs a second request.
+ * and (per admin) either all of a request arrives or none of it does. Callers
+ * that need all-or-nothing delivery pass at most MAX_MESSAGES_PER_PUSH texts.
  */
 export async function pushTextsToOwner(texts: string[]): Promise<boolean> {
   for (let i = 0; i < texts.length; i += MAX_MESSAGES_PER_PUSH) {
@@ -368,8 +368,13 @@ export function chunkForLine(text: string): string[] {
   const chunks: string[] = [];
   let rest = text;
   while (rest.length > LINE_TEXT_LIMIT) {
-    const cut = rest.lastIndexOf("\n\n", LINE_TEXT_LIMIT);
-    const splitAt = cut > 0 ? cut : LINE_TEXT_LIMIT;
+    // Prefer a paragraph break, then a line break — but only one in the back
+    // half of the window, or a header followed by one long list would burn a
+    // whole message on the header.
+    const minCut = LINE_TEXT_LIMIT / 2;
+    const para = rest.lastIndexOf("\n\n", LINE_TEXT_LIMIT);
+    const line = rest.lastIndexOf("\n", LINE_TEXT_LIMIT);
+    const splitAt = para >= minCut ? para : line >= minCut ? line : LINE_TEXT_LIMIT;
     chunks.push(rest.slice(0, splitAt));
     rest = rest.slice(splitAt).replace(/^\n+/, "");
   }
