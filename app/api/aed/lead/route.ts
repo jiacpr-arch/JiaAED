@@ -28,9 +28,10 @@ export const runtime = "nodejs";
 // Abuse limits. A real buyer submits once or twice; anything past these is a
 // script, and every stored lead fans out to a LINE push, two emails and two ad
 // platforms. Kept generous so a busy office sharing one IP still gets through.
-const LEADS_PER_IP_PER_HOUR = 5;
-// Same phone/email again within this window = a double-submit or a re-send
-// from the success screen: answer with the first lead, repeat no side effects.
+const LEADS_PER_IP_PER_HOUR = 8;
+// The same form sent again with the same contact and message within this
+// window = a double-submit or a re-send from the success screen: answer with
+// the first lead and repeat no side effects.
 const DUPLICATE_WINDOW_MS = 10 * MINUTE;
 // Site-wide hourly volume past which we stop pushing LINE alerts and sending
 // auto-replies (the owner email still goes out) — this business sees a few
@@ -136,7 +137,9 @@ export async function POST(req: Request) {
   }
 
   // `skipped` tells the form not to fire a second conversion for the repeat.
-  const duplicateOf = await findRecentLead({ phone, email }, DUPLICATE_WINDOW_MS);
+  const duplicateOf = await findRecentLead({ phone, email }, DUPLICATE_WINDOW_MS, {
+    sameAs: { source, message },
+  });
   if (duplicateOf) {
     return NextResponse.json({ ok: true, skipped: "duplicate", leadId: duplicateOf });
   }

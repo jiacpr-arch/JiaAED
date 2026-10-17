@@ -17,7 +17,7 @@ export const runtime = "nodejs";
 // Anonymous and unauthenticated, so bound what one source can write: a page
 // view emits a handful of events, a script emits thousands. `properties` is
 // stored as JSONB verbatim, so cap its size too.
-const EVENTS_PER_IP_PER_MINUTE = 60;
+const EVENTS_PER_IP_PER_MINUTE = 120; // generous: offices share one IP
 const MAX_PROPERTIES_JSON = 2_000;
 // Site-wide cap on hot-lead LINE pings: sessions are free to mint, so without
 // this a script could score fresh sessions to 7+ and burn the LINE quota.

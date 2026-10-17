@@ -15,9 +15,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # The repo is public, so fetching needs no token; don't leave one in
-          # .git/config for the push step below.
-          persist-credentials: false
       - name: Fetch every branch
         run: |
           git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'

@@ -60,11 +60,13 @@ export function overLimit(count: number | null, max: number): boolean {
  * Id of a lead with the same phone or email inside the window, or null.
  * Partial (abandoned-form) rows only count when `includePartial` is set, so a
  * real submit after an abandon beacon is never swallowed as a duplicate.
+ * `sameAs` narrows it to an identical submission (same form + message), so a
+ * follow-up from another form with new details is still stored and alerted.
  */
 export async function findRecentLead(
   contact: { phone: string | null; email: string | null },
   windowMs: number,
-  opts: { includePartial?: boolean } = {},
+  opts: { includePartial?: boolean; sameAs?: { source: string; message: string | null } } = {},
 ): Promise<string | null> {
   const since = new Date(Date.now() - windowMs).toISOString();
   // Two .eq() queries rather than one .or(): .or() takes a raw PostgREST
@@ -81,6 +83,10 @@ export async function findRecentLead(
         .eq(column, value)
         .gte("created_at", since);
       if (!opts.includePartial) q = q.not("source", "like", "partial%");
+      if (opts.sameAs) {
+        q = q.eq("source", opts.sameAs.source);
+        q = opts.sameAs.message === null ? q.is("message", null) : q.eq("message", opts.sameAs.message);
+      }
       const { data, error } = await q.order("created_at", { ascending: false }).limit(1);
       if (error) {
         console.error("[rate-limit] duplicate lookup failed:", error.message);
