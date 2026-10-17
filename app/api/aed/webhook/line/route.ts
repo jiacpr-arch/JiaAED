@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow, updateConversationState, countRecentInbound } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
-import { notifyNewFollow, notifyHotConversation, notifyProcessingError } from "@/lib/aed/notify-owner";
+import { notifyNewFollow, notifyHotConversation, notifyProcessingError, notifyProcessingErrors } from "@/lib/aed/notify-owner";
 import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
 import { replyOrPush } from "@/lib/aed/line-messaging";
 import { primedicModels } from "@/lib/aed/primedic";
@@ -28,8 +28,10 @@ const MAX_INBOUND_PER_MINUTE = 8;
 // Events in one delivery are handled one after another inside a single
 // invocation, so they share one deadline (with headroom under maxDuration).
 const PROCESSING_BUDGET_MS = 240_000;
-// Don't start an AI turn with less than this left before the deadline.
-const MIN_TURN_MS = 60_000;
+// Don't start an AI turn with less than this left before the deadline: runAI
+// keeps 50s back for its last tool round and the reply, so below ~80s the
+// model would get under half a minute.
+const MIN_TURN_MS = 80_000;
 
 // ─── Signature verification ───────────────────────────────────────────────────
 
@@ -81,9 +83,10 @@ export async function POST(request: NextRequest) {
 
 async function processEvents(events: LineEvent[], deadline: number): Promise<void> {
   // Messages that arrived after the time ran out: acknowledged to the
-  // customer, then reported to the owner in ONE alert after the loop rather
-  // than a push per message eating into what little time is left.
-  const deferred: Array<{ lineUserId: string; userText: string }> = [];
+  // customer, then reported to the owner after the loop — one alert per
+  // customer, batched into as few pushes as possible, rather than a push per
+  // message eating into what little time is left.
+  const deferred = new Map<string, { texts: string[]; acknowledged: boolean }>();
   for (const event of events) {
     const lineUserId = event.source?.userId;
     if (!lineUserId) continue;
@@ -151,7 +154,10 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
       // the owner answer by hand rather than being killed mid-turn.
       if (deadline - Date.now() < MIN_TURN_MS) {
         replied = await replyOrPush(target, "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏");
-        deferred.push({ lineUserId, userText });
+        const entry = deferred.get(lineUserId) ?? { texts: [], acknowledged: false };
+        entry.texts.push(userText);
+        entry.acknowledged ||= replied;
+        deferred.set(lineUserId, entry);
         continue;
       }
 
@@ -167,12 +173,14 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
       );
       await bumpConversation(conversation.id);
 
-      // The model failed after tools ran; the customer got a holding reply.
+      // The turn didn't finish; the customer got (or was sent) a holding reply.
       if (incomplete) {
         await notifyProcessingError({
           lineUserId,
           userText,
-          error: new Error("บอทตอบไม่จบ (model ล้มเหลวหลังเรียก tool) — ลูกค้าได้ข้อความรับเรื่องแล้ว กรุณาตามต่อ"),
+          error: new Error(
+            `บอทตอบไม่จบ: ${incomplete} — ${replied ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตามต่อ`,
+          ),
         }).catch(() => null);
       }
 
@@ -212,15 +220,16 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
     }
   }
 
-  if (deferred.length > 0) {
-    const first = deferred[0];
-    await notifyProcessingError({
-      lineUserId: first.lineUserId,
-      userText: deferred.map((d) => d.userText).join(" | ").slice(0, 200),
-      error: new Error(
-        `ข้อความ ${deferred.length} รายการมาในรอบเดียวกันจนบอทตอบไม่ทัน (ลูกค้าได้ข้อความรับเรื่องแล้ว) — กรุณาตอบเอง` +
-          (new Set(deferred.map((d) => d.lineUserId)).size > 1 ? " · มีลูกค้ามากกว่า 1 ราย ดูใน LINE OA" : ""),
-      ),
-    }).catch(() => null);
+  if (deferred.size > 0) {
+    await notifyProcessingErrors(
+      [...deferred].map(([lineUserId, d]) => ({
+        lineUserId,
+        userText: d.texts.join(" | "),
+        error: new Error(
+          `ข้อความ ${d.texts.length} รายการมาพร้อมข้อความอื่นจนบอทตอบไม่ทัน — ` +
+            `${d.acknowledged ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตอบเอง`,
+        ),
+      })),
+    ).catch(() => null);
   }
 }

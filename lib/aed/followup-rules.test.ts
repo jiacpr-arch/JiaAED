@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { isAcknowledgement } from "./followup-rules";
 
 describe("isAcknowledgement", () => {
-  it.each(["ครับ", "ค่ะ", "ได้ครับ", "ได้ครับ ขอบคุณครับ", "ขอบคุณมากค่ะ 🙏", "ok 👍", "โอเคครับ", "รับทราบครับผม", "Thank you!"])(
+  it.each(["ครับ", "ค่ะ", "ได้ครับ", "ได้ครับ ขอบคุณครับ", "ขอบคุณมากค่ะ 🙏", "ok 👍", "โอเคครับ", "รับทราบครับผม", "Thank you!",
+    "okay", "Okay ครับ", "ขอบคุณมากๆครับ", "ครับๆ", "ขอบคุณค่ะ ❤️", "ค่าาา", "คร้าบ", "คับ", "ขอบคุณครับ (love)"])(
     "treats %s as a bare acknowledgement",
     (text) => expect(isAcknowledgement(text)).toBe(true),
   );

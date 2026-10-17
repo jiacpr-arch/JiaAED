@@ -322,22 +322,28 @@ export async function notifyHotConversation(p: {
 // owner would never know a real person reached out and hit a wall. A lost
 // message here is a lost lead, so surface it immediately with enough to follow
 // up by hand.
-export async function notifyProcessingError(p: {
-  lineUserId: string;
-  userText: string;
-  error: unknown;
-}): Promise<void> {
-  await pushToOwner(
-    [
-      `🚨 ระบบตอบ LINE ขัดข้อง — มีลูกค้าทักแต่บอทตอบไม่ได้`,
-      `รีบเข้าไปตอบเองใน LINE OA ด่วน`,
-      ``,
-      `🔗 LINE ID: ${p.lineUserId}`,
-      `💬 ข้อความลูกค้า: ${p.userText.slice(0, 200)}`,
-      `⚠️ ${p.error instanceof Error ? p.error.message : String(p.error)}`,
-      `⏰ ${bkkNow()}`,
-    ].join("\n"),
-  );
+type ProcessingError = { lineUserId: string; userText: string; error: unknown };
+
+function processingErrorText(p: ProcessingError): string {
+  return [
+    `🚨 ระบบตอบ LINE ขัดข้อง — มีลูกค้าทักแต่บอทตอบไม่ได้`,
+    `รีบเข้าไปตอบเองใน LINE OA ด่วน`,
+    ``,
+    `🔗 LINE ID: ${p.lineUserId}`,
+    `💬 ข้อความลูกค้า: ${p.userText.slice(0, 200)}`,
+    // Capped: an alert listing many skipped tool calls must still fit LINE's 5000.
+    `⚠️ ${(p.error instanceof Error ? p.error.message : String(p.error)).slice(0, 1500)}`,
+    `⏰ ${bkkNow()}`,
+  ].join("\n");
+}
+
+export async function notifyProcessingError(p: ProcessingError): Promise<void> {
+  await pushToOwner(processingErrorText(p));
+}
+
+/** One alert per customer, sent 5 to a push request. */
+export async function notifyProcessingErrors(list: ProcessingError[]): Promise<void> {
+  await pushTextsToOwner(list.map(processingErrorText));
 }
 
 // ─── Analytics digest + alert (plain text) ─────────────────────────────────────

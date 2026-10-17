@@ -21,13 +21,6 @@ const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
 type QueueRow = { id: number; text: string; created_at: string };
 
 /**
- * Pack queued rows, in order, into LINE messages made of whole rows, so each
- * push delivers a known set of rows and a failure part-way through only hands
- * back the rows that weren't sent. A single row longer than one message gets a
- * group of its own; its chunkForLine pieces go out in one push request (see
- * groupMessages), so it too is delivered whole or not at all.
- */
-/**
  * The LINE messages for one group — never more than one push request's worth,
  * so a group is delivered whole or not at all. Text past that is cut with a
  * note (only a runaway report gets there: 5 messages hold ~20k+ chars).
@@ -36,11 +29,22 @@ export function groupMessages(text: string): string[] {
   const chunks = chunkForLine(text);
   if (chunks.length <= MAX_MESSAGES_PER_PUSH) return chunks;
   const kept = chunks.slice(0, MAX_MESSAGES_PER_PUSH);
-  const note = `\n\n… (ตัดส่วนที่เหลืออีก ${chunks.length - MAX_MESSAGES_PER_PUSH} ข้อความ — ดูข้อมูลเต็มในหน้า admin)`;
-  kept[kept.length - 1] = kept[kept.length - 1].slice(0, LINE_TEXT_LIMIT - note.length) + note;
+  const note = "\n\n… (รายงานยาวเกิน — ตัดส่วนที่เหลือ ดูข้อมูลเต็มในหน้า admin)";
+  const last = kept[kept.length - 1];
+  const room = LINE_TEXT_LIMIT - note.length;
+  // Cut on a line break so a line (or a Thai syllable / emoji) isn't split.
+  const nl = last.lastIndexOf("\n", room);
+  kept[kept.length - 1] = (last.length <= room ? last : last.slice(0, nl > room / 2 ? nl : room)) + note;
   return kept;
 }
 
+/**
+ * Pack queued rows, in order, into LINE messages made of whole rows, so each
+ * push delivers a known set of rows and a failure part-way through only hands
+ * back the rows that weren't sent. A single row longer than one message gets a
+ * group of its own; its chunkForLine pieces go out in one push request (see
+ * groupMessages), so it too is delivered whole or not at all.
+ */
 export function packRows<T extends { text: string }>(rows: T[], limit = LINE_TEXT_LIMIT): T[][] {
   const groups: T[][] = [];
   let current: T[] = [];

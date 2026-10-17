@@ -102,8 +102,12 @@ const AED_TOOLS: Anthropic.Tool[] = [
 export interface OrchestratorResult {
   reply: string;
   toolsUsed: AiToolCall[];
-  /** The model failed part-way; `reply` is a fallback the owner should follow up. */
-  incomplete?: boolean;
+  /**
+   * Set when the turn ended without the model's own answer: what went wrong
+   * and what did or didn't run, for the owner's alert. `reply` is then a
+   * holding message and the owner has to follow up by hand.
+   */
+  incomplete?: string;
 }
 
 // Stop starting new model calls after this long, so the turn always ends with
@@ -175,6 +179,13 @@ export async function runAI(
       opts.deadline === undefined ? Infinity : opts.deadline - Date.now() - POST_LOOP_RESERVE_MS,
     );
 
+  // End the turn with a holding reply and tell the owner what's left to do.
+  const giveUp = (why: string): OrchestratorResult => ({
+    reply: fallbackReply(toolsUsed),
+    toolsUsed,
+    incomplete: toolsUsed.length ? `${why} · ทำไปแล้ว: ${toolsUsed.map((t) => t.name).join(", ")}` : why,
+  });
+
   // One manual retry instead of the SDK's, whose backoff can honour a
   // retry-after of up to a minute — every attempt here fits the time left.
   const createMessage = async (): Promise<Anthropic.Message> => {
@@ -214,19 +225,26 @@ export async function runAI(
       if (toolsUsed.length === 0) throw err;
       // Tools already ran (a quotation may exist): keep what they did, so the
       // turn is still saved and scored, and answer from their results.
-      return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+      return giveUp("AI ล้มเหลวกลางคัน");
     }
 
     // Collect text blocks
     const textBlocks = response.content.filter((b): b is Anthropic.TextBlock => b.type === "text");
     const toolUseBlocks = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
 
-    if (response.stop_reason === "end_turn" || toolUseBlocks.length === 0) {
+    // Tool calls are only run when the model stopped in order to call them —
+    // after a max_tokens cut the last call's input can be truncated, and a
+    // refusal isn't a request to act.
+    if (toolUseBlocks.length > 0 && response.stop_reason !== "tool_use") {
+      return giveUp(`AI ตอบไม่จบ (${response.stop_reason}) · ไม่ได้ทำ: ${describeTools(toolUseBlocks)}`);
+    }
+
+    if (toolUseBlocks.length === 0) {
       const reply = textBlocks.map((b) => b.text).join("").trim();
       // An empty turn (or a refusal) after tools ran must not tell the customer
       // to "try again" — that can re-issue a quotation that already went out.
       if (!reply || response.stop_reason === "refusal") {
-        return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+        return giveUp(`AI ไม่ได้ให้คำตอบ (${response.stop_reason})`);
       }
       return { reply, toolsUsed };
     }
@@ -236,13 +254,12 @@ export async function runAI(
 
     // Execute each tool call
     const toolResults: Anthropic.ToolResultBlockParam[] = [];
-    let outOfTime = false;
+    const skipped: Anthropic.ToolUseBlock[] = [];
     for (const toolUse of toolUseBlocks) {
       // Out of time for this delivery: don't start more external calls; the
-      // owner is alerted (incomplete) and follows up by hand.
+      // owner is told which ones were skipped and follows up by hand.
       if (opts.deadline !== undefined && opts.deadline - Date.now() < MIN_TOOL_MS) {
-        outOfTime = true;
-        toolResults.push({ type: "tool_result", tool_use_id: toolUse.id, content: "ข้าม — หมดเวลา ทีมงานจะดำเนินการต่อ" });
+        skipped.push(toolUse);
         continue;
       }
       const result = await executeToolCall(toolUse.name, toolUse.input as Record<string, unknown>, ctx);
@@ -250,13 +267,22 @@ export async function runAI(
       toolResults.push({ type: "tool_result", tool_use_id: toolUse.id, content: String(result) });
     }
 
-    if (outOfTime) return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+    if (skipped.length > 0) {
+      console.warn("[AED] out of time — skipped tools:", JSON.stringify(skipped.map((t) => ({ name: t.name, input: t.input }))));
+      return giveUp(`หมดเวลา · ไม่ได้ทำ: ${describeTools(skipped)}`);
+    }
 
     // Add tool results
     messages.push({ role: "user", content: toolResults });
   }
 
-  return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+  return giveUp(iterations >= MAX_ITERATIONS ? `AI เรียก tool เกิน ${MAX_ITERATIONS} รอบ` : "หมดเวลาก่อน AI ตอบ");
+}
+
+// Tool calls as the owner reads them in an alert — the inputs carry what they
+// need to finish by hand (product, quantity, customer name).
+function describeTools(blocks: Anthropic.ToolUseBlock[]): string {
+  return blocks.map((b) => `${b.name} ${JSON.stringify(b.input).slice(0, 300)}`).join(", ");
 }
 
 // ─── Tool dispatcher ──────────────────────────────────────────────────────────

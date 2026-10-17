@@ -291,7 +291,10 @@ export async function scheduleFollowup(
     .update({ status: "skipped" })
     .eq("conversation_id", conversationId)
     .eq("status", "pending")
-    .neq("id", (data as AedFollowup).id);
+    .neq("id", (data as AedFollowup).id)
+    // Only older rows: if two turns schedule at once, the newest survives
+    // instead of each call skipping the other's.
+    .lt("created_at", (data as AedFollowup).created_at);
   if (supersedeError) console.error("[AED] supersede follow-ups failed:", conversationId, supersedeError);
 
   return data as AedFollowup;
