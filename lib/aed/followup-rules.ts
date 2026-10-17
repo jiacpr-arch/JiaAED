@@ -4,9 +4,11 @@
 // Polite particles and filler that carry no meaning on their own, including
 // the stretched spellings people type in chat ("ครับบ", "ค่าาา", "คร้าบ").
 const PARTICLES = /(ครับผม|คร[ั้]*า?บ+|ค[ั้]+า?บ+|ค่ะ+|คะ+|ค่า+|จ้า+|จ้ะ|นะ+|ฮะ)/g;
-// LINE emoticons sent as text, like "(love)" — removed before NOISE, which
-// would otherwise eat the brackets and leave the word.
-const EMOTICON = /\([a-z ]+\)/g;
+// LINE emoticons arrive as alt text like "(love)" — removed before NOISE,
+// which would otherwise eat the brackets and leave the word. Only known
+// names: any other bracketed text ("(not interested)") is a real reply.
+const EMOTICON =
+  /\((love|heart|hearts|happy|smile|smiling|laugh|lol|joy|grin|moon grin|blush|wink|kiss|hug|shy|cool|yay|wow|pleased|proud|brown|cony|sally|moon|james|boss|jessica|edward|leonard)\)/g;
 // Punctuation, symbols, emoji (and their variation selector), zero-width
 // joiners/spaces and the Thai repetition mark "ๆ".
 const NOISE = /[\p{P}\p{S}\p{Extended_Pictographic}\s\u200b-\u200d\ufe0f\u0e46]+/gu;

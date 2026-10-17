@@ -8,7 +8,8 @@ describe("isAcknowledgement", () => {
     (text) => expect(isAcknowledgement(text)).toBe(true),
   );
 
-  it.each(["แพงไปครับ ไม่เอาแล้ว", "ไม่ได้ครับ", "ตกลงซื้อครับ", "โอนแล้วนะครับ", "ขอเลขบัญชีครับ", "ได้ครับ ส่งที่อยู่ให้นะครับ ซอย 5"])(
+  it.each(["แพงไปครับ ไม่เอาแล้ว", "ไม่ได้ครับ", "ตกลงซื้อครับ", "โอนแล้วนะครับ", "ขอเลขบัญชีครับ", "ได้ครับ ส่งที่อยู่ให้นะครับ ซอย 5",
+    "Thanks (we bought elsewhere)", "ok (not interested anymore)", "ขอบคุณครับ (no)", "Thank you (cancel)"])(
     "treats %s as a real reply",
     (text) => expect(isAcknowledgement(text)).toBe(false),
   );

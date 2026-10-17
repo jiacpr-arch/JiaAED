@@ -132,7 +132,7 @@ export function fallbackReply(toolsUsed: AiToolCall[]): string {
     const number = /เลขที่:\s*(\S+)/.exec(String(quote.result))?.[1];
     return `ออกใบเสนอราคาให้แล้วครับ${number ? ` (เลขที่ ${number})` : ""} ทีมงานจะติดต่อกลับเพื่อยืนยันรายละเอียดและการชำระเงินโดยเร็วครับ 🙏`;
   }
-  if (toolsUsed.some((t) => t.name === "escalate_to_human")) {
+  if (toolsUsed.some((t) => t.name === "escalate_to_human" && String(t.result).startsWith("escalated_to_human"))) {
     return "ทีมงานได้รับเรื่องแล้วครับ จะติดต่อกลับโดยเร็วที่สุด 🙏";
   }
   return "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏";
@@ -180,10 +180,14 @@ export async function runAI(
     );
 
   // End the turn with a holding reply and tell the owner what's left to do.
+  // Each tool that ran is listed with its result, since a call that ran can
+  // still have failed (e.g. "สร้างใบเสนอราคาล้มเหลว") and isn't done.
   const giveUp = (why: string): OrchestratorResult => ({
     reply: fallbackReply(toolsUsed),
     toolsUsed,
-    incomplete: toolsUsed.length ? `${why} · ทำไปแล้ว: ${toolsUsed.map((t) => t.name).join(", ")}` : why,
+    incomplete: toolsUsed.length
+      ? `${why} · เรียกไปแล้ว: ${toolsUsed.map((t) => `${t.name} → ${String(t.result).slice(0, 80)}`).join(" / ")}`
+      : why,
   });
 
   // One manual retry instead of the SDK's, whose backoff can honour a
