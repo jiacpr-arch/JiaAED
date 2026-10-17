@@ -123,6 +123,9 @@ const POST_LOOP_RESERVE_MS = 50_000;
 // (the slowest, create_quotation, can take ~45s at its upstream timeouts).
 const MIN_TOOL_MS = 45_000;
 
+// Tools that only look things up — nothing for the owner to follow up.
+const READ_ONLY_TOOLS = new Set(["get_customer_info", "calculate_price"]);
+
 // What to tell the customer when the model fails after tools already ran —
 // built from what those tools did, so a quotation or escalation that went
 // through isn't answered with "please try again".
@@ -180,15 +183,19 @@ export async function runAI(
     );
 
   // End the turn with a holding reply and tell the owner what's left to do.
-  // Each tool that ran is listed with its result, since a call that ran can
-  // still have failed (e.g. "สร้างใบเสนอราคาล้มเหลว") and isn't done.
-  const giveUp = (why: string): OrchestratorResult => ({
-    reply: fallbackReply(toolsUsed),
-    toolsUsed,
-    incomplete: toolsUsed.length
-      ? `${why} · เรียกไปแล้ว: ${toolsUsed.map((t) => `${t.name} → ${String(t.result).slice(0, 80)}`).join(" / ")}`
-      : why,
-  });
+  // Each tool that changed something is listed with its result, since a call
+  // that ran can still have failed (e.g. "สร้างใบเสนอราคาล้มเหลว") and isn't
+  // done. Lookups are left out so a long turn can't push these off the alert.
+  const giveUp = (why: string): OrchestratorResult => {
+    const writes = toolsUsed.filter((t) => !READ_ONLY_TOOLS.has(t.name));
+    return {
+      reply: fallbackReply(toolsUsed),
+      toolsUsed,
+      incomplete: writes.length
+        ? `${why} · เรียกไปแล้ว: ${writes.map((t) => `${t.name} → ${String(t.result).slice(0, 80)}`).join(" / ")}`
+        : why,
+    };
+  };
 
   // One manual retry instead of the SDK's, whose backoff can honour a
   // retry-after of up to a minute — every attempt here fits the time left.

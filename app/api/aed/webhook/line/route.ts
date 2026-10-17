@@ -178,8 +178,10 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
         await notifyProcessingError({
           lineUserId,
           userText,
+          // Delivery status first: the reason after it can be long and is
+          // what gets cut if the alert hits its length cap.
           error: new Error(
-            `บอทตอบไม่จบ: ${incomplete} — ${replied ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตามต่อ`,
+            `บอทตอบไม่จบ — ${replied ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตามต่อ · ${incomplete}`,
           ),
         }).catch(() => null);
       }
