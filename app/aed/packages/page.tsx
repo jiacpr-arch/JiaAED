@@ -20,7 +20,7 @@ export const revalidate = 3600;
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ | JiaAED",
+  title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ",
   description:
     "3 วิธีได้ AED มาใช้สำหรับองค์กร: Safety Premium (ซื้อขาด), Safety Start (เช่าแล้วได้ซื้อ), Safety Care (เช่าบริการครบวงจร) พร้อมระบบ GPS ตู้จัดเก็บ และการอบรม — ปรึกษาฟรี",
   alternates: { canonical: "/aed/packages" },

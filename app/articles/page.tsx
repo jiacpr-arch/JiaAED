@@ -6,7 +6,7 @@ import { PageHero } from "@/app/components/PageHero";
 import { articles, articleCover } from "@/lib/aed/articles";
 
 export const metadata: Metadata = {
-  title: "บทความ AED — ความรู้และวิธีใช้ | JiaAED",
+  title: "บทความ AED — ความรู้และวิธีใช้",
   description:
     "บทความเกี่ยวกับเครื่อง AED วิธีการใช้งาน การบำรุงรักษา และมาตรฐานความปลอดภัย",
   alternates: { canonical: "/articles" },

@@ -28,7 +28,7 @@ const modelPrice = Object.fromEntries(
 ) as Record<(typeof primedicModels)[number]["id"], string>;
 
 export const metadata: Metadata = {
-  title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม | JiaAED",
+  title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม",
   description:
     `ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (${modelPrice["primedic-y0"]}), Y8 (${modelPrice["primedic-y8"]}) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (${modelPrice["primedic-y2"]}) จอสี EKG ดูคุณภาพ CPR สด ๆ`,
   alternates: { canonical: "/aed/primedic" },

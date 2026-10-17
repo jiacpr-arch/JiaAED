@@ -5,7 +5,7 @@ import { PageHero } from "@/app/components/PageHero";
 import { LINE_OA_ID } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "นโยบายความเป็นส่วนตัว | JiaAED",
+  title: "นโยบายความเป็นส่วนตัว",
   description:
     "นโยบายความเป็นส่วนตัวของ JiaAED (เจี่ยรักษา) — ข้อมูลที่เราเก็บ วัตถุประสงค์ การใช้คุกกี้ และสิทธิของท่านตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล (PDPA)",
   alternates: { canonical: "/privacy" },

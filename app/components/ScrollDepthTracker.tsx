@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { trackEvent } from "@/lib/aed/analytics-client";
 
 const SESSION_KEY_PREFIX = "jiaaed_scroll_";
@@ -18,8 +19,11 @@ function alreadyFired(key: string): boolean {
 }
 
 export function ScrollDepthTracker() {
+  // Mounted once in the root layout, so key the effect on the route: each
+  // client-side navigation restarts the timers/thresholds for the new page.
+  const path = usePathname();
+
   useEffect(() => {
-    const path = window.location.pathname;
 
     const engagedTimer = window.setTimeout(() => {
       if (alreadyFired(`${SESSION_KEY_PREFIX}engaged_${path}`)) return;
@@ -52,7 +56,7 @@ export function ScrollDepthTracker() {
       window.clearTimeout(engagedTimer);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [path]);
 
   return null;
 }

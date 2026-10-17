@@ -4,11 +4,12 @@ import type { Metadata } from "next";
 import { PageHero } from "@/app/components/PageHero";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// News changes at most daily (news-feed cron) and admin hides are not urgent,
+// so serve a cached render instead of querying Supabase on every visit.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "ข่าวและความตระหนักเรื่องหัวใจหยุดเต้น | JiaAED",
+  title: "ข่าวและความตระหนักเรื่องหัวใจหยุดเต้น",
   description:
     "ข่าวที่เกี่ยวข้องกับภาวะหัวใจหยุดเต้นเฉียบพลัน การกู้ชีพ CPR และเครื่อง AED พร้อมมุมให้ความรู้จาก JiaAED",
   alternates: { canonical: "/news" },

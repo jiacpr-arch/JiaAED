@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { LINE_OA, LINE_OA_ID } from "@/lib/aed/line";
 
@@ -15,6 +15,49 @@ const LINE_ID = LINE_OA_ID;
 export function LineFallbackModal({ onClose }: { onClose: () => void }) {
   const [copied, setCopied] = useState(false);
   const [hasQr, setHasQr] = useState(true);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // Keyboard a11y: focus moves into the dialog on open and back to whatever
+  // had it (usually the LINE button) on close; Escape closes; Tab cycles
+  // inside the dialog instead of wandering into the page behind the overlay.
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const dialog = dialogRef.current;
+    const focusables = () =>
+      Array.from(
+        dialog?.querySelectorAll<HTMLElement>("button, a[href], [tabindex]:not([tabindex='-1'])") ?? [],
+      );
+    focusables()[0]?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusables();
+      if (items.length === 0) return;
+      const first = items[0];
+      const lastItem = items[items.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !dialog?.contains(document.activeElement))) {
+        e.preventDefault();
+        lastItem.focus();
+      } else if (!e.shiftKey && (document.activeElement === lastItem || !dialog?.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      previouslyFocused?.focus?.();
+    };
+  }, []);
 
   const copyId = async () => {
     try {
@@ -43,10 +86,11 @@ export function LineFallbackModal({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="เพิ่มเพื่อน LINE"
+      aria-labelledby="line-fallback-title"
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
         className="relative w-full max-w-sm rounded-2xl bg-white p-6 text-gray-900 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
@@ -59,7 +103,7 @@ export function LineFallbackModal({ onClose }: { onClose: () => void }) {
           ×
         </button>
 
-        <h2 className="mb-1 text-center text-lg font-bold">📱 เพิ่มเพื่อนทาง LINE</h2>
+        <h2 id="line-fallback-title" className="mb-1 text-center text-lg font-bold">📱 เพิ่มเพื่อนทาง LINE</h2>
         <p className="mb-4 text-center text-sm text-gray-500">
           {hasQr
             ? "สแกน QR ด้วยมือถือ หรือค้นหา ID ในแอป LINE"

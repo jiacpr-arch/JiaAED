@@ -10,7 +10,7 @@ export default function NotFound() {
       <div className="market-content">
 
 
-      <main className="flex-1 flex items-center justify-center px-4 py-20">
+      <div className="flex-1 flex items-center justify-center px-4 py-20">
         <div className="max-w-lg text-center">
           <div className="text-7xl mb-6">🔍</div>
           <p className="text-yellow-400 font-black text-6xl mb-3">404</p>
@@ -42,7 +42,7 @@ export default function NotFound() {
             <Link href="/docs" className="hover:text-yellow-400 transition-colors">เอกสาร</Link>
           </div>
         </div>
-      </main>
+      </div>
 
 
           </div>

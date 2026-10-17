@@ -20,7 +20,7 @@ export const revalidate = 3600;
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน | JiaAED",
+  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน",
   description:
     "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },

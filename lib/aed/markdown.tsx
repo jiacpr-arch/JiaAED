@@ -2,9 +2,25 @@ import React from "react";
 
 /**
  * Minimal markdown renderer for trusted in-repo article content.
- * Supports: ## h2, ### h3, paragraphs, - bullet lists, [text](url) links, **bold**.
+ * Supports: ## h2, ### h3, paragraphs, - bullet lists, 1. numbered lists,
+ * [text](url) links, **bold**.
  * Not a general-purpose renderer — only what our articles need.
  */
+
+/**
+ * Returns the href if it's one we're willing to render as a link — http(s),
+ * a site-relative path ("/…"), an in-page anchor ("#…"), tel: or mailto: —
+ * otherwise null so the caller renders the label as plain text. Articles are
+ * in-repo, but the web chat renders AI replies with the same rule, and a
+ * `javascript:`/`data:` href must never become a clickable link.
+ */
+export function safeHref(href: string): string | null {
+  const h = href.trim();
+  if (h.startsWith("//")) return null; // protocol-relative → arbitrary host
+  if (h.startsWith("/") || h.startsWith("#")) return h;
+  if (/^(https?:\/\/|tel:|mailto:)/i.test(h)) return h;
+  return null;
+}
 
 function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   // Split into tokens for [text](url) and **bold**
@@ -18,8 +34,13 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
       nodes.push(text.slice(last, match.index));
     }
     if (match[1] !== undefined && match[2] !== undefined) {
-      const href = match[2];
-      const isExternal = /^https?:\/\//.test(href);
+      const href = safeHref(match[2]);
+      if (!href) {
+        nodes.push(match[1]);
+        last = regex.lastIndex;
+        continue;
+      }
+      const isExternal = /^https?:\/\//i.test(href);
       nodes.push(
         <a
           key={`${keyPrefix}-l-${i++}`}
@@ -49,20 +70,34 @@ export function renderMarkdown(src: string): React.ReactNode {
   const lines = src.split("\n");
   const blocks: React.ReactNode[] = [];
   let listBuf: string[] = [];
+  let listOrdered = false;
   let paraBuf: string[] = [];
   let key = 0;
 
   const flushList = () => {
     if (listBuf.length === 0) return;
-    const items = listBuf;
+    const items = listBuf.map((it, i) => (
+      <li key={i}>{renderInline(it, `li-${key}-${i}`)}</li>
+    ));
     blocks.push(
-      <ul key={`ul-${key++}`} className="list-disc list-outside pl-6 space-y-1 my-3 text-gray-300">
-        {items.map((it, i) => (
-          <li key={i}>{renderInline(it, `li-${key}-${i}`)}</li>
-        ))}
-      </ul>,
+      listOrdered ? (
+        <ol key={`ol-${key++}`} className="list-decimal list-outside pl-6 space-y-1 my-3 text-gray-300">
+          {items}
+        </ol>
+      ) : (
+        <ul key={`ul-${key++}`} className="list-disc list-outside pl-6 space-y-1 my-3 text-gray-300">
+          {items}
+        </ul>
+      ),
     );
     listBuf = [];
+  };
+
+  const pushListItem = (ordered: boolean, text: string) => {
+    // A switch between "-" and "1." starts a new list rather than merging.
+    if (listBuf.length > 0 && listOrdered !== ordered) flushList();
+    listOrdered = ordered;
+    listBuf.push(text);
   };
 
   const flushPara = () => {
@@ -96,7 +131,10 @@ export function renderMarkdown(src: string): React.ReactNode {
       );
     } else if (/^-\s+/.test(line)) {
       flushPara();
-      listBuf.push(line.replace(/^-\s+\[\s?[xX ]?\]\s+/, "").replace(/^-\s+/, ""));
+      pushListItem(false, line.replace(/^-\s+\[\s?[xX ]?\]\s+/, "").replace(/^-\s+/, ""));
+    } else if (/^\d+[.)]\s+/.test(line)) {
+      flushPara();
+      pushListItem(true, line.replace(/^\d+[.)]\s+/, ""));
     } else if (line === "") {
       flushList();
       flushPara();
