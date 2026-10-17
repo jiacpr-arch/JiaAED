@@ -2,9 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { trackEvent as sharedTrack } from "@/lib/aed/analytics-client";
+import { safeHref } from "@/lib/aed/markdown";
 
 import { LINE_OA } from "@/lib/aed/line";
 const STORAGE_KEY = "jiaaed_web_chat_v1";
+// Broadcast when the panel opens/closes so FloatingLineButton can step aside —
+// both sit in the bottom-right corner and the panel would otherwise be covered.
+export const WEB_CHAT_TOGGLE_EVENT = "jiaaed:web-chat-toggle";
 const SESSION_KEY = "jiaaed_web_chat_session";
 const GREETING =
   "สวัสดีครับ 🙏 ผมเจี่ย — AI ผู้ช่วยขาย AED Yuwell / PRIMEDIC HeartSave\n\nสนใจสอบถามเรื่องอะไรครับ? ราคา สเปค การติดตั้ง หรือคำแนะนำเลือกรุ่น?";
@@ -70,7 +74,9 @@ function trackEvent(name: string, params?: Record<string, unknown>) {
 }
 
 function renderMessage(text: string): React.ReactNode {
-  // Render simple markdown-style links [text](#section) → <a>; otherwise plain
+  // Render simple markdown-style links [text](#section) → <a>; otherwise plain.
+  // Replies come from the model, so only safe hrefs become links — anything
+  // else (javascript:, data:, //host) is shown as its label text.
   const parts: React.ReactNode[] = [];
   const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let last = 0;
@@ -78,14 +84,20 @@ function renderMessage(text: string): React.ReactNode {
   let i = 0;
   while ((match = regex.exec(text)) !== null) {
     if (match.index > last) parts.push(text.slice(last, match.index));
-    const [, label, href] = match;
+    const [, label, rawHref] = match;
+    const href = safeHref(rawHref);
+    if (!href) {
+      parts.push(label);
+      last = match.index + match[0].length;
+      continue;
+    }
     const isLine = href.includes("line.me");
     parts.push(
       <a
         key={`l-${i++}`}
         href={href}
-        target={href.startsWith("http") ? "_blank" : undefined}
-        rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+        target={/^https?:/i.test(href) ? "_blank" : undefined}
+        rel={/^https?:/i.test(href) ? "noopener noreferrer" : undefined}
         data-line-cta={isLine ? "web_chat_link" : undefined}
         className="text-yellow-400 underline hover:text-yellow-300"
       >
@@ -123,6 +135,10 @@ export function WebChat() {
   }, [history]);
 
   useEffect(() => {
+    window.dispatchEvent(new CustomEvent<boolean>(WEB_CHAT_TOGGLE_EVENT, { detail: open }));
+  }, [open]);
+
+  useEffect(() => {
     if (open && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -147,9 +163,11 @@ export function WebChat() {
     setInput("");
     setError(null);
     setLoading(true);
+    // Never send the message text to analytics — visitors type names and phone
+    // numbers into the chat. The transcript is stored server-side instead.
     trackEvent("web_chat_message_sent", {
       turn: next.filter((m) => m.role === "user").length,
-      text: text.slice(0, 400),
+      length: text.length,
     });
 
     try {
@@ -167,7 +185,11 @@ export function WebChat() {
         error?: string;
       };
       if (!res.ok || !json.ok || !json.reply) {
-        setError("ขออภัย ระบบขัดข้องชั่วคราว ลองอีกครั้งหรือทักทาง LINE");
+        setError(
+          json.error === "rate_limited" || json.error === "busy"
+            ? "ตอนนี้มีคำถามเข้ามาเยอะ รบกวนลองใหม่อีกสักครู่ หรือทักทาง LINE ได้ทันทีครับ"
+            : "ขออภัย ระบบขัดข้องชั่วคราว ลองอีกครั้งหรือทักทาง LINE",
+        );
         setLoading(false);
         return;
       }
@@ -276,7 +298,7 @@ export function WebChat() {
           {/* Quick actions */}
           <div className="px-4 py-2 border-t border-gray-800 flex gap-2 overflow-x-auto">
             <a
-              href="#contact"
+              href="/quote"
               onClick={() => {
                 setOpen(false);
                 trackEvent("web_chat_contact_click");
@@ -301,6 +323,7 @@ export function WebChat() {
             <div className="flex gap-2 items-end">
               <textarea
                 ref={inputRef}
+                aria-label="พิมพ์คำถามถึงเจี่ย AI"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKey}

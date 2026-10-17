@@ -13,6 +13,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
+import { SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
 import { trustedBy } from "@/lib/aed/trust";
 
 export const revalidate = 3600;
@@ -20,7 +21,7 @@ export const revalidate = 3600;
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน | JiaAED",
+  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน",
   description:
     "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
@@ -84,7 +85,7 @@ export default function SubscriptionPage() {
           <FeatureMatrix />
         </div>
         <p className="text-center text-gray-600 text-xs mt-4">
-          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿5,000 (คืนเมื่อจบสัญญา)
+          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
         </p>
       </section>
 

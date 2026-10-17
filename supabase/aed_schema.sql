@@ -84,7 +84,6 @@ CREATE TABLE IF NOT EXISTS aed_followups (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_aed_conv_thread     ON aed_conversations(channel, channel_thread_id);
 CREATE INDEX IF NOT EXISTS idx_aed_msg_conv        ON aed_messages(conversation_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_aed_deals_stage     ON aed_deals(stage, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_aed_followups_sched ON aed_followups(scheduled_for, status);
@@ -96,8 +95,13 @@ ALTER TABLE aed_messages      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aed_deals         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aed_followups     ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "service_role_aed_customers" ON aed_customers;
 CREATE POLICY "service_role_aed_customers"     ON aed_customers     FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "service_role_aed_conversations" ON aed_conversations;
 CREATE POLICY "service_role_aed_conversations" ON aed_conversations FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "service_role_aed_messages" ON aed_messages;
 CREATE POLICY "service_role_aed_messages"      ON aed_messages      FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "service_role_aed_deals" ON aed_deals;
 CREATE POLICY "service_role_aed_deals"         ON aed_deals         FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "service_role_aed_followups" ON aed_followups;
 CREATE POLICY "service_role_aed_followups"     ON aed_followups     FOR ALL TO service_role USING (true) WITH CHECK (true);

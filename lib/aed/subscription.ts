@@ -2,6 +2,8 @@
 // BASIC / PRO / ELITE are the monthly service levels of the ดูแลครบ
 // managed-rental package (see ./packages.ts). Prices are PROVISIONAL.
 
+import { SAFETY_PREMIUM_PRICING } from "./packages";
+
 export type SubscriptionTierId = "managed-basic" | "managed-pro" | "managed-elite";
 
 export type SubscriptionTier = {
@@ -88,11 +90,23 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
   },
 ];
 
+// Tier names that include a matrix feature, e.g. "PRO/ELITE" — so the
+// comparison below can't claim more than the matrix promises.
+function tiersWith(feature: string): string {
+  const row = subscriptionMatrix.find((r) => r.feature === feature);
+  return subscriptionTiers
+    .filter((t) => row && row.values[t.id] !== false)
+    .map((t) => t.name)
+    .join("/");
+}
+
+const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
+
 // Rent (managed subscription) vs buy (outright) comparison.
 export const rentVsBuy: { dimension: string; buy: string; subscribe: string }[] = [
   {
     dimension: "เงินลงทุนเริ่มต้น",
-    buy: "จ่ายเต็มจำนวนทันที (เงินสด ฿42,900 / เครดิต-ราชการ ฿69,000)",
+    buy: `จ่ายเต็มจำนวนทันที (เงินสด ${thb(SAFETY_PREMIUM_PRICING.cash)} / เครดิต-ราชการ ${thb(SAFETY_PREMIUM_PRICING.credit)})`,
     subscribe: "ไม่ต้องจ่ายเงินก้อนใหญ่",
   },
   {
@@ -103,12 +117,14 @@ export const rentVsBuy: { dimension: string; buy: string; subscribe: string }[] 
   {
     dimension: "แจ้งเตือนแบต / แผ่นแปะหมดอายุ",
     buy: "ต้องติดตามเอง",
-    subscribe: "มีระบบแจ้งเตือนอัตโนมัติ",
+    subscribe: `ทีมงานติดตามและเปลี่ยนให้ · แจ้งเตือนทางอีเมลในระดับ ${tiersWith("แจ้งเตือนทางอีเมล (Email Alert)")}`,
   },
   {
+    // Safety Premium includes the first on-site course (see ./packages.ts);
+    // recurring training is a PRO/ELITE subscription feature, BASIC has none.
     dimension: "การอบรมพนักงาน",
-    buy: "จัดอบรมเอง",
-    subscribe: "มีในแพ็กเกจ",
+    buy: "อบรมครั้งแรกรวมในแพ็กซื้อขาด (Safety Premium) — ครั้งต่อไปจัดเอง/ซื้อคอร์สเพิ่ม",
+    subscribe: `อบรมประจำปีในระดับ ${tiersWith("อบรมพนักงาน (ครั้ง/ปี)")} (BASIC ซื้อคอร์สเพิ่มได้)`,
   },
   {
     dimension: "เหมาะกับองค์กรแบบใด",

@@ -3,6 +3,7 @@ import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 import { faqs, type FAQ } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA } from "@/lib/aed/line";
+import { jsonLd } from "@/lib/aed/json-ld";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 const BRAND = "JiaAED";
@@ -23,7 +24,9 @@ export function StructuredData() {
     url: SITE,
     logo: `${SITE}/images/jia-logo.webp`,
     description:
-      "ผู้นำเข้าและจัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
+      // Distributor, not importer — Yuwell Medical (Thailand) is the registered
+      // importer (see lib/aed/regulatory.ts).
+      "ผู้จัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
@@ -71,7 +74,7 @@ export function StructuredData() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify([organization, website]) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd([organization, website]) }}
     />
   );
 }
@@ -99,7 +102,7 @@ export function FaqStructuredData({ items }: { items: FAQ[] }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd(faqPage) }}
     />
   );
 }
@@ -127,7 +130,7 @@ export function BreadcrumbStructuredData({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumb) }}
     />
   );
 }
@@ -170,7 +173,7 @@ export function ArticleStructuredData({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd(article) }}
     />
   );
 }
@@ -257,7 +260,7 @@ export function ProductStructuredData({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(blob) }}
+      dangerouslySetInnerHTML={{ __html: jsonLd(blob) }}
     />
   );
 }

@@ -37,18 +37,42 @@ export async function flushNotifyQueue(): Promise<{
     return { flushed: false, count: rows.length, reason: "debouncing" };
   }
 
-  const combined = rows.map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
-  // Send directly — going through notifyAnalyticsDigest here would re-enqueue
-  // the combined text and the queue would never drain.
-  for (const chunk of chunkForLine(combined)) {
-    await pushToOwner(chunk);
-  }
-
-  const ids = rows.map((r) => r.id);
-  await supabase
+  // Claim before sending: only rows this run flips from unsent → sent come
+  // back, so an overlapping run (Vercel can re-deliver a cron tick) can't send
+  // the same rows again. Postgres re-checks `sent = false` after waiting on the
+  // other run's row locks, which makes the claim exclusive.
+  const { data: claimed, error: claimError } = await supabase
     .from("aed_notify_queue")
     .update({ sent: true, sent_at: new Date(now).toISOString() })
-    .in("id", ids);
+    .in("id", rows.map((r) => r.id))
+    .eq("sent", false)
+    .select("id");
+  if (claimError) throw claimError;
 
-  return { flushed: true, count: rows.length, reason: waitingMs >= MAX_WAIT_MS ? "max_wait" : "quiet" };
+  const claimedIds = new Set(((claimed ?? []) as Array<{ id: number }>).map((r) => r.id));
+  const mine = rows.filter((r) => claimedIds.has(r.id));
+  if (mine.length === 0) return { flushed: false, count: 0, reason: "empty" };
+
+  const combined = mine.map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
+  // Send directly — going through notifyAnalyticsDigest here would re-enqueue
+  // the combined text and the queue would never drain.
+  let delivered = true;
+  for (const chunk of chunkForLine(combined)) {
+    if (!(await pushToOwner(chunk))) {
+      delivered = false;
+      break;
+    }
+  }
+
+  if (!delivered) {
+    // LINE rejected or timed out (429/5xx, missing token): hand the rows back
+    // so the next run retries, instead of marking the day's reports sent.
+    await supabase
+      .from("aed_notify_queue")
+      .update({ sent: false, sent_at: null })
+      .in("id", [...claimedIds]);
+    throw new Error(`LINE push failed — ${mine.length} queued message(s) kept for retry`);
+  }
+
+  return { flushed: true, count: mine.length, reason: waitingMs >= MAX_WAIT_MS ? "max_wait" : "quiet" };
 }

@@ -2,7 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createNotifyBatch } from "@/lib/aed/notify-owner";
-import { claimDailyCronRun } from "@/lib/aed/cron-once";
+import { claimDailyCronRun, releaseDailyCronRun } from "@/lib/aed/cron-once";
 import {
   hasEnoughSignal,
   insertArticleIntoSource,
@@ -46,6 +46,13 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
+  const ghToken = process.env.GITHUB_TOKEN;
+  const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
+  if (!ghToken) {
+    console.warn("[article-gap] skipped — no GITHUB_TOKEN env var");
+    return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
+  }
+
   // At-least-once cron gate: bail out if a twin invocation already claimed today,
   // so the article-gap LINE messages (and its PR flow) run at most once.
   if (!(await claimDailyCronRun("article_gap"))) {
@@ -55,13 +62,6 @@ export async function GET(req: Request) {
   const batch = createNotifyBatch();
   const notify = (text: string) => batch.add(text);
   const notifyError = (text: string) => batch.add(text);
-
-  const ghToken = process.env.GITHUB_TOKEN;
-  const ghRepo = process.env.GITHUB_REPO ?? "jiacpr-arch/JiaAED";
-  if (!ghToken) {
-    console.warn("[article-gap] skipped — no GITHUB_TOKEN env var");
-    return NextResponse.json({ ok: false, reason: "no_github_token" }, { status: 500 });
-  }
   const [owner, repo] = ghRepo.split("/");
   const gh = { token: ghToken, owner, repo };
 
@@ -150,7 +150,10 @@ Tags: ${proposal.tags.join(", ")}
     const msg = String(err).slice(0, 300);
     console.error("[article-gap] failed:", err);
     notifyError(`🚨 Article-gap error:\n${msg}`);
-    await logRun({ ...result, error: msg });
+    // Free today's claim so a manual re-run can retry (this cron is weekly). A
+    // PR may already exist if the failure came late — the slug collision check
+    // only guards merged articles, so a retry can at worst open a second draft.
+    await releaseDailyCronRun("article_gap");
     return NextResponse.json({ ok: false, error: msg }, { status: 500 });
   } finally {
     await batch.flush().catch((e) => console.error("[article-gap] batch flush failed:", e));

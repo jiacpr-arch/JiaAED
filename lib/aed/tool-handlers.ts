@@ -3,7 +3,15 @@
  * แต่ละ handler รับ input JSON และ return ผลลัพธ์เป็น string (Claude อ่านได้)
  */
 
-import { calculatePrice, getProduct, formatThaiPrice } from "./pricing";
+import {
+  calculatePrice,
+  checkQuoteRequest,
+  getProduct,
+  formatThaiPrice,
+  isValidQuantity,
+  MAX_QUOTE_QUANTITY,
+  QUOTABLE_PRODUCT_IDS,
+} from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
 import { recordConversion } from "./conversion";
@@ -83,7 +91,9 @@ export async function handleUpdateCustomerInfo(
       email,
       companyName: input.company_name ?? ctx.customer.company_name ?? null,
     });
-    void recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
+    // Awaited: this runs inside the webhook's waitUntil chain, and a floating
+    // promise there can be dropped when the function is frozen.
+    await recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
       console.error("[AED] chat conversion failed:", e),
     );
     // Reflect locally so repeated calls within the same turn don't double-fire.
@@ -97,6 +107,10 @@ export async function handleUpdateCustomerInfo(
 // ─── calculate_price ──────────────────────────────────────────────────────────
 
 export async function handleCalculatePrice(input: CalculatePriceInput): Promise<string> {
+  if (!QUOTABLE_PRODUCT_IDS.includes(input.product_id)) return `ไม่พบสินค้า id: ${input.product_id}`;
+  if (!isValidQuantity(input.quantity)) {
+    return `จำนวนต้องเป็นจำนวนเต็ม 1–${MAX_QUOTE_QUANTITY} เครื่อง (ถ้ามากกว่านี้ให้ escalate_to_human)`;
+  }
   const result = calculatePrice(input.product_id, input.quantity, input.customer_type ?? "individual");
   if (!result) return `ไม่พบสินค้า id: ${input.product_id}`;
 
@@ -126,8 +140,9 @@ export async function handleCreateQuotation(
   ctx: ToolContext,
   input: CreateQuotationInput,
 ): Promise<string> {
-  const product = getProduct(input.product_id);
-  if (!product) return `ไม่พบสินค้า: ${input.product_id}`;
+  const check = checkQuoteRequest(input.product_id, input.quantity, input.unit_price);
+  if (!check.ok) return `ยังไม่ได้สร้างใบเสนอราคา: ${check.reason}`;
+  const product = check.product;
 
   // Create deal in DB first
   const deal = await createDeal(
@@ -169,7 +184,7 @@ export async function handleCreateQuotation(
 
   // Notify owner about the new quotation
   if (result.documentNumber) {
-    void notifyNewQuotation({
+    await notifyNewQuotation({
       customerName: ctx.customer.full_name,
       productName: product.nameTh,
       quantity: input.quantity,
@@ -217,6 +232,13 @@ export async function handleScheduleFollowup(
   input: ScheduleFollowupInput,
   dealId?: string,
 ): Promise<string> {
+  const days = input.days_later;
+  if (typeof days !== "number" || !Number.isInteger(days) || days < 1 || days > 14) {
+    return "days_later ต้องเป็นจำนวนเต็ม 1–14 วัน";
+  }
+  if (typeof input.message_template !== "string" || !input.message_template.trim()) {
+    return "ต้องมี message_template";
+  }
   const followup = await scheduleFollowup(
     ctx.customer.id,
     ctx.conversation.id,

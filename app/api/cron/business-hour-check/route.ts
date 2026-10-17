@@ -2,6 +2,7 @@ import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyAnalyticsAlert } from "@/lib/aed/notify-owner";
+import { claimDailyCronRun } from "@/lib/aed/cron-once";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +12,6 @@ const BUSINESS_START_HOUR = 9;
 const BUSINESS_END_HOUR = 18;
 const WINDOW_HOURS = 4;
 const VISITOR_THRESHOLD = 30;
-const ALERT_COOLDOWN_HOURS = 6;
 
 function bkkHour(): number {
   const fmt = new Intl.DateTimeFormat("en-US", {
@@ -20,16 +20,6 @@ function bkkHour(): number {
     hour12: false,
   });
   return Number(fmt.format(new Date()));
-}
-
-function bkkDateLabel(): string {
-  const fmt = new Intl.DateTimeFormat("en-CA", {
-    timeZone: BKK_TZ,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  return fmt.format(new Date());
 }
 
 export async function GET(req: Request) {
@@ -43,10 +33,9 @@ export async function GET(req: Request) {
   }
 
   const since = new Date(Date.now() - WINDOW_HOURS * 60 * 60 * 1000).toISOString();
-  const cooldownSince = new Date(Date.now() - ALERT_COOLDOWN_HOURS * 60 * 60 * 1000).toISOString();
   const supabase = createAdminClient();
 
-  const [visitsRes, submitsRes, recentAlertRes] = await Promise.all([
+  const [visitsRes, submitsRes] = await Promise.all([
     supabase
       .from("aed_ad_visits")
       .select("*", { count: "exact", head: true })
@@ -56,19 +45,19 @@ export async function GET(req: Request) {
       .select("*", { count: "exact", head: true })
       .eq("event_name", "lead_form_submit")
       .gte("created_at", since),
-    supabase
-      .from("aed_analytics_digest_log")
-      .select("id")
-      .eq("kind", "no_leads_alert")
-      .gte("created_at", cooldownSince)
-      .limit(1),
   ]);
 
   const visits = visitsRes.count ?? 0;
   const submits = submitsRes.count ?? 0;
-  const recentAlertSent = (recentAlertRes.data ?? []).length > 0;
 
-  if (visits >= VISITOR_THRESHOLD && submits === 0 && !recentAlertSent) {
+  if (visits >= VISITOR_THRESHOLD && submits === 0) {
+    // At most one alert per Bangkok day. The old 6-hour cooldown read the
+    // previous alert row, but a second same-day row could never be written
+    // (UNIQUE(digest_date, kind)), so after the cooldown it re-alerted hourly.
+    // The claim insert is atomic, which also covers re-delivered cron ticks.
+    if (!(await claimDailyCronRun("no_leads_alert"))) {
+      return NextResponse.json({ ok: true, alerted: false, already_alerted_today: true, visits, submits });
+    }
     const msg = [
       `🚨 ไม่มี Lead ในช่วงทำการ!`,
       ``,
@@ -80,14 +69,8 @@ export async function GET(req: Request) {
     ].join("\n");
     await notifyAnalyticsAlert(msg);
 
-    await supabase.from("aed_analytics_digest_log").insert({
-      digest_date: bkkDateLabel(),
-      kind: "no_leads_alert",
-      payload: { visits, submits, hour },
-    });
-
     return NextResponse.json({ ok: true, alerted: true, visits, submits });
   }
 
-  return NextResponse.json({ ok: true, alerted: false, visits, submits, recentAlertSent });
+  return NextResponse.json({ ok: true, alerted: false, visits, submits });
 }

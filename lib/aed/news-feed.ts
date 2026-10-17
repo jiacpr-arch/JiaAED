@@ -107,6 +107,8 @@ export async function fetchGoogleNews(query: string): Promise<RawNewsItem[]> {
   const res = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (compatible; JiaAEDNewsBot/1.0)" },
     cache: "no-store",
+    // One slow feed must not eat the whole cron's maxDuration.
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`google news rss ${res.status} for "${query}"`);
 
@@ -215,7 +217,9 @@ export async function curate(items: RawNewsItem[]): Promise<CuratedItem[]> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const anthropic = new Anthropic({ apiKey });
+  // Inside the cron's 120s budget, so a slow call fails (and alerts) instead
+  // of the function being killed silently.
+  const anthropic = new Anthropic({ apiKey, timeout: 90_000, maxRetries: 0 });
 
   const list = items
     .map(

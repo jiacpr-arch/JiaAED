@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/aed/paging";
 
 const BKK_TZ = "Asia/Bangkok";
 
@@ -51,14 +52,6 @@ export type WeeklyContext = {
     organic_visits: number;
     top_sources: Array<{ source: string; n: number }>;
   };
-  ab_test: {
-    a_views: number;
-    a_clicks: number;
-    a_ctr: number;
-    b_views: number;
-    b_clicks: number;
-    b_ctr: number;
-  };
   leads: { total: number; from_gclid: number; from_organic: number };
 };
 
@@ -105,32 +98,52 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
 
   const supabase = createAdminClient();
 
+  // Row lists are paged (fetchAllRows): a single select stops at Supabase's
+  // 1,000-row cap, which a week of events passes. Leads exclude partial_*
+  // (abandoned-form beacons).
   const [thisWeek, lastWeek, visitsThis, visitsPrev, leads, chats, messages] = await Promise.all([
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name, properties, page_url")
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name")
-      .gte("created_at", prevWeek.from)
-      .lt("created_at", week.from),
-    supabase
-      .from("aed_ad_visits")
-      .select("gclid, utm_source", { count: "exact" })
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
+    fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name, properties, page_url")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
+    fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name")
+        .gte("created_at", prevWeek.from)
+        .lt("created_at", week.from)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
+    fetchAllRows<{ gclid: string | null; utm_source: string | null }>((a, b) =>
+      supabase
+        .from("aed_ad_visits")
+        .select("gclid, utm_source")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data, count: data.length })),
     supabase
       .from("aed_ad_visits")
       .select("*", { count: "exact", head: true })
       .gte("created_at", prevWeek.from)
       .lt("created_at", week.from),
-    supabase
-      .from("aed_leads")
-      .select("gclid, utm_source")
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
+    fetchAllRows<{ gclid: string | null; utm_source: string | null }>((a, b) =>
+      supabase
+        .from("aed_leads")
+        .select("gclid, utm_source")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .not("source", "like", "partial%")
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
     // LINE only — web-chat transcripts share these tables (channel "web").
     supabase
       .from("aed_conversations")
@@ -160,16 +173,7 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
     bucket[r.event_name] = (bucket[r.event_name] ?? 0) + 1;
   }
 
-  const heroViews = rows.filter((r) => r.event_name === "hero_cta_view");
   const lineClicks = rows.filter((r) => r.event_name === "line_click");
-  const a_views = heroViews.filter((r) => (r.properties?.variant as string) === "a").length;
-  const b_views = heroViews.filter((r) => (r.properties?.variant as string) === "b").length;
-  const a_clicks = lineClicks.filter(
-    (r) => (r.properties?.hero_variant as string) === "a" && (r.properties?.location as string) === "hero",
-  ).length;
-  const b_clicks = lineClicks.filter(
-    (r) => (r.properties?.hero_variant as string) === "b" && (r.properties?.location as string) === "hero",
-  ).length;
 
   const top_pages = countBy(rows, (r) => pathFromUrl(r.page_url)).map(({ key, n }) => ({ path: key, n }));
   const top_doc_downloads = countBy(
@@ -215,14 +219,6 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
       messages: messages.count ?? 0,
     },
     ad_attribution: { gclid_visits, utm_visits, organic_visits, top_sources },
-    ab_test: {
-      a_views,
-      a_clicks,
-      a_ctr: a_views > 0 ? Math.round((a_clicks / a_views) * 1000) / 10 : 0,
-      b_views,
-      b_clicks,
-      b_ctr: b_views > 0 ? Math.round((b_clicks / b_views) * 1000) / 10 : 0,
-    },
     leads: {
       total: leadRows.length,
       from_gclid: leadRows.filter((l) => !!l.gclid).length,
@@ -245,7 +241,6 @@ const SYSTEM_PROMPT = `คุณคือนักวิเคราะห์ก
 
 ⚠️ สำคัญมาก — วิธีอ่าน event ให้ถูก (กันสรุปผิด):
 - หน้าแรก (home, path "/") กับ หน้าโฆษณา (ads_landing, path "/aed/*") ฝัง event ไม่เหมือนกัน ห้ามเอายอดรวม (field "events") มาเทียบ % แล้วตีความตรงๆ ให้ดู "events_by_page" เพื่อเทียบแยกหน้า
-- "hero_cta_view" ยิงเฉพาะหน้าแรกเท่านั้น หน้าโฆษณาไม่มี event นี้ → ถ้า traffic ย้ายไปหน้าโฆษณามากขึ้น ตัวเลขนี้จะลดเองโดยที่ปุ่มไม่ได้หาย/ไม่ได้พัง อย่าด่วนสรุปว่า CTA โดนซ่อนหรือให้ rollback
 - "price_view" บนหน้าโฆษณายิงตั้งแต่โหลด เพราะราคาอยู่บนสุดของหน้า → ค่านี้เกือบเท่าจำนวนคนเข้าหน้าโฆษณา ไม่ใช่สัญญาณว่าสนใจราคาเป็นพิเศษ ส่วน price_view บนหน้าแรกต้องเลื่อนลงไปถึงจะยิง = เป็น signal ความสนใจจริง ให้ดูแยกหน้า
 - เวลาเจอตัวเลขพุ่ง/ตกแรงๆ ให้เช็คก่อนว่าเป็นเพราะ "สัดส่วน traffic ระหว่างหน้าเปลี่ยน" หรือ "พฤติกรรมเปลี่ยนจริง" ก่อนเสนอ action
 
@@ -265,7 +260,8 @@ export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const anthropic = new Anthropic({ apiKey });
+  // The cron has 60s; leave room to build the context and send the report.
+  const anthropic = new Anthropic({ apiKey, timeout: 40_000, maxRetries: 0 });
 
   const userPayload = JSON.stringify(ctx, null, 2);
 

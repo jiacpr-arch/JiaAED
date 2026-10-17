@@ -3,7 +3,53 @@
 // or managed rental. The managed-rental package (pkg-care) is the gateway to the
 // ดูแลครบ BASIC / PRO / ELITE subscription tiers in ./subscription.ts.
 //
-// Prices are PROVISIONAL (wholesale being finalized). Update here only.
+// Prices are PROVISIONAL (wholesale being finalized). Update here only — the
+// rental table, FAQs, subscription comparison and bots read these constants.
+
+import { primedicModels, yuwellGpsAed } from "./primedic";
+
+const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
+
+// ─── Rent-to-own (Safety Start) contract terms ────────────────────────────────
+// The only place these numbers live — rental.ts derives its breakdown table and
+// contract totals from here.
+//   Y8: 16,000 + 2,600 × 18 = ฿62,800 (≈1.40× ราคาสด 44,900) — owner approved 2026-07-19
+//   Y2: 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999) — สัดส่วนพรีเมียมเดียวกัน
+export type RentToOwnTerms = { deposit: number; monthly: number; months: number };
+
+export const RENT_TO_OWN_TERMS = {
+  "pkg-start-y8": { deposit: 16_000, monthly: 2_600, months: 18 },
+  "pkg-start-y2": { deposit: 22_000, monthly: 3_400, months: 18 },
+} as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
+
+const rentToOwnNote = (t: RentToOwnTerms) =>
+  `มัดจำ ${thb(t.deposit)} + ผ่อน ${thb(t.monthly)}/เดือน × ${t.months} เดือน แล้วเป็นเจ้าของ`;
+
+// ─── Safety Premium (ซื้อขาด) price build-up ──────────────────────────────────
+// Owner confirmed 2026-09-24: ฿42,900 = Yuwell Y0 (ขายเดี่ยว ฿39,000) + ฿3,900
+// ค่าอบรม/ชุดฝึก/บริการ — ไม่รวม GPS. รวมตู้ +฿6,100 (all-in ฿49,000, ไม่แยกราคาตู้).
+// อัปเกรดรุ่น GPS ในตัว (yuwell-gps ฿60,000) ใช้ส่วนต่าง ฿3,900 เดียวกัน: ฿63,900 · รวมตู้ ฿69,900.
+// The credit/government prices are a different payment term (เทอมเครดิตยาว), NOT a
+// former price — never render them struck-through as a "was" price.
+const PREMIUM_SERVICE_ADDON = 3_900;
+const PREMIUM_CABINET_ADDON = 6_100;
+const y0 = primedicModels.find((m) => m.id === "primedic-y0")!;
+
+export const SAFETY_PREMIUM_PRICING = {
+  cash: y0.price + PREMIUM_SERVICE_ADDON,
+  cashWithCabinet: y0.price + PREMIUM_SERVICE_ADDON + PREMIUM_CABINET_ADDON,
+  credit: 69_000,
+  gpsCash: yuwellGpsAed.price + PREMIUM_SERVICE_ADDON,
+  // Published owner price. NOTE: this is ฿6,000 over gpsCash, not the ฿6,100
+  // cabinet step above (63,900 + 6,100 would be ฿70,000) — owner to confirm.
+  gpsCashWithCabinet: 69_900,
+  gpsCredit: 89_000,
+} as const;
+
+// Safety Care (managed rental) — refundable deposit for the 1-year contract.
+// The monthly "เริ่ม ฿2,990" is the BASIC tier in ./subscription.ts
+// (catalog-consistency.test.ts keeps the two in step).
+export const SAFETY_CARE_DEPOSIT = 5_000;
 
 export type AcquisitionPackage = {
   id: "pkg-premium" | "pkg-start-y8" | "pkg-start-y2" | "pkg-care";
@@ -12,8 +58,7 @@ export type AcquisitionPackage = {
   nameTh: string; // Thai label, e.g. "ซื้อขาด"
   tagline: string;
   priceLabel: string; // headline price string (packages aren't single-number SKUs)
-  listPriceLabel: string | null; // struck-through list/credit price, if any
-  priceNote: string; // structure under the headline
+  priceNote: string; // structure under the headline (alternative terms live here)
   deposit: string | null;
   features: string[];
   bestFor: string;
@@ -27,6 +72,10 @@ export type AcquisitionPackage = {
   imageAlt: string;
 };
 
+const startY8 = RENT_TO_OWN_TERMS["pkg-start-y8"];
+const startY2 = RENT_TO_OWN_TERMS["pkg-start-y2"];
+const premium = SAFETY_PREMIUM_PRICING;
+
 // Order matters: rental-first. The homepage and /aed/packages render this array
 // in order, so the two rental options (managed rental, rent-to-own) lead and the
 // outright purchase comes last — the site emphasises เช่า over ซื้อ.
@@ -37,12 +86,11 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Care",
     nameTh: "เช่าบริการครบวงจร",
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
-    listPriceLabel: null,
     // Monthly price = the ดูแลครบ subscription tiers (BASIC/PRO/ELITE).
-    // BASIC tier starts at ฿2,990/month. Deposit ฿5,000 for annual contract.
+    // BASIC tier starts at ฿2,990/month.
     priceLabel: "เริ่ม ฿2,990/เดือน",
-    priceNote: "มัดจำ ฿5,000 (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE",
-    deposit: "฿5,000 (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)",
+    priceNote: `มัดจำ ${thb(SAFETY_CARE_DEPOSIT)} (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE`,
+    deposit: `${thb(SAFETY_CARE_DEPOSIT)} (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)`,
     features: [
       "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
       "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",
@@ -62,17 +110,13 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Start — Yuwell Y8",
     nameTh: "เช่าแล้วได้ซื้อ",
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
-    priceLabel: "฿2,600/เดือน",
-    listPriceLabel: null,
-    // Rent-to-own total = 16,000 + 2,600 × 18 = ฿62,800 vs ราคาสด Y8 ฿44,900
-    // (62,800 / 44,900 ≈ 1.40) — สัดส่วนพรีเมียมเดียวกับ pkg-start-y2 (≈1.41)
-    // ตามนโยบายผ่อนของร้าน. Owner approved 2026-07-19.
-    priceNote: "มัดจำ ฿16,000 + ผ่อน ฿2,600/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
-    deposit: "฿16,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
+    priceLabel: `${thb(startY8.monthly)}/เดือน`,
+    priceNote: rentToOwnNote(startY8),
+    deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง)`,
     features: [
       "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
       "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
-      "ครบ 18 เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม",
+      `ครบ ${startY8.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
     badge: "ยอดนิยม",
@@ -87,17 +131,13 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Start — Yuwell Y2",
     nameTh: "เช่าแล้วได้ซื้อ · รุ่นเรือธง",
     tagline: "ผ่อนเบา ๆ ได้เครื่องรุ่นท็อป จอ EKG ดู CPR สด ๆ",
-    priceLabel: "฿3,400/เดือน",
-    listPriceLabel: null,
-    // Rent-to-own total = 22,000 + 3,400 × 18 = ฿83,200. สัดส่วนพรีเมียมเทียบราคาสด
-    // (83,200 / 59,999 ≈ 1.39) ใกล้เคียงสัดส่วนของแพ็ก pkg-start-y8 (62,800/44,900 ≈ 1.40)
-    // — คงความสม่ำเสมอของนโยบายผ่อนระหว่างรุ่น (ปรับตามราคาป้าย Y2 ใหม่ 59,999).
-    priceNote: "มัดจำ ฿22,000 + ผ่อน ฿3,400/เดือน × 18 เดือน แล้วเป็นเจ้าของ",
-    deposit: "฿22,000 (นับเป็นส่วนหนึ่งของค่าเครื่อง)",
+    priceLabel: `${thb(startY2.monthly)}/เดือน`,
+    priceNote: rentToOwnNote(startY2),
+    deposit: `${thb(startY2.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง)`,
     features: [
       "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
       "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
-      "ครบ 18 เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม",
+      `ครบ ${startY2.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นเรือธงแต่ผ่อนเบา ๆ",
     badge: "ผ่อนรุ่นเรือธง",
@@ -112,19 +152,16 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Premium",
     nameTh: "ซื้อขาด",
     tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
-    priceLabel: "เงินสด ฿42,900",
-    listPriceLabel: "฿69,000",
-    // Cabinet add-on price ฿49,000 (all-in, ไม่แยกราคาตู้ต่างหาก). Owner confirmed 2026-09-24.
-    // ฿42,900 = Yuwell Y0 (ขายเดี่ยว ฿39,000) + ฿3,900 ค่าอบรม/ชุดฝึก/บริการ — ไม่รวม GPS.
-    // อัปเกรดรุ่น GPS ในตัว (yuwell-gps ฿60,000, ทุน ฿35,000) ใช้ส่วนต่างเดียวกัน:
-    // 60,000 + 3,900 = ฿63,900 · รวมตู้ +6,100 → ฿69,900 · เครดิต/ราชการ ฿89,000.
+    priceLabel: `เงินสด ${thb(premium.cash)}`,
     priceNote:
-      "เงินสด ฿42,900 (Yuwell Y0 ไม่รวมตู้) / รวมตู้ ฿49,000 · ราคาเครดิต/ราชการ ฿69,000 (สำหรับเทอมเครดิตยาว) · อัปเกรดรุ่น GPS ในตัว ฿63,900 (รวมตู้ ฿69,900 · เครดิต/ราชการ ฿89,000) · ออกใบกำกับภาษีได้",
+      `เงินสด ${thb(premium.cash)} (Yuwell Y0 ไม่รวมตู้) / รวมตู้ ${thb(premium.cashWithCabinet)} · ` +
+      `ราคาเครดิต/ราชการ ${thb(premium.credit)} (สำหรับเทอมเครดิตยาว) · ` +
+      `อัปเกรดรุ่น GPS ในตัว ${thb(premium.gpsCash)} (รวมตู้ ${thb(premium.gpsCashWithCabinet)} · เครดิต/ราชการ ${thb(premium.gpsCredit)}) · ออกใบกำกับภาษีได้`,
     deposit: null,
     features: [
       "เครื่อง AED Yuwell Y0 เป็นกรรมสิทธิ์ขององค์กร",
-      "เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้ (รวมตู้ ฿49,000)",
-      "อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ ฿63,900 (รวมตู้ ฿69,900)",
+      `เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้ (รวมตู้ ${thb(premium.cashWithCabinet)})`,
+      `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ ${thb(premium.gpsCash)} (รวมตู้ ${thb(premium.gpsCashWithCabinet)})`,
       "อบรม CPR & AED สอนถึงที่ โดยทีม BLS Instructor",
       "ชุดอุปกรณ์ฝึกสอน + บริการหลังการขาย",
     ],

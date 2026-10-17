@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-noto-thai), var(--font-geist-sans), sans-serif;
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-noto-thai), sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* Site palette. Tailwind's stock "gray" is blue-tinted, which is what made
@@ -33,7 +33,7 @@
 body {
   background: #0b0b0a;
   color: #ededed;
-  font-family: var(--font-noto-thai), var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-thai), Arial, Helvetica, sans-serif;
   line-height: 1.65;
 }
 

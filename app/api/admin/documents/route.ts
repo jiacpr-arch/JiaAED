@@ -6,7 +6,9 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const BUCKET = "aed-documents";
-const MAX_BYTES = 25 * 1024 * 1024; // 25 MB
+// Vercel rejects function request bodies over 4.5 MB before this code runs,
+// so a larger limit here only produced a confusing platform error.
+const MAX_BYTES = 4 * 1024 * 1024; // 4 MB
 const ALLOWED_MIME = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -24,6 +26,26 @@ const ALLOWED_CATEGORIES = new Set([
 
 function unauthorized() {
   return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+}
+
+// The browser-reported MIME type is just a label; check the file's leading
+// bytes too, so a renamed HTML/script file can't be published to the bucket.
+function sniffMatches(mime: string, b: Uint8Array): boolean {
+  const starts = (...sig: number[]) => sig.every((v, i) => b[i] === v);
+  switch (mime) {
+    case "application/pdf":
+      return starts(0x25, 0x50, 0x44, 0x46); // %PDF
+    case "image/png":
+      return starts(0x89, 0x50, 0x4e, 0x47);
+    case "image/jpeg":
+      return starts(0xff, 0xd8, 0xff);
+    case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+      return starts(0x50, 0x4b, 0x03, 0x04); // zip container
+    case "application/msword":
+      return starts(0xd0, 0xcf, 0x11, 0xe0); // OLE compound file
+    default:
+      return false;
+  }
 }
 
 function sanitizeFilename(name: string): string {
@@ -87,6 +109,12 @@ export async function POST(req: Request) {
   const safeName = sanitizeFilename(file.name);
   const storagePath = `${category}/${Date.now()}-${safeName}`;
   const bytes = new Uint8Array(await file.arrayBuffer());
+  if (!sniffMatches(file.type, bytes)) {
+    return NextResponse.json(
+      { ok: false, error: "unsupported_type", detail: "เนื้อไฟล์ไม่ตรงกับนามสกุล" },
+      { status: 400 },
+    );
+  }
 
   const uploadRes = await supabase.storage.from(BUCKET).upload(storagePath, bytes, {
     contentType: file.type,

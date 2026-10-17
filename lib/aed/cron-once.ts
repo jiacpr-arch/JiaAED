@@ -66,3 +66,25 @@ export async function claimDailyCronRun(
     return true; // fail open
   }
 }
+
+/**
+ * Undo a claim after the run failed before producing any side effect, so a
+ * manual retry the same day isn't refused as `already_ran_today` (for a weekly
+ * cron that would otherwise lose the whole week). Best-effort.
+ */
+export async function releaseDailyCronRun(
+  kind: string,
+  opts: { date?: string } = {},
+): Promise<void> {
+  const date = opts.date ?? bkkDateLabel();
+  try {
+    const { error } = await createAdminClient()
+      .from("aed_analytics_digest_log")
+      .delete()
+      .eq("digest_date", date)
+      .eq("kind", kind);
+    if (error) console.error(`[cron-once] release failed for "${kind}":`, error);
+  } catch (e) {
+    console.error(`[cron-once] release threw for "${kind}":`, e);
+  }
+}

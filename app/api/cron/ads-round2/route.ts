@@ -19,8 +19,9 @@ export const maxDuration = 120;
 
 const GOOD_CPL = 200;
 const BAD_CPL = 300;
-const CURRENT_DAILY_BUDGET = 150;
 const RANGE_DAYS = 14;
+// A CPL from one or two conversions is noise — don't advise scaling on it.
+const MIN_CONVERSIONS_TO_SCALE = 5;
 
 function baht(n: number): string {
   return `฿${Math.round(n).toLocaleString("en-US")}`;
@@ -118,13 +119,21 @@ export async function GET(req: Request) {
         "• รัน npm run report:ads เพื่อดู search terms",
         "• เช็ค Google Ads → Tools → Conversions",
       ];
+    } else if (cpl <= GOOD_CPL && totals.conversions < MIN_CONVERSIONS_TO_SCALE) {
+      decision = `🟡 CPL ${baht(cpl)} ดูดี แต่มีแค่ ${totals.conversions} conversion — ยังน้อยเกินจะตัดสินใจ`;
+      actions = [
+        `• คงงบเดิม — รอให้ได้ ≥ ${MIN_CONVERSIONS_TO_SCALE} conversion ก่อนเพิ่มงบ`,
+        "• ขุด negative keyword จาก search terms ระหว่างรอ",
+      ];
     } else if (cpl <= GOOD_CPL) {
       const targetCpa = Math.round(cpl * 1.2);
-      const newBudget = Math.round(CURRENT_DAILY_BUDGET * 1.2);
-      decision = `✅ CPL ${baht(cpl)} ≤ ${baht(GOOD_CPL)} → Scale!`;
+      // Measured from actual spend rather than a hard-coded budget that goes
+      // stale whenever the budget is changed in Google Ads.
+      const avgDailySpend = totals.costThb / RANGE_DAYS;
+      decision = `✅ CPL ${baht(cpl)} ≤ ${baht(GOOD_CPL)} จาก ${totals.conversions} conversion → Scale!`;
       actions = [
         `• ตั้ง Target CPA = ${baht(targetCpa)} (CPL จริง × 1.2)`,
-        `• เพิ่มงบ +20% → ${baht(newBudget)}/วัน (จาก ${baht(CURRENT_DAILY_BUDGET)})`,
+        `• เพิ่มงบ +20% → ~${baht(avgDailySpend * 1.2)}/วัน (ใช้จริงเฉลี่ย ${baht(avgDailySpend)}/วัน ใน ${RANGE_DAYS} วัน)`,
         `• Scale Ad Group ที่ CPL ดีสุด (ดูข้อความถัดไป)`,
         `• พิจารณาเปิด Brand Keywords campaign`,
         `• เพิ่ม Remarketing audience`,

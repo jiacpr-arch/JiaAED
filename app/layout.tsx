@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
+import { Noto_Sans_Thai } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
@@ -11,19 +11,11 @@ import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
 import { MobileContactBar } from "./components/MobileContactBar";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 
 // Thai body font — the previous Arial fallback rendered Thai text cramped and
-// was a big reason the site felt like a wall of text.
+// was a big reason the site felt like a wall of text. Its "latin" subset also
+// covers English, so no second (Geist) font is preloaded on every page.
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-noto-thai",
   subsets: ["thai", "latin"],
@@ -39,7 +31,8 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย · ทะเบียน อย. 65-2-2-2-0013415",
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย" +
+    (PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · ทะเบียน อย. ${PRIMEDIC_REGULATORY.fda}` : ""),
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
@@ -95,7 +88,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${notoSansThai.variable} antialiased`}
+        className={`${notoSansThai.variable} antialiased`}
       >
         {/* PDPA: trackers (gtag / Meta Pixel / PostHog) live behind the consent gate */}
         <CookieConsent />

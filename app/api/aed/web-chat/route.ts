@@ -1,22 +1,28 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { WEB_CHAT_SYSTEM_PROMPT } from "@/lib/aed/web-chat-prompt";
-import { logWebChatMessage, parseSessionId } from "@/lib/aed/web-chat-log";
+import { countWebChatInbound, logWebChatMessage, parseSessionId } from "@/lib/aed/web-chat-log";
+import { DAY, MINUTE, overLimit } from "@/lib/aed/rate-limit";
+import { sanitizeChatHistory } from "@/lib/aed/web-chat-guard";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const MODEL = "claude-sonnet-5-5";
-const MAX_TURNS = 30;
-const MAX_INPUT_CHARS = 4000;
+// Per-visitor and site-wide budgets, counted from the server-written
+// transcript (aed_messages) so they hold across serverless instances.
+const SESSION_MAX_PER_10_MIN = 20;
+const SITE_MAX_PER_DAY = 1_500;
 
 // ---- abuse guards -----------------------------------------------------------
 // This endpoint spends real money per call (Anthropic tokens), so it must not
-// be an open proxy. Two layers, both best-effort but cheap:
+// be an open proxy. Three layers, all best-effort but cheap:
 //  1. Browser origin allow-list — blocks other sites calling us cross-origin
 //     and naive scripts that don't bother forging an Origin header.
 //  2. Per-IP sliding-window rate limit — in-memory per serverless instance,
 //     which still throttles any sustained single-source abuse.
+//  3. Per-session and site-wide daily caps backed by the DB transcript, plus
+//     hard limits on how much history one request may carry.
 
 const SITE_HOST = (() => {
   try {
@@ -25,6 +31,16 @@ const SITE_HOST = (() => {
     return "jiaaed.com";
   }
 })();
+
+// This project's own Vercel hosts (production alias, this deployment, and the
+// branch preview) — not every *.vercel.app site, which anyone can deploy.
+const DEPLOYMENT_HOSTS = new Set(
+  [
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    process.env.VERCEL_URL,
+    process.env.VERCEL_BRANCH_URL,
+  ].filter((h): h is string => !!h),
+);
 
 function isAllowedOrigin(req: Request): boolean {
   const origin = req.headers.get("origin");
@@ -36,7 +52,7 @@ function isAllowedOrigin(req: Request): boolean {
       host === `www.${SITE_HOST}` ||
       SITE_HOST === `www.${host}` ||
       host === "localhost:3000" ||
-      host.endsWith(".vercel.app") // preview deployments
+      DEPLOYMENT_HOSTS.has(host)
     );
   } catch {
     return false;
@@ -69,30 +85,12 @@ function clientIp(req: Request): string {
 }
 // -----------------------------------------------------------------------------
 
-type Role = "user" | "assistant";
-type ChatMsg = { role: Role; content: string };
-
 type Body = {
-  messages?: ChatMsg[];
+  messages?: unknown;
   /** Random per-browser UUID from WebChat.tsx; keys the transcript in the DB. */
   sessionId?: unknown;
 };
 
-function sanitize(messages: ChatMsg[]): ChatMsg[] {
-  return messages
-    .filter(
-      (m): m is ChatMsg =>
-        !!m &&
-        (m.role === "user" || m.role === "assistant") &&
-        typeof m.content === "string" &&
-        m.content.trim().length > 0,
-    )
-    .slice(-MAX_TURNS)
-    .map((m) => ({
-      role: m.role,
-      content: m.content.slice(0, MAX_INPUT_CHARS),
-    }));
-}
 
 export async function POST(req: Request) {
   if (!isAllowedOrigin(req)) {
@@ -121,7 +119,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
-  const messages = sanitize(body.messages ?? []);
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+  }
+
+  // The widget always sends its per-browser UUID; requiring it lets the
+  // per-session budget below actually bind.
+  const sessionId = parseSessionId(body.sessionId);
+  if (!sessionId) {
+    return NextResponse.json({ ok: false, error: "missing_session" }, { status: 400 });
+  }
+
+  const messages = sanitizeChatHistory(body.messages);
   if (messages.length === 0) {
     return NextResponse.json(
       { ok: false, error: "no_messages" },
@@ -135,11 +144,27 @@ export async function POST(req: Request) {
     );
   }
 
+  const [sessionCount, siteCount] = await Promise.all([
+    countWebChatInbound(10 * MINUTE, sessionId),
+    countWebChatInbound(DAY),
+  ]);
+  if (overLimit(sessionCount, SESSION_MAX_PER_10_MIN)) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429, headers: { "retry-after": "600" } },
+    );
+  }
+  if (overLimit(siteCount, SITE_MAX_PER_DAY)) {
+    console.error("[web-chat] site-wide daily budget reached:", siteCount);
+    return NextResponse.json({ ok: false, error: "busy" }, { status: 503 });
+  }
+
   // Saved before the model call so a failed turn still leaves a record.
-  const sessionId = parseSessionId(body.sessionId);
   await logWebChatMessage(sessionId, "inbound", messages[messages.length - 1].content);
 
-  const client = new Anthropic({ apiKey });
+  // Fail inside maxDuration (30s) instead of the SDK default 10-minute timeout,
+  // so the visitor gets an error they can act on rather than a dead spinner.
+  const client = new Anthropic({ apiKey, timeout: 25_000, maxRetries: 1 });
 
   try {
     const res = await client.messages.create({

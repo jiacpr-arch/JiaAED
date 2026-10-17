@@ -38,6 +38,7 @@ CREATE INDEX IF NOT EXISTS idx_aed_news_visible
 ALTER TABLE aed_news_items ENABLE ROW LEVEL SECURITY;
 
 -- Service role bypasses RLS, but be explicit (cron + admin use it).
+DROP POLICY IF EXISTS "service_role_aed_news_items" ON aed_news_items;
 CREATE POLICY "service_role_aed_news_items"
   ON aed_news_items
   FOR ALL
@@ -46,6 +47,7 @@ CREATE POLICY "service_role_aed_news_items"
   WITH CHECK (true);
 
 -- Anyone may read items that are not hidden (powers the public /news page).
+DROP POLICY IF EXISTS "anon_read_visible_news" ON aed_news_items;
 CREATE POLICY "anon_read_visible_news"
   ON aed_news_items
   FOR SELECT

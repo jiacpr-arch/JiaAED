@@ -1,3 +1,5 @@
+import { AED_PRODUCTS } from "./pricing";
+
 export type Product = {
   id: string;
   name: string;
@@ -11,15 +13,16 @@ export type Product = {
 
 // Amoul i7 discontinued — Yuwell Y2 takes over the "i7" SKU slot (ids kept
 // as-is for LeadForm/lead-validation/Merchant-feed/accounting continuity).
-// Real specs from lib/aed/primedic.ts (primedicSharedSpecs) — same numbers
-// as the "primedic-y2" catalog entry, never re-typed independently.
+// Real specs from lib/aed/primedic.ts (primedicSharedSpecs); price/msrp come
+// from the quote catalog in ./pricing.ts (the same numbers the LINE bot quotes),
+// never re-typed here — catalog-consistency.test.ts pins i7 to primedic-y2.
 export const products: Product[] = [
   {
     id: "i7",
     name: "AED Yuwell Y2",
     subtitle: "รุ่นเรือธง · จอสี EKG",
-    price: 59999,
-    msrp: 89000,
+    price: AED_PRODUCTS.i7.startingPrice,
+    msrp: AED_PRODUCTS.i7.msrp,
     description:
       "จอสี EKG แสดงคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) เหมาะสำหรับสำนักงาน โรงเรียน และหน่วยกู้ชีพที่ต้องการ CPR คุณภาพสูงสุด",
     features: [
@@ -34,12 +37,12 @@ export const products: Product[] = [
     id: "i7-cabinet",
     name: "AED Yuwell Y2 + ตู้",
     subtitle: "รุ่นพร้อมตู้ติดผนัง",
-    price: 64900,
-    msrp: 99000,
+    price: AED_PRODUCTS["i7-cabinet"].startingPrice,
+    msrp: AED_PRODUCTS["i7-cabinet"].msrp,
     description: "ครบชุด พร้อมตู้ติดผนังและสัญญาณเตือน",
     features: [
       "ครบชุดพร้อมติดตั้ง",
-      "ตู้กันฝุ่นกันน้ำ IP65",
+      "ตู้ติดผนังมาตรฐาน มองเห็นชัด",
       "สัญญาณเตือนเปิดตู้",
     ],
     badge: "ยอดนิยม",
@@ -48,8 +51,8 @@ export const products: Product[] = [
     id: "i7-floor",
     name: "AED Yuwell Y2 + แท่นตั้งพื้น",
     subtitle: "รุ่นแท่นตั้งพื้น",
-    price: 68900,
-    msrp: 109000,
+    price: AED_PRODUCTS["i7-floor"].startingPrice,
+    msrp: AED_PRODUCTS["i7-floor"].msrp,
     description: "เคลื่อนย้ายได้ เหมาะสำหรับสถานที่ขนาดใหญ่",
     features: [
       "เคลื่อนย้ายได้สะดวก",

@@ -9,12 +9,16 @@ import {
   primedicSharedSpecs,
 } from "@/lib/aed/primedic";
 import { products, accessories } from "@/lib/aed/products";
-import { acquisitionPackages } from "@/lib/aed/packages";
+import { acquisitionPackages, SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
 import { rentalKnowledgeBlock } from "@/lib/aed/rental";
 import { subscriptionTiers } from "@/lib/aed/subscription";
 import { articles } from "@/lib/aed/articles";
 import { faqs } from "@/lib/aed/faqs";
-import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
+import {
+  PRIMEDIC_REGULATORY,
+  adLicensesLine,
+  regulatoryStatement,
+} from "@/lib/aed/regulatory";
 import { LINE_OA_ID, LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY } from "@/lib/aed/contact";
 
@@ -106,7 +110,7 @@ export function GET() {
 
 > ผู้จัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ (AED) Yuwell / PRIMEDIC HeartSave ในประเทศไทย — ขาย เช่า เช่าซื้อ พร้อมอบรม CPR & AED · อย. รับรอง ใบโฆษณาถูกต้องตามกฎหมาย
 
-${reg.disclaimer}
+${regulatoryStatement(reg)}
 
 บริการลูกค้าผ่าน LINE Official Account ${LINE_OA_ID} ตอบโดย AI ตลอด 24 ชั่วโมง หรือโทร ${PHONE_DISPLAY}
 
@@ -116,8 +120,12 @@ ${reg.disclaimer}
 - **เว็บไซต์**: ${SITE}
 - **LINE Official**: ${LINE_OA_ID} (${LINE_OA})
 - **โทร**: ${PHONE_DISPLAY}
-- **ทะเบียน อย.**: ${reg.fda} (ใช้ได้ถึง ${reg.validUntil})
-- **ใบอนุญาตโฆษณา**: ฆพ.${reg.adLicense} (HeartSave Y0/Y2) · ฆพ.287/2567 (HeartSave Y8)
+${
+    reg.published
+      ? `- **ทะเบียน อย.**: ${reg.fda} (ใช้ได้ถึง ${reg.validUntil})
+- **ใบอนุญาตโฆษณา**: ${adLicensesLine(reg, { joiner: " · " })} โดย ${reg.advertiser}`
+      : `- **ทะเบียน อย. / ใบอนุญาตโฆษณา**: ${reg.pendingNote}`
+  }
 - **สินค้า**: AED Yuwell Y2 / PRIMEDIC HeartSave Y0 · Y8 / Yuwell AED GPS (Automated External Defibrillator)
 - **บริการ**: ขาย · เช่า (รายวัน/รายเดือน/รายปี) · เช่าซื้อผ่อน 18 เดือน · เช่าบริการครบวงจรรายเดือน · อบรม CPR & AED
 - **ประเทศ**: Thailand · **ภาษา**: ไทย, English
@@ -152,7 +160,7 @@ ${acquisition}
 
 ${rentalKnowledgeBlock()}
 
-## เช่าบริการครบวงจร "ดูแลครบ" (รายเดือน สัญญา 1 ปี มัดจำ ฿5,000)
+## เช่าบริการครบวงจร "ดูแลครบ" (รายเดือน สัญญา 1 ปี มัดจำ ${thb(SAFETY_CARE_DEPOSIT)})
 
 ${tiers}
 
@@ -167,8 +175,7 @@ ${specs}
 
 ## Certifications
 
-- อย. ไทย (FDA Thailand) — ทะเบียน ${reg.fda}
-- CE Mark · ISO 13485 (Medical Devices Quality Management)
+${reg.published ? `- อย. ไทย (FDA Thailand) — ทะเบียน ${reg.fda}\n` : ""}- CE Mark · ISO 13485 (Medical Devices Quality Management)
 - IP55 (กันละอองน้ำและฝุ่น) · AHA Guideline 2010/2015
 
 ## FAQ

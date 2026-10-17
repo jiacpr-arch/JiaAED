@@ -12,7 +12,9 @@ import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
-  title: "ซื้อเครื่อง AED สำหรับองค์กร | เทียบรุ่น ราคา และขอใบเสนอราคา",
+  // The layout's "%s · JiaAED" template only applies to child segments, so the
+  // root page has to carry the brand itself.
+  title: { absolute: "ซื้อเครื่อง AED สำหรับองค์กร | เทียบรุ่น ราคา และขอใบเสนอราคา · JiaAED" },
   description: "เปรียบเทียบ AED HeartSave Y0, Y8 และ Yuwell Y2 พร้อมราคาเริ่มต้น บริการติดตั้ง อบรม CPR และขอใบเสนอราคาจาก JiaAED",
   alternates: { canonical: "/" },
 };

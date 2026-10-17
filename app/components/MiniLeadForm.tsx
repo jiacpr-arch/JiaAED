@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { hasMarketingConsent } from "@/lib/aed/consent";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { LINE_OA } from "@/lib/aed/line";
 
@@ -95,8 +96,12 @@ export function MiniLeadForm({
   const focusedFieldsRef = useRef<Set<string>>(new Set());
   const submittedRef = useRef(false);
 
+  // Abandoned-form capture: if the visitor typed a phone number and leaves
+  // without submitting, send what they typed so the team can call back. Only
+  // with marketing consent (it's data they didn't choose to submit), and on
+  // `pagehide`, which unlike `beforeunload` also fires on iOS/Android.
   useEffect(() => {
-    function onBeforeUnload() {
+    function onPageHide() {
       if (!startedRef.current || submittedRef.current) return;
       const form = formRef.current;
       if (!form || typeof navigator.sendBeacon !== "function") return;
@@ -106,6 +111,7 @@ export function MiniLeadForm({
       if (!phone) return;
 
       trackEvent("lead_form_abandon", { variant }, { beacon: true });
+      if (!hasMarketingConsent()) return;
 
       const { gclid, utm } = readTracking();
       const payload = JSON.stringify({
@@ -125,8 +131,8 @@ export function MiniLeadForm({
         // swallow
       }
     }
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    window.addEventListener("pagehide", onPageHide);
+    return () => window.removeEventListener("pagehide", onPageHide);
   }, [variant]);
 
   function onFieldFocus(e: React.FocusEvent<HTMLFormElement>) {
@@ -184,6 +190,8 @@ export function MiniLeadForm({
           eventId,
           pageUrl: typeof window !== "undefined" ? window.location.href : null,
           hp,
+          // Lets the server skip Meta CAPI / Google enhanced matching without consent.
+          marketingConsent: hasMarketingConsent(),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {

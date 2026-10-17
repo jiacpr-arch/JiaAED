@@ -15,7 +15,7 @@ describe("calculatePrice", () => {
 
   it("quotes startingPrice for a single individual unit", () => {
     const r = calculatePrice("i7", 1, "individual")!;
-    expect(r.unitPrice).toBe(AED_PRODUCTS.i7.startingPrice); // 42,900
+    expect(r.unitPrice).toBe(AED_PRODUCTS.i7.startingPrice); // Y2 ฿59,999
     expect(r.priceLevel).toBe("standard");
     expect(r.canDiscount).toBe(true);
   });

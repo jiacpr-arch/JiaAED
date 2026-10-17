@@ -20,7 +20,7 @@ export const revalidate = 3600;
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ | JiaAED",
+  title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ",
   description:
     "3 วิธีได้ AED มาใช้สำหรับองค์กร: Safety Premium (ซื้อขาด), Safety Start (เช่าแล้วได้ซื้อ), Safety Care (เช่าบริการครบวงจร) พร้อมระบบ GPS ตู้จัดเก็บ และการอบรม — ปรึกษาฟรี",
   alternates: { canonical: "/aed/packages" },
@@ -82,12 +82,13 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      {/* What every package includes — shown in photos, not another list */}
+      {/* What the packages offer — shown in photos, not another list. Inclusion
+          differs per package/tier (see the cards + FAQ), so no "ทุกแพ็กเกจ" claims. */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <PhotoStrip
           heightClass="h-44 md:h-56"
           photos={[
-            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดย BLS Instructor ทุกแพ็กเกจ" },
+            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดยทีม BLS Instructor สอนถึงที่" },
             { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
             { src: "/images/cloud-dashboard.png", alt: "Cloud Dashboard ดูสถานะเครื่อง AED", caption: "Dashboard เช็กความพร้อม 24 ชม." },
           ]}

@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/aed/paging";
 
 const BKK_TZ = "Asia/Bangkok";
 
@@ -28,14 +29,6 @@ export type DigestPayload = {
     visit_to_submit_rate: number;
     engagement_rate: number;
     bounce_rate: number;
-  };
-  ab: {
-    variant_a_views: number;
-    variant_a_clicks: number;
-    variant_b_views: number;
-    variant_b_clicks: number;
-    ctr_a: number;
-    ctr_b: number;
   };
   by_source: Array<{
     source: string;
@@ -96,13 +89,20 @@ function diffPct(curr: number, prev: number): string {
 
 async function fetchRows(from: string, to: string): Promise<EventRow[]> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("aed_analytics_events")
-    .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
-    .gte("created_at", from)
-    .lte("created_at", to);
-  if (error) throw new Error(`fetch events failed: ${error.message}`);
-  return (data ?? []) as EventRow[];
+  try {
+    // Paged: a single select stops at Supabase's 1,000-row cap.
+    return await fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
+        .gte("created_at", from)
+        .lte("created_at", to)
+        .order("id")
+        .range(a, b),
+    );
+  } catch (e) {
+    throw new Error(`fetch events failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
 }
 
 function buildBySource(rows: EventRow[]): DigestPayload["by_source"] {
@@ -189,18 +189,6 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
   const counts = countByEvent(rows);
   const prev_counts = countByEvent(prev);
 
-  const heroViews = rows.filter((r) => r.event_name === "hero_cta_view");
-  const lineClicks = rows.filter((r) => r.event_name === "line_click");
-
-  const variant_a_views = heroViews.filter((r) => (r.properties?.variant as string) === "a").length;
-  const variant_b_views = heroViews.filter((r) => (r.properties?.variant as string) === "b").length;
-  const variant_a_clicks = lineClicks.filter(
-    (r) => (r.properties?.hero_variant as string) === "a" && (r.properties?.location as string) === "hero",
-  ).length;
-  const variant_b_clicks = lineClicks.filter(
-    (r) => (r.properties?.hero_variant as string) === "b" && (r.properties?.location as string) === "hero",
-  ).length;
-
   const funnel = {
     visits,
     price_views: counts["price_view"] || 0,
@@ -221,15 +209,6 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     visit_to_submit_rate: pct(funnel.form_submits, funnel.visits),
     engagement_rate,
     bounce_rate: funnel.visits > 0 ? Math.round((100 - engagement_rate) * 10) / 10 : 0,
-  };
-
-  const ab = {
-    variant_a_views,
-    variant_a_clicks,
-    variant_b_views,
-    variant_b_clicks,
-    ctr_a: pct(variant_a_clicks, variant_a_views),
-    ctr_b: pct(variant_b_clicks, variant_b_views),
   };
 
   const alerts: string[] = [];
@@ -265,14 +244,6 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     alerts.push(`🚨 มีคนเข้าเว็บ ${funnel.visits} คน แต่ไม่มีใครส่งฟอร์มเลย`);
   }
 
-  if (ab.variant_a_views >= 50 && ab.variant_b_views >= 50) {
-    const winner = ab.ctr_b > ab.ctr_a ? "B" : "A";
-    const margin = Math.abs(ab.ctr_b - ab.ctr_a);
-    if (margin >= 1) {
-      alerts.push(`🧪 A/B test: variant ${winner} ชนะ (CTR ห่าง ${margin.toFixed(1)}pp) — พิจารณาปิด test`);
-    }
-  }
-
   const by_source = buildBySource(rows);
   const form_field_drop = buildFieldDrop(rows);
   const hot_leads = counts["hot_lead_alert_fired"] || 0;
@@ -285,7 +256,6 @@ export async function buildDailyDigest(): Promise<DigestPayload> {
     prev_visits,
     funnel,
     rates,
-    ab,
     by_source,
     form_field_drop,
     hot_leads,
@@ -324,15 +294,6 @@ export function formatDigestForLine(d: DigestPayload): string {
 
   if (d.funnel.price_views > 0) {
     lines.push(`👁️  เห็นราคา: ${d.funnel.price_views} (${d.rates.price_view_rate}% ของ visitor)`);
-  }
-
-  if (d.ab.variant_a_views + d.ab.variant_b_views > 0) {
-    lines.push(
-      ``,
-      `🧪 A/B Hero:`,
-      `  A: ${d.ab.variant_a_clicks}/${d.ab.variant_a_views} (${d.ab.ctr_a}%)`,
-      `  B: ${d.ab.variant_b_clicks}/${d.ab.variant_b_views} (${d.ab.ctr_b}%)`,
-    );
   }
 
   if (d.by_source.length > 0) {

@@ -28,6 +28,16 @@ export async function getOrCreateCustomerByLine(lineUserId: string): Promise<Aed
     .select("*")
     .single();
 
+  // A new customer who sends two messages at once runs this twice in
+  // parallel; the loser hits UNIQUE(line_user_id) and reads the winner's row.
+  if (error?.code === "23505") {
+    const { data: raced } = await supabase
+      .from("aed_customers")
+      .select("*")
+      .eq("line_user_id", lineUserId)
+      .maybeSingle();
+    if (raced) return raced as AedCustomer;
+  }
   if (error || !created) throw new Error(`Failed to create customer: ${error?.message}`);
   return created as AedCustomer;
 }
@@ -79,6 +89,17 @@ export async function getOrCreateConversation(
     .select("*")
     .single();
 
+  // Same parallel-first-message race as getOrCreateCustomerByLine, on
+  // UNIQUE(channel, channel_thread_id).
+  if (error?.code === "23505") {
+    const { data: raced } = await supabase
+      .from("aed_conversations")
+      .select("*")
+      .eq("channel", channel)
+      .eq("channel_thread_id", channelThreadId)
+      .maybeSingle();
+    if (raced) return raced as AedConversation;
+  }
   if (error || !created) throw new Error(`Failed to create conversation: ${error?.message}`);
   return created as AedConversation;
 }
@@ -132,6 +153,21 @@ export async function saveMessage(
 
   if (error || !data) throw new Error(`Failed to save message: ${error?.message}`);
   return data as AedMessage;
+}
+
+/** Inbound messages in a conversation within the window; null on a DB error. */
+export async function countRecentInbound(conversationId: string, windowMs: number): Promise<number | null> {
+  const { count, error } = await db()
+    .from("aed_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("conversation_id", conversationId)
+    .eq("direction", "inbound")
+    .gte("created_at", new Date(Date.now() - windowMs).toISOString());
+  if (error) {
+    console.error("[AED] countRecentInbound failed:", error.message);
+    return null;
+  }
+  return count ?? 0;
 }
 
 export async function getRecentMessages(conversationId: string, limit = 20): Promise<AedMessage[]> {
@@ -248,20 +284,56 @@ export async function scheduleFollowup(
   return data as AedFollowup;
 }
 
-export async function getPendingFollowups(before: Date = new Date()): Promise<AedFollowup[]> {
-  const { data } = await db()
+export async function getPendingFollowups(before: Date = new Date(), limit = 50): Promise<AedFollowup[]> {
+  const { data, error } = await db()
     .from("aed_followups")
     .select("*")
     .eq("status", "pending")
     .lte("scheduled_for", before.toISOString())
-    .order("scheduled_for", { ascending: true });
+    .order("scheduled_for", { ascending: true })
+    .limit(limit);
+  if (error) throw new Error(`Failed to load follow-ups: ${error.message}`);
   return (data ?? []) as AedFollowup[];
 }
 
-export async function markFollowupSent(followupId: string): Promise<void> {
-  const { error } = await db()
+/**
+ * Move a follow-up out of "pending". Returns false if another run already did
+ * (the `status = pending` guard makes the claim exclusive), so it is sent once.
+ */
+export async function setFollowupStatus(
+  followupId: string,
+  status: AedFollowup["status"],
+  from: AedFollowup["status"] = "pending",
+): Promise<boolean> {
+  const { data, error } = await db()
     .from("aed_followups")
-    .update({ status: "sent", sent_at: new Date().toISOString() })
-    .eq("id", followupId);
-  if (error) console.error("[AED] markFollowupSent failed:", followupId, error);
+    .update({ status, sent_at: status === "sent" ? new Date().toISOString() : null })
+    .eq("id", followupId)
+    .eq("status", from)
+    .select("id");
+  if (error) {
+    console.error("[AED] setFollowupStatus failed:", followupId, error);
+    return false;
+  }
+  return (data ?? []).length > 0;
+}
+
+export async function getCustomerLineUserId(customerId: string): Promise<string | null> {
+  const { data } = await db()
+    .from("aed_customers")
+    .select("line_user_id")
+    .eq("id", customerId)
+    .maybeSingle();
+  return (data?.line_user_id as string | null | undefined) ?? null;
+}
+
+/** Whether the customer wrote anything in the conversation after `since`. */
+export async function hasInboundSince(conversationId: string, since: string): Promise<boolean> {
+  const { count } = await db()
+    .from("aed_messages")
+    .select("id", { count: "exact", head: true })
+    .eq("conversation_id", conversationId)
+    .eq("direction", "inbound")
+    .gt("created_at", since);
+  return (count ?? 0) > 0;
 }

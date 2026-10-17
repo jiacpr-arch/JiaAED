@@ -9,9 +9,15 @@ import {
   isValidEmail,
   VALID_PRODUCT_IDS,
 } from "@/lib/aed/lead-validation";
+import { HOUR, countRecent, findRecentLead, overLimit, requestIp } from "@/lib/aed/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Each stored partial pushes an "abandoned form" alert to every admin's LINE,
+// so cap it per source and site-wide (see the lead route for the rationale).
+const PARTIALS_PER_IP_PER_HOUR = 5;
+const PARTIAL_FLOOD_PER_HOUR = 20;
 
 type Body = {
   variant?: string;
@@ -32,6 +38,9 @@ export async function POST(req: Request) {
   try {
     body = (await req.json()) as Body;
   } catch {
+    return NextResponse.json({ ok: false }, { status: 400 });
+  }
+  if (!body || typeof body !== "object") {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
@@ -65,11 +74,24 @@ export async function POST(req: Request) {
   const utmCampaign = clean(utm.campaign, 200);
   const utmMedium = clean(utm.medium, 100);
 
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    null;
+  const ip = requestIp(req);
+  const ipHash = hashIp(ip);
   const userAgent = clean(req.headers.get("user-agent"), 500);
+
+  if (
+    ipHash &&
+    overLimit(
+      await countRecent("aed_leads", [["ip_hash", ipHash]], HOUR),
+      PARTIALS_PER_IP_PER_HOUR,
+    )
+  ) {
+    return NextResponse.json({ ok: true, skipped: "rate_limited" });
+  }
+  // Same contact already captured in the last hour (a full submit, or an
+  // earlier beacon from another tab/page) — nothing new to tell the owner.
+  if (await findRecentLead({ phone, email }, HOUR, { includePartial: true })) {
+    return NextResponse.json({ ok: true, skipped: "duplicate" });
+  }
 
   const supabase = createAdminClient();
 
@@ -88,12 +110,17 @@ export async function POST(req: Request) {
     utm_campaign: utmCampaign,
     page_url: pageUrl,
     user_agent: userAgent,
-    ip_hash: hashIp(ip),
+    ip_hash: ipHash,
   });
 
   if (error) {
     console.error("[lead-partial] insert failed:", error);
     return NextResponse.json({ ok: false }, { status: 500 });
+  }
+
+  if (overLimit(await countRecent("aed_leads", [], HOUR), PARTIAL_FLOOD_PER_HOUR)) {
+    console.warn("[lead-partial] flood — skipping LINE alert");
+    return NextResponse.json({ ok: true });
   }
 
   // waitUntil, not a bare `void` — this route is hit via sendBeacon on page

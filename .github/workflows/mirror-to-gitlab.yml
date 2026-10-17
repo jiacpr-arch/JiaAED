@@ -3,6 +3,8 @@ on:
   push:
   delete:
   workflow_dispatch:
+permissions:
+  contents: read
 concurrency:
   group: mirror-${{ github.repository }}
   cancel-in-progress: false

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
-import { readHeadlineVariant, readHeroVariant } from "@/lib/aed/ab-variant";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { hasMarketingConsent } from "@/lib/aed/consent";
 import { GADS_LINE_CLICK_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 import { LineFallbackModal } from "./LineFallbackModal";
 
@@ -31,14 +31,9 @@ export function LineClickTracker() {
       if (lineAnchor) {
         const location = lineAnchor.dataset.lineCta || "unknown";
         const productId = lineAnchor.dataset.product || null;
-        const heroVariant = readHeroVariant();
-        const headlineVariant = readHeadlineVariant();
-
         trackEvent("line_click", {
           location,
           product_id: productId ?? "none",
-          hero_variant: heroVariant ?? "none",
-          headline_variant: headlineVariant ?? "none",
         });
 
         // Report to Google as the `LINE Click` conversion — which is kept
@@ -63,22 +58,27 @@ export function LineClickTracker() {
         // few conversions to optimize on. The LINE click is the real contact
         // action here, so we report it as a Lead (browser pixel + server CAPI,
         // shared eventId for dedup) to give Meta a usable optimization signal.
-        const fb = readFbTracking();
-        const eventId = newEventId();
-        fireMetaLead(eventId);
-        fetch("/api/aed/meta-lead", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            source: "line_click",
-            location,
-            eventId,
-            fbc: fb.fbc,
-            fbp: fb.fbp,
-            pageUrl: typeof window !== "undefined" ? window.location.href : null,
-          }),
-          keepalive: true,
-        }).catch(() => {});
+        // Both only with marketing consent — the server call sends the
+        // visitor's IP/UA to Meta, so it follows the banner choice too.
+        if (hasMarketingConsent()) {
+          const fb = readFbTracking();
+          const eventId = newEventId();
+          fireMetaLead(eventId);
+          fetch("/api/aed/meta-lead", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              source: "line_click",
+              location,
+              eventId,
+              fbc: fb.fbc,
+              fbp: fb.fbp,
+              pageUrl: typeof window !== "undefined" ? window.location.href : null,
+              marketingConsent: true,
+            }),
+            keepalive: true,
+          }).catch(() => {});
+        }
 
         // On desktop, line.me add-friend links open a dead page (they only work
         // inside the LINE mobile app). Intercept and show a QR / copy-ID / form

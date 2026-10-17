@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { hasMarketingConsent } from "@/lib/aed/consent";
 import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
 
 import { LINE_OA } from "@/lib/aed/line";
@@ -51,10 +52,12 @@ export function QuoteForm({
     }
   }
 
+  // Abandoned-form capture — consent-gated and on `pagehide`; see MiniLeadForm.
   useEffect(() => {
-    function onBeforeUnload() {
+    function onPageHide() {
       if (!startedRef.current || submittedRef.current) return;
       trackEvent("lead_form_abandon", { variant }, { beacon: true });
+      if (!hasMarketingConsent()) return;
       const form = formRef.current;
       if (!form || typeof navigator.sendBeacon !== "function") return;
       const fd = new FormData(form);
@@ -81,8 +84,8 @@ export function QuoteForm({
         // best-effort
       }
     }
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    window.addEventListener("pagehide", onPageHide);
+    return () => window.removeEventListener("pagehide", onPageHide);
   }, [variant, productId]);
 
   useEffect(() => {
@@ -154,6 +157,8 @@ export function QuoteForm({
           eventId,
           pageUrl: typeof window !== "undefined" ? window.location.href : null,
           hp,
+          // Lets the server skip Meta CAPI / Google enhanced matching without consent.
+          marketingConsent: hasMarketingConsent(),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { JiaAedLogo } from "@/app/components/JiaAedLogo";
+import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
 
 type DocRow = {
   id: string;
@@ -26,7 +27,6 @@ const CATEGORIES = [
   { value: "other", label: "อื่นๆ" },
 ];
 
-const TOKEN_STORAGE_KEY = "jiaaed_admin_token";
 
 function fmtSize(b: number): string {
   if (b < 1024) return `${b} B`;
@@ -49,29 +49,20 @@ export default function AdminDocsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
-    if (saved) {
-      setToken(saved);
-    }
-  }, []);
-
-  const load = useCallback(async (t: string) => {
+  // The session is an HttpOnly cookie sent with every /api/admin request.
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/documents", {
-        headers: { Authorization: `Bearer ${t}` },
-      });
+      const res = await fetch("/api/admin/documents");
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error === "unauthorized" ? "Token ไม่ถูกต้อง" : "เกิดข้อผิดพลาด");
+        if (res.status !== 401) setError("เกิดข้อผิดพลาด");
         setAuthed(false);
         return;
       }
       setAuthed(true);
       setDocs(data.documents);
-      localStorage.setItem(TOKEN_STORAGE_KEY, t);
     } catch {
       setError("เชื่อมต่อไม่ได้");
     } finally {
@@ -79,14 +70,33 @@ export default function AdminDocsPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    forgetLegacyToken();
+    load();
+  }, [load]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (token.trim()) load(token.trim());
+    if (!token.trim()) return;
+    setLoading(true);
+    const result = await adminLogin(token.trim());
+    setLoading(false);
+    if (result !== "ok") {
+      setError(LOGIN_ERRORS[result]);
+      return;
+    }
+    setToken("");
+    await load();
   };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!file || !title.trim()) return;
+    // Vercel caps request bodies at 4.5 MB; fail here with a clear message.
+    if (file.size > 4 * 1024 * 1024) {
+      setError("ไฟล์ใหญ่เกิน 4MB — บีบอัด PDF ก่อนอัปโหลด");
+      return;
+    }
     setUploading(true);
     setError(null);
     try {
@@ -98,7 +108,6 @@ export default function AdminDocsPage() {
       fd.append("language", language);
       const res = await fetch("/api/admin/documents", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
         body: fd,
       });
       const data = await res.json();
@@ -111,7 +120,7 @@ export default function AdminDocsPage() {
       setFile(null);
       const inp = document.getElementById("file-input") as HTMLInputElement | null;
       if (inp) inp.value = "";
-      await load(token);
+      await load();
     } catch {
       setError("อัปโหลดล้มเหลว");
     } finally {
@@ -123,14 +132,13 @@ export default function AdminDocsPage() {
     if (!confirm("ลบเอกสารนี้?")) return;
     const res = await fetch(`/api/admin/documents?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
     });
-    if (res.ok) await load(token);
+    if (res.ok) await load();
     else setError("ลบไม่สำเร็จ");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  const handleLogout = async () => {
+    await adminLogout();
     setAuthed(false);
     setToken("");
     setDocs([]);
@@ -232,7 +240,7 @@ export default function AdminDocsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-1">ไฟล์ * (PDF/DOCX/รูป, ≤25MB)</label>
+                    <label className="block text-sm font-semibold mb-1">ไฟล์ * (PDF/DOCX/รูป, ≤4MB)</label>
                     <input
                       id="file-input"
                       type="file"
@@ -256,7 +264,7 @@ export default function AdminDocsPage() {
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-bold">เอกสารที่อัปโหลด ({docs.length})</h2>
-                <button onClick={() => load(token)} className="text-sm text-yellow-400 hover:text-yellow-300">
+                <button onClick={() => load()} className="text-sm text-yellow-400 hover:text-yellow-300">
                   รีเฟรช
                 </button>
               </div>

@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "./system-prompt";
+import { MAX_QUOTE_QUANTITY, QUOTABLE_PRODUCT_IDS } from "./pricing";
 import { getRecentMessages } from "./db-queries";
 import {
   handleGetCustomerInfo,
@@ -43,8 +44,8 @@ const AED_TOOLS: Anthropic.Tool[] = [
     input_schema: {
       type: "object" as const,
       properties: {
-        product_id: { type: "string", enum: ["i7", "i7-cabinet", "i7-floor"], description: "รหัสสินค้า" },
-        quantity: { type: "number", description: "จำนวนเครื่อง" },
+        product_id: { type: "string", enum: QUOTABLE_PRODUCT_IDS, description: "รหัสสินค้า" },
+        quantity: { type: "integer", minimum: 1, maximum: MAX_QUOTE_QUANTITY, description: "จำนวนเครื่อง" },
         customer_type: { type: "string", enum: ["individual", "corporate", "government"] },
       },
       required: ["product_id", "quantity"],
@@ -56,8 +57,8 @@ const AED_TOOLS: Anthropic.Tool[] = [
     input_schema: {
       type: "object" as const,
       properties: {
-        product_id: { type: "string", enum: ["i7", "i7-cabinet", "i7-floor"] },
-        quantity: { type: "number" },
+        product_id: { type: "string", enum: QUOTABLE_PRODUCT_IDS },
+        quantity: { type: "integer", minimum: 1, maximum: MAX_QUOTE_QUANTITY },
         unit_price: { type: "number", description: "ราคาต่อเครื่อง (ไม่รวม VAT)" },
         customer_name: { type: "string", description: "ชื่อ-นามสกุลหรือชื่อบริษัท" },
         customer_phone: { type: "string" },
@@ -103,22 +104,38 @@ export interface OrchestratorResult {
   toolsUsed: AiToolCall[];
 }
 
+// Stop starting new model calls after this long, so the turn always ends with
+// a reply inside the webhook's maxDuration instead of being killed mid-loop.
+const TURN_BUDGET_MS = 150_000;
+
 export async function runAI(
   userMessage: string,
   ctx: ToolContext,
 ): Promise<OrchestratorResult> {
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    timeout: 45_000,
+    maxRetries: 1,
+  });
   const toolsUsed: AiToolCall[] = [];
+  const startedAt = Date.now();
 
   // Build conversation history from DB
   const history = await getRecentMessages(ctx.conversation.id, 20);
-  const messages: Anthropic.MessageParam[] = history.map((m) => ({
-    role: m.sender_type === "customer" ? "user" : "assistant",
-    content: m.content_text ?? "",
-  }));
+  const messages: Anthropic.MessageParam[] = history
+    .filter((m) => (m.content_text ?? "").trim().length > 0)
+    .map((m) => ({
+      role: m.sender_type === "customer" ? "user" : "assistant",
+      content: m.content_text ?? "",
+    }));
 
-  // Append current user message
-  messages.push({ role: "user", content: userMessage });
+  // The webhook saves the inbound message before calling us, so it's normally
+  // already the last history entry — only append it when it isn't, or the
+  // model sees every customer message twice.
+  const last = history[history.length - 1];
+  if (!(last && last.sender_type === "customer" && last.content_text === userMessage)) {
+    messages.push({ role: "user", content: userMessage });
+  }
 
   const systemPrompt = buildSystemPrompt(ctx.customer.full_name);
 
@@ -126,7 +143,7 @@ export async function runAI(
   let iterations = 0;
   const MAX_ITERATIONS = 8;
 
-  while (iterations < MAX_ITERATIONS) {
+  while (iterations < MAX_ITERATIONS && Date.now() - startedAt < TURN_BUDGET_MS) {
     iterations++;
 
     const response = await anthropic.messages.create({

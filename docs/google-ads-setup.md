@@ -126,6 +126,10 @@ Negative keywords (ใส่ทั้งระดับ campaign):
 
 ### Responsive Search Ads (RSA) — เตรียม headlines/descriptions
 
+> ⛔ **ชุดตัวอย่างด้านล่างเป็นของ Amoul i7 ที่ อย. สั่งระงับการโฆษณาแล้ว — ห้ามนำไปใช้**
+> (รวมถึงเลข อย. 68-2-2-2-0005243 / ฆพ.743/2569 และ "ผู้นำเข้าตรง") ใช้ชุดปัจจุบันใน
+> `docs/google-ads-copy.md` และเลข อย./ฆพ. ตาม `lib/aed/regulatory.ts`
+
 Headlines (15 ชิ้น, ≤ 30 ตัวอักษร):
 - AED Amoul i7 อย. รับรอง
 - เครื่องกระตุกหัวใจ Shock 7 วินาที
@@ -171,7 +175,7 @@ https://jiaaed.vercel.app/feed/products.xml
 - Listing groups: All products
 - Asset group:
   - 5+ headlines, 5+ long headlines, 5+ descriptions (re-use จาก RSA)
-  - 4+ images (square + landscape) — ใช้ `/images/aed-floorstand.png`, `aed-wallcabinet.png`, `product-main.png`, `lifestyle-cpr.png`
+  - 4+ images (square + landscape) — ใช้ `/images/aed-floorstand.png`, `aed-wallcabinet.png`, `yuwell-y2-main.jpg`, `lifestyle-cpr.png`
   - 1+ logo
   - 1 video — ถ้าไม่มี Google จะ auto-gen (คุณภาพไม่ดี แนะนำอัด YouTube short 15s)
 - Audience signal: customer list (ถ้ามี) + interests "Health/Medical equipment"

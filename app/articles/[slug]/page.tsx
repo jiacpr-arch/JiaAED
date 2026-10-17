@@ -21,7 +21,7 @@ export async function generateMetadata(
   const article = findArticle(slug);
   if (!article) return {};
   return {
-    title: `${article.title} | JiaAED`,
+    title: article.title,
     description: article.description,
     alternates: { canonical: `/articles/${article.slug}` },
     openGraph: {

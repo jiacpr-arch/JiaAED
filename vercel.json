@@ -14,16 +14,8 @@
       "schedule": "0 2 * * 1"
     },
     {
-      "path": "/api/cron/auto-optimize",
-      "schedule": "0 3 * * 1"
-    },
-    {
       "path": "/api/cron/article-gap",
       "schedule": "0 4 * * 1"
-    },
-    {
-      "path": "/api/cron/auto-optimize-headline",
-      "schedule": "0 3 * * 2"
     },
     {
       "path": "/api/cron/news-feed",
@@ -56,6 +48,10 @@
     {
       "path": "/api/cron/unit-expiry-check",
       "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/send-followups",
+      "schedule": "10 2-11 * * *"
     }
   ]
 }
