@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/aed/paging";
 
 const BKK_TZ = "Asia/Bangkok";
 
@@ -88,13 +89,20 @@ function diffPct(curr: number, prev: number): string {
 
 async function fetchRows(from: string, to: string): Promise<EventRow[]> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("aed_analytics_events")
-    .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
-    .gte("created_at", from)
-    .lte("created_at", to);
-  if (error) throw new Error(`fetch events failed: ${error.message}`);
-  return (data ?? []) as EventRow[];
+  try {
+    // Paged: a single select stops at Supabase's 1,000-row cap.
+    return await fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
+        .gte("created_at", from)
+        .lte("created_at", to)
+        .order("id")
+        .range(a, b),
+    );
+  } catch (e) {
+    throw new Error(`fetch events failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
 }
 
 function buildBySource(rows: EventRow[]): DigestPayload["by_source"] {

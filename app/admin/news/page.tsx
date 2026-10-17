@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { JiaAedLogo } from "@/app/components/JiaAedLogo";
+import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
 
 type NewsRow = {
   id: string;
@@ -16,7 +17,6 @@ type NewsRow = {
   created_at: string;
 };
 
-const TOKEN_STORAGE_KEY = "jiaaed_admin_token";
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "-";
@@ -38,27 +38,20 @@ export default function AdminNewsPage() {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
-    if (saved) setToken(saved);
-  }, []);
-
-  const load = useCallback(async (t: string) => {
+  // The session is an HttpOnly cookie sent with every /api/admin request.
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/news", {
-        headers: { Authorization: `Bearer ${t}` },
-      });
+      const res = await fetch("/api/admin/news");
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error === "unauthorized" ? "Token ไม่ถูกต้อง" : "เกิดข้อผิดพลาด");
+        if (res.status !== 401) setError("เกิดข้อผิดพลาด");
         setAuthed(false);
         return;
       }
       setAuthed(true);
       setNews(data.news);
-      localStorage.setItem(TOKEN_STORAGE_KEY, t);
     } catch {
       setError("เชื่อมต่อไม่ได้");
     } finally {
@@ -66,9 +59,23 @@ export default function AdminNewsPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    forgetLegacyToken();
+    load();
+  }, [load]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (token.trim()) load(token.trim());
+    if (!token.trim()) return;
+    setLoading(true);
+    const result = await adminLogin(token.trim());
+    setLoading(false);
+    if (result !== "ok") {
+      setError(LOGIN_ERRORS[result]);
+      return;
+    }
+    setToken("");
+    await load();
   };
 
   const toggleHidden = async (row: NewsRow) => {
@@ -77,7 +84,7 @@ export default function AdminNewsPage() {
     try {
       const res = await fetch("/api/admin/news", {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: row.id, hidden: !row.hidden }),
       });
       if (res.ok) {
@@ -99,15 +106,14 @@ export default function AdminNewsPage() {
     setBusyId(id);
     const res = await fetch(`/api/admin/news?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) setNews((prev) => prev.filter((n) => n.id !== id));
     else setError("ลบไม่สำเร็จ");
     setBusyId(null);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  const handleLogout = async () => {
+    await adminLogout();
     setAuthed(false);
     setToken("");
     setNews([]);
@@ -169,7 +175,7 @@ export default function AdminNewsPage() {
               <h2 className="font-bold">
                 ข่าวทั้งหมด {news.length} — แสดงอยู่ {visibleCount} / ซ่อน {news.length - visibleCount}
               </h2>
-              <button onClick={() => load(token)} className="text-sm text-yellow-400 hover:text-yellow-300">
+              <button onClick={() => load()} className="text-sm text-yellow-400 hover:text-yellow-300">
                 รีเฟรช
               </button>
             </div>

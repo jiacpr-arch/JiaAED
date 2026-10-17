@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { fetchAllRows } from "@/lib/aed/paging";
 
 const BKK_TZ = "Asia/Bangkok";
 
@@ -97,32 +98,52 @@ export async function buildWeeklyContext(): Promise<WeeklyContext> {
 
   const supabase = createAdminClient();
 
+  // Row lists are paged (fetchAllRows): a single select stops at Supabase's
+  // 1,000-row cap, which a week of events passes. Leads exclude partial_*
+  // (abandoned-form beacons).
   const [thisWeek, lastWeek, visitsThis, visitsPrev, leads, chats, messages] = await Promise.all([
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name, properties, page_url")
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name")
-      .gte("created_at", prevWeek.from)
-      .lt("created_at", week.from),
-    supabase
-      .from("aed_ad_visits")
-      .select("gclid, utm_source", { count: "exact" })
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
+    fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name, properties, page_url")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
+    fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name")
+        .gte("created_at", prevWeek.from)
+        .lt("created_at", week.from)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
+    fetchAllRows<{ gclid: string | null; utm_source: string | null }>((a, b) =>
+      supabase
+        .from("aed_ad_visits")
+        .select("gclid, utm_source")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data, count: data.length })),
     supabase
       .from("aed_ad_visits")
       .select("*", { count: "exact", head: true })
       .gte("created_at", prevWeek.from)
       .lt("created_at", week.from),
-    supabase
-      .from("aed_leads")
-      .select("gclid, utm_source")
-      .gte("created_at", week.from)
-      .lte("created_at", week.to),
+    fetchAllRows<{ gclid: string | null; utm_source: string | null }>((a, b) =>
+      supabase
+        .from("aed_leads")
+        .select("gclid, utm_source")
+        .gte("created_at", week.from)
+        .lte("created_at", week.to)
+        .not("source", "like", "partial%")
+        .order("id")
+        .range(a, b),
+    ).then((data) => ({ data })),
     // LINE only — web-chat transcripts share these tables (channel "web").
     supabase
       .from("aed_conversations")

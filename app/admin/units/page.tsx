@@ -5,8 +5,7 @@ import Link from "next/link";
 import { JiaAedLogo } from "@/app/components/JiaAedLogo";
 import { UNIT_STATUSES, UNIT_PLAN_TYPES, type AedUnit } from "@/lib/aed/units";
 import { checkUnitExpiries } from "@/lib/aed/unit-expiry";
-
-const TOKEN_STORAGE_KEY = "jiaaed_admin_token";
+import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
 
 const EMPTY_FORM = {
   serial_number: "",
@@ -37,25 +36,20 @@ export default function AdminUnitsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    const saved = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
-    if (saved) setToken(saved);
-  }, []);
-
-  const load = useCallback(async (t: string) => {
+  // The session is an HttpOnly cookie sent with every /api/admin request.
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/units", { headers: { Authorization: `Bearer ${t}` } });
+      const res = await fetch("/api/admin/units");
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.error === "unauthorized" ? "Token ไม่ถูกต้อง" : "เกิดข้อผิดพลาด");
+        if (res.status !== 401) setError("เกิดข้อผิดพลาด");
         setAuthed(false);
         return;
       }
       setAuthed(true);
       setUnits(data.units);
-      localStorage.setItem(TOKEN_STORAGE_KEY, t);
     } catch {
       setError("เชื่อมต่อไม่ได้");
     } finally {
@@ -63,9 +57,23 @@ export default function AdminUnitsPage() {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    forgetLegacyToken();
+    load();
+  }, [load]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (token.trim()) load(token.trim());
+    if (!token.trim()) return;
+    setLoading(true);
+    const result = await adminLogin(token.trim());
+    setLoading(false);
+    if (result !== "ok") {
+      setError(LOGIN_ERRORS[result]);
+      return;
+    }
+    setToken("");
+    await load();
   };
 
   const startEdit = (u: AedUnit) => {
@@ -104,7 +112,7 @@ export default function AdminUnitsPage() {
       const body = editingId ? { id: editingId, ...form } : form;
       const res = await fetch("/api/admin/units", {
         method,
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const data = await res.json();
@@ -113,7 +121,7 @@ export default function AdminUnitsPage() {
         return;
       }
       cancelEdit();
-      await load(token);
+      await load();
     } catch {
       setError("บันทึกล้มเหลว");
     } finally {
@@ -125,14 +133,13 @@ export default function AdminUnitsPage() {
     if (!confirm("ลบเครื่องนี้ออกจากทะเบียน?")) return;
     const res = await fetch(`/api/admin/units?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
     });
-    if (res.ok) await load(token);
+    if (res.ok) await load();
     else setError("ลบไม่สำเร็จ");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(TOKEN_STORAGE_KEY);
+  const handleLogout = async () => {
+    await adminLogout();
     setAuthed(false);
     setToken("");
     setUnits([]);
@@ -363,7 +370,7 @@ export default function AdminUnitsPage() {
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-bold">เครื่องในทะเบียน ({units.length})</h2>
-                <button onClick={() => load(token)} className="text-sm text-yellow-400 hover:text-yellow-300">
+                <button onClick={() => load()} className="text-sm text-yellow-400 hover:text-yellow-300">
                   รีเฟรช
                 </button>
               </div>

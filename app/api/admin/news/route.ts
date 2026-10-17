@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAuthorized } from "@/lib/aed/admin-auth";
 
@@ -51,6 +52,9 @@ export async function PATCH(req: Request) {
     console.error("[admin/news][PATCH] supabase error:", error.message);
     return NextResponse.json({ ok: false, error: "database_error" }, { status: 500 });
   }
+  // /news is served from an hourly ISR cache — refresh it so a hide/unhide
+  // shows up on the next visit instead of up to an hour later.
+  revalidatePath("/news");
   return NextResponse.json({ ok: true });
 }
 
@@ -65,5 +69,6 @@ export async function DELETE(req: Request) {
     console.error("[admin/news][DELETE] supabase error:", error.message);
     return NextResponse.json({ ok: false, error: "database_error" }, { status: 500 });
   }
+  revalidatePath("/news");
   return NextResponse.json({ ok: true });
 }

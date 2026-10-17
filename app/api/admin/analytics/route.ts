@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthorized } from "@/lib/aed/admin-auth";
+import { fetchAllRows } from "@/lib/aed/paging";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -94,31 +95,50 @@ export async function GET(req: Request) {
 
   const supabase = createAdminClient();
 
-  const [eventsRes, prevEventsRes, visitsRes, prevVisitsRes, leadsRes, alertsRes] = await Promise.all([
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name, properties, page_url, referrer, created_at")
-      .gte("created_at", from),
-    supabase
-      .from("aed_analytics_events")
-      .select("event_name")
-      .gte("created_at", prevFrom)
-      .lt("created_at", prevTo),
-    supabase
-      .from("aed_ad_visits")
-      .select("gclid, utm_source, referrer, created_at")
-      .gte("created_at", from),
+  // Every list that feeds a count is paged (fetchAllRows) — a single select
+  // stops at Supabase's 1,000-row cap, which a 30/90-day range passes easily.
+  // Leads exclude partial_* rows (abandoned-form beacons, not submissions).
+  const [events, prevEvents, visits, prevVisitsRes, leads, alertsRes] = await Promise.all([
+    fetchAllRows<EventRow>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name, properties, page_url, referrer, created_at")
+        .gte("created_at", from)
+        .order("id")
+        .range(a, b),
+    ),
+    fetchAllRows<{ event_name: string }>((a, b) =>
+      supabase
+        .from("aed_analytics_events")
+        .select("event_name")
+        .gte("created_at", prevFrom)
+        .lt("created_at", prevTo)
+        .order("id")
+        .range(a, b),
+    ),
+    fetchAllRows<VisitRow>((a, b) =>
+      supabase
+        .from("aed_ad_visits")
+        .select("gclid, utm_source, referrer, created_at")
+        .gte("created_at", from)
+        .order("id")
+        .range(a, b),
+    ),
     supabase
       .from("aed_ad_visits")
       .select("*", { count: "exact", head: true })
       .gte("created_at", prevFrom)
       .lt("created_at", prevTo),
-    supabase
-      .from("aed_leads")
-      .select("id, full_name, phone, email, product_id, gclid, created_at")
-      .gte("created_at", from)
-      .order("created_at", { ascending: false })
-      .limit(20),
+    fetchAllRows<LeadRow>((a, b) =>
+      supabase
+        .from("aed_leads")
+        .select("id, full_name, phone, email, product_id, gclid, created_at")
+        .gte("created_at", from)
+        .not("source", "like", "partial%")
+        .order("created_at", { ascending: false })
+        .order("id")
+        .range(a, b),
+    ),
     supabase
       .from("aed_analytics_digest_log")
       .select("digest_date, kind, payload, created_at")
@@ -126,10 +146,6 @@ export async function GET(req: Request) {
       .limit(10),
   ]);
 
-  const events = (eventsRes.data ?? []) as EventRow[];
-  const prevEvents = (prevEventsRes.data ?? []) as Array<{ event_name: string }>;
-  const visits = (visitsRes.data ?? []) as VisitRow[];
-  const leads = (leadsRes.data ?? []) as LeadRow[];
   const digestLogs = (alertsRes.data ?? []) as DigestLogRow[];
 
   const eventCounts: Record<string, number> = {};
@@ -201,7 +217,7 @@ export async function GET(req: Request) {
       location: x.key,
       n: x.n,
     })),
-    recent_leads: leads.map((l) => ({
+    recent_leads: leads.slice(0, 20).map((l) => ({
       id: l.id,
       full_name: l.full_name,
       phone: l.phone,

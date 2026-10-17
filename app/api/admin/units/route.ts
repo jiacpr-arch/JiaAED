@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAuthorized } from "@/lib/aed/admin-auth";
+import { validateUnitInput } from "@/lib/aed/units";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -44,6 +45,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
+  const invalid = validateUnitInput(body);
+  if (invalid) return NextResponse.json({ ok: false, error: invalid }, { status: 400 });
+
   const serialNumber = String(body.serial_number ?? "").trim();
 
   const supabase = createAdminClient();
@@ -86,6 +90,8 @@ export async function PATCH(req: Request) {
 
   const id = String(body.id ?? "");
   if (!id) return NextResponse.json({ ok: false, error: "no_id" }, { status: 400 });
+  const invalid = validateUnitInput(body);
+  if (invalid) return NextResponse.json({ ok: false, error: invalid }, { status: 400 });
 
   const updatable = [
     "serial_number",

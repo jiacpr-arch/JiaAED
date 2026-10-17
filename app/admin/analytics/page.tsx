@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-
-const TOKEN_STORAGE_KEY = "jiaaed_admin_token";
+import { LOGIN_ERRORS, adminLogin, forgetLegacyToken } from "../admin-session";
 
 type DashboardData = {
   range: { days: number; from: string; to: string };
@@ -59,19 +58,14 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async (currentDays: number, currentToken: string) => {
+  // The session is an HttpOnly cookie sent with every /api/admin request.
+  const load = useCallback(async (currentDays: number) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/analytics?days=${currentDays}`, {
-        headers: { authorization: `Bearer ${currentToken}` },
-      });
+      const res = await fetch(`/api/admin/analytics?days=${currentDays}`);
       if (res.status === 401) {
         setAuthed(false);
-        setError("Token ไม่ถูกต้อง");
-        try {
-          window.localStorage.removeItem(TOKEN_STORAGE_KEY);
-        } catch {}
         return;
       }
       const json = (await res.json()) as DashboardData;
@@ -85,27 +79,26 @@ export default function AdminAnalyticsPage() {
   }, []);
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(TOKEN_STORAGE_KEY);
-      if (saved) {
-        setToken(saved);
-        void load(days, saved);
-      }
-    } catch {}
+    forgetLegacyToken();
+    void load(days);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function onLogin(e: React.FormEvent) {
+  async function onLogin(e: React.FormEvent) {
     e.preventDefault();
-    try {
-      window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
-    } catch {}
-    void load(days, token);
+    if (!token.trim()) return;
+    const result = await adminLogin(token.trim());
+    if (result !== "ok") {
+      setError(LOGIN_ERRORS[result]);
+      return;
+    }
+    setToken("");
+    void load(days);
   }
 
   function changeRange(d: number) {
     setDays(d);
-    if (token) void load(d, token);
+    if (authed) void load(d);
   }
 
   if (!authed) {

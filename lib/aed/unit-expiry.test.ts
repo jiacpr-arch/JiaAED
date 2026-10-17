@@ -4,6 +4,7 @@ import {
   formatUnitExpiryReport,
   type UnitExpiryInput,
 } from "./unit-expiry";
+import { validateUnitInput } from "./units";
 
 // This is what actually implements the "แจ้งเตือนแบต / แผ่นแปะหมดอายุ" feature
 // lib/aed/subscription.ts's PRO/ELITE tiers already market — pin the exact
@@ -174,5 +175,28 @@ describe("formatUnitExpiryReport", () => {
     const text = formatUnitExpiryReport(results);
     expect(text).toContain("🚨");
     expect(text).toContain("1 รายการ");
+  });
+});
+
+describe("validateUnitInput", () => {
+  it("accepts a normal unit and blank optional fields", () => {
+    expect(
+      validateUnitInput({
+        status: "ปล่อยเช่า",
+        plan_type: "เช่าซื้อ",
+        pad_expiry_date: "2027-03-01",
+        rent_amount: "2990",
+        notes: "",
+        end_date: "",
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects Buddhist-era dates, unknown enums and negative amounts", () => {
+    expect(validateUnitInput({ pad_expiry_date: "2570-03-01" })).toBe("invalid_pad_expiry_date");
+    expect(validateUnitInput({ end_date: "01/03/2027" })).toBe("invalid_end_date");
+    expect(validateUnitInput({ status: "หาย" })).toBe("invalid_status");
+    expect(validateUnitInput({ plan_type: "x" })).toBe("invalid_plan_type");
+    expect(validateUnitInput({ deposit_amount: -5 })).toBe("invalid_deposit_amount");
   });
 });
