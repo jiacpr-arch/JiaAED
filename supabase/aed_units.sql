@@ -48,6 +48,7 @@ ALTER TABLE aed_units ENABLE ROW LEVEL SECURITY;
 
 -- Service role only — no anon policy. Customer names and deposit amounts are
 -- internal ops data, never public (same posture as aed_leads.sql).
+DROP POLICY IF EXISTS "service_role_aed_units" ON aed_units;
 CREATE POLICY "service_role_aed_units"
   ON aed_units
   FOR ALL

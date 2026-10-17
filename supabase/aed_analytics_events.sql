@@ -32,6 +32,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_aed_hot_lead_alert_once_per_session
   WHERE event_name = 'hot_lead_alert_fired';
 
 ALTER TABLE aed_analytics_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_analytics_events" ON aed_analytics_events;
 CREATE POLICY "service_role_aed_analytics_events" ON aed_analytics_events
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 
@@ -52,5 +53,6 @@ CREATE TABLE IF NOT EXISTS aed_analytics_digest_log (
 );
 
 ALTER TABLE aed_analytics_digest_log ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_analytics_digest_log" ON aed_analytics_digest_log;
 CREATE POLICY "service_role_aed_analytics_digest_log" ON aed_analytics_digest_log
   FOR ALL TO service_role USING (true) WITH CHECK (true);

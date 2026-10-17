@@ -31,4 +31,5 @@ CREATE INDEX IF NOT EXISTS idx_aed_leads_email  ON aed_leads(email);
 CREATE INDEX IF NOT EXISTS idx_aed_leads_phone  ON aed_leads(phone);
 
 ALTER TABLE aed_leads ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_leads" ON aed_leads;
 CREATE POLICY "service_role_aed_leads" ON aed_leads FOR ALL TO service_role USING (true) WITH CHECK (true);

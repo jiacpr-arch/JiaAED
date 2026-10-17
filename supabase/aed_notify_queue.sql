@@ -19,5 +19,6 @@ CREATE INDEX IF NOT EXISTS idx_aed_notify_queue_unsent
   WHERE sent = FALSE;
 
 ALTER TABLE aed_notify_queue ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_notify_queue" ON aed_notify_queue;
 CREATE POLICY "service_role_aed_notify_queue" ON aed_notify_queue
   FOR ALL TO service_role USING (true) WITH CHECK (true);

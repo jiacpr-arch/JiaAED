@@ -31,6 +31,7 @@ CREATE INDEX IF NOT EXISTS idx_aed_docs_published ON aed_documents(is_published,
 ALTER TABLE aed_documents ENABLE ROW LEVEL SECURITY;
 
 -- Service role bypasses RLS, but be explicit.
+DROP POLICY IF EXISTS "service_role_aed_documents" ON aed_documents;
 CREATE POLICY "service_role_aed_documents"
   ON aed_documents
   FOR ALL
@@ -39,6 +40,7 @@ CREATE POLICY "service_role_aed_documents"
   WITH CHECK (true);
 
 -- Allow anyone to read published documents (used if you ever build a public listing query).
+DROP POLICY IF EXISTS "anon_read_published" ON aed_documents;
 CREATE POLICY "anon_read_published"
   ON aed_documents
   FOR SELECT

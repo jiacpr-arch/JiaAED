@@ -26,6 +26,7 @@ CREATE INDEX IF NOT EXISTS idx_aed_ad_visits_fp ON aed_ad_visits(fingerprint, cr
 CREATE INDEX IF NOT EXISTS idx_aed_ad_visits_ts ON aed_ad_visits(created_at DESC);
 
 ALTER TABLE aed_ad_visits ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_ad_visits" ON aed_ad_visits;
 CREATE POLICY "service_role_aed_ad_visits" ON aed_ad_visits FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- Conversion log — record what we sent to Google Ads
@@ -49,4 +50,5 @@ CREATE INDEX IF NOT EXISTS idx_aed_conversion_log_status ON aed_conversion_log(s
 CREATE INDEX IF NOT EXISTS idx_aed_conversion_log_order ON aed_conversion_log(order_id);
 
 ALTER TABLE aed_conversion_log ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_role_aed_conversion_log" ON aed_conversion_log;
 CREATE POLICY "service_role_aed_conversion_log" ON aed_conversion_log FOR ALL TO service_role USING (true) WITH CHECK (true);
