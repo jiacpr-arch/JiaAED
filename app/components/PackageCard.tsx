@@ -68,13 +68,13 @@ export function PackageCard({
       </div>
       <p className="text-sm text-gray-400 mb-4">{pkg.tagline}</p>
 
+      {/* No struck-through "was" price: the credit/government price in priceNote is a
+          different payment term, not a former price — striking it through would
+          advertise a discount that doesn't exist. */}
       <div className="mb-1 flex items-end gap-2">
         <span className={`text-3xl font-black ${isBuy ? "text-white" : "text-yellow-400"}`}>
           {pkg.priceLabel}
         </span>
-        {pkg.listPriceLabel && (
-          <span className="text-gray-500 line-through text-base mb-1">{pkg.listPriceLabel}</span>
-        )}
       </div>
       <div className="text-gray-500 text-xs mb-4">{pkg.priceNote}</div>
 

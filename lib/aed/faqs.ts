@@ -1,8 +1,34 @@
 import { LINE_OA_ID } from "./line";
+import { consumableLifetimeText, primedicModels } from "./primedic";
+import { products } from "./products";
+import { SAFETY_PREMIUM_PRICING } from "./packages";
+import { MACHINE_TRAINING_PERK } from "./promotion";
+import { subscriptionMatrix, subscriptionTiers } from "./subscription";
+import { PRIMEDIC_REGULATORY, adLicensesLine, fdaLine } from "./regulatory";
+
 export type FAQ = {
   question: string;
   answer: string;
 };
+
+// Prices in the copy below come from the catalog modules, never re-typed.
+const baht = (n: number) => n.toLocaleString("en-US");
+const modelPrice = (id: string) => primedicModels.find((m) => m.id === id)!.price;
+const productPrice = (id: string) => products.find((p) => p.id === id)!.price;
+
+// "PRO 1 ครั้ง/ปี · ELITE 2 ครั้ง/ปี" — training per subscription tier, read from
+// the feature matrix so the FAQ can't promise training a tier doesn't include.
+const trainingRow = subscriptionMatrix.find((r) => r.feature === "อบรมพนักงาน (ครั้ง/ปี)")!;
+const tierTraining = subscriptionTiers
+  .filter((t) => trainingRow.values[t.id] !== false)
+  .map((t) => `${t.name} ${trainingRow.values[t.id]}`)
+  .join(" · ");
+const tiersWithoutTraining = subscriptionTiers
+  .filter((t) => trainingRow.values[t.id] === false)
+  .map((t) => t.name)
+  .join("/");
+
+const reg = PRIMEDIC_REGULATORY;
 
 // Amoul i7 discontinued (ก.ค. 2026) — these FAQs now describe AED Yuwell Y2 /
 // PRIMEDIC HeartSave. Real specs from lib/aed/primedic.ts (primedicSharedSpecs)
@@ -11,14 +37,19 @@ export type FAQ = {
 // doesn't have that feature (GPS tracking is a separate product, yuwellGpsAed).
 export const faqs: FAQ[] = [
   {
+    // Y2 is the flagship, not the entry point — the answer also names the
+    // cheaper Y0/Y8 so "how much is an AED" never reads as "from ฿59,999".
     question: "AED Yuwell Y2 ราคาเท่าไหร่?",
     answer:
-      `ราคาเริ่มต้น 59,999 บาท (ยังไม่รวม VAT) สำหรับรุ่นมาตรฐาน, 64,900 บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ 68,900 บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น ทุกชุดมีบริการอบรม CPR & AED สอนถึงที่ และออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
+      `Yuwell Y2 (รุ่นเรือธง จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ยังไม่รวม VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท และ Y8 (มีเซ็นเซอร์ CPR feedback) ${baht(modelPrice("primedic-y8"))} บาท ทุกเครื่องมาพร้อม${MACHINE_TRAINING_PERK} และออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
   },
   {
+    // เจี่ยรักษา is the seller and ฆพ. holder — the importer/registrant is Yuwell
+    // Medical (Thailand). Never call เจี่ยรักษา the importer.
     question: "AED Yuwell Y2 ผ่าน อย. หรือไม่?",
-    answer:
-      "ผ่านครับ ทะเบียน อย. เลขที่ 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) ครอบคลุมตระกูล HeartSave Y0/Y8/Y2 นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด — พร้อมใบอนุญาตโฆษณาเครื่องมือแพทย์ ฆพ.2475/2569 (Y0/Y2) และ ฆพ.287/2567 (Y8) จัดจำหน่ายโดยเจี่ยรักษา ผู้นำเข้าเครื่องมือแพทย์โดยตรง",
+    answer: reg.published
+      ? `ผ่านครับ ทะเบียน ${fdaLine(reg)} ครอบคลุมตระกูล HeartSave Y0/Y8/Y2 นำเข้าโดย ${reg.importer} — พร้อมใบอนุญาตโฆษณาเครื่องมือแพทย์ ${adLicensesLine(reg, { short: true })} จัดจำหน่ายโดย ${reg.advertiser}`
+      : `เป็นเครื่องมือแพทย์นำเข้าโดย ${reg.importer} — ${reg.pendingNote}`,
   },
   {
     question: "ใช้งานยากไหม คนไม่เคยใช้กดเป็นไหม?",
@@ -48,7 +79,7 @@ export const faqs: FAQ[] = [
   {
     question: "แบตเตอรี่อยู่ได้นานแค่ไหน?",
     answer:
-      "แบตเตอรี่ LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (ชาร์จใหม่ไม่ได้) ช็อกได้ ≥ 200 ครั้งที่ 360J พร้อม Self-test อัตโนมัติ (สูงสุด 3,650 ครั้ง) เพื่อให้แน่ใจว่าเครื่องพร้อมใช้งานตลอดเวลา และบันทึกข้อมูลได้ครบ — ECG 10 ชม. · event 2,000 รายการ · เสียง 2 ชม. · CPR data 10 ชม.",
+      `แบตเตอรี่ LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (ชาร์จใหม่ไม่ได้) ช็อกได้ ≥ 200 ครั้งที่ 360J พร้อม Self-test อัตโนมัติ (สูงสุด 3,650 ครั้ง) เพื่อให้แน่ใจว่าเครื่องพร้อมใช้งานตลอดเวลา และบันทึกข้อมูลได้ครบ — ECG 10 ชม. · event 2,000 รายการ · เสียง 2 ชม. · CPR data 10 ชม. · อายุการใช้งาน: ${consumableLifetimeText}`,
   },
   {
     question: "AED Yuwell Y2 กันน้ำกันฝุ่นไหม?",
@@ -63,7 +94,7 @@ export const faqs: FAQ[] = [
   {
     question: "มีบริการหลังการขายไหม?",
     answer:
-      `มีครับ — ทีมเทคนิคไทยให้คำปรึกษาและดูแลตลอดอายุการใช้งาน 7+ ปี จัดส่งทั่วประเทศพร้อมบริการติดตั้งสาธิตการใช้งาน สอบถามเงื่อนไขการรับประกันและบริการของแต่ละรุ่นได้ที่ทีมขาย LINE ${LINE_OA_ID}`,
+      `มีครับ — ทีมเทคนิคไทยให้คำปรึกษาและดูแลตลอดอายุการใช้งาน จัดส่งทั่วประเทศพร้อมบริการติดตั้งสาธิตการใช้งาน สอบถามเงื่อนไขการรับประกันและบริการของแต่ละรุ่นได้ที่ทีมขาย LINE ${LINE_OA_ID}`,
   },
   {
     question: "เครื่อง AED ควรติดตั้งที่ไหนบ้าง?",
@@ -109,7 +140,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "แพ็กเกจของท่านรวมอะไรบ้าง?",
         answer:
-          "ทุกแพ็กเกจรวมเครื่อง AED พร้อมการฝึกอบรมการใช้งานและบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ทุกระดับ ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (เงินสด ฿63,900) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร",
+          `ทุกแพ็กเกจรวมเครื่อง AED และบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — การอบรม: Safety Premium รวมอบรม CPR & AED สอนถึงที่ ส่วน Safety Care อบรมพนักงานตามระดับบริการ (${tierTraining}; ${tiersWithoutTraining} ไม่รวมอบรม) — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ทุกระดับ ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (เงินสด ฿${baht(SAFETY_PREMIUM_PRICING.gpsCash)}) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร`,
       },
       {
         question: "ทำไมต้องมี GPS คู่กับ AED?",
@@ -119,7 +150,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "จำเป็นต้องฝึกอบรมเพื่อใช้ AED ไหม?",
         answer:
-          "แนะนำอย่างยิ่ง แม้เครื่อง AED จะออกแบบให้ใช้งานง่ายด้วยคำแนะนำเสียง แต่การฝึกอบรมช่วยเพิ่มความมั่นใจ ลดความตื่นตระหนก และสอนเทคนิค CPR ที่จำเป็นควบคู่กับการใช้เครื่อง ซึ่งช่วยเพิ่มโอกาสรอดชีวิตได้อย่างมีนัยสำคัญ — เราจึงรวมการอบรมไว้ในทุกแพ็กเกจ",
+          `แนะนำอย่างยิ่ง แม้เครื่อง AED จะออกแบบให้ใช้งานง่ายด้วยคำแนะนำเสียง แต่การฝึกอบรมช่วยเพิ่มความมั่นใจ ลดความตื่นตระหนก และสอนเทคนิค CPR ที่จำเป็นควบคู่กับการใช้เครื่อง ซึ่งช่วยเพิ่มโอกาสรอดชีวิตได้อย่างมีนัยสำคัญ — แพ็กซื้อขาด Safety Premium จึงรวมอบรมสอนถึงที่ และแพ็กเช่าบริการ Safety Care มีอบรมประจำปีในระดับ ${tierTraining} (ระดับอื่นเลือกซื้อคอร์สอบรมเพิ่มได้)`,
       },
     ],
   },
@@ -233,7 +264,7 @@ export const subscriptionFaqCategories: FaqCategory[] = [
       {
         question: "มีการอบรมพนักงานหรือไม่ บ่อยแค่ไหน?",
         answer:
-          "มี รวมการอบรมการใช้งานในแพ็กเกจ (จำนวนครั้งต่อปีขึ้นกับระดับบริการ PRO/ELITE) สอนโดยวิทยากรที่ผ่าน BLS Instructor Course และระดับ ELITE ยังช่วยสร้างผู้สอนภายในองค์กรได้",
+          `มี ตามระดับบริการ — ${tierTraining} (${tiersWithoutTraining} ไม่รวมอบรม เลือกซื้อคอร์สเพิ่มได้) สอนโดยวิทยากรที่ผ่าน BLS Instructor Course และระดับ ELITE ยังช่วยสร้างผู้สอนภายในองค์กรได้`,
       },
     ],
   },

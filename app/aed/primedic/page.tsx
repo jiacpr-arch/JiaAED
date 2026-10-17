@@ -170,30 +170,29 @@ export default function PrimedicPage() {
           ))}
         </div>
 
-        {/* ใบอนุญาตโฆษณา ฆพ. ตัวจริงจาก อย. — สำหรับผู้ซื้อภาครัฐ/องค์กรที่ต้องตรวจสอบ */}
-        <div className="mt-4">
-          <h2 className="text-sm font-bold text-gray-300 mb-2">ใบอนุญาตโฆษณาเครื่องมือแพทย์ (ฆพ.) ฉบับจริง</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <a
-              href="/documents/khop-2475-2569-y0-y2.jpg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-center hover:border-yellow-400/50 transition-colors"
-            >
-              <div className="text-sm font-bold text-white">ฆพ.2475/2569</div>
-              <div className="text-[11px] text-gray-400 mt-0.5">HeartSave Y0 / Yuwell Y2 · ดูใบอนุญาตฉบับเต็ม →</div>
-            </a>
-            <a
-              href="/documents/khop-287-2567-y8.jpg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-center hover:border-yellow-400/50 transition-colors"
-            >
-              <div className="text-sm font-bold text-white">ฆพ.287/2567</div>
-              <div className="text-[11px] text-gray-400 mt-0.5">HeartSave Y8 · ดูใบอนุญาตฉบับเต็ม →</div>
-            </a>
+        {/* ใบอนุญาตโฆษณา ฆพ. ตัวจริงจาก อย. — สำหรับผู้ซื้อภาครัฐ/องค์กรที่ต้องตรวจสอบ.
+            Numbers + scans come from regulatory.ts and follow its `published` gate. */}
+        {PRIMEDIC_REGULATORY.published && (
+          <div className="mt-4">
+            <h2 className="text-sm font-bold text-gray-300 mb-2">ใบอนุญาตโฆษณาเครื่องมือแพทย์ (ฆพ.) ฉบับจริง</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {PRIMEDIC_REGULATORY.adLicenses
+                .filter((l) => l.documentHref)
+                .map((l) => (
+                  <a
+                    key={l.number}
+                    href={l.documentHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-center hover:border-yellow-400/50 transition-colors"
+                  >
+                    <div className="text-sm font-bold text-white">ฆพ.{l.number}</div>
+                    <div className="text-[11px] text-gray-400 mt-0.5">{l.covers} · ดูใบอนุญาตฉบับเต็ม →</div>
+                  </a>
+                ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* ฿10,000 survivor-reward promotion */}

@@ -1,17 +1,18 @@
-# Ad creative assets — JiaAED (AED Yuwell Y2)
+# Ad creative assets — JiaAED (Yuwell / PRIMEDIC HeartSave)
 
-Use ONLY AED product images when building Meta/Google ad creatives for this
-project. The copy is about the **AED Yuwell Y2 defibrillator** — the image must
-show the AED, not another product.
+Internal guide (moved out of `public/` so it is no longer served on the site).
+Image files live in `public/images/`.
 
-> **Amoul i7 discontinued (ก.ค. 2026)** — Yuwell Y2 replaced it as the
-> site-wide featured product. `product-main.png` (below) is Amoul-only
-> creative and is NOT used anywhere in the codebase anymore — the new hero
-> photo is `yuwell-y2-main.jpg`. The `/aed/amoul-i7` PPC landing page and its
-> creatives (`aed-i7-poster.jpg`, `aed-i7-promo-39999.png`,
-> `scripts/build-promo-poster.mjs`) were intentionally left untouched because
-> they're tied to a live Google Ads campaign — coordinate with the owner
-> before changing those so ad copy and landing page stay in sync.
+Use ONLY images of the AED models we currently sell (Yuwell Y2 / PRIMEDIC
+HeartSave Y0 · Y8 / Yuwell GPS) when building Meta/Google ad creatives. The copy
+is about those defibrillators — the image must show them, not another product.
+
+> **Amoul i7 — suspended by อย. order (ก.ค. 2026).** Its advertising was ordered
+> stopped, so it must not appear in ads or on the site again. The `/aed/amoul-i7`
+> landing page is gone — `proxy.ts` 301-redirects that path to `/` — and its
+> promo poster (`aed-i7-promo-39999.png`) and the script that built it were
+> deleted. The remaining Amoul files listed below are kept only until the owner
+> confirms nothing external still links to them; never use them in new creatives.
 
 ## ✅ AED creatives (safe to use)
 
@@ -24,11 +25,12 @@ show the AED, not another product.
 | `aed-wallcabinet.png` | AED wall cabinet |
 | `feature-grid.jpg` | AED feature grid |
 
-## 🟡 Amoul i7 creatives (legacy — `/aed/amoul-i7` PPC campaign only)
+## ⛔ Amoul i7 files (suspended product — do NOT use)
 
 | File | Content |
 | --- | --- |
-| `product-main.png` | AED Amoul i7 unit (front) — discontinued, ads-landing-page only |
+| `product-main.png` | AED Amoul i7 unit (front) — still named in docs/google-ads-setup.md and docs/meta-ads-setup.md; replace it there before reusing those guides |
+| `aed-i7-poster.jpg` | AED Amoul i7 poster |
 | `aed-i7-2.jpg` | AED Amoul i7 poster (MP Group) |
 
 ## 🟢 AED rental campaign creatives (เช่า AED — Yuwell/PRIMEDIC)
@@ -37,6 +39,8 @@ Pricing posters for the AED rental program (landing: `/aed/rental`). VAT not inc
 2026-07-30: replaced the Amoul-device versions with the owner's Yuwell/PRIMEDIC poster
 (`rentaed2.png` from Drive) — per-plan cards are column crops of the same poster.
 Usable in paid ads (matches ฆพ.2475/2569); the old Amoul versions must NOT be re-used.
+The prices baked into these images must match `RENTAL_PRICES` in `lib/aed/rental.ts` —
+re-export the posters if a rental price changes.
 
 | File | Content |
 | --- | --- |
@@ -51,7 +55,7 @@ Usable in paid ads (matches ฆพ.2475/2569); the old Amoul versions must NOT b
 | File | Content |
 | --- | --- |
 | `primedic-y-open-pads.webp` | PRIMEDIC HeartSave เปิดฝา + แผ่น electrode ผู้ใหญ่/เด็ก บนพื้นขาว (product shot) |
-| `primedic-features-infographic.png` | อินโฟกราฟิกฟีเจอร์ HeartSave โทนดำ/แดง (พลังงาน 200–360J, จอ 4.3"/7", ชุดอุปกรณ์, แบต 5 ปี, ประกัน 8 ปี) |
+| `primedic-features-infographic.png` | อินโฟกราฟิกฟีเจอร์ HeartSave จากผู้ผลิต โทนดำ/แดง (พลังงาน 200–360J, จอ 4.3"/7", ชุดอุปกรณ์, แบต/แผ่น "up to 5 years", ประกัน 8 ปี) — ⚠️ ตัวเลขอายุแบต/แผ่นและประกันในภาพเป็นของผู้ผลิต: เว็บ/บอทใช้ "ไม่น้อยกว่า 4 ปี" ตามสเปกชีต Y2 และให้สอบถามเงื่อนไขประกันกับทีมขาย — ยืนยันกับเจ้าของก่อนใช้ภาพนี้ยิงโฆษณา |
 
 ## ⛔ NOT an AED — do not use in AED ads
 

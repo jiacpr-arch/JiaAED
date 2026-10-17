@@ -1,9 +1,10 @@
 import { LINE_OA_ID } from "./line";
+import { PRIMEDIC_REGULATORY, adLicensesLine, fdaLine } from "./regulatory";
 /**
  * Authoritative knowledge base for the AI sales assistant.
  *
  * Content here is grounded in the documents shipped under /public/documents
- * (Y2 spec sheet, อย. 65-2-2-2-0013415) and lib/aed/regulatory.ts. The old
+ * (Y2 spec sheet, the อย. notification) and lib/aed/regulatory.ts. The old
  * Amoul i7 manual/certificates (incl. EN 1789) were removed with the product,
  * so their claims must not come back here.
  *
@@ -16,13 +17,21 @@ export type KnowledgeArticle = {
   content: string;
 };
 
+const reg = PRIMEDIC_REGULATORY;
+
+// Registration lines follow the `published` gate — while unpublished the bots
+// get the pending note instead of a number.
+const registrationLines = reg.published
+  ? `- **อย. ไทย** ${fdaLine(reg, "ทะเบียน ")} นำเข้าโดย ${reg.importer}
+- **ใบอนุญาตโฆษณา** ${adLicensesLine(reg)} โดย ${reg.advertiser}`
+  : `- **อย./ใบอนุญาตโฆษณา:** ${reg.pendingNote}`;
+
 export const knowledgeArticles: KnowledgeArticle[] = [
   {
     id: "certifications",
     title: "ใบรับรองและมาตรฐาน",
     content: `เครื่อง AED Yuwell / PRIMEDIC HeartSave ที่จำหน่ายอยู่:
-- **อย. ไทย** ทะเบียน 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569) นำเข้าโดย บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด
-- **ใบอนุญาตโฆษณา** ฆพ.2475/2569 (HeartSave Y0/Y2) และ ฆพ.287/2567 (HeartSave Y8) โดย บริษัท เจี่ยรักษา จำกัด
+${registrationLines}
 - **ISO 13485** ระบบคุณภาพเครื่องมือแพทย์
 - **CE** มาตรฐานความปลอดภัยยุโรป
 ผู้ใช้สามารถดาวน์โหลดเอกสารได้ที่หน้า [เอกสารดาวน์โหลด](/docs)`,
@@ -46,7 +55,7 @@ export const knowledgeArticles: KnowledgeArticle[] = [
 
 **After 3 shocks:** cumulative success > 95% — ส่วนใหญ่ไม่ต้องถึง 360J
 
-ดังนั้น escalating protocol ที่เริ่มจาก 100J (ผู้ใหญ่) ไม่ได้ "อ่อนแอ" — แต่ปลอดภัยกว่าและมีประสิทธิภาพเทียบเท่า fixed high energy ตามหลักฐานเชิงประจักษ์`,
+เครื่องที่เราจำหน่าย (Yuwell / PRIMEDIC HeartSave) ใช้ escalating protocol ผู้ใหญ่ 200 → 300 → 360 J (โหมดเด็ก 50 → 70 → 100 J) ตั้งค่าไว้จากโรงงาน ผู้ใช้ปรับเองไม่ได้ — สอดคล้องกับคำแนะนำ ILCOR (ช็อกแรก 120–200J biphasic ครั้งต่อไปเท่ากันหรือสูงกว่า สูงสุด 360J)`,
   },
   {
     id: "warranty-service",

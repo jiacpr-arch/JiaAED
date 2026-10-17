@@ -23,7 +23,6 @@
     "resend": "^6.12.3"
   },
   "devDependencies": {
-    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",

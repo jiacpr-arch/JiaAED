@@ -82,12 +82,13 @@ export default function PackagesPage() {
         </div>
       </section>
 
-      {/* What every package includes — shown in photos, not another list */}
+      {/* What the packages offer — shown in photos, not another list. Inclusion
+          differs per package/tier (see the cards + FAQ), so no "ทุกแพ็กเกจ" claims. */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <PhotoStrip
           heightClass="h-44 md:h-56"
           photos={[
-            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดย BLS Instructor ทุกแพ็กเกจ" },
+            { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดยทีม BLS Instructor สอนถึงที่" },
             { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
             { src: "/images/cloud-dashboard.png", alt: "Cloud Dashboard ดูสถานะเครื่อง AED", caption: "Dashboard เช็กความพร้อม 24 ชม." },
           ]}

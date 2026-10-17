@@ -16,6 +16,11 @@ export type Promotion = {
   conditionNote: string;
 };
 
+// Training bundled with every machine purchase — FAQs and the bots quote this
+// exact wording so the offer reads the same everywhere. (Managed-rental training
+// is per subscription tier instead, see ./subscription.ts.)
+export const MACHINE_TRAINING_PERK = "คอร์สอบรม CPR & AED ฟรี สำหรับ 5 ท่าน";
+
 // "รอดแล้วให้ ฿10,000" — the headline trust offer.
 export const survivorReward: Promotion = {
   id: "survivor-10k",
@@ -24,12 +29,10 @@ export const survivorReward: Promotion = {
   subtitle:
     "เรามั่นใจในเครื่องและการอบรมของเรา — ถ้าใช้ AED ของ JIA CPR ช่วยชีวิตคนได้สำเร็จ (ผู้ป่วยรอดชีวิต) เรามอบเงิน ฿10,000 ร่วมยินดีกับทุกชีวิตที่รอด",
   points: [
-    "ทุกเครื่องมาพร้อมคอร์สอบรม CPR & AED ฟรี สำหรับ 5 ท่าน",
+    `ทุกเครื่องมาพร้อม${MACHINE_TRAINING_PERK}`,
     "ทีมงานพร้อมให้คำปรึกษาและดูแลหลังการขายตลอดอายุการใช้งาน",
     "ยืนยันเหตุการณ์และการใช้งานจริงผ่าน LINE — รับเงินรางวัล ฿10,000",
   ],
   conditionNote:
     "เงื่อนไขเป็นไปตามที่บริษัทกำหนด · ต้องเป็นการใช้งานจริงในเหตุฉุกเฉินและยืนยันได้ · สอบถามรายละเอียดทาง LINE",
 };
-
-export const flyerImage = "/images/promo-y0-flyer.png";

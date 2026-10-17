@@ -3,19 +3,32 @@
 // HeartSave comparison sheet.
 //
 // Compliance: PRIMEDIC's อย./ฆพ. (incl. validUntil + importer disclaimer) live in
-// ./regulatory.ts (re-exported here for backward-compat). อย. 65-2-2-2-0013415
+// ./regulatory.ts (re-exported here for backward-compat). The อย. notification
 // covers HeartSave Y0/Y8 (semi-auto) and YA0/YA8 (fully-auto), battery NRL01B, and
 // the OBS-DE/P electrode pads. Registrant/importer: บริษัท ยูเวล เมดิคอล (ไทยแลนด์)
 // จำกัด. DO NOT reuse the i7 numbers — see regulatory.ts.
-export { PRIMEDIC_REGULATORY } from "./regulatory";
+import { PRIMEDIC_REGULATORY } from "./regulatory";
+export { PRIMEDIC_REGULATORY };
 
 // Certifications confirmed by the official Yuwell Y8 spec sheet (ISO 13485 / CE)
-// and the Thai FDA ใบรับแจ้งรายการละเอียด (อย.). Shown as trust badges.
+// and the Thai FDA ใบรับแจ้งรายการละเอียด (อย.). Shown as trust badges. The อย.
+// badge follows the `published` gate like every other registration claim.
 export const primedicCertifications: { label: string; sub: string }[] = [
-  { label: "อย.", sub: "65-2-2-2-0013415" },
+  ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
+    ? [{ label: "อย.", sub: PRIMEDIC_REGULATORY.fda }]
+    : []),
   { label: "ISO 13485", sub: "ระบบคุณภาพเครื่องมือแพทย์" },
   { label: "CE", sub: "มาตรฐานความปลอดภัยยุโรป" },
 ];
+
+// Consumable lifetimes from the Y2 spec sheet
+// (public/documents/aed-y2-specification-2026.docx): electrode pads and battery
+// each last "ไม่น้อยกว่า 4 ปี นับจากวันที่ผลิต". The manufacturer infographic
+// (primedic-features-infographic.png) says "up to 5 years" for both — we quote
+// the guaranteed minimum. One constant so FAQs, articles and both bots say the
+// same thing (they used to say 2–3, 3, ~5 and "≥ 5" years).
+export const CONSUMABLE_LIFETIME_YEARS = { pads: 4, battery: 4 } as const;
+export const consumableLifetimeText = `แผ่นอิเล็กโทรดอายุไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.pads} ปี และแบตเตอรี่อายุไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.battery} ปี นับจากวันที่ผลิต (เปลี่ยนตามวันหมดอายุที่ระบุบนซอง/ตัวแบต)`;
 
 export type PrimedicModelId = "primedic-y0" | "primedic-y8" | "primedic-y2";
 
@@ -103,7 +116,13 @@ export const yuwellGpsAed = {
 export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "รูปแบบคลื่นกระตุก", value: "Biphasic Truncated Exponential (BTE)" },
   { label: "ECG ในตัว", value: "Single Channel ECG — วิเคราะห์จังหวะหัวใจอัตโนมัติ" },
-  { label: "มาตรฐานรับรอง", value: "ISO 13485 · CE · อย. 65-2-2-2-0013415" },
+  {
+    label: "มาตรฐานรับรอง",
+    value:
+      PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
+        ? `ISO 13485 · CE · อย. ${PRIMEDIC_REGULATORY.fda}`
+        : "ISO 13485 · CE",
+  },
   { label: "แนวทางการกู้ชีพ (CPR)", value: "ตาม AHA Guideline 2010/2015" },
   { label: "ตัวเครื่อง", value: "วัสดุแข็งแรง มีหูหิ้วในตัว ขนาดกะทัดรัด เคลื่อนย้ายสะดวก" },
   { label: "Self-test อัตโนมัติ", value: "ทุก 24 ชั่วโมง (บันทึกผลได้ 3,650 ครั้ง)" },
@@ -120,12 +139,14 @@ export const primedicSharedSpecs: { label: string; value: string }[] = [
   { label: "เปิดฝาเครื่องถึงชาร์จ 360J พร้อม", value: "≤ 14 วินาที" },
   { label: "จำนวนช็อกต่อแบต", value: "≥ 200 ครั้งที่ 360J (NRL01C)" },
   { label: "แบตเตอรี่", value: "LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (non-rechargeable)" },
+  { label: "อายุแบตเตอรี่", value: `ไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.battery} ปี นับจากวันที่ผลิต` },
   {
     label: "บันทึกข้อมูล",
     value: "SD card 16GB · ECG 10 ชม. · Event 2,000 · Audio log 2 ชม. · CPR data 10 ชม. · Self-test 3,650",
   },
   { label: "ถ่ายโอนข้อมูล", value: "USB 2.0" },
   { label: "แผ่นอิเล็กโทรด", value: "แบบใช้แล้วทิ้ง รองรับผู้ใหญ่และเด็ก (อายุ 3 ปี)" },
+  { label: "อายุแผ่นอิเล็กโทรด", value: `ไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.pads} ปี นับจากวันที่ผลิต` },
   { label: "ขนาด (กว้าง×ลึก×สูง)", value: "22 × 9.7 × 29.6 ซม." },
   { label: "น้ำหนัก", value: "~2.5 กก. (รวมโมดูลพลังงานและแผ่น)" },
   { label: "อายุการเก็บรักษา (shelf life)", value: "10 ปี" },

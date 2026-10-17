@@ -10,9 +10,10 @@ import {
   primedicCertifications,
 } from "@/lib/aed/primedic";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
-import { acquisitionPackages } from "@/lib/aed/packages";
+import { acquisitionPackages, RENT_TO_OWN_TERMS } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
-import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
+import { MACHINE_TRAINING_PERK } from "@/lib/aed/promotion";
+import { PRIMEDIC_REGULATORY, regLine, regulatoryStatement } from "@/lib/aed/regulatory";
 import { LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
@@ -23,6 +24,9 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 // Single source of truth — price/copy comes from the catalog, never re-typed.
 const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
 const y2Installment = acquisitionPackages.find((p) => p.id === "pkg-start-y2")!;
+const y2InstallmentTerms = RENT_TO_OWN_TERMS["pkg-start-y2"];
+// The ฆพ. licence that names Y2 (the featured flyer below was approved under it).
+const Y2_AD_LICENSE = PRIMEDIC_REGULATORY.adLicenses.find((l) => /Y2/.test(l.covers));
 const Y2_PRICE = `฿${y2.price.toLocaleString()}`;
 
 const LINE_Y2 = lineOaUrl(`สนใจ AED Yuwell Y2 (จอสี EKG) ราคา ${Y2_PRICE} ขอใบเสนอราคาครับ`);
@@ -75,7 +79,7 @@ const govSpecChecklist: { spec: string; evidence: string }[] = [
   },
   {
     spec: "ผ่านมาตรฐานสากล FDA หรือ CE และใช้งานตามแนวทาง AHA Guideline 2010/2015 ว่าด้วยกระบวนการช่วยชีวิต (CPR)",
-    evidence: "CE · ISO 13485 · อย. 65-2-2-2-0013415 · ทำงานตาม AHA Guideline 2010/2015",
+    evidence: `CE · ISO 13485${PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · อย. ${PRIMEDIC_REGULATORY.fda}` : ""} · ทำงานตาม AHA Guideline 2010/2015`,
   },
   {
     spec: "หน้าจอ Backlight แสดงผลดิจิตอล ใช้งานง่ายแม้ในที่มืด",
@@ -171,7 +175,7 @@ export default function YuwellY2Landing() {
             <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
             <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
             <div className="market-product-price"><strong>{Y2_PRICE}</strong><span>ยังไม่รวม VAT</span></div>
-            <p>หรือผ่อน {y2Installment.priceLabel} × 18 เดือน (มัดจำ ฿22,000) แล้วเป็นเจ้าของ</p>
+            <p>หรือผ่อน {y2Installment.priceLabel} × {y2InstallmentTerms.months} เดือน (มัดจำ ฿{y2InstallmentTerms.deposit.toLocaleString()}) แล้วเป็นเจ้าของ</p>
             <div className="market-actions"><MarketButton href={LINE_Y2} lineCta="y2_hero" product="primedic-y2">สอบถาม / ขอใบเสนอราคา</MarketButton><MarketButton href={PHONE_HREF} secondary>โทร {PHONE_DISPLAY}</MarketButton></div>
           </div>
           <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
@@ -327,7 +331,7 @@ export default function YuwellY2Landing() {
               <ul className="space-y-1.5 my-4 flex-1 text-sm text-gray-700">
                 <li className="flex gap-2"><span className="text-green-600">✓</span> เป็นเจ้าของทันที จบในครั้งเดียว</li>
                 <li className="flex gap-2"><span className="text-green-600">✓</span> ออกใบกำกับภาษี / ใบเสนอราคา</li>
-                <li className="flex gap-2"><span className="text-green-600">✓</span> อบรม CPR &amp; AED สอนถึงที่</li>
+                <li className="flex gap-2"><span className="text-green-600">✓</span> {MACHINE_TRAINING_PERK}</li>
                 <li className="flex gap-2"><span className="text-green-600">✓</span> ราคาพิเศษสำหรับหน่วยงาน / ซื้อหลายเครื่อง</li>
               </ul>
               <a
@@ -385,34 +389,41 @@ export default function YuwellY2Landing() {
             </div>
           ))}
         </div>
-        {PRIMEDIC_REGULATORY.disclaimer && (
-          <p className="text-xs text-gray-400 text-center mt-4">{PRIMEDIC_REGULATORY.disclaimer}</p>
+        {/* regulatoryStatement honours the `published` gate (the raw disclaimer doesn't). */}
+        {regulatoryStatement(PRIMEDIC_REGULATORY) && (
+          <p className="text-xs text-gray-400 text-center mt-4">{regulatoryStatement(PRIMEDIC_REGULATORY)}</p>
         )}
 
         {/* ใบปลิวทางการ ฆพ.2475/2569 — อยู่คู่กับข้อมูลใบอนุญาต แสดงขนาดใหญ่ให้อ่านเลขใบอนุญาตได้ชัด */}
-        <div className="max-w-md mx-auto mt-8">
-          <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white">
-            <Image
-              src={FEATURED_KHOP_FLYER.src}
-              alt={FEATURED_KHOP_FLYER.alt}
-              width={FEATURED_KHOP_FLYER.width}
-              height={FEATURED_KHOP_FLYER.height}
-              className="w-full h-auto"
-              sizes="(max-width: 768px) 100vw, 448px"
-            />
-          </div>
-          <p className="text-center text-xs text-gray-500 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
-        </div>
-        <div className="text-center mt-4">
-          <a
-            href="/documents/khop-2475-2569-y0-y2.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-red-600 hover:text-red-700 font-semibold underline"
-          >
-            📄 ดูใบอนุญาตโฆษณาเครื่องมือแพทย์ ฆพ.2475/2569 ฉบับเต็ม (สำหรับหน่วยงานจัดซื้อ)
-          </a>
-        </div>
+        {PRIMEDIC_REGULATORY.published && (
+          <>
+            <div className="max-w-md mx-auto mt-8">
+              <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white">
+                <Image
+                  src={FEATURED_KHOP_FLYER.src}
+                  alt={FEATURED_KHOP_FLYER.alt}
+                  width={FEATURED_KHOP_FLYER.width}
+                  height={FEATURED_KHOP_FLYER.height}
+                  className="w-full h-auto"
+                  sizes="(max-width: 768px) 100vw, 448px"
+                />
+              </div>
+              <p className="text-center text-xs text-gray-500 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.{Y2_AD_LICENSE?.number}</p>
+            </div>
+            {Y2_AD_LICENSE?.documentHref && (
+              <div className="text-center mt-4">
+                <a
+                  href={Y2_AD_LICENSE.documentHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-red-600 hover:text-red-700 font-semibold underline"
+                >
+                  📄 ดูใบอนุญาตโฆษณาเครื่องมือแพทย์ ฆพ.{Y2_AD_LICENSE.number} ฉบับเต็ม (สำหรับหน่วยงานจัดซื้อ)
+                </a>
+              </div>
+            )}
+          </>
+        )}
       </section>
 
       {/* Lead form */}
@@ -470,7 +481,7 @@ export default function YuwellY2Landing() {
             </a>
           </div>
           <p className="text-xs text-gray-400 mt-6">
-            {regLine(PRIMEDIC_REGULATORY)} · เจี่ยรักษา — นำเข้าเครื่องมือแพทย์โดยตรง
+            {regLine(PRIMEDIC_REGULATORY)} · จัดจำหน่ายโดย {PRIMEDIC_REGULATORY.advertiser}
           </p>
         </div>
       </section>

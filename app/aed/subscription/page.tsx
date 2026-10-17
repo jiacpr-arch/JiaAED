@@ -13,6 +13,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
+import { SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
 import { trustedBy } from "@/lib/aed/trust";
 
 export const revalidate = 3600;
@@ -84,7 +85,7 @@ export default function SubscriptionPage() {
           <FeatureMatrix />
         </div>
         <p className="text-center text-gray-600 text-xs mt-4">
-          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿5,000 (คืนเมื่อจบสัญญา)
+          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
         </p>
       </section>
 
