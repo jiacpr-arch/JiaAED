@@ -10,7 +10,8 @@ export const maxDuration = 60;
 
 function isAuthorized(req: Request): boolean {
   const secret = process.env.CRON_SECRET;
-  if (!secret) return true;
+  // Fail closed: an unset secret must not leave the cron open to anyone.
+  if (!secret) return false;
   return req.headers.get("authorization") === `Bearer ${secret}`;
 }
 
