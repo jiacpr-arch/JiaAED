@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { phoneE164Digits } from "./phone";
 
 // Meta Conversions API (server-side) — mirrors the role of lib/aed/google-ads.ts
 // for Facebook/Instagram ads. Sends the `Lead` event server-to-server so it
@@ -41,12 +42,9 @@ function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
-function normalizePhone(phone: string): string {
-  // Meta expects digits only including country code, no "+" or symbols.
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length === 10 && digits.startsWith("0")) return `66${digits.slice(1)}`;
-  if (digits.length === 9) return `66${digits}`;
-  return digits;
+// Meta expects digits only including country code, no "+" or symbols.
+function normalizePhone(phone: string): string | null {
+  return phoneE164Digits(phone);
 }
 
 // Builds the hashed user_data block. Meta requires SHA-256 of normalized PII;
@@ -115,6 +113,7 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaLeadR
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10_000),
       },
     );
     const json = (await res.json().catch(() => ({}))) as {

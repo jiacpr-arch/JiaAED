@@ -14,6 +14,7 @@ async function getToken(): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({ grant_type: "client_credentials", client_id: CLIENT_ID, client_secret: CLIENT_SECRET, scope: "flowaccount-api" }),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "<no body>");
@@ -37,6 +38,7 @@ async function faPost<T>(path: string, body: unknown): Promise<T> {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(20_000),
   });
   const text = await res.text();
   if (!res.ok) {

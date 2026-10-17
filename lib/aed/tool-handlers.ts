@@ -91,7 +91,9 @@ export async function handleUpdateCustomerInfo(
       email,
       companyName: input.company_name ?? ctx.customer.company_name ?? null,
     });
-    void recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
+    // Awaited: this runs inside the webhook's waitUntil chain, and a floating
+    // promise there can be dropped when the function is frozen.
+    await recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
       console.error("[AED] chat conversion failed:", e),
     );
     // Reflect locally so repeated calls within the same turn don't double-fire.
@@ -182,7 +184,7 @@ export async function handleCreateQuotation(
 
   // Notify owner about the new quotation
   if (result.documentNumber) {
-    void notifyNewQuotation({
+    await notifyNewQuotation({
       customerName: ctx.customer.full_name,
       productName: product.nameTh,
       quantity: input.quantity,
@@ -230,6 +232,13 @@ export async function handleScheduleFollowup(
   input: ScheduleFollowupInput,
   dealId?: string,
 ): Promise<string> {
+  const days = input.days_later;
+  if (typeof days !== "number" || !Number.isInteger(days) || days < 1 || days > 14) {
+    return "days_later ต้องเป็นจำนวนเต็ม 1–14 วัน";
+  }
+  if (typeof input.message_template !== "string" || !input.message_template.trim()) {
+    return "ต้องมี message_template";
+  }
   const followup = await scheduleFollowup(
     ctx.customer.id,
     ctx.conversation.id,

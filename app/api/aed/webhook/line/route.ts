@@ -9,13 +9,21 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
-import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow, updateConversationState } from "@/lib/aed/db-queries";
+import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow, updateConversationState, countRecentInbound } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow, notifyHotConversation, notifyProcessingError } from "@/lib/aed/notify-owner";
 import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
+import { replyOrPush } from "@/lib/aed/line-messaging";
 import type { LineEvent } from "@/lib/aed/types";
 
 export const runtime = "nodejs";
+// The AI turn runs after the 200 (waitUntil) and can chain several model and
+// FlowAccount calls; give it the plan's full budget rather than the default.
+export const maxDuration = 300;
+
+// A person sending a few short lines in a row is normal; dozens a minute is a
+// script burning model tokens. Past this, messages are saved but not answered.
+const MAX_INBOUND_PER_MINUTE = 8;
 
 // ─── Signature verification ───────────────────────────────────────────────────
 
@@ -30,22 +38,6 @@ function verifySignature(body: string, signature: string): boolean {
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
   } catch {
     return false;
-  }
-}
-
-// ─── LINE push helper ─────────────────────────────────────────────────────────
-
-async function pushMessage(lineUserId: string, text: string): Promise<void> {
-  const token = process.env.AED_LINE_CHANNEL_ACCESS_TOKEN;
-  if (!token) return;
-
-  const res = await fetch("https://api.line.me/v2/bot/message/push", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ to: lineUserId, messages: [{ type: "text", text }] }),
-  });
-  if (!res.ok) {
-    console.error("[AED] LINE push failed:", res.status, await res.text().catch(() => ""));
   }
 }
 
@@ -84,6 +76,12 @@ async function processEvents(events: LineEvent[]): Promise<void> {
   for (const event of events) {
     const lineUserId = event.source?.userId;
     if (!lineUserId) continue;
+    // Answer with the event's free reply token; replyOrPush falls back to a
+    // (quota-counted) push if the token is missing or already expired.
+    const target = {
+      userId: lineUserId,
+      replyToken: "replyToken" in event && typeof event.replyToken === "string" ? event.replyToken : null,
+    };
 
     // ── Follow (ลูกค้าเพิ่มเพื่อน) ──────────────────────────────────────────
     if (event.type === "follow") {
@@ -100,7 +98,7 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         "สนใจสอบถามข้อมูล หรือต้องการใบเสนอราคาได้เลยนะครับ 😊",
       ].join("\n");
 
-      await pushMessage(lineUserId, welcomeMsg);
+      await replyOrPush(target, welcomeMsg);
       continue;
     }
 
@@ -115,13 +113,14 @@ async function processEvents(events: LineEvent[]): Promise<void> {
     // แอดมินคนใหม่พิมพ์ "myid" เพื่อขอ LINE User ID ของตัวเอง แล้วเอาไปใส่ env
     // AED_ADMIN_LINE_USER_IDS ดูวิธีที่ docs/google-ads-setup.md
     if (/^\/?(myid|my\s*id|ไอดี|user\s*id)$/i.test(userText)) {
-      await pushMessage(
-        lineUserId,
+      await replyOrPush(
+        target,
         ["🆔 LINE User ID ของคุณคือ:", lineUserId, "", "ส่ง ID นี้ให้แอดมินเพื่อเพิ่มสิทธิ์รับแจ้งเตือนครับ"].join("\n"),
       );
       continue;
     }
 
+    let replied = false;
     try {
       // Get or create customer + conversation
       const customer = await getOrCreateCustomerByLine(lineUserId);
@@ -131,15 +130,23 @@ async function processEvents(events: LineEvent[]): Promise<void> {
       await saveMessage(conversation.id, "inbound", "customer", userText);
       await bumpConversation(conversation.id);
 
-      // Run AI
+      const recentInbound = await countRecentInbound(conversation.id, 60_000);
+      if (recentInbound !== null && recentInbound > MAX_INBOUND_PER_MINUTE) {
+        console.warn("[AED] LINE flood — not answering", lineUserId.slice(0, 8), recentInbound);
+        continue;
+      }
+
+      // Run AI (the inbound message is already in the history it loads)
       const { reply, toolsUsed } = await runAI(userText, { customer, conversation });
 
-      // Save AI reply
-      await saveMessage(conversation.id, "outbound", "ai", reply, toolsUsed.length > 0 ? toolsUsed : undefined);
-      await bumpConversation(conversation.id);
+      // Send first: a bookkeeping failure below must not cost the customer
+      // their answer, nor trigger the "error, please retry" message on top of it.
+      replied = await replyOrPush(target, reply);
 
-      // Send reply via LINE
-      await pushMessage(lineUserId, reply);
+      await saveMessage(conversation.id, "outbound", "ai", reply, toolsUsed.length > 0 ? toolsUsed : undefined).catch(
+        (e) => console.error("[AED] save AI reply failed:", e),
+      );
+      await bumpConversation(conversation.id);
 
       // Score the conversation now that we know the latest contact info + what
       // the AI did, and write it back. This is the ONLY place
@@ -171,7 +178,9 @@ async function processEvents(events: LineEvent[]): Promise<void> {
       // A real person just hit a wall — make sure the owner knows so they can
       // reply by hand. A swallowed error here is a silently lost lead.
       await notifyProcessingError({ lineUserId, userText, error: err }).catch(() => null);
-      await pushMessage(lineUserId, "ขออภัยครับ เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ 🙏");
+      if (!replied) {
+        await replyOrPush(target, "ขออภัยครับ เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ 🙏");
+      }
     }
   }
 }

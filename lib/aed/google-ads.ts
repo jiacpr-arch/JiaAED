@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { phoneE164Digits } from "./phone";
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 // Google Ads sunsets each API version ~1 year after release and then answers
@@ -40,13 +41,10 @@ function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
-function normalizePhone(phone: string): string {
-  // Google Ads expects E.164. Strip non-digits; if 9-10 digits assume Thailand.
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length === 10 && digits.startsWith("0")) return `+66${digits.slice(1)}`;
-  if (digits.length === 9) return `+66${digits}`;
-  if (digits.length > 0 && !phone.trim().startsWith("+")) return `+${digits}`;
-  return phone.trim();
+// Google Ads expects E.164 with the "+" ("+66812345678") before hashing.
+function normalizePhone(phone: string): string | null {
+  const digits = phoneE164Digits(phone);
+  return digits ? `+${digits}` : null;
 }
 
 function thbToMicros(thb: number): number {
@@ -72,6 +70,7 @@ export async function getAccessToken(): Promise<string> {
       refresh_token: process.env.GOOGLE_ADS_REFRESH_TOKEN!,
       grant_type: "refresh_token",
     }),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     const t = await res.text().catch(() => "");
@@ -109,7 +108,9 @@ export async function uploadConversion(input: ConversionInput): Promise<Conversi
   } else if (input.email || input.phone) {
     const userIdentifiers: Array<Record<string, string>> = [];
     if (input.email) userIdentifiers.push({ hashedEmail: sha256(normalizeEmail(input.email)) });
-    if (input.phone) userIdentifiers.push({ hashedPhoneNumber: sha256(normalizePhone(input.phone)) });
+    const phone = input.phone ? normalizePhone(input.phone) : null;
+    if (phone) userIdentifiers.push({ hashedPhoneNumber: sha256(phone) });
+    if (userIdentifiers.length === 0) return { ok: false, reason: "no_attribution" };
     conversion.userIdentifiers = userIdentifiers;
     matchStrategy = "enhanced";
   } else {
@@ -146,6 +147,7 @@ export async function uploadConversion(input: ConversionInput): Promise<Conversi
       conversions: [conversion],
       partialFailure: true,
     }),
+    signal: AbortSignal.timeout(20_000),
   });
 
   const text = await res.text().catch(() => "");
@@ -207,6 +209,7 @@ export async function searchGaql(query: string): Promise<Array<Record<string, un
       method: "POST",
       headers: reportHeaders(token),
       body: JSON.stringify({ query, pageSize: 1000, ...(pageToken ? { pageToken } : {}) }),
+      signal: AbortSignal.timeout(30_000),
     });
     const text = await res.text().catch(() => "");
     if (!res.ok) throw new Error(`ads_api_${res.status}: ${text.slice(0, 300)}`);

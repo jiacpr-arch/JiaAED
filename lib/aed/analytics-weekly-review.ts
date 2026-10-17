@@ -239,7 +239,8 @@ export async function generateWeeklyReview(ctx: WeeklyContext): Promise<string> 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const anthropic = new Anthropic({ apiKey });
+  // The cron has 60s; leave room to build the context and send the report.
+  const anthropic = new Anthropic({ apiKey, timeout: 40_000, maxRetries: 0 });
 
   const userPayload = JSON.stringify(ctx, null, 2);
 

@@ -101,6 +101,7 @@ export async function checkWwwRedirect(fetchImpl: typeof fetch): Promise<HealthC
       headers: { "User-Agent": "JiaAED-ai-seo-health/1.0" },
       redirect: "manual",
       cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
     });
     const location = res.headers.get("location") ?? "";
     const ok = res.status >= 300 && res.status < 400 && location.includes(host);
@@ -124,6 +125,9 @@ async function fetchText(
     const res = await fetchImpl(url, {
       headers: { "User-Agent": "JiaAED-ai-seo-health/1.0" },
       cache: "no-store",
+      // A hung page must fail its check, not stall the cron until it's killed
+      // before the LINE report goes out.
+      signal: AbortSignal.timeout(10_000),
     });
     return { status: res.status, body: res.ok ? await res.text() : "" };
   } catch {

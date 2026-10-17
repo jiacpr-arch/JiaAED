@@ -16,6 +16,7 @@ async function gh<T>(opts: GhOpts, path: string, init?: RequestInit): Promise<T>
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
     },
+    signal: init?.signal ?? AbortSignal.timeout(20_000),
   });
   if (!res.ok) {
     const body = await res.text();

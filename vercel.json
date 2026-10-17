@@ -48,6 +48,10 @@
     {
       "path": "/api/cron/unit-expiry-check",
       "schedule": "0 7 * * 1"
+    },
+    {
+      "path": "/api/cron/send-followups",
+      "schedule": "10 2-11 * * *"
     }
   ]
 }

@@ -25,38 +25,53 @@ function getRecipients(): string[] {
   return [...new Set(ids)];
 }
 
-async function pushMessages(messages: LineMessage[]): Promise<void> {
+/**
+ * Push to every admin. Resolves true when at least one admin received it, so
+ * callers that must not lose a message (the notify queue) can retry — one
+ * admin who blocked the OA shouldn't make everyone else get it twice.
+ */
+async function pushMessages(messages: LineMessage[]): Promise<boolean> {
   const token = process.env.AED_LINE_CHANNEL_ACCESS_TOKEN ?? "";
   const recipients = getRecipients();
 
   if (!token || recipients.length === 0) {
     console.warn("[AED] admin notify skipped — env vars not set");
-    return;
+    return false;
   }
 
   const messagesToSend = messages.slice(0, 5);
 
   // One push per recipient so a single bad/blocked ID can't drop the whole batch.
-  await Promise.all(
+  const results = await Promise.all(
     recipients.map(async (to) => {
-      const res = await fetch("https://api.line.me/v2/bot/message/push", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ to, messages: messagesToSend }),
-      });
-
-      if (!res.ok) console.error(`[AED] admin push failed (${to.slice(0, 8)}…):`, res.status, await res.text());
+      try {
+        const res = await fetch("https://api.line.me/v2/bot/message/push", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ to, messages: messagesToSend }),
+          signal: AbortSignal.timeout(10_000),
+        });
+        if (!res.ok) {
+          console.error(`[AED] admin push failed (${to.slice(0, 8)}…):`, res.status, await res.text());
+        }
+        return res.ok;
+      } catch (e) {
+        console.error(`[AED] admin push threw (${to.slice(0, 8)}…):`, e);
+        return false;
+      }
     }),
   );
+  return results.some(Boolean);
 }
 
 /**
  * Direct text push, bypassing the notify queue. Exported for the queue
  * flusher itself (which must not re-enqueue) — everything else should go
- * through notifyAnalyticsDigest/Alert or createNotifyBatch.
+ * through notifyAnalyticsDigest/Alert or createNotifyBatch. Resolves whether
+ * at least one admin got it.
  */
-export async function pushToOwner(text: string): Promise<void> {
-  await pushMessages([{ type: "text", text }]);
+export async function pushToOwner(text: string): Promise<boolean> {
+  return pushMessages([{ type: "text", text }]);
 }
 
 function bkkNow(): string {
@@ -322,7 +337,9 @@ export async function notifyAnalyticsDigest(text: string): Promise<void> {
 }
 
 export async function notifyAnalyticsAlert(text: string): Promise<void> {
-  await pushToOwner(text);
+  // Alerts can be long (e.g. the unit-expiry list grows with the fleet) and
+  // LINE rejects a text over 5,000 chars outright — split instead of losing it.
+  for (const chunk of chunkForLine(text)) await pushToOwner(chunk);
 }
 
 // ─── Batched notify (combine several messages from one cron run, then queue

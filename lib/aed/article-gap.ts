@@ -78,7 +78,7 @@ export async function proposeArticle(sample: QuestionSample): Promise<ProposedAr
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY not set");
 
-  const anthropic = new Anthropic({ apiKey });
+  const anthropic = new Anthropic({ apiKey, timeout: 180_000, maxRetries: 1 });
 
   const prompt = [
     `บทความที่มีแล้วในเว็บ (ห้ามเขียนซ้ำหัวข้อเดียวกัน):`,
