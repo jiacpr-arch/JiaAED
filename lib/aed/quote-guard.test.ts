@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { AED_PRODUCTS, QUOTABLE_PRODUCT_IDS, calculatePrice, checkQuoteRequest } from "./pricing";
 import { buildSystemPrompt, sanitizePromptName } from "./system-prompt";
+import { fallbackReply } from "./ai-orchestrator";
 
 describe("checkQuoteRequest", () => {
   const y2 = AED_PRODUCTS.i7;
@@ -58,5 +59,25 @@ describe("sanitizePromptName", () => {
   it("is applied to every place the prompt mentions the name", () => {
     const prompt = buildSystemPrompt("x\n## rule");
     expect(prompt).not.toContain("x\n## rule");
+  });
+});
+
+describe("fallbackReply", () => {
+  it("confirms a quotation that already went through instead of asking to retry", () => {
+    const reply = fallbackReply([
+      { name: "create_quotation", input: {}, result: "สร้างใบเสนอราคาสำเร็จ\nเลขที่: QT2026-0042\ndeal_id: x" },
+    ]);
+    expect(reply).toContain("QT2026-0042");
+    expect(reply).not.toMatch(/ลองใหม่/);
+  });
+
+  it("acknowledges an escalation, else gives a neutral holding reply", () => {
+    expect(fallbackReply([{ name: "escalate_to_human", input: {}, result: "escalated_to_human" }])).toMatch(/ทีมงาน/);
+    expect(fallbackReply([])).toMatch(/ทีมงาน/);
+  });
+
+  it("does not treat a refused quotation as issued", () => {
+    const reply = fallbackReply([{ name: "create_quotation", input: {}, result: "ยังไม่ได้สร้างใบเสนอราคา: ..." }]);
+    expect(reply).not.toMatch(/ออกใบเสนอราคาให้แล้ว/);
   });
 });

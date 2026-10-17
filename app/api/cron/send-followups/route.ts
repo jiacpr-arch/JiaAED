@@ -1,6 +1,7 @@
 import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { NextResponse } from "next/server";
 import {
+  followupSentSince,
   getCustomerLineUserId,
   getPendingFollowups,
   hasInboundSince,
@@ -17,14 +18,17 @@ export const maxDuration = 120;
 // ติดตามนะครับ" and stores a row in aed_followups — but nothing ever sent them.
 // This cron (hourly, Bangkok business hours) delivers what's due.
 //
-// A follow-up is dropped instead of sent when it's gone stale (the customer
-// would get "still interested?" days late — this also covers the backlog that
-// piled up before this cron existed), when the customer is mid-conversation
-// (wrote in the last few hours — a nudge would talk over a live chat; a quick
-// "ครับ" right after the bot's reply the day before doesn't count), or when
-// the same chat already got one in this run.
+// A follow-up is dropped instead of sent when:
+//  - it's gone stale (the customer would get "still interested?" days late —
+//    this also covers the backlog that piled up before this cron existed);
+//  - the customer wrote again after it was scheduled (declined, booked, or
+//    is mid-conversation), ignoring a reply within the first 30 minutes —
+//    that's usually just "ครับ" to the bot's message that scheduled it;
+//  - the chat already got a follow-up in the last 24h (schedule_followup
+//    also supersedes older pending ones, see scheduleFollowup).
 const STALE_AFTER_MS = 48 * 60 * 60 * 1000;
-const ACTIVE_CHAT_MS = 6 * 60 * 60 * 1000;
+const REPLY_GRACE_MS = 30 * 60 * 1000;
+const ONE_PER_CHAT_MS = 24 * 60 * 60 * 1000;
 const MAX_TEXT = 1000;
 
 export async function GET(req: Request) {
@@ -32,8 +36,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
   }
 
-  const result = { sent: 0, skipped_stale: 0, skipped_active: 0, skipped_no_line: 0, failed: 0 };
-  const sentTo = new Set<string>();
+  const result = { sent: 0, skipped_stale: 0, skipped_replied: 0, skipped_recent: 0, skipped_no_line: 0, failed: 0 };
 
   try {
     const due = await getPendingFollowups();
@@ -42,13 +45,16 @@ export async function GET(req: Request) {
         if (await setFollowupStatus(f.id, "skipped")) result.skipped_stale++;
         continue;
       }
-      if (
-        f.conversation_id &&
-        (sentTo.has(f.conversation_id) ||
-          (await hasInboundSince(f.conversation_id, new Date(Date.now() - ACTIVE_CHAT_MS).toISOString())))
-      ) {
-        if (await setFollowupStatus(f.id, "skipped")) result.skipped_active++;
-        continue;
+      if (f.conversation_id) {
+        const graceEnd = new Date(new Date(f.created_at).getTime() + REPLY_GRACE_MS).toISOString();
+        if (await hasInboundSince(f.conversation_id, graceEnd)) {
+          if (await setFollowupStatus(f.id, "skipped")) result.skipped_replied++;
+          continue;
+        }
+        if (await followupSentSince(f.conversation_id, new Date(Date.now() - ONE_PER_CHAT_MS).toISOString())) {
+          if (await setFollowupStatus(f.id, "skipped")) result.skipped_recent++;
+          continue;
+        }
       }
       const lineUserId = f.customer_id ? await getCustomerLineUserId(f.customer_id) : null;
       const text = f.message_template.trim().slice(0, MAX_TEXT);
@@ -66,7 +72,6 @@ export async function GET(req: Request) {
         continue;
       }
       result.sent++;
-      if (f.conversation_id) sentTo.add(f.conversation_id);
       // Keep the transcript complete so the bot has context if they reply.
       if (f.conversation_id) {
         await saveMessage(f.conversation_id, "outbound", "ai", text).catch((e) =>

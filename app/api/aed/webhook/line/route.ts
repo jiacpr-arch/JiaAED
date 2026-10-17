@@ -25,6 +25,11 @@ export const maxDuration = 300;
 // A person sending a few short lines in a row is normal; dozens a minute is a
 // script burning model tokens. Past this, messages are saved but not answered.
 const MAX_INBOUND_PER_MINUTE = 8;
+// Events in one delivery are handled one after another inside a single
+// invocation, so they share one deadline (with headroom under maxDuration).
+const PROCESSING_BUDGET_MS = 240_000;
+// Don't start an AI turn with less than this left before the deadline.
+const MIN_TURN_MS = 60_000;
 
 // ─── Signature verification ───────────────────────────────────────────────────
 
@@ -66,14 +71,15 @@ export async function POST(request: NextRequest) {
   }
 
   // waitUntil keeps the Vercel function alive after response is sent
-  waitUntil(processEvents(events).catch((err) => console.error("[AED] processEvents error:", err)));
+  const deadline = Date.now() + PROCESSING_BUDGET_MS;
+  waitUntil(processEvents(events, deadline).catch((err) => console.error("[AED] processEvents error:", err)));
 
   return NextResponse.json({ ok: true });
 }
 
 // ─── Event processor ──────────────────────────────────────────────────────────
 
-async function processEvents(events: LineEvent[]): Promise<void> {
+async function processEvents(events: LineEvent[], deadline: number): Promise<void> {
   for (const event of events) {
     const lineUserId = event.source?.userId;
     if (!lineUserId) continue;
@@ -137,8 +143,20 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         continue;
       }
 
+      // Earlier events in this delivery used up the time: acknowledge, and let
+      // the owner answer by hand rather than being killed mid-turn.
+      if (deadline - Date.now() < MIN_TURN_MS) {
+        replied = await replyOrPush(target, "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏");
+        await notifyProcessingError({
+          lineUserId,
+          userText,
+          error: new Error("ข้อความหลายรายการในรอบเดียว — บอทตอบไม่ทัน กรุณาตอบลูกค้าเอง"),
+        }).catch(() => null);
+        continue;
+      }
+
       // Run AI (the inbound message is already in the history it loads)
-      const { reply, toolsUsed } = await runAI(userText, { customer, conversation });
+      const { reply, toolsUsed, incomplete } = await runAI(userText, { customer, conversation }, { deadline });
 
       // Send first: a bookkeeping failure below must not cost the customer
       // their answer, nor trigger the "error, please retry" message on top of it.
@@ -148,6 +166,15 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         (e) => console.error("[AED] save AI reply failed:", e),
       );
       await bumpConversation(conversation.id);
+
+      // The model failed after tools ran; the customer got a holding reply.
+      if (incomplete) {
+        await notifyProcessingError({
+          lineUserId,
+          userText,
+          error: new Error("บอทตอบไม่จบ (model ล้มเหลวหลังเรียก tool) — ลูกค้าได้ข้อความรับเรื่องแล้ว กรุณาตามต่อ"),
+        }).catch(() => null);
+      }
 
       // Score the conversation now that we know the latest contact info + what
       // the AI did, and write it back. This is the ONLY place

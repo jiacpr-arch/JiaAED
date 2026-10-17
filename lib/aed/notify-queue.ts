@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { chunkForLine, pushToOwner, LINE_TEXT_LIMIT, NOTIFY_BATCH_SEPARATOR } from "@/lib/aed/notify-owner";
+import { chunkForLine, pushTextsToOwner, LINE_TEXT_LIMIT, NOTIFY_BATCH_SEPARATOR } from "@/lib/aed/notify-owner";
 
 // No new message in this long -> whatever's pending is probably one cron
 // cluster that's done firing, so send it.
@@ -18,7 +18,8 @@ type QueueRow = { id: number; text: string; created_at: string };
  * Pack queued rows, in order, into LINE messages made of whole rows, so each
  * push delivers a known set of rows and a failure part-way through only hands
  * back the rows that weren't sent. A single row longer than one message gets a
- * group of its own (split by chunkForLine when sent).
+ * group of its own; its chunkForLine pieces go out in one push request (up to
+ * 5 messages, ~24k chars), so it too is delivered whole or not at all.
  */
 export function packRows<T extends { text: string }>(rows: T[], limit = LINE_TEXT_LIMIT): T[][] {
   const groups: T[][] = [];
@@ -90,25 +91,26 @@ export async function flushNotifyQueue(): Promise<{
   const groups = packRows(fresh);
   for (let g = 0; g < groups.length; g++) {
     const text = groups[g].map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
-    let delivered = true;
-    for (const chunk of chunkForLine(text)) {
-      if (!(await pushToOwner(chunk))) {
-        delivered = false;
-        break;
-      }
-    }
-    if (delivered) continue;
+    if (await pushTextsToOwner(chunkForLine(text))) continue;
 
     // LINE refused or timed out (429/5xx, missing token): hand back the rows
     // not yet delivered so the next run retries them — but not the groups
     // that already went out, which would otherwise be sent twice.
     const unsent = groups.slice(g).flat().map((r) => r.id);
-    const { error: releaseError } = await supabase
-      .from("aed_notify_queue")
-      .update({ sent: false, sent_at: null })
-      .in("id", unsent);
-    if (releaseError) console.error("[notify-queue] release failed — rows stay marked sent:", releaseError.message);
-    throw new Error(`LINE push failed — ${unsent.length} queued message(s) kept for retry`);
+    let released = false;
+    for (let attempt = 0; attempt < 3 && !released; attempt++) {
+      const { error: releaseError } = await supabase
+        .from("aed_notify_queue")
+        .update({ sent: false, sent_at: null })
+        .in("id", unsent);
+      if (releaseError) console.error("[notify-queue] release attempt failed:", releaseError.message);
+      else released = true;
+    }
+    throw new Error(
+      released
+        ? `LINE push failed — ${unsent.length} queued message(s) kept for retry`
+        : `LINE push failed and ${unsent.length} queued message(s) could not be released — they will not be retried`,
+    );
   }
 
   return { flushed: true, count: fresh.length, reason: waitingMs >= MAX_WAIT_MS ? "max_wait" : "quiet" };

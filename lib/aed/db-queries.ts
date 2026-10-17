@@ -274,6 +274,16 @@ export async function scheduleFollowup(
 ): Promise<AedFollowup> {
   const scheduledFor = new Date(Date.now() + daysLater * 86_400_000).toISOString();
 
+  // A newer follow-up replaces any still pending for this chat — the bot
+  // schedules one after a price question and again after the quotation, and
+  // the customer should get one nudge, not one per call.
+  const { error: supersedeError } = await db()
+    .from("aed_followups")
+    .update({ status: "skipped" })
+    .eq("conversation_id", conversationId)
+    .eq("status", "pending");
+  if (supersedeError) console.error("[AED] supersede follow-ups failed:", conversationId, supersedeError);
+
   const { data, error } = await db()
     .from("aed_followups")
     .insert({ customer_id: customerId, conversation_id: conversationId, deal_id: dealId ?? null, scheduled_for: scheduledFor, message_template: messageTemplate })
@@ -325,6 +335,17 @@ export async function getCustomerLineUserId(customerId: string): Promise<string 
     .eq("id", customerId)
     .maybeSingle();
   return (data?.line_user_id as string | null | undefined) ?? null;
+}
+
+/** Whether a follow-up was already sent in this conversation after `since`. */
+export async function followupSentSince(conversationId: string, since: string): Promise<boolean> {
+  const { count } = await db()
+    .from("aed_followups")
+    .select("id", { count: "exact", head: true })
+    .eq("conversation_id", conversationId)
+    .eq("status", "sent")
+    .gt("sent_at", since);
+  return (count ?? 0) > 0;
 }
 
 /** Whether the customer wrote anything in the conversation after `since`. */

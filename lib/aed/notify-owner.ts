@@ -74,6 +74,21 @@ export async function pushToOwner(text: string): Promise<boolean> {
   return pushMessages([{ type: "text", text }]);
 }
 
+const MAX_MESSAGES_PER_PUSH = 5; // LINE push API limit
+
+/**
+ * Push several texts as one LINE request per 5, so a reader gets them together
+ * and (per admin) either all of a request arrives or none of it does. Only text
+ * past 5 × 4,900 chars needs a second request.
+ */
+export async function pushTextsToOwner(texts: string[]): Promise<boolean> {
+  for (let i = 0; i < texts.length; i += MAX_MESSAGES_PER_PUSH) {
+    const batch = texts.slice(i, i + MAX_MESSAGES_PER_PUSH).map((text) => ({ type: "text", text }));
+    if (!(await pushMessages(batch))) return false;
+  }
+  return true;
+}
+
 function bkkNow(): string {
   return new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
 }

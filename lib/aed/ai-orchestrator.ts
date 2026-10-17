@@ -102,6 +102,8 @@ const AED_TOOLS: Anthropic.Tool[] = [
 export interface OrchestratorResult {
   reply: string;
   toolsUsed: AiToolCall[];
+  /** The model failed part-way; `reply` is a fallback the owner should follow up. */
+  incomplete?: boolean;
 }
 
 // Stop starting new model calls after this long, so the turn always ends with
@@ -110,10 +112,29 @@ const TURN_BUDGET_MS = 150_000;
 const CALL_TIMEOUT_MS = 45_000;
 // Not worth starting a model call with less time than this left.
 const MIN_CALL_MS = 10_000;
+// Kept back from the caller's deadline for the last tool round (FlowAccount,
+// LINE notify) and sending/saving the reply after the loop.
+const POST_LOOP_RESERVE_MS = 50_000;
+
+// What to tell the customer when the model fails after tools already ran —
+// built from what those tools did, so a quotation or escalation that went
+// through isn't answered with "please try again".
+export function fallbackReply(toolsUsed: AiToolCall[]): string {
+  const quote = toolsUsed.find((t) => t.name === "create_quotation" && String(t.result).startsWith("สร้างใบเสนอราคาสำเร็จ"));
+  if (quote) {
+    const number = /เลขที่:\s*(\S+)/.exec(String(quote.result))?.[1];
+    return `ออกใบเสนอราคาให้แล้วครับ${number ? ` (เลขที่ ${number})` : ""} ทีมงานจะติดต่อกลับเพื่อยืนยันรายละเอียดและการชำระเงินโดยเร็วครับ 🙏`;
+  }
+  if (toolsUsed.some((t) => t.name === "escalate_to_human")) {
+    return "ทีมงานได้รับเรื่องแล้วครับ จะติดต่อกลับโดยเร็วที่สุด 🙏";
+  }
+  return "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏";
+}
 
 export async function runAI(
   userMessage: string,
   ctx: ToolContext,
+  opts: { deadline?: number } = {},
 ): Promise<OrchestratorResult> {
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const toolsUsed: AiToolCall[] = [];
@@ -142,26 +163,56 @@ export async function runAI(
   let iterations = 0;
   const MAX_ITERATIONS = 8;
 
+  // Time left for model calls: this turn's own budget, and — since one webhook
+  // delivery can carry several events handled back to back — the caller's
+  // deadline minus what the rest of the turn still needs.
+  const remainingMs = () =>
+    Math.min(
+      TURN_BUDGET_MS - (Date.now() - startedAt),
+      opts.deadline === undefined ? Infinity : opts.deadline - Date.now() - POST_LOOP_RESERVE_MS,
+    );
+
+  // One manual retry instead of the SDK's, whose backoff can honour a
+  // retry-after of up to a minute — every attempt here fits the time left.
+  const createMessage = async (): Promise<Anthropic.Message> => {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const remaining = remainingMs();
+      if (remaining < MIN_CALL_MS) break;
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 1_000));
+      try {
+        return await anthropic.messages.create(
+          {
+            model: "claude-sonnet-5-5",
+            max_tokens: 1024,
+            system: systemPrompt,
+            tools: AED_TOOLS,
+            messages,
+          },
+          { timeout: Math.min(CALL_TIMEOUT_MS, remaining), maxRetries: 0 },
+        );
+      } catch (err) {
+        lastError = err;
+        console.error(`[AED] model call failed (attempt ${attempt + 1}):`, err);
+      }
+    }
+    throw lastError ?? new Error("no time left for a model call");
+  };
+
   while (iterations < MAX_ITERATIONS) {
-    const remaining = TURN_BUDGET_MS - (Date.now() - startedAt);
-    if (remaining < MIN_CALL_MS) break;
+    if (remainingMs() < MIN_CALL_MS) break;
     iterations++;
 
-    const response = await anthropic.messages.create(
-      {
-        model: "claude-sonnet-5-5",
-        max_tokens: 1024,
-        system: systemPrompt,
-        tools: AED_TOOLS,
-        messages,
-      },
-      // Bound each call (and its retry) by what's left of the turn budget, so
-      // a slow API can't push the turn past the webhook's maxDuration.
-      {
-        timeout: Math.min(CALL_TIMEOUT_MS, remaining),
-        maxRetries: remaining > 2 * CALL_TIMEOUT_MS ? 1 : 0,
-      },
-    );
+    let response: Anthropic.Message;
+    try {
+      response = await createMessage();
+    } catch (err) {
+      // Nothing happened yet: let the caller's error path alert the owner.
+      if (toolsUsed.length === 0) throw err;
+      // Tools already ran (a quotation may exist): keep what they did, so the
+      // turn is still saved and scored, and answer from their results.
+      return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
+    }
 
     // Collect text blocks
     const textBlocks = response.content.filter((b): b is Anthropic.TextBlock => b.type === "text");
@@ -187,7 +238,7 @@ export async function runAI(
     messages.push({ role: "user", content: toolResults });
   }
 
-  return { reply: "ขออภัย เกิดข้อผิดพลาดในการประมวลผล กรุณาลองใหม่อีกครั้งครับ", toolsUsed };
+  return { reply: fallbackReply(toolsUsed), toolsUsed, incomplete: true };
 }
 
 // ─── Tool dispatcher ──────────────────────────────────────────────────────────
