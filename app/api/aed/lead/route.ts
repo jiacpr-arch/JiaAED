@@ -60,6 +60,8 @@ type LeadBody = {
   eventId?: string;
   pageUrl?: string;
   hp?: string;
+  /** True only when the visitor accepted the cookie banner (lib/aed/consent.ts). */
+  marketingConsent?: boolean;
 };
 
 export async function POST(req: Request) {
@@ -95,6 +97,9 @@ export async function POST(req: Request) {
   const eventId = clean(body.eventId, 64);
   const pageUrl = clean(body.pageUrl, 500);
   const source = clean(body.source, 30) || "lead_form";
+  // PDPA: without consent the lead is stored and the team is notified as
+  // usual, but nothing about this visitor is handed to Google or Meta.
+  const marketingConsent = body.marketingConsent === true;
 
   if (!phone && !email) {
     return NextResponse.json(
@@ -224,12 +229,13 @@ export async function POST(req: Request) {
 
   // Report the lead to Google Ads (gclid click-conversion, or enhanced match on
   // phone/email). No-op-but-logged until GOOGLE_ADS_* env + conversion action id
-  // are configured. orderId = lead id so Google dedupes re-submissions.
+  // are configured. orderId = lead id so Google dedupes re-submissions. Without
+  // consent it's still logged (as no-attribution) but carries no user data.
   waitUntil(
     recordConversion({
-      gclid,
-      email,
-      phone,
+      gclid: marketingConsent ? gclid : null,
+      email: marketingConsent ? email : null,
+      phone: marketingConsent ? phone : null,
       orderId: data.id,
     }).catch((e) => console.error("[AED] conversion record failed:", e)),
   );
@@ -237,19 +243,21 @@ export async function POST(req: Request) {
   // Report the lead to Meta via Conversions API (server-side), sharing eventId
   // with the browser pixel for dedup. Must use waitUntil — bare void fetch is
   // torn down the moment we return on Vercel serverless.
-  waitUntil(
-    sendMetaLeadEvent({
-      eventId: eventId || data.id,
-      email,
-      phone,
-      fbc,
-      fbp,
-      clientIp: ip,
-      userAgent,
-      eventSourceUrl: pageUrl,
-      contentName: productName,
-    }).catch((e) => console.error("[AED] meta capi failed:", e)),
-  );
+  if (marketingConsent) {
+    waitUntil(
+      sendMetaLeadEvent({
+        eventId: eventId || data.id,
+        email,
+        phone,
+        fbc,
+        fbp,
+        clientIp: ip,
+        userAgent,
+        eventSourceUrl: pageUrl,
+        contentName: productName,
+      }).catch((e) => console.error("[AED] meta capi failed:", e)),
+    );
+  }
 
   // One auto-reply per address per day: the recipient is whatever was typed,
   // so without this the form can mail-bomb a third party from our domain.

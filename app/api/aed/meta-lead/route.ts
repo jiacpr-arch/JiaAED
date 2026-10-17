@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
+import { hashIp } from "@/lib/aed/lead-validation";
+import { HOUR, countRecent, overLimit, requestIp } from "@/lib/aed/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -8,6 +10,12 @@ export const runtime = "nodejs";
 // (see LineClickTracker). A LINE click carries no email/phone, so attribution
 // relies on fbc/fbp + client IP/UA. Shares eventId with the browser pixel for
 // dedup. Safe no-op until the Meta env vars are set.
+//
+// It reports the visitor's IP/UA to Meta, so it only fires when the request
+// carries the visitor's marketing consent (sent by LineClickTracker only after
+// "ยอมรับทั้งหมด"). Meta optimizes ad delivery on this event, so cap how many
+// Leads one source can trigger per hour (counted from its recorded LINE clicks).
+const MAX_LEADS_PER_IP_PER_HOUR = 10;
 
 type Body = {
   source?: string;
@@ -16,6 +24,7 @@ type Body = {
   fbc?: string;
   fbp?: string;
   pageUrl?: string;
+  marketingConsent?: boolean;
 };
 
 function clean(v: unknown, max = 255): string | null {
@@ -32,6 +41,12 @@ export async function POST(req: Request) {
   } catch {
     return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+  }
+  if (body.marketingConsent !== true) {
+    return NextResponse.json({ ok: true, skipped: "no_consent" });
+  }
 
   const eventId = clean(body.eventId, 64);
   const fbc = clean(body.fbc);
@@ -44,10 +59,18 @@ export async function POST(req: Request) {
   }
 
   const userAgent = clean(req.headers.get("user-agent"), 500);
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    null;
+  const ip = requestIp(req);
+  const ipHash = hashIp(ip);
+  if (ipHash) {
+    const clicks = await countRecent(
+      "aed_analytics_events",
+      [["ip_hash", ipHash], ["event_name", "line_click"]],
+      HOUR,
+    );
+    if (overLimit(clicks, MAX_LEADS_PER_IP_PER_HOUR)) {
+      return NextResponse.json({ ok: true, skipped: "rate_limited" });
+    }
+  }
 
   // waitUntil keeps the serverless instance alive until the CAPI call settles —
   // a bare `void fetch` would be torn down the moment we return (Vercel freezes
