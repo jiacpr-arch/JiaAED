@@ -134,6 +134,71 @@ export function listProducts(): AedProduct[] {
   return Object.values(AED_PRODUCTS);
 }
 
+// "primedic-y2" is the same physical Yuwell Y2 as the "i7" SKU slot (kept for
+// accounting continuity) — offering both to the LINE bot made it list Y2 twice.
+const BOT_HIDDEN_IDS = new Set(["primedic-y2"]);
+
+/** SKUs the LINE bot may show, price and quote — one entry per physical product. */
+export const QUOTABLE_PRODUCT_IDS: string[] = Object.keys(AED_PRODUCTS).filter(
+  (id) => !BOT_HIDDEN_IDS.has(id),
+);
+
+export function listQuotableProducts(): AedProduct[] {
+  return QUOTABLE_PRODUCT_IDS.map((id) => AED_PRODUCTS[id]);
+}
+
+export const MAX_QUOTE_QUANTITY = 50;
+
+export function isValidQuantity(quantity: unknown): quantity is number {
+  return (
+    typeof quantity === "number" &&
+    Number.isInteger(quantity) &&
+    quantity >= 1 &&
+    quantity <= MAX_QUOTE_QUANTITY
+  );
+}
+
+/**
+ * Server-side guard for create_quotation. The unit price and quantity arrive
+ * from the model, which a customer can talk into anything ("price is ฿1"), and
+ * the result is a real FlowAccount document under the company's name — so the
+ * prompt's pricing rules are enforced here, not just requested. The bot may
+ * quote between bestPrice (its own discount limit) and startingPrice; anything
+ * lower must go through escalate_to_human.
+ */
+export function checkQuoteRequest(
+  productId: string,
+  quantity: unknown,
+  unitPrice: unknown,
+): { ok: true; product: AedProduct } | { ok: false; reason: string } {
+  const product = QUOTABLE_PRODUCT_IDS.includes(productId) ? getProduct(productId) : null;
+  if (!product) return { ok: false, reason: `ไม่พบสินค้า id: ${productId}` };
+  if (!isValidQuantity(quantity)) {
+    return {
+      ok: false,
+      reason: `จำนวนต้องเป็นจำนวนเต็ม 1–${MAX_QUOTE_QUANTITY} เครื่อง (ถ้ามากกว่านี้ให้ escalate_to_human)`,
+    };
+  }
+  if (typeof unitPrice !== "number" || !Number.isFinite(unitPrice)) {
+    return { ok: false, reason: "unit_price ต้องเป็นตัวเลข" };
+  }
+  if (unitPrice < product.bestPrice) {
+    return {
+      ok: false,
+      reason:
+        "ราคานี้ต่ำกว่าที่ AI อนุมัติได้ — ห้ามออกใบเสนอราคา ให้เรียก escalate_to_human (urgency: medium) " +
+        "แล้วแจ้งลูกค้าว่าทีมจะพิจารณาราคาพิเศษให้",
+    };
+  }
+  if (unitPrice > product.startingPrice) {
+    return {
+      ok: false,
+      reason: `unit_price สูงกว่าราคาเริ่มต้น (${formatThaiPrice(product.startingPrice)}) — ตรวจสอบราคาอีกครั้งด้วย calculate_price`,
+    };
+  }
+  return { ok: true, product };
+}
+
 // ─── Pricing engine ───────────────────────────────────────────────────────────
 
 export function calculatePrice(
@@ -143,6 +208,7 @@ export function calculatePrice(
 ): PriceCalcResult | null {
   const product = getProduct(productId);
   if (!product) return null;
+  if (!isValidQuantity(quantity)) return null;
 
   let unitPrice: number;
   let priceLevel: PriceCalcResult["priceLevel"];

@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { articles } from "@/lib/aed/articles";
+import { WEB_CHAT_CHANNEL } from "@/lib/aed/web-chat-log";
 
 const MIN_QUESTIONS = 15;
 const LOOKBACK_DAYS = 14;
@@ -15,20 +16,22 @@ export async function readRecentChatQuestions(): Promise<QuestionSample> {
   const supabase = createAdminClient();
   const since = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
+  // Read what visitors actually typed from the server-written web chat
+  // transcript (lib/aed/web-chat-log.ts), not from aed_analytics_events — that
+  // table is filled by the public, unauthenticated /api/aed/event endpoint, so
+  // anyone could have planted "questions" there to steer the article writer.
   const { data } = await supabase
-    .from("aed_analytics_events")
-    .select("properties, created_at")
-    .eq("event_name", "web_chat_message_sent")
+    .from("aed_messages")
+    .select("content_text, created_at, aed_conversations!inner(channel)")
+    .eq("aed_conversations.channel", WEB_CHAT_CHANNEL)
+    .eq("direction", "inbound")
     .gte("created_at", since)
     .order("created_at", { ascending: false })
     .limit(300);
 
   const messages: string[] = [];
   for (const row of data ?? []) {
-    const text =
-      ((row.properties as Record<string, unknown> | null)?.text as string) ||
-      ((row.properties as Record<string, unknown> | null)?.content as string) ||
-      null;
+    const text = (row as { content_text: string | null }).content_text?.trim();
     if (text && text.length > 4 && text.length < 400) messages.push(text);
   }
 
@@ -107,11 +110,8 @@ export async function proposeArticle(sample: QuestionSample): Promise<ProposedAr
   const jsonEnd = text.lastIndexOf("}");
   if (jsonStart < 0 || jsonEnd < 0) throw new Error(`no JSON in model output: ${text.slice(0, 200)}`);
 
-  const parsed = JSON.parse(text.slice(jsonStart, jsonEnd + 1)) as ProposedArticle;
+  const parsed = validateProposedArticle(JSON.parse(text.slice(jsonStart, jsonEnd + 1)));
 
-  if (!parsed.slug || !parsed.title || !parsed.content) {
-    throw new Error(`missing fields in proposal: ${JSON.stringify(parsed).slice(0, 200)}`);
-  }
   if (articles.some((a) => a.slug === parsed.slug)) {
     throw new Error(`slug collision: ${parsed.slug}`);
   }
@@ -122,9 +122,57 @@ export async function proposeArticle(sample: QuestionSample): Promise<ProposedAr
   return parsed;
 }
 
+// The proposal is model output steered by visitor-typed chat text, and it gets
+// spliced into lib/aed/articles.ts, which the next build executes. Treat every
+// field as untrusted: exact types, tight shapes, and nothing that could escape
+// its string literal (read_minutes in particular lands in the source unquoted).
+export function validateProposedArticle(raw: unknown): ProposedArticle {
+  const fail = (why: string): never => {
+    throw new Error(`invalid proposal (${why}): ${JSON.stringify(raw).slice(0, 200)}`);
+  };
+  if (!raw || typeof raw !== "object") fail("not an object");
+  const r = raw as Record<string, unknown>;
+
+  const str = (key: string, min: number, max: number): string => {
+    const v = r[key];
+    if (typeof v !== "string") return fail(`${key} not a string`);
+    const t = v.trim();
+    if (t.length < min || t.length > max) return fail(`${key} length ${t.length}`);
+    return t;
+  };
+
+  const slug = str("slug", 3, 80);
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+){1,9}$/.test(slug)) fail("slug format");
+
+  const readMinutes = r.read_minutes;
+  if (typeof readMinutes !== "number" || !Number.isInteger(readMinutes) || readMinutes < 1 || readMinutes > 20) {
+    fail("read_minutes");
+  }
+
+  const tags = r.tags;
+  if (
+    !Array.isArray(tags) ||
+    tags.length < 1 ||
+    tags.length > 6 ||
+    !tags.every((t) => typeof t === "string" && t.trim().length > 0 && t.length <= 40)
+  ) {
+    fail("tags");
+  }
+
+  return {
+    slug,
+    title: str("title", 4, 120),
+    description: str("description", 20, 300),
+    read_minutes: readMinutes as number,
+    tags: (tags as string[]).map((t) => t.trim()),
+    content: str("content", 200, 20_000),
+  };
+}
+
 const ARRAY_CLOSE_MARKER = "\n];\n\nexport function findArticle";
 
-export function insertArticleIntoSource(source: string, a: ProposedArticle): string {
+export function insertArticleIntoSource(source: string, proposal: ProposedArticle): string {
+  const a = validateProposedArticle(proposal);
   if (!source.includes(ARRAY_CLOSE_MARKER)) {
     throw new Error("articles.ts marker not found — file structure changed");
   }
@@ -145,7 +193,7 @@ export function insertArticleIntoSource(source: string, a: ProposedArticle): str
     `    title: ${JSON.stringify(a.title)},`,
     `    description: ${JSON.stringify(a.description)},`,
     `    publishedAt: ${JSON.stringify(today)},`,
-    `    readMinutes: ${a.read_minutes},`,
+    `    readMinutes: ${JSON.stringify(a.read_minutes)},`,
     `    tags: ${tagsLiteral},`,
     `    content: \`${escapedContent}\`,`,
     `  },`,

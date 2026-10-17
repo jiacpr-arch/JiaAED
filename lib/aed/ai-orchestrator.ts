@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildSystemPrompt } from "./system-prompt";
+import { MAX_QUOTE_QUANTITY, QUOTABLE_PRODUCT_IDS } from "./pricing";
 import { getRecentMessages } from "./db-queries";
 import {
   handleGetCustomerInfo,
@@ -43,8 +44,8 @@ const AED_TOOLS: Anthropic.Tool[] = [
     input_schema: {
       type: "object" as const,
       properties: {
-        product_id: { type: "string", enum: ["i7", "i7-cabinet", "i7-floor"], description: "รหัสสินค้า" },
-        quantity: { type: "number", description: "จำนวนเครื่อง" },
+        product_id: { type: "string", enum: QUOTABLE_PRODUCT_IDS, description: "รหัสสินค้า" },
+        quantity: { type: "integer", minimum: 1, maximum: MAX_QUOTE_QUANTITY, description: "จำนวนเครื่อง" },
         customer_type: { type: "string", enum: ["individual", "corporate", "government"] },
       },
       required: ["product_id", "quantity"],
@@ -56,8 +57,8 @@ const AED_TOOLS: Anthropic.Tool[] = [
     input_schema: {
       type: "object" as const,
       properties: {
-        product_id: { type: "string", enum: ["i7", "i7-cabinet", "i7-floor"] },
-        quantity: { type: "number" },
+        product_id: { type: "string", enum: QUOTABLE_PRODUCT_IDS },
+        quantity: { type: "integer", minimum: 1, maximum: MAX_QUOTE_QUANTITY },
         unit_price: { type: "number", description: "ราคาต่อเครื่อง (ไม่รวม VAT)" },
         customer_name: { type: "string", description: "ชื่อ-นามสกุลหรือชื่อบริษัท" },
         customer_phone: { type: "string" },

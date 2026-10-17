@@ -3,7 +3,15 @@
  * แต่ละ handler รับ input JSON และ return ผลลัพธ์เป็น string (Claude อ่านได้)
  */
 
-import { calculatePrice, getProduct, formatThaiPrice } from "./pricing";
+import {
+  calculatePrice,
+  checkQuoteRequest,
+  getProduct,
+  formatThaiPrice,
+  isValidQuantity,
+  MAX_QUOTE_QUANTITY,
+  QUOTABLE_PRODUCT_IDS,
+} from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
 import { recordConversion } from "./conversion";
@@ -97,6 +105,10 @@ export async function handleUpdateCustomerInfo(
 // ─── calculate_price ──────────────────────────────────────────────────────────
 
 export async function handleCalculatePrice(input: CalculatePriceInput): Promise<string> {
+  if (!QUOTABLE_PRODUCT_IDS.includes(input.product_id)) return `ไม่พบสินค้า id: ${input.product_id}`;
+  if (!isValidQuantity(input.quantity)) {
+    return `จำนวนต้องเป็นจำนวนเต็ม 1–${MAX_QUOTE_QUANTITY} เครื่อง (ถ้ามากกว่านี้ให้ escalate_to_human)`;
+  }
   const result = calculatePrice(input.product_id, input.quantity, input.customer_type ?? "individual");
   if (!result) return `ไม่พบสินค้า id: ${input.product_id}`;
 
@@ -126,8 +138,9 @@ export async function handleCreateQuotation(
   ctx: ToolContext,
   input: CreateQuotationInput,
 ): Promise<string> {
-  const product = getProduct(input.product_id);
-  if (!product) return `ไม่พบสินค้า: ${input.product_id}`;
+  const check = checkQuoteRequest(input.product_id, input.quantity, input.unit_price);
+  if (!check.ok) return `ยังไม่ได้สร้างใบเสนอราคา: ${check.reason}`;
+  const product = check.product;
 
   // Create deal in DB first
   const deal = await createDeal(

@@ -5,6 +5,21 @@ const REPLY_TO = process.env.RESEND_REPLY_TO || "sales@jiaaed.com";
 import { LINE_OA } from "@/lib/aed/line";
 import { PRIMEDIC_REGULATORY, regLine } from "./regulatory";
 
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// True for text a mail client could turn into a clickable link (scheme, www.,
+// or a bare domain like "evil.com"). Thai/English person names never need these.
+export function looksLikeLink(s: string): boolean {
+  return /[a-z][a-z0-9+.-]*:\/\/|www\.|[a-z0-9-]\.[a-z]{2,}\b|[<>@\/\\]/i.test(s);
+}
+
 function getClient(): Resend | null {
   const key = process.env.RESEND_API_KEY;
   if (!key) return null;
@@ -19,15 +34,20 @@ export async function sendLeadAutoReply(p: {
   const client = getClient();
   if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
 
-  const greeting = p.fullName ? `คุณ${p.fullName}` : "ลูกค้า";
+  // fullName is whatever the visitor typed into a public form, and `to` is any
+  // address they chose — so it must never carry markup or a link, or this route
+  // becomes a phishing relay signed by our domain. Escape it, and fall back to a
+  // generic greeting for anything that looks like a URL or domain.
+  const safeName = p.fullName && !looksLikeLink(p.fullName) ? p.fullName : null;
+  const greeting = safeName ? `คุณ${safeName}` : "ลูกค้า";
   const product = p.productName ? `รุ่น ${p.productName}` : "AED Yuwell / PRIMEDIC HeartSave";
 
   const subject = `JiaAED — ได้รับข้อมูลของคุณแล้ว`;
   const html = `<!DOCTYPE html>
 <html lang="th">
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width:560px; margin:0 auto; padding:24px; color:#1a1a1a;">
-  <h2 style="color:#b8860b;">สวัสดี${greeting} 👋</h2>
-  <p>ขอบคุณที่สนใจ <strong>${product}</strong> ทีมงานเจี่ยรักษาจะติดต่อกลับภายใน 24 ชั่วโมง</p>
+  <h2 style="color:#b8860b;">สวัสดี${escapeHtml(greeting)} 👋</h2>
+  <p>ขอบคุณที่สนใจ <strong>${escapeHtml(product)}</strong> ทีมงานเจี่ยรักษาจะติดต่อกลับภายใน 24 ชั่วโมง</p>
   <p>หากเร่งด่วน คุยกับ AI เจี่ยทาง LINE ได้ทันที 24 ชั่วโมง:</p>
   <p style="text-align:center; margin: 24px 0;">
     <a href="${LINE_OA}" style="display:inline-block; background:#06C755; color:#fff; font-weight:bold; text-decoration:none; padding:12px 28px; border-radius:24px;">💬 เพิ่มเพื่อน LINE</a>
@@ -72,15 +92,6 @@ export async function sendLeadAutoReply(p: {
 function getOwnerEmails(): string[] {
   const raw = process.env.AED_OWNER_NOTIFY_EMAILS || "jiacpr@gmail.com";
   return [...new Set(raw.split(/[,\s]+/).map((e) => e.trim()).filter(Boolean))];
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
 
 export async function sendLeadOwnerNotification(p: {
