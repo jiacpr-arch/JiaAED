@@ -59,9 +59,13 @@ export function clean(v: unknown, max = 500): string | null {
 }
 
 // Hash an IP for privacy-preserving dedup/rate context. Salted so the same IP
-// isn't trivially reversible; truncated to keep the stored value compact.
+// isn't trivially reversible; truncated to keep the stored value compact. The
+// salt must be secret — the IPv4 space is small enough to brute-force against
+// a known salt, and this repo is public — so when LEAD_IP_SALT is unset fall
+// back to another server secret rather than a constant. (The hashes only key
+// short rate-limit windows, so a salt change just resets those counts.)
 export function hashIp(ip: string | null): string | null {
   if (!ip) return null;
-  const salt = process.env.LEAD_IP_SALT || "jiaaed";
+  const salt = process.env.LEAD_IP_SALT || process.env.SUPABASE_SERVICE_ROLE_KEY || "jiaaed-dev";
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
 }
