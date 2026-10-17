@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Room for several LINE pushes (10s timeout each) plus the release on failure,
+// so the run isn't killed between claiming rows and handing them back.
+export const maxDuration = 60;
 
 export async function GET(req: Request) {
   if (!isCronAuthorized(req)) {

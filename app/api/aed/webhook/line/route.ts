@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { waitUntil } from "@vercel/functions";
 import { getOrCreateCustomerByLine, getOrCreateConversation, saveMessage, bumpConversation, recordLineFollow, updateConversationState, countRecentInbound } from "@/lib/aed/db-queries";
 import { runAI } from "@/lib/aed/ai-orchestrator";
-import { notifyNewFollow, notifyHotConversation, notifyProcessingError } from "@/lib/aed/notify-owner";
+import { notifyNewFollow, notifyHotConversation, notifyProcessingError, notifyProcessingErrors } from "@/lib/aed/notify-owner";
 import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
 import { replyOrPush } from "@/lib/aed/line-messaging";
 import { primedicModels } from "@/lib/aed/primedic";
@@ -25,6 +25,13 @@ export const maxDuration = 300;
 // A person sending a few short lines in a row is normal; dozens a minute is a
 // script burning model tokens. Past this, messages are saved but not answered.
 const MAX_INBOUND_PER_MINUTE = 8;
+// Events in one delivery are handled one after another inside a single
+// invocation, so they share one deadline (with headroom under maxDuration).
+const PROCESSING_BUDGET_MS = 240_000;
+// Don't start an AI turn with less than this left before the deadline: runAI
+// keeps 50s back for its last tool round and the reply, so below ~80s the
+// model would get under half a minute.
+const MIN_TURN_MS = 80_000;
 
 // ─── Signature verification ───────────────────────────────────────────────────
 
@@ -66,14 +73,20 @@ export async function POST(request: NextRequest) {
   }
 
   // waitUntil keeps the Vercel function alive after response is sent
-  waitUntil(processEvents(events).catch((err) => console.error("[AED] processEvents error:", err)));
+  const deadline = Date.now() + PROCESSING_BUDGET_MS;
+  waitUntil(processEvents(events, deadline).catch((err) => console.error("[AED] processEvents error:", err)));
 
   return NextResponse.json({ ok: true });
 }
 
 // ─── Event processor ──────────────────────────────────────────────────────────
 
-async function processEvents(events: LineEvent[]): Promise<void> {
+async function processEvents(events: LineEvent[], deadline: number): Promise<void> {
+  // Messages that arrived after the time ran out: acknowledged to the
+  // customer, then reported to the owner after the loop — one alert per
+  // customer, batched into as few pushes as possible, rather than a push per
+  // message eating into what little time is left.
+  const deferred = new Map<string, { texts: string[]; acknowledged: boolean }>();
   for (const event of events) {
     const lineUserId = event.source?.userId;
     if (!lineUserId) continue;
@@ -137,8 +150,19 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         continue;
       }
 
+      // Earlier events in this delivery used up the time: acknowledge, and let
+      // the owner answer by hand rather than being killed mid-turn.
+      if (deadline - Date.now() < MIN_TURN_MS) {
+        replied = await replyOrPush(target, "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏");
+        const entry = deferred.get(lineUserId) ?? { texts: [], acknowledged: false };
+        entry.texts.push(userText);
+        entry.acknowledged ||= replied;
+        deferred.set(lineUserId, entry);
+        continue;
+      }
+
       // Run AI (the inbound message is already in the history it loads)
-      const { reply, toolsUsed } = await runAI(userText, { customer, conversation });
+      const { reply, toolsUsed, incomplete } = await runAI(userText, { customer, conversation }, { deadline });
 
       // Send first: a bookkeeping failure below must not cost the customer
       // their answer, nor trigger the "error, please retry" message on top of it.
@@ -148,6 +172,19 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         (e) => console.error("[AED] save AI reply failed:", e),
       );
       await bumpConversation(conversation.id);
+
+      // The turn didn't finish; the customer got (or was sent) a holding reply.
+      if (incomplete) {
+        await notifyProcessingError({
+          lineUserId,
+          userText,
+          // Delivery status first: the reason after it can be long and is
+          // what gets cut if the alert hits its length cap.
+          error: new Error(
+            `บอทตอบไม่จบ — ${replied ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตามต่อ · ${incomplete}`,
+          ),
+        }).catch(() => null);
+      }
 
       // Score the conversation now that we know the latest contact info + what
       // the AI did, and write it back. This is the ONLY place
@@ -183,5 +220,18 @@ async function processEvents(events: LineEvent[]): Promise<void> {
         await replyOrPush(target, "ขออภัยครับ เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ 🙏");
       }
     }
+  }
+
+  if (deferred.size > 0) {
+    await notifyProcessingErrors(
+      [...deferred].map(([lineUserId, d]) => ({
+        lineUserId,
+        userText: d.texts.join(" | "),
+        error: new Error(
+          `ข้อความ ${d.texts.length} รายการมาพร้อมข้อความอื่นจนบอทตอบไม่ทัน — ` +
+            `${d.acknowledged ? "ลูกค้าได้ข้อความรับเรื่องแล้ว" : "ส่งข้อความรับเรื่องถึงลูกค้าไม่สำเร็จ"} กรุณาตอบเอง`,
+        ),
+      })),
+    ).catch(() => null);
   }
 }

@@ -164,7 +164,8 @@ export async function POST(req: Request) {
 
   // Fail inside maxDuration (30s) instead of the SDK default 10-minute timeout,
   // so the visitor gets an error they can act on rather than a dead spinner.
-  const client = new Anthropic({ apiKey, timeout: 25_000, maxRetries: 1 });
+  // No retry: a second 25s attempt would be killed by the platform mid-flight.
+  const client = new Anthropic({ apiKey, timeout: 25_000, maxRetries: 0 });
 
   try {
     const res = await client.messages.create({

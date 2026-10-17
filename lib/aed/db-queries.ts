@@ -281,6 +281,22 @@ export async function scheduleFollowup(
     .single();
 
   if (error || !data) throw new Error(`Failed to schedule follow-up: ${error?.message}`);
+
+  // The new follow-up replaces any others still pending for this chat — the
+  // bot schedules one after a price question and again after the quotation,
+  // and the customer should get one nudge, not one per call. Done after the
+  // insert so a failed insert never leaves the chat with none.
+  const { error: supersedeError } = await db()
+    .from("aed_followups")
+    .update({ status: "skipped" })
+    .eq("conversation_id", conversationId)
+    .eq("status", "pending")
+    .neq("id", (data as AedFollowup).id)
+    // Only older rows: if two turns schedule at once, the newest survives
+    // instead of each call skipping the other's.
+    .lt("created_at", (data as AedFollowup).created_at);
+  if (supersedeError) console.error("[AED] supersede follow-ups failed:", conversationId, supersedeError);
+
   return data as AedFollowup;
 }
 
@@ -327,13 +343,28 @@ export async function getCustomerLineUserId(customerId: string): Promise<string 
   return (data?.line_user_id as string | null | undefined) ?? null;
 }
 
-/** Whether the customer wrote anything in the conversation after `since`. */
-export async function hasInboundSince(conversationId: string, since: string): Promise<boolean> {
+/** Whether a follow-up was already sent in this conversation after `since`. */
+export async function followupSentSince(conversationId: string, since: string): Promise<boolean> {
   const { count } = await db()
-    .from("aed_messages")
+    .from("aed_followups")
     .select("id", { count: "exact", head: true })
     .eq("conversation_id", conversationId)
-    .eq("direction", "inbound")
-    .gt("created_at", since);
+    .eq("status", "sent")
+    .gt("sent_at", since);
   return (count ?? 0) > 0;
 }
+
+/** Text of the customer's messages in the conversation after `since` (oldest first). */
+export async function inboundTextsSince(conversationId: string, since: string): Promise<string[]> {
+  const { data, error } = await db()
+    .from("aed_messages")
+    .select("content_text")
+    .eq("conversation_id", conversationId)
+    .eq("direction", "inbound")
+    .gt("created_at", since)
+    .order("created_at", { ascending: true })
+    .limit(50);
+  if (error) throw new Error(`Failed to read replies: ${error.message}`);
+  return ((data ?? []) as Array<{ content_text: string | null }>).map((m) => m.content_text ?? "");
+}
+

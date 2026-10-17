@@ -102,21 +102,51 @@ const AED_TOOLS: Anthropic.Tool[] = [
 export interface OrchestratorResult {
   reply: string;
   toolsUsed: AiToolCall[];
+  /**
+   * Set when the turn ended without the model's own answer: what went wrong
+   * and what did or didn't run, for the owner's alert. `reply` is then a
+   * holding message and the owner has to follow up by hand.
+   */
+  incomplete?: string;
 }
 
 // Stop starting new model calls after this long, so the turn always ends with
 // a reply inside the webhook's maxDuration instead of being killed mid-loop.
 const TURN_BUDGET_MS = 150_000;
+const CALL_TIMEOUT_MS = 45_000;
+// Not worth starting a model call with less time than this left.
+const MIN_CALL_MS = 10_000;
+// Kept back from the caller's deadline for the last tool round (FlowAccount,
+// LINE notify) and sending/saving the reply after the loop.
+const POST_LOOP_RESERVE_MS = 50_000;
+// A tool isn't started with less than this left before the caller's deadline
+// (the slowest, create_quotation, can take ~45s at its upstream timeouts).
+const MIN_TOOL_MS = 45_000;
+
+// Tools that only look things up — nothing for the owner to follow up.
+const READ_ONLY_TOOLS = new Set(["get_customer_info", "calculate_price"]);
+
+// What to tell the customer when the model fails after tools already ran —
+// built from what those tools did, so a quotation or escalation that went
+// through isn't answered with "please try again".
+export function fallbackReply(toolsUsed: AiToolCall[]): string {
+  const quote = toolsUsed.find((t) => t.name === "create_quotation" && String(t.result).startsWith("สร้างใบเสนอราคาสำเร็จ"));
+  if (quote) {
+    const number = /เลขที่:\s*(\S+)/.exec(String(quote.result))?.[1];
+    return `ออกใบเสนอราคาให้แล้วครับ${number ? ` (เลขที่ ${number})` : ""} ทีมงานจะติดต่อกลับเพื่อยืนยันรายละเอียดและการชำระเงินโดยเร็วครับ 🙏`;
+  }
+  if (toolsUsed.some((t) => t.name === "escalate_to_human" && String(t.result).startsWith("escalated_to_human"))) {
+    return "ทีมงานได้รับเรื่องแล้วครับ จะติดต่อกลับโดยเร็วที่สุด 🙏";
+  }
+  return "ได้รับข้อความแล้วครับ ทีมงานจะตอบกลับโดยเร็วที่สุด 🙏";
+}
 
 export async function runAI(
   userMessage: string,
   ctx: ToolContext,
+  opts: { deadline?: number } = {},
 ): Promise<OrchestratorResult> {
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY,
-    timeout: 45_000,
-    maxRetries: 1,
-  });
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const toolsUsed: AiToolCall[] = [];
   const startedAt = Date.now();
 
@@ -143,24 +173,91 @@ export async function runAI(
   let iterations = 0;
   const MAX_ITERATIONS = 8;
 
-  while (iterations < MAX_ITERATIONS && Date.now() - startedAt < TURN_BUDGET_MS) {
+  // Time left for model calls: this turn's own budget, and — since one webhook
+  // delivery can carry several events handled back to back — the caller's
+  // deadline minus what the rest of the turn still needs.
+  const remainingMs = () =>
+    Math.min(
+      TURN_BUDGET_MS - (Date.now() - startedAt),
+      opts.deadline === undefined ? Infinity : opts.deadline - Date.now() - POST_LOOP_RESERVE_MS,
+    );
+
+  // End the turn with a holding reply and tell the owner what's left to do.
+  // Each tool that changed something is listed with its result, since a call
+  // that ran can still have failed (e.g. "สร้างใบเสนอราคาล้มเหลว") and isn't
+  // done. Lookups are left out so a long turn can't push these off the alert.
+  const giveUp = (why: string): OrchestratorResult => {
+    const writes = toolsUsed.filter((t) => !READ_ONLY_TOOLS.has(t.name));
+    return {
+      reply: fallbackReply(toolsUsed),
+      toolsUsed,
+      incomplete: writes.length
+        ? `${why} · เรียกไปแล้ว: ${writes.map((t) => `${t.name} → ${String(t.result).slice(0, 80)}`).join(" / ")}`
+        : why,
+    };
+  };
+
+  // One manual retry instead of the SDK's, whose backoff can honour a
+  // retry-after of up to a minute — every attempt here fits the time left.
+  const createMessage = async (): Promise<Anthropic.Message> => {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const remaining = remainingMs();
+      if (remaining < MIN_CALL_MS) break;
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 1_000));
+      try {
+        return await anthropic.messages.create(
+          {
+            model: "claude-sonnet-5-5",
+            max_tokens: 1024,
+            system: systemPrompt,
+            tools: AED_TOOLS,
+            messages,
+          },
+          { timeout: Math.min(CALL_TIMEOUT_MS, remaining), maxRetries: 0 },
+        );
+      } catch (err) {
+        lastError = err;
+        console.error(`[AED] model call failed (attempt ${attempt + 1}):`, err);
+      }
+    }
+    throw lastError ?? new Error("no time left for a model call");
+  };
+
+  while (iterations < MAX_ITERATIONS) {
+    if (remainingMs() < MIN_CALL_MS) break;
     iterations++;
 
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-5-5",
-      max_tokens: 1024,
-      system: systemPrompt,
-      tools: AED_TOOLS,
-      messages,
-    });
+    let response: Anthropic.Message;
+    try {
+      response = await createMessage();
+    } catch (err) {
+      // Nothing happened yet: let the caller's error path alert the owner.
+      if (toolsUsed.length === 0) throw err;
+      // Tools already ran (a quotation may exist): keep what they did, so the
+      // turn is still saved and scored, and answer from their results.
+      return giveUp("AI ล้มเหลวกลางคัน");
+    }
 
     // Collect text blocks
     const textBlocks = response.content.filter((b): b is Anthropic.TextBlock => b.type === "text");
     const toolUseBlocks = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
 
-    if (response.stop_reason === "end_turn" || toolUseBlocks.length === 0) {
+    // Tool calls are only run when the model stopped in order to call them —
+    // after a max_tokens cut the last call's input can be truncated, and a
+    // refusal isn't a request to act.
+    if (toolUseBlocks.length > 0 && response.stop_reason !== "tool_use") {
+      return giveUp(`AI ตอบไม่จบ (${response.stop_reason}) · ไม่ได้ทำ: ${describeTools(toolUseBlocks)}`);
+    }
+
+    if (toolUseBlocks.length === 0) {
       const reply = textBlocks.map((b) => b.text).join("").trim();
-      return { reply: reply || "ขออภัย ไม่สามารถตอบได้ในขณะนี้ กรุณาลองใหม่อีกครั้งครับ", toolsUsed };
+      // An empty turn (or a refusal) after tools ran must not tell the customer
+      // to "try again" — that can re-issue a quotation that already went out.
+      if (!reply || response.stop_reason === "refusal") {
+        return giveUp(`AI ไม่ได้ให้คำตอบ (${response.stop_reason})`);
+      }
+      return { reply, toolsUsed };
     }
 
     // Add assistant response to messages
@@ -168,17 +265,35 @@ export async function runAI(
 
     // Execute each tool call
     const toolResults: Anthropic.ToolResultBlockParam[] = [];
+    const skipped: Anthropic.ToolUseBlock[] = [];
     for (const toolUse of toolUseBlocks) {
+      // Out of time for this delivery: don't start more external calls; the
+      // owner is told which ones were skipped and follows up by hand.
+      if (opts.deadline !== undefined && opts.deadline - Date.now() < MIN_TOOL_MS) {
+        skipped.push(toolUse);
+        continue;
+      }
       const result = await executeToolCall(toolUse.name, toolUse.input as Record<string, unknown>, ctx);
       toolsUsed.push({ name: toolUse.name, input: toolUse.input as Record<string, unknown>, result });
       toolResults.push({ type: "tool_result", tool_use_id: toolUse.id, content: String(result) });
+    }
+
+    if (skipped.length > 0) {
+      console.warn("[AED] out of time — skipped tools:", JSON.stringify(skipped.map((t) => ({ name: t.name, input: t.input }))));
+      return giveUp(`หมดเวลา · ไม่ได้ทำ: ${describeTools(skipped)}`);
     }
 
     // Add tool results
     messages.push({ role: "user", content: toolResults });
   }
 
-  return { reply: "ขออภัย เกิดข้อผิดพลาดในการประมวลผล กรุณาลองใหม่อีกครั้งครับ", toolsUsed };
+  return giveUp(iterations >= MAX_ITERATIONS ? `AI เรียก tool เกิน ${MAX_ITERATIONS} รอบ` : "หมดเวลาก่อน AI ตอบ");
+}
+
+// Tool calls as the owner reads them in an alert — the inputs carry what they
+// need to finish by hand (product, quantity, customer name).
+function describeTools(blocks: Anthropic.ToolUseBlock[]): string {
+  return blocks.map((b) => `${b.name} ${JSON.stringify(b.input).slice(0, 300)}`).join(", ");
 }
 
 // ─── Tool dispatcher ──────────────────────────────────────────────────────────

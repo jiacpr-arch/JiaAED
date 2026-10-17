@@ -13,16 +13,27 @@ function textMessages(text: string) {
     .map((t) => ({ type: "text", text: t }));
 }
 
-async function post(path: "reply" | "push", body: Record<string, unknown>): Promise<boolean> {
+async function post(
+  path: "reply" | "push",
+  body: Record<string, unknown>,
+  retryKey?: string,
+): Promise<boolean> {
   const token = process.env.AED_LINE_CHANNEL_ACCESS_TOKEN;
   if (!token) return false;
   try {
     const res = await fetch(`${LINE_API}/${path}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...(retryKey ? { "X-Line-Retry-Key": retryKey } : {}),
+      },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(10_000),
     });
+    // 409 with a retry key = LINE already accepted this exact request earlier
+    // (our previous attempt timed out after it went through): delivered.
+    if (retryKey && res.status === 409) return true;
     if (!res.ok) {
       console.error(`[AED] LINE ${path} failed:`, res.status, await res.text().catch(() => ""));
     }
@@ -33,9 +44,13 @@ async function post(path: "reply" | "push", body: Record<string, unknown>): Prom
   }
 }
 
-/** Push API — counts against the OA's monthly message quota. */
-export function pushText(to: string, text: string): Promise<boolean> {
-  return post("push", { to, messages: textMessages(text) });
+/**
+ * Push API — counts against the OA's monthly message quota. Pass a stable
+ * UUID as `retryKey` when the same push may be retried (LINE dedupes it for
+ * 24h), so a timeout that hid a successful send can't deliver it twice.
+ */
+export function pushText(to: string, text: string, opts: { retryKey?: string } = {}): Promise<boolean> {
+  return post("push", { to, messages: textMessages(text) }, opts.retryKey);
 }
 
 /**

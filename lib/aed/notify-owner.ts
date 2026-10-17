@@ -74,6 +74,21 @@ export async function pushToOwner(text: string): Promise<boolean> {
   return pushMessages([{ type: "text", text }]);
 }
 
+export const MAX_MESSAGES_PER_PUSH = 5; // LINE push API limit
+
+/**
+ * Push several texts as one LINE request per 5, so a reader gets them together
+ * and (per admin) either all of a request arrives or none of it does. Callers
+ * that need all-or-nothing delivery pass at most MAX_MESSAGES_PER_PUSH texts.
+ */
+export async function pushTextsToOwner(texts: string[]): Promise<boolean> {
+  for (let i = 0; i < texts.length; i += MAX_MESSAGES_PER_PUSH) {
+    const batch = texts.slice(i, i + MAX_MESSAGES_PER_PUSH).map((text) => ({ type: "text", text }));
+    if (!(await pushMessages(batch))) return false;
+  }
+  return true;
+}
+
 function bkkNow(): string {
   return new Date().toLocaleString("th-TH", { timeZone: "Asia/Bangkok" });
 }
@@ -307,22 +322,28 @@ export async function notifyHotConversation(p: {
 // owner would never know a real person reached out and hit a wall. A lost
 // message here is a lost lead, so surface it immediately with enough to follow
 // up by hand.
-export async function notifyProcessingError(p: {
-  lineUserId: string;
-  userText: string;
-  error: unknown;
-}): Promise<void> {
-  await pushToOwner(
-    [
-      `🚨 ระบบตอบ LINE ขัดข้อง — มีลูกค้าทักแต่บอทตอบไม่ได้`,
-      `รีบเข้าไปตอบเองใน LINE OA ด่วน`,
-      ``,
-      `🔗 LINE ID: ${p.lineUserId}`,
-      `💬 ข้อความลูกค้า: ${p.userText.slice(0, 200)}`,
-      `⚠️ ${p.error instanceof Error ? p.error.message : String(p.error)}`,
-      `⏰ ${bkkNow()}`,
-    ].join("\n"),
-  );
+type ProcessingError = { lineUserId: string; userText: string; error: unknown };
+
+function processingErrorText(p: ProcessingError): string {
+  return [
+    `🚨 ระบบตอบ LINE ขัดข้อง — มีลูกค้าทักแต่บอทตอบไม่ได้`,
+    `รีบเข้าไปตอบเองใน LINE OA ด่วน`,
+    ``,
+    `🔗 LINE ID: ${p.lineUserId}`,
+    `💬 ข้อความลูกค้า: ${p.userText.slice(0, 200)}`,
+    // Capped: an alert listing many skipped tool calls must still fit LINE's 5000.
+    `⚠️ ${(p.error instanceof Error ? p.error.message : String(p.error)).slice(0, 1500)}`,
+    `⏰ ${bkkNow()}`,
+  ].join("\n");
+}
+
+export async function notifyProcessingError(p: ProcessingError): Promise<void> {
+  await pushToOwner(processingErrorText(p));
+}
+
+/** One alert per customer, sent 5 to a push request. */
+export async function notifyProcessingErrors(list: ProcessingError[]): Promise<void> {
+  await pushTextsToOwner(list.map(processingErrorText));
 }
 
 // ─── Analytics digest + alert (plain text) ─────────────────────────────────────
@@ -353,8 +374,13 @@ export function chunkForLine(text: string): string[] {
   const chunks: string[] = [];
   let rest = text;
   while (rest.length > LINE_TEXT_LIMIT) {
-    const cut = rest.lastIndexOf("\n\n", LINE_TEXT_LIMIT);
-    const splitAt = cut > 0 ? cut : LINE_TEXT_LIMIT;
+    // Prefer a paragraph break, then a line break — but only one in the back
+    // half of the window, or a header followed by one long list would burn a
+    // whole message on the header.
+    const minCut = LINE_TEXT_LIMIT / 2;
+    const para = rest.lastIndexOf("\n\n", LINE_TEXT_LIMIT);
+    const line = rest.lastIndexOf("\n", LINE_TEXT_LIMIT);
+    const splitAt = para >= minCut ? para : line >= minCut ? line : LINE_TEXT_LIMIT;
     chunks.push(rest.slice(0, splitAt));
     rest = rest.slice(splitAt).replace(/^\n+/, "");
   }

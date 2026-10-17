@@ -97,6 +97,7 @@ async function fetchRows(from: string, to: string): Promise<EventRow[]> {
         .select("event_name, properties, gclid, page_url, utm_source, utm_campaign")
         .gte("created_at", from)
         .lte("created_at", to)
+        .order("created_at")
         .order("id")
         .range(a, b),
     );

@@ -104,6 +104,7 @@ export async function GET(req: Request) {
         .from("aed_analytics_events")
         .select("event_name, properties, page_url, referrer, created_at")
         .gte("created_at", from)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ),
@@ -113,6 +114,7 @@ export async function GET(req: Request) {
         .select("event_name")
         .gte("created_at", prevFrom)
         .lt("created_at", prevTo)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ),
@@ -121,6 +123,7 @@ export async function GET(req: Request) {
         .from("aed_ad_visits")
         .select("gclid, utm_source, referrer, created_at")
         .gte("created_at", from)
+        .order("created_at")
         .order("id")
         .range(a, b),
     ),
@@ -135,10 +138,10 @@ export async function GET(req: Request) {
         .select("id, full_name, phone, email, product_id, gclid, created_at")
         .gte("created_at", from)
         .not("source", "like", "partial%")
-        .order("created_at", { ascending: false })
+        .order("created_at")
         .order("id")
         .range(a, b),
-    ),
+    ).then((rows) => rows.reverse()), // paged oldest-first (new rows append), shown newest-first
     supabase
       .from("aed_analytics_digest_log")
       .select("digest_date, kind, payload, created_at")
