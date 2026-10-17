@@ -9,6 +9,7 @@
 // The inbound message is saved BEFORE the model is called — same order as the
 // LINE webhook — so an outage shows up as inbound rows with no reply.
 
+import { createAdminClient } from "@/lib/supabase/admin";
 import { bumpConversation, getOrCreateConversation, saveMessage } from "./db-queries";
 
 export const WEB_CHAT_CHANNEL = "web";
@@ -36,5 +37,33 @@ export async function logWebChatMessage(
     await bumpConversation(conversation.id);
   } catch (err) {
     console.error("[web-chat] transcript log failed:", err);
+  }
+}
+
+/**
+ * Inbound web-chat messages in the window — for one session when `sessionId`
+ * is given, else site-wide. Null on a DB error (callers fail open).
+ */
+export async function countWebChatInbound(
+  windowMs: number,
+  sessionId?: string,
+): Promise<number | null> {
+  try {
+    let q = createAdminClient()
+      .from("aed_messages")
+      .select("id, aed_conversations!inner(channel, channel_thread_id)", { count: "exact", head: true })
+      .eq("direction", "inbound")
+      .eq("aed_conversations.channel", WEB_CHAT_CHANNEL)
+      .gte("created_at", new Date(Date.now() - windowMs).toISOString());
+    if (sessionId) q = q.eq("aed_conversations.channel_thread_id", sessionId);
+    const { count, error } = await q;
+    if (error) {
+      console.error("[web-chat] inbound count failed:", error.message);
+      return null;
+    }
+    return count ?? 0;
+  } catch (err) {
+    console.error("[web-chat] inbound count threw:", err);
+    return null;
   }
 }

@@ -13,8 +13,29 @@ import {
   isValidEmail,
   VALID_PRODUCT_IDS,
 } from "@/lib/aed/lead-validation";
+import {
+  DAY,
+  HOUR,
+  MINUTE,
+  countRecent,
+  findRecentLead,
+  overLimit,
+  requestIp,
+} from "@/lib/aed/rate-limit";
 
 export const runtime = "nodejs";
+
+// Abuse limits. A real buyer submits once or twice; anything past these is a
+// script, and every stored lead fans out to a LINE push, two emails and two ad
+// platforms. Kept generous so a busy office sharing one IP still gets through.
+const LEADS_PER_IP_PER_HOUR = 5;
+// Same phone/email again within this window = a double-submit or a re-send
+// from the success screen: answer with the first lead, repeat no side effects.
+const DUPLICATE_WINDOW_MS = 10 * MINUTE;
+// Site-wide hourly volume past which we stop pushing LINE alerts and sending
+// auto-replies (the owner email still goes out) — this business sees a few
+// leads a day, so this only trips during a flood.
+const LEAD_FLOOD_PER_HOUR = 30;
 
 type LeadBody = {
   source?: string;
@@ -53,7 +74,10 @@ export async function POST(req: Request) {
   // it as not stored so the client skips the lead_form_submit event and the
   // Google Ads conversion. Otherwise every bot that trips the hidden field fires
   // a phantom conversion (no lead row), polluting the funnel + Ads optimization.
-  if (body.hp && body.hp.trim() !== "") {
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 });
+  }
+  if (typeof body.hp === "string" && body.hp.trim() !== "") {
     return NextResponse.json({ ok: true, skipped: "honeypot" });
   }
 
@@ -96,11 +120,21 @@ export async function POST(req: Request) {
   const utmContent = clean(utm.content, 200);
 
   const userAgent = clean(req.headers.get("user-agent"), 500);
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    null;
+  const ip = requestIp(req);
   const ipHash = hashIp(ip);
+
+  if (ipHash && overLimit(await countRecent("aed_leads", [["ip_hash", ipHash]], HOUR), LEADS_PER_IP_PER_HOUR)) {
+    return NextResponse.json(
+      { ok: false, error: "rate_limited" },
+      { status: 429, headers: { "retry-after": "3600" } },
+    );
+  }
+
+  // `skipped` tells the form not to fire a second conversion for the repeat.
+  const duplicateOf = await findRecentLead({ phone, email }, DUPLICATE_WINDOW_MS);
+  if (duplicateOf) {
+    return NextResponse.json({ ok: true, skipped: "duplicate", leadId: duplicateOf });
+  }
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -137,26 +171,31 @@ export async function POST(req: Request) {
     ? products.find((p) => p.id === productId)?.name ?? null
     : null;
 
+  const flooding = overLimit(await countRecent("aed_leads", [], HOUR), LEAD_FLOOD_PER_HOUR);
+  if (flooding) console.warn("[AED] lead flood — skipping LINE alert + auto-reply for", data.id);
+
   // Side effects don't block the response, but they MUST be registered with
   // waitUntil — on Vercel the serverless instance is frozen the moment we return,
   // so a bare `void fetch(...)` (the LINE owner push, the Ads upload, the email)
   // gets torn down mid-flight and silently dropped. waitUntil keeps the function
   // alive until they settle. (The LINE webhook route uses the same pattern.)
-  waitUntil(
-    notifyNewLead({
-      source,
-      fullName,
-      phone,
-      email,
-      company,
-      productId,
-      unitCount,
-      message,
-      gclid,
-      utmSource,
-      utmCampaign,
-    }).catch((e) => console.error("[AED] notify failed:", e)),
-  );
+  if (!flooding) {
+    waitUntil(
+      notifyNewLead({
+        source,
+        fullName,
+        phone,
+        email,
+        company,
+        productId,
+        unitCount,
+        message,
+        gclid,
+        utmSource,
+        utmCampaign,
+      }).catch((e) => console.error("[AED] notify failed:", e)),
+    );
+  }
 
   // Email copy of the lead to the owner — a second channel alongside LINE.
   waitUntil(
@@ -212,12 +251,17 @@ export async function POST(req: Request) {
     }).catch((e) => console.error("[AED] meta capi failed:", e)),
   );
 
-  if (email) {
-    waitUntil(
-      sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>
-        console.error("[AED] auto-reply failed:", e),
-      ),
-    );
+  // One auto-reply per address per day: the recipient is whatever was typed,
+  // so without this the form can mail-bomb a third party from our domain.
+  if (email && !flooding) {
+    const sentToday = await countRecent("aed_leads", [["email", email]], DAY);
+    if (!overLimit(sentToday, 2)) {
+      waitUntil(
+        sendLeadAutoReply({ to: email, fullName, productName }).catch((e) =>
+          console.error("[AED] auto-reply failed:", e),
+        ),
+      );
+    }
   }
 
   return NextResponse.json({ ok: true, leadId: data.id });

@@ -185,7 +185,11 @@ export function WebChat() {
         error?: string;
       };
       if (!res.ok || !json.ok || !json.reply) {
-        setError("ขออภัย ระบบขัดข้องชั่วคราว ลองอีกครั้งหรือทักทาง LINE");
+        setError(
+          json.error === "rate_limited" || json.error === "busy"
+            ? "ตอนนี้มีคำถามเข้ามาเยอะ รบกวนลองใหม่อีกสักครู่ หรือทักทาง LINE ได้ทันทีครับ"
+            : "ขออภัย ระบบขัดข้องชั่วคราว ลองอีกครั้งหรือทักทาง LINE",
+        );
         setLoading(false);
         return;
       }
