@@ -195,11 +195,16 @@ describe("runDataRetention", () => {
     expect(tables).toEqual(seed());
   });
 
-  it("gets past more protected rows than one response can hold, deleting in small chunks", async () => {
-    const pad = (n: number) => String(n).padStart(5, "0");
+  it("gets past any number of protected rows, interleaved, deleting in small chunks", async () => {
+    const pad = (n: number) => String(n).padStart(6, "0");
+    // 12,000 deal-linked idle conversations spread through the id order, with
+    // a deletable one after every fourth — more than a page cap would reach.
+    const n = 15_000;
     const tables: Record<string, Row[]> = {
-      aed_deals: Array.from({ length: 1200 }, (_, i) => ({ id: `d${pad(i)}`, conversation_id: `c${pad(i)}`, customer_id: null })),
-      aed_conversations: Array.from({ length: 1500 }, (_, i) => ({
+      aed_deals: Array.from({ length: n }, (_, i) => i)
+        .filter((i) => i % 5 !== 4)
+        .map((i) => ({ id: `d${pad(i)}`, conversation_id: `c${pad(i)}`, customer_id: null })),
+      aed_conversations: Array.from({ length: n }, (_, i) => ({
         id: `c${pad(i)}`,
         customer_id: null,
         last_message_at: OLD,
@@ -209,8 +214,8 @@ describe("runDataRetention", () => {
     const inSizes: number[] = [];
     mocks.client = fakeDb(tables, inSizes);
     const report = await runDataRetention(NOW);
-    expect(report.aed_conversations).toBe(300);
-    expect(tables.aed_conversations).toHaveLength(1200);
+    expect(report.aed_conversations).toBe(3_000);
+    expect(tables.aed_conversations).toHaveLength(12_000);
     expect(Math.max(...inSizes)).toBeLessThanOrEqual(100);
   });
 });

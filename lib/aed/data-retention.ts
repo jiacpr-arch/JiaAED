@@ -41,11 +41,13 @@ export type RetentionReport = Record<string, number>;
 
 // Rows per page / per delete request. A delete sends its ids in the URL, and
 // ~100 UUIDs keep it near 4 KB (postgrest-js warns past 8 KB; proxies cut off
-// around 8–16 KB). MAX_PAGES bounds one run well inside the cron's maxDuration —
-// whatever is left goes the next day.
+// around 8–16 KB). Scans are bounded by time, not pages: rows a deal keeps come
+// back on every run, and a page of them costs one SELECT, so a page cap would
+// stall behind them. SCAN_BUDGET_MS keeps a run inside the cron's maxDuration
+// (60s); anything left goes the next day.
 const PAGE = 500;
 const DELETE_CHUNK = 100;
-const MAX_PAGES = 20;
+const SCAN_BUDGET_MS = 40_000;
 
 // A lead keeps its contact details for the 2-year lead period, but the
 // ad-referral data on it is marketing data (13 months, as /privacy says).
@@ -107,10 +109,11 @@ async function deleteInactive(
   cutoff: string,
   protectedIds: Array<Iterable<string | null>>,
   dryRun: boolean,
+  deadline: number,
 ): Promise<string[]> {
   const gone: string[] = [];
   let lastId: string | null = null;
-  for (let page = 0; page < MAX_PAGES; page++) {
+  while (Date.now() < deadline) {
     let query = db.from(table).select("id").or(inactiveFilter(activeColumn, cutoff));
     if (lastId) query = query.gt("id", lastId);
     const { data, error } = await query.order("id").limit(PAGE);
@@ -135,6 +138,7 @@ export async function runDataRetention(now: Date, dryRun = false): Promise<Reten
   const db = createAdminClient();
   const cut = retentionCutoffs(now);
   const report: RetentionReport = {};
+  const scanDeadline = Date.now() + SCAN_BUDGET_MS;
 
   for (const table of ["aed_analytics_events", "aed_ad_visits", "aed_conversion_log"]) {
     report[table] = await deleteOlderThan(db, table, cut.marketing, dryRun);
@@ -159,6 +163,7 @@ export async function runDataRetention(now: Date, dryRun = false): Promise<Reten
     cut.leadChat,
     [deals.map((d) => d.conversation_id), await referencedIds(db, "aed_followups", "conversation_id", cut.leadChat)],
     dryRun,
+    scanDeadline,
   );
   report.aed_conversations = conversationsGone.length;
 
@@ -178,6 +183,8 @@ export async function runDataRetention(now: Date, dryRun = false): Promise<Reten
         liveConversations.filter((c) => !goneSet.has(c.id)).map((c) => c.customer_id),
       ],
       dryRun,
+      // The customer pass gets at least a few seconds even if conversations used the budget.
+      Math.max(scanDeadline, Date.now() + 5_000),
     )
   ).length;
 
