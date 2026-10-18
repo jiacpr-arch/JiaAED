@@ -12,7 +12,8 @@ import {
   SAFETY_PREMIUM_PRICING,
   acquisitionPackages,
 } from "./packages";
-import { acquisitionComparison, rentalPlans, rentToOwnBreakdowns } from "./rental";
+import { acquisitionComparison, RENTAL_TRAINING, rentalKnowledgeBlock, rentalPlans, rentToOwnBreakdowns } from "./rental";
+import { articles } from "./articles";
 import { subscriptionTiers } from "./subscription";
 import { faqs, packageFaqCategories, subscriptionFaqCategories } from "./faqs";
 import { survivorReward, TRAINING_POLICY } from "./promotion";
@@ -201,5 +202,28 @@ describe("training and warranty read the same everywhere", () => {
     expect(WEB_CHAT_SYSTEM_PROMPT).toContain(warrantyLine);
     expect(knowledgeBlock()).toContain(warrantyLine);
     expect(allFaqAnswers().some((a) => a.includes(warrantyLine))).toBe(true);
+  });
+});
+
+describe("rental-plan training matches the owner's rental terms", () => {
+  const plan = (id: string) => rentalPlans.find((p) => p.id === id)!;
+
+  it("monthly and annual include the free Mini Course at the centre; on-site is extra; events get a briefing", () => {
+    for (const id of ["rent-flex", "rent-annual"]) {
+      expect(plan(id).features).toContain(RENTAL_TRAINING.included);
+      expect(plan(id).features).toContain(RENTAL_TRAINING.onSite);
+    }
+    expect(plan("rent-event").features).toContain(RENTAL_TRAINING.event);
+    // No plan promises training beyond those three lines (e.g. "อบรมใช้งาน 1 ครั้ง" on-site).
+    const known = new Set<string>(Object.values(RENTAL_TRAINING));
+    for (const p of rentalPlans) {
+      for (const f of p.features.filter((f) => /อบรม/.test(f))) expect(known.has(f), f).toBe(true);
+    }
+  });
+
+  it("both bots and the price guide quote the same terms", () => {
+    expect(rentalKnowledgeBlock()).toContain(RENTAL_TRAINING.included);
+    expect(articles.some((a) => a.content.includes(RENTAL_TRAINING.included))).toBe(true);
+    expect(articles.every((a) => !a.content.includes("รวมติดตั้ง อบรม"))).toBe(true);
   });
 });

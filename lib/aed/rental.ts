@@ -24,6 +24,17 @@ export const RENTAL_PRICES = {
   flexMinMonths: 3,
 } as const;
 
+// Training on the rental plans, as the owner's rental comparison table and
+// flyers state it (Jun 2026) — a Sep 2026 annual quotation also says on-site
+// training isn't included: monthly and annual include the free Mini Course at
+// the JIA training centre, on-site training is extra, and an event rental gets
+// a usage briefing only. Cards, bots and the price-guide article read these.
+export const RENTAL_TRAINING = {
+  included: "อบรมฟรี CPR & AED Mini Course 5–7 ท่าน (E-Certificate) ที่ The Street รัชดา",
+  onSite: `อบรมนอกสถานที่ ${thb(4_000)} + ค่าเดินทาง`,
+  event: "แนะนำการใช้งานเบื้องต้น (ไม่ใช่คอร์สอบรม)",
+} as const;
+
 const DEPOSITS = {
   eventCardHold: 30_000,
   eventCash: 25_000,
@@ -61,6 +72,7 @@ export const rentalPlans: RentalPlan[] = [
       "ส่ง-รับถึงงาน (คิดตามระยะทาง)",
       "เหมาะกับมาราธอน คอนเสิร์ต งานกีฬา กองถ่าย",
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
+      RENTAL_TRAINING.event,
     ],
     badge: "",
     image: "/images/primedic-kit.png",
@@ -75,7 +87,9 @@ export const rentalPlans: RentalPlan[] = [
     depositRange: [DEPOSITS.annual, DEPOSITS.annual],
     features: [
       `เฉลี่ยเพียง ~${thb(Math.round(RENTAL_PRICES.annual / 12 / 10) * 10)}/เดือน`,
-      "รวมส่ง+ติดตั้ง + อบรมใช้งาน 1 ครั้ง",
+      "รวมส่ง+ติดตั้ง",
+      RENTAL_TRAINING.included,
+      RENTAL_TRAINING.onSite,
       "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย",
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
     ],
@@ -95,6 +109,8 @@ export const rentalPlans: RentalPlan[] = [
       "เหมาะกับออฟฟิศชั่วคราว ไซต์งาน ทดลองใช้",
       "ค่าเช่าที่จ่ายแล้วหักเป็นส่วนลดเมื่อแปลงเป็นรายปี",
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
+      RENTAL_TRAINING.included,
+      RENTAL_TRAINING.onSite,
     ],
     badge: "",
     image: "/images/yuwell-y2-main.jpg",

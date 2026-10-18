@@ -14,6 +14,7 @@ import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 import { SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
+import { tiersWith } from "@/lib/aed/subscription";
 import { trustedBy } from "@/lib/aed/trust";
 
 export const revalidate = 3600;
@@ -67,7 +68,11 @@ export default function SubscriptionPage() {
               { icon: "📡", title: "GPS + Cloud Dashboard", desc: "เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time" },
               { icon: "🔔", title: "แจ้งเตือนอัตโนมัติ", desc: "แบตเตอรี่/แผ่นอิเล็กโทรดใกล้หมดอายุ ระบบเตือนก่อนเสมอ" },
               { icon: "♻️", title: "เครื่องสำรองถ้าเสีย", desc: "เปลี่ยนเครื่องให้ภายใน 24–48 ชม. ไม่มีช่วงที่จุดติดตั้งไม่มีเครื่อง" },
-              { icon: "🎓", title: "อบรมพนักงานถึงที่", desc: "ทีม BLS Instructor สอนการใช้ AED + CPR ให้ทีมงานของคุณ" },
+              {
+                icon: "🎓",
+                title: "อบรมพนักงานถึงที่",
+                desc: `ทีม BLS Instructor สอนการใช้ AED + CPR ให้ทีมงานของคุณ (ระดับ ${tiersWith("อบรมพนักงาน (ครั้ง/ปี)")})`,
+              },
             ].map((b) => (
               <div key={b.title} className="flex items-start gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
                 <span className="text-2xl leading-none mt-0.5">{b.icon}</span>
