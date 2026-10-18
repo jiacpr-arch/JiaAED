@@ -4,6 +4,7 @@
 // public/llms.txt did drift — it still listed Y0 at ฿39,999 after the price
 // dropped to ฿39,000).
 import {
+  PRICE_ON_REQUEST,
   primedicModels,
   yuwellGpsAed,
   primedicSharedSpecs,
@@ -58,7 +59,7 @@ export function GET() {
     {
       id: yuwellGpsAed.id,
       name: yuwellGpsAed.name,
-      price: thb(yuwellGpsAed.price),
+      price: yuwellGpsAed.price === null ? PRICE_ON_REQUEST : thb(yuwellGpsAed.price),
       desc: `${yuwellGpsAed.keyDiff} · ${yuwellGpsAed.bestFor}`,
     },
   ]

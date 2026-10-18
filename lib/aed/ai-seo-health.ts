@@ -80,7 +80,9 @@ export function requiredLlmsTxtStrings(): { label: string; needle: string }[] {
       label: `ราคา ${m.name}`,
       needle: thb(m.price),
     })),
-    { label: `ราคา ${yuwellGpsAed.name}`, needle: thb(yuwellGpsAed.price) },
+    ...(yuwellGpsAed.price === null
+      ? []
+      : [{ label: `ราคา ${yuwellGpsAed.name}`, needle: thb(yuwellGpsAed.price) }]),
     ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
       ? [{ label: "ทะเบียน อย.", needle: PRIMEDIC_REGULATORY.fda }]
       : []),

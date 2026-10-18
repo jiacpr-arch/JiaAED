@@ -122,7 +122,7 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     bestPrice: 60_000,
     minPrice: 58_000, // ทุน 35,000 → ขั้นต่ำยังเหลือกำไร 23,000
     vatRate: 0.07,
-    faProductCode: "AED-YW-GPS",
+    faProductCode: "AED-Y8GPS", // the GPS unit's code in FlowAccount
   },
 };
 

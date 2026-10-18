@@ -12,7 +12,6 @@ import {
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages, RENT_TO_OWN_TERMS } from "@/lib/aed/packages";
 import { faqs } from "@/lib/aed/faqs";
-import { MACHINE_TRAINING_PERK } from "@/lib/aed/promotion";
 import { PRIMEDIC_REGULATORY, regLine, regulatoryStatement } from "@/lib/aed/regulatory";
 import { LINE_OA_ID, lineOaUrl } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
@@ -28,6 +27,7 @@ const y2InstallmentTerms = RENT_TO_OWN_TERMS["pkg-start-y2"];
 // The ฆพ. licence that names Y2 (the featured flyer below was approved under it).
 const Y2_AD_LICENSE = PRIMEDIC_REGULATORY.adLicenses.find((l) => /Y2/.test(l.covers));
 const Y2_PRICE = `฿${y2.price.toLocaleString()}`;
+const Y2_WARRANTY_YEARS = y2.warrantyYears;
 
 const LINE_Y2 = lineOaUrl(`สนใจ AED Yuwell Y2 (จอสี EKG) ราคา ${Y2_PRICE} ขอใบเสนอราคาครับ`);
 const LINE_Y2_GOV = lineOaUrl(
@@ -331,7 +331,8 @@ export default function YuwellY2Landing() {
               <ul className="space-y-1.5 my-4 flex-1 text-sm text-gray-700">
                 <li className="flex gap-2"><span className="text-green-600">✓</span> เป็นเจ้าของทันที จบในครั้งเดียว</li>
                 <li className="flex gap-2"><span className="text-green-600">✓</span> ออกใบกำกับภาษี / ใบเสนอราคา</li>
-                <li className="flex gap-2"><span className="text-green-600">✓</span> {MACHINE_TRAINING_PERK}</li>
+                <li className="flex gap-2"><span className="text-green-600">✓</span> รับประกันตัวเครื่อง {Y2_WARRANTY_YEARS} ปี</li>
+                <li className="flex gap-2"><span className="text-green-600">✓</span> เพิ่มคอร์สอบรม CPR &amp; AED ถึงที่ได้ (สอบถามทีมขาย)</li>
                 <li className="flex gap-2"><span className="text-green-600">✓</span> ราคาพิเศษสำหรับหน่วยงาน / ซื้อหลายเครื่อง</li>
               </ul>
               <a
