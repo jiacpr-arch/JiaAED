@@ -5,10 +5,10 @@ import { documents } from "./documents";
 import { articles } from "./articles";
 import { LINE_OA_ID } from "./line";
 import { rentalKnowledgeBlock } from "./rental";
-import { consumableLifetimeText, primedicModels, yuwellGpsAed } from "./primedic";
+import { consumableLifetimeText, PRICE_ON_REQUEST, primedicModels, warrantyLine, yuwellGpsAed } from "./primedic";
 import { acquisitionPackages } from "./packages";
 import { subscriptionTiers } from "./subscription";
-import { MACHINE_TRAINING_PERK } from "./promotion";
+import { TRAINING_POLICY } from "./promotion";
 import { PRIMEDIC_REGULATORY, adLicensesLine, fdaLine } from "./regulatory";
 
 const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
@@ -23,7 +23,7 @@ function productBlock(): string {
       (m) =>
         `• ${m.name} — ${thb(m.price)} (ยังไม่รวม VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
     ),
-    `• ${yuwellGpsAed.name} — ${thb(yuwellGpsAed.price)} (ยังไม่รวม VAT)\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
+    `• ${yuwellGpsAed.name} — ${yuwellGpsAed.price === null ? `${PRICE_ON_REQUEST}กับทีมขาย (ห้ามบอกตัวเลข)` : `${thb(yuwellGpsAed.price)} (ยังไม่รวม VAT)`}\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
   ].join("\n");
 
   // Base Y2 is already listed above; these are its cabinet/stand bundles.
@@ -51,7 +51,7 @@ ${bundles}
 ${packages}
 • ระดับบริการ Safety Care: ${tiers}
 
-ทุกเครื่องที่ซื้อมาพร้อม${MACHINE_TRAINING_PERK} · ${consumableLifetimeText}`;
+${TRAINING_POLICY} · ${warrantyLine} · ${consumableLifetimeText}`;
 }
 
 function faqBlock(): string {
@@ -82,7 +82,7 @@ ${productBlock()}
 ## ข้อมูลรับรอง (สำคัญ)
 ${regulatoryBlock}
 - มาตรฐาน CE Mark · ISO 13485
-- เงื่อนไขการรับประกัน: สอบถามทีมขาย (LINE ${LINE_OA_ID})
+- ${warrantyLine} — รายละเอียดเงื่อนไขสอบถามทีมขาย (LINE ${LINE_OA_ID})
 
 ## FAQ ที่ควรรู้
 

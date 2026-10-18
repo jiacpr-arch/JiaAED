@@ -216,16 +216,9 @@ export default function PrimedicPage() {
         <PriceViewTracker targetId="primedic-specs" />
         <div id="primedic-specs">
           <SectionHeading title="เปรียบเทียบสเปกละเอียด — Y0 vs Y8" />
-          {/* Manufacturer features infographic — the picture version of the table below */}
-          <div className="mt-6 max-w-2xl mx-auto rounded-2xl overflow-hidden border border-gray-800">
-            <Image
-              src="/images/primedic-features-infographic.png"
-              alt="สรุปฟีเจอร์ PRIMEDIC HeartSave — พลังงาน 200–360J ผู้ใหญ่ / 50–100J เด็ก, จอ 4.3 และ 7 นิ้ว, ชุดอุปกรณ์ฉุกเฉิน, แบตเตอรี่ 5 ปี, ประกัน 8 ปี"
-              width={1092}
-              height={1993}
-              className="w-full h-auto"
-            />
-          </div>
+          {/* The manufacturer's feature infographic used to sit here; it printed
+              "8 year warranty" under a Y0 vs Y8 heading, while Jia's terms differ
+              per model (see warrantyLine) — removed Oct 2026. */}
           <div className="mt-6">
             <SpecComparisonTable />
           </div>

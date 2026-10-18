@@ -1,4 +1,5 @@
 import { LINE_OA_ID } from "./line";
+import { warrantyLine } from "./primedic";
 import { PRIMEDIC_REGULATORY, adLicensesLine, fdaLine } from "./regulatory";
 /**
  * Authoritative knowledge base for the AI sales assistant.
@@ -60,7 +61,7 @@ ${registrationLines}
   {
     id: "warranty-service",
     title: "การรับประกันและบริการหลังการขาย",
-    content: `- **เงื่อนไขและระยะเวลาการรับประกัน:** สอบถามกับทีมขายเจี่ยรักษา (เงื่อนไขอาจต่างกันตามรุ่น/ล็อต) — ทักไลน์ ${LINE_OA_ID} หรือ [กรอกฟอร์ม](/#contact)
+    content: `- **ระยะเวลาการรับประกัน:** ${warrantyLine} — รายละเอียดเงื่อนไขสอบถามทีมขายเจี่ยรักษา ทักไลน์ ${LINE_OA_ID} หรือ [กรอกฟอร์ม](/#contact)
 - ครอบคลุมความผิดปกติจากการผลิต ไม่ครอบคลุมอุบัติเหตุหรือการใช้ผิดวิธี
 - ห้ามให้บุคคลที่ไม่ได้รับการรับรองซ่อมเอง
 - บริการในไทย: ทีม เจี่ยรักษา รับเรื่องและประสานงาน — ทักไลน์ ${LINE_OA_ID} หรือ [กรอกฟอร์ม](/#contact)`,

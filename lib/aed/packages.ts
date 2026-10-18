@@ -6,7 +6,8 @@
 // Prices are PROVISIONAL (wholesale being finalized). Update here only — the
 // rental table, FAQs, subscription comparison and bots read these constants.
 
-import { primedicModels, yuwellGpsAed } from "./primedic";
+import { PRICE_ON_REQUEST, primedicModels } from "./primedic";
+import { PACKAGE_TRAINING_PERK } from "./promotion";
 
 const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 
@@ -28,7 +29,8 @@ const rentToOwnNote = (t: RentToOwnTerms) =>
 // ─── Safety Premium (ซื้อขาด) price build-up ──────────────────────────────────
 // Owner confirmed 2026-09-24: ฿42,900 = Yuwell Y0 (ขายเดี่ยว ฿39,000) + ฿3,900
 // ค่าอบรม/ชุดฝึก/บริการ — ไม่รวม GPS. รวมตู้ +฿6,100 (all-in ฿49,000, ไม่แยกราคาตู้).
-// อัปเกรดรุ่น GPS ในตัว (yuwell-gps ฿60,000) ใช้ส่วนต่าง ฿3,900 เดียวกัน: ฿63,900 · รวมตู้ ฿69,900.
+// อัปเกรดรุ่น GPS ในตัว: สอบถามราคา (owner, Oct 2026 — the ฿63,900/฿69,900/฿89,000
+// GPS figures had no source; see yuwellGpsAed in ./primedic.ts).
 // The credit/government prices are a different payment term (เทอมเครดิตยาว), NOT a
 // former price — never render them struck-through as a "was" price.
 const PREMIUM_SERVICE_ADDON = 3_900;
@@ -39,11 +41,6 @@ export const SAFETY_PREMIUM_PRICING = {
   cash: y0.price + PREMIUM_SERVICE_ADDON,
   cashWithCabinet: y0.price + PREMIUM_SERVICE_ADDON + PREMIUM_CABINET_ADDON,
   credit: 69_000,
-  gpsCash: yuwellGpsAed.price + PREMIUM_SERVICE_ADDON,
-  // Published owner price. NOTE: this is ฿6,000 over gpsCash, not the ฿6,100
-  // cabinet step above (63,900 + 6,100 would be ฿70,000) — owner to confirm.
-  gpsCashWithCabinet: 69_900,
-  gpsCredit: 89_000,
 } as const;
 
 // Safety Care (managed rental) — refundable deposit for the 1-year contract.
@@ -156,13 +153,13 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     priceNote:
       `เงินสด ${thb(premium.cash)} (Yuwell Y0 ไม่รวมตู้) / รวมตู้ ${thb(premium.cashWithCabinet)} · ` +
       `ราคาเครดิต/ราชการ ${thb(premium.credit)} (สำหรับเทอมเครดิตยาว) · ` +
-      `อัปเกรดรุ่น GPS ในตัว ${thb(premium.gpsCash)} (รวมตู้ ${thb(premium.gpsCashWithCabinet)} · เครดิต/ราชการ ${thb(premium.gpsCredit)}) · ออกใบกำกับภาษีได้`,
+      `อัปเกรดรุ่น GPS ในตัวได้ (${PRICE_ON_REQUEST}) · ออกใบกำกับภาษีได้`,
     deposit: null,
     features: [
       "เครื่อง AED Yuwell Y0 เป็นกรรมสิทธิ์ขององค์กร",
       `เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้ (รวมตู้ ${thb(premium.cashWithCabinet)})`,
-      `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ ${thb(premium.gpsCash)} (รวมตู้ ${thb(premium.gpsCashWithCabinet)})`,
-      "อบรม CPR & AED สอนถึงที่ โดยทีม BLS Instructor",
+      `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ (${PRICE_ON_REQUEST})`,
+      `รวม${PACKAGE_TRAINING_PERK} โดยทีม BLS Instructor (ต่างจังหวัดสอบถาม)`,
       "ชุดอุปกรณ์ฝึกสอน + บริการหลังการขาย",
     ],
     bestFor: "องค์กรที่มีงบลงทุน (CAPEX) และต้องการเป็นเจ้าของ",

@@ -23,9 +23,8 @@ export const primedicCertifications: { label: string; sub: string }[] = [
 
 // Consumable lifetimes from the Y2 spec sheet
 // (public/documents/aed-y2-specification-2026.docx): electrode pads and battery
-// each last "ไม่น้อยกว่า 4 ปี นับจากวันที่ผลิต". The manufacturer infographic
-// (primedic-features-infographic.png) says "up to 5 years" for both — we quote
-// the guaranteed minimum. One constant so FAQs, articles and both bots say the
+// each last "ไม่น้อยกว่า 4 ปี นับจากวันที่ผลิต". The manufacturer's feature sheet
+// says "up to 5 years" for both — we quote the guaranteed minimum. One constant so FAQs, articles and both bots say the
 // same thing (they used to say 2–3, 3, ~5 and "≥ 5" years).
 export const CONSUMABLE_LIFETIME_YEARS = { pads: 4, battery: 4 } as const;
 export const consumableLifetimeText = `แผ่นอิเล็กโทรดอายุไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.pads} ปี และแบตเตอรี่อายุไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.battery} ปี นับจากวันที่ผลิต (เปลี่ยนตามวันหมดอายุที่ระบุบนซอง/ตัวแบต)`;
@@ -47,6 +46,7 @@ export type PrimedicModel = {
   bestFor: string;
   image: string; // real photos from the Yuwell/PRIMEDIC HeartSave Y/YA catalog
   badge: string | null;
+  warrantyYears: number; // body warranty Jia commits to — see warrantyLine below
 };
 
 export const primedicModels: PrimedicModel[] = [
@@ -61,6 +61,7 @@ export const primedicModels: PrimedicModel[] = [
     bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
     image: "/images/primedic-y-series.png",
     badge: null,
+    warrantyYears: 5,
   },
   {
     id: "primedic-y8",
@@ -73,6 +74,7 @@ export const primedicModels: PrimedicModel[] = [
     bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
     image: "/images/primedic-y8-open.png",
     badge: "แนะนำ",
+    warrantyYears: 8,
   },
   {
     // รุ่นเรือธง — ฮาร์ดแวร์เดียวกับ Y8 แต่มีจอสีแสดง EKG + ดูคุณภาพ CPR สด ๆ.
@@ -87,14 +89,20 @@ export const primedicModels: PrimedicModel[] = [
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการ CPR คุณภาพสูงสุด · เห็นบนจอ ปรับท่าปั๊มได้ทันที",
     image: "/images/primedic-y2-open.jpg",
     badge: "เรือธง",
+    warrantyYears: 4,
   },
 ];
 
-// Yuwell AED with GPS built in (the red unit) — sold as its own product.
+// Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
+// networking module) — sold as its own product.
 export const yuwellGpsAed = {
   id: "yuwell-gps",
   name: "Yuwell AED — GPS ในตัว",
-  price: 60_000, // before VAT
+  // Price on request (owner, Oct 2026): the ฿60,000 shown before had no source
+  // and sat above what the team actually quotes. Pages print "สอบถามราคา" while
+  // this is null; the LINE bot still quotes from AED_PRODUCTS in ./pricing.ts.
+  price: null as number | null, // before VAT
+  warrantyYears: 8, // same as the Y8 it's built on, per the owner's GPS quotations
   // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds
   // the Google product JSON-LD (StructuredData) and lineup.ts.
   image: "/images/yuwell-gps-aed.webp",
@@ -108,6 +116,17 @@ export const yuwellGpsAed = {
     "เสียงนำทางการกู้ชีพ",
   ],
 };
+
+export const PRICE_ON_REQUEST = "สอบถามราคา";
+
+// Body warranty (ตัวเครื่อง) per model, as Jia's quotations state it and the
+// owner confirmed (Oct 2026). The manufacturer's Thailand letter says 8 years for
+// the whole Y line and the manual says 24 months; the site follows what Jia
+// actually commits to. One line so pages, FAQs and both bots say the same thing.
+export const warrantyLine = `รับประกันตัวเครื่อง ${[
+  ...primedicModels.map((m) => `${m.id.replace("primedic-", "").toUpperCase()} ${m.warrantyYears} ปี`),
+  `รุ่น GPS ${yuwellGpsAed.warrantyYears} ปี`,
+].join(" · ")}`;
 
 // Specs shared by all four models — rendered as a simple label/value list.
 // Verified against the official Yuwell HeartSave Y8 spec sheet + the อย. แนบท้าย.

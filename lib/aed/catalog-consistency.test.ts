@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 import { AED_PRODUCTS } from "./pricing";
-import { CONSUMABLE_LIFETIME_YEARS, primedicModels, yuwellGpsAed } from "./primedic";
+import { CONSUMABLE_LIFETIME_YEARS, PRICE_ON_REQUEST, primedicModels, warrantyLine, yuwellGpsAed } from "./primedic";
 import { products } from "./products";
 import {
   RENT_TO_OWN_TERMS,
@@ -14,7 +14,8 @@ import {
 } from "./packages";
 import { acquisitionComparison, rentalPlans, rentToOwnBreakdowns } from "./rental";
 import { subscriptionTiers } from "./subscription";
-import { faqs } from "./faqs";
+import { faqs, packageFaqCategories, subscriptionFaqCategories } from "./faqs";
+import { survivorReward, TRAINING_POLICY } from "./promotion";
 import { documents } from "./documents";
 import { knowledgeBlock } from "./knowledge";
 import { buildSystemPrompt } from "./system-prompt";
@@ -36,7 +37,11 @@ describe("one price per physical product", () => {
     for (const id of ["primedic-y0", "primedic-y8", "primedic-y2"]) {
       expect(AED_PRODUCTS[id].startingPrice, id).toBe(model(id).price);
     }
-    expect(AED_PRODUCTS["yuwell-gps"].startingPrice).toBe(yuwellGpsAed.price);
+    // GPS is "price on request" on the site (null) — the LINE bot still quotes
+    // from AED_PRODUCTS. Once the owner publishes a price, the two must agree.
+    if (yuwellGpsAed.price !== null) {
+      expect(AED_PRODUCTS["yuwell-gps"].startingPrice).toBe(yuwellGpsAed.price);
+    }
   });
 
   it('the legacy "i7" SKU slot is priced exactly like Yuwell Y2', () => {
@@ -57,8 +62,15 @@ describe("packages", () => {
     // Owner confirmed 2026-09-24 — change only with a new confirmation.
     expect(SAFETY_PREMIUM_PRICING.cash).toBe(42_900);
     expect(SAFETY_PREMIUM_PRICING.cashWithCabinet).toBe(49_000);
-    expect(SAFETY_PREMIUM_PRICING.gpsCash).toBe(63_900);
-    expect(SAFETY_PREMIUM_PRICING.gpsCashWithCabinet).toBe(69_900);
+  });
+
+  it("the GPS upgrade shows no price while the GPS unit is price-on-request", () => {
+    if (yuwellGpsAed.price !== null) return;
+    const premium = acquisitionPackages.find((p) => p.id === "pkg-premium")!;
+    const copy = [premium.priceNote, ...premium.features, ...allFaqAnswers()].join("\n");
+    expect(copy).toContain(PRICE_ON_REQUEST);
+    // The unsourced figures that used to be printed for it.
+    expect(copy).not.toMatch(/63,900|69,900/);
   });
 
   it("Safety Care headline price is the cheapest subscription tier", () => {
@@ -166,5 +178,28 @@ describe("regulatory numbers have a single source", () => {
       expect(documents.some((d) => d.href === PRIMEDIC_REGULATORY.certificateHref)).toBe(true);
     }
     for (const f of faqs) expect(f.answer).not.toContain("ผู้นำเข้าเครื่องมือแพทย์โดยตรง");
+  });
+});
+
+function allFaqAnswers(): string[] {
+  return [faqs, ...[...packageFaqCategories, ...subscriptionFaqCategories].map((c) => c.items)]
+    .flat()
+    .map((f) => f.answer);
+}
+
+describe("training and warranty read the same everywhere", () => {
+  it("free training is promised with Safety Premium only, never with every machine", () => {
+    const copy = [...allFaqAnswers(), ...survivorReward.points, WEB_CHAT_SYSTEM_PROMPT];
+    for (const text of copy) expect(text).not.toMatch(/ทุกเครื่อง[^\n·]{0,12}(มาพร้อม|รวม|ฟรี)[^\n·]{0,10}(คอร์ส|อบรม)/);
+    expect(faqs.some((f) => f.answer.includes(TRAINING_POLICY))).toBe(true);
+    expect(WEB_CHAT_SYSTEM_PROMPT).toContain(TRAINING_POLICY);
+  });
+
+  it("every model's warranty comes from primedic.ts, in both bots and the FAQs", () => {
+    for (const m of [...primedicModels, yuwellGpsAed]) expect(warrantyLine).toContain(`${m.warrantyYears} ปี`);
+    expect(buildSystemPrompt(null)).toContain(warrantyLine);
+    expect(WEB_CHAT_SYSTEM_PROMPT).toContain(warrantyLine);
+    expect(knowledgeBlock()).toContain(warrantyLine);
+    expect(allFaqAnswers().some((a) => a.includes(warrantyLine))).toBe(true);
   });
 });

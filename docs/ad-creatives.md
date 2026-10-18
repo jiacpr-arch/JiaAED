@@ -55,7 +55,7 @@ re-export the posters if a rental price changes.
 | File | Content |
 | --- | --- |
 | `primedic-y-open-pads.webp` | PRIMEDIC HeartSave เปิดฝา + แผ่น electrode ผู้ใหญ่/เด็ก บนพื้นขาว (product shot) |
-| `primedic-features-infographic.png` | อินโฟกราฟิกฟีเจอร์ HeartSave จากผู้ผลิต โทนดำ/แดง (พลังงาน 200–360J, จอ 4.3"/7", ชุดอุปกรณ์, แบต/แผ่น "up to 5 years", ประกัน 8 ปี) — ⚠️ ตัวเลขอายุแบต/แผ่นและประกันในภาพเป็นของผู้ผลิต: เว็บ/บอทใช้ "ไม่น้อยกว่า 4 ปี" ตามสเปกชีต Y2 และให้สอบถามเงื่อนไขประกันกับทีมขาย — ยืนยันกับเจ้าของก่อนใช้ภาพนี้ยิงโฆษณา |
+| `primedic-features-infographic.png` | อินโฟกราฟิกฟีเจอร์ HeartSave จากผู้ผลิต โทนดำ/แดง (พลังงาน 200–360J, จอ 4.3"/7", ชุดอุปกรณ์, แบต/แผ่น "up to 5 years", ประกัน 8 ปี) — ⛔ ห้ามใช้ (ถอดออกจากเว็บ ต.ค. 2026): ภาพเขียน "8 year warranty" แต่เจี่ยรักษารับประกันตัวเครื่องแยกรุ่น Y0 5 ปี · Y8 8 ปี · Y2 4 ปี (`warrantyLine` ใน lib/aed/primedic.ts) และอายุแบต/แผ่นในภาพ ("up to 5 years") ไม่ตรงกับที่เว็บใช้ ("ไม่น้อยกว่า 4 ปี") |
 
 ## ⛔ NOT an AED — do not use in AED ads
 

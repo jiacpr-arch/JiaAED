@@ -221,24 +221,30 @@ export function ProductStructuredData({
         seller: { "@type": "Organization", name: BRAND },
       },
     })),
-    {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      name: yuwellGpsAed.name,
-      description: `${yuwellGpsAed.description} ${yuwellGpsAed.features.join(" ")}`,
-      image: `${SITE}${yuwellGpsAed.image}`,
-      brand: { "@type": "Brand", name: "Yuwell" },
-      sku: yuwellGpsAed.id,
-      category: "Medical Equipment / AED / Defibrillator",
-      offers: {
-        "@type": "Offer",
-        url: `${SITE}/aed/primedic`,
-        priceCurrency: "THB",
-        price: yuwellGpsAed.price,
-        availability: "https://schema.org/InStock",
-        seller: { "@type": "Organization", name: BRAND },
-      },
-    },
+    // Only while it has a published price — a Product without offers fails
+    // Google's rich-result validation (price on request: see yuwellGpsAed).
+    ...(yuwellGpsAed.price === null
+      ? []
+      : [
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: yuwellGpsAed.name,
+            description: `${yuwellGpsAed.description} ${yuwellGpsAed.features.join(" ")}`,
+            image: `${SITE}${yuwellGpsAed.image}`,
+            brand: { "@type": "Brand", name: "Yuwell" },
+            sku: yuwellGpsAed.id,
+            category: "Medical Equipment / AED / Defibrillator",
+            offers: {
+              "@type": "Offer",
+              url: `${SITE}/aed/primedic`,
+              priceCurrency: "THB",
+              price: yuwellGpsAed.price,
+              availability: "https://schema.org/InStock",
+              seller: { "@type": "Organization", name: BRAND },
+            },
+          },
+        ]),
   ];
 
   const faqPage = {

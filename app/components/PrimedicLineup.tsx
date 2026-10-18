@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
+import { PRICE_ON_REQUEST, primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 
 import { LINE_OA } from "@/lib/aed/line";
 
@@ -15,7 +15,8 @@ const imgById: Record<string, string> = {
 type Card = {
   id: string;
   name: string;
-  price: number;
+  price: number | null; // null = price on request
+  warrantyYears: number;
   keyDiff: string;
   bestFor: string;
   accent: string; // tailwind border/text accent
@@ -29,6 +30,7 @@ const cards: Card[] = [
     id: primedicModels[0].id,
     name: primedicModels[0].name,
     price: primedicModels[0].price,
+    warrantyYears: primedicModels[0].warrantyYears,
     keyDiff: primedicModels[0].keyDiff,
     bestFor: primedicModels[0].bestFor,
     accent: "border-red-500/50 text-red-400",
@@ -38,6 +40,7 @@ const cards: Card[] = [
     id: primedicModels[1].id,
     name: primedicModels[1].name,
     price: primedicModels[1].price,
+    warrantyYears: primedicModels[1].warrantyYears,
     keyDiff: primedicModels[1].keyDiff,
     bestFor: primedicModels[1].bestFor,
     accent: "border-red-400/70 text-red-300",
@@ -48,6 +51,7 @@ const cards: Card[] = [
     id: primedicModels[2].id,
     name: primedicModels[2].name,
     price: primedicModels[2].price,
+    warrantyYears: primedicModels[2].warrantyYears,
     keyDiff: primedicModels[2].keyDiff,
     bestFor: primedicModels[2].bestFor,
     accent: "border-yellow-400/70 text-yellow-300",
@@ -57,6 +61,7 @@ const cards: Card[] = [
     id: yuwellGpsAed.id,
     name: yuwellGpsAed.name,
     price: yuwellGpsAed.price,
+    warrantyYears: yuwellGpsAed.warrantyYears,
     keyDiff: yuwellGpsAed.keyDiff,
     bestFor: yuwellGpsAed.bestFor,
     accent: "border-red-500/50 text-red-400",
@@ -98,8 +103,9 @@ export function PrimedicLineup() {
             </div>
             <div className="mt-2 font-bold text-lg text-white">{c.name}</div>
             <div className="text-3xl font-black text-yellow-400 mt-1">
-              ฿{c.price.toLocaleString()}
+              {c.price === null ? <span className="text-2xl">{PRICE_ON_REQUEST}</span> : `฿${c.price.toLocaleString()}`}
             </div>
+            <div className="text-xs text-gray-400 mt-1">รับประกันตัวเครื่อง {c.warrantyYears} ปี</div>
 
             {/* The single distinguishing feature, made loud */}
             <div className="mt-3 rounded-lg bg-gray-950 border border-gray-800 px-3 py-2.5">

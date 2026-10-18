@@ -1,8 +1,7 @@
 import { LINE_OA_ID } from "./line";
-import { consumableLifetimeText, primedicModels } from "./primedic";
+import { consumableLifetimeText, primedicModels, warrantyLine } from "./primedic";
 import { products } from "./products";
-import { SAFETY_PREMIUM_PRICING } from "./packages";
-import { MACHINE_TRAINING_PERK } from "./promotion";
+import { TRAINING_POLICY } from "./promotion";
 import { subscriptionMatrix, subscriptionTiers } from "./subscription";
 import { PRIMEDIC_REGULATORY, adLicensesLine, fdaLine } from "./regulatory";
 
@@ -41,7 +40,7 @@ export const faqs: FAQ[] = [
     // cheaper Y0/Y8 so "how much is an AED" never reads as "from ฿59,999".
     question: "AED Yuwell Y2 ราคาเท่าไหร่?",
     answer:
-      `Yuwell Y2 (รุ่นเรือธง จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ยังไม่รวม VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท และ Y8 (มีเซ็นเซอร์ CPR feedback) ${baht(modelPrice("primedic-y8"))} บาท ทุกเครื่องมาพร้อม${MACHINE_TRAINING_PERK} และออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
+      `Yuwell Y2 (รุ่นเรือธง จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ยังไม่รวม VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท และ Y8 (มีเซ็นเซอร์ CPR feedback) ${baht(modelPrice("primedic-y8"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
   },
   {
     // เจี่ยรักษา is the seller and ฆพ. holder — the importer/registrant is Yuwell
@@ -94,7 +93,7 @@ export const faqs: FAQ[] = [
   {
     question: "มีบริการหลังการขายไหม?",
     answer:
-      `มีครับ — ทีมเทคนิคไทยให้คำปรึกษาและดูแลตลอดอายุการใช้งาน จัดส่งทั่วประเทศพร้อมบริการติดตั้งสาธิตการใช้งาน สอบถามเงื่อนไขการรับประกันและบริการของแต่ละรุ่นได้ที่ทีมขาย LINE ${LINE_OA_ID}`,
+      `มีครับ — ทีมเทคนิคไทยให้คำปรึกษาและดูแลตลอดอายุการใช้งาน จัดส่งทั่วประเทศพร้อมบริการติดตั้งสาธิตการใช้งาน ${warrantyLine} สอบถามรายละเอียดเงื่อนไขได้ที่ทีมขาย LINE ${LINE_OA_ID}`,
   },
   {
     question: "เครื่อง AED ควรติดตั้งที่ไหนบ้าง?",
@@ -140,7 +139,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "แพ็กเกจของท่านรวมอะไรบ้าง?",
         answer:
-          `ทุกแพ็กเกจรวมเครื่อง AED และบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — การอบรม: Safety Premium รวมอบรม CPR & AED สอนถึงที่ ส่วน Safety Care อบรมพนักงานตามระดับบริการ (${tierTraining}; ${tiersWithoutTraining} ไม่รวมอบรม) — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ทุกระดับ ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (เงินสด ฿${baht(SAFETY_PREMIUM_PRICING.gpsCash)}) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร`,
+          `ทุกแพ็กเกจรวมเครื่อง AED และบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — การอบรม: Safety Premium รวมอบรม CPR & AED สอนถึงที่ ส่วน Safety Care อบรมพนักงานตามระดับบริการ (${tierTraining}; ${tiersWithoutTraining} ไม่รวมอบรม) — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ทุกระดับ ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (สอบถามราคา) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร`,
       },
       {
         question: "ทำไมต้องมี GPS คู่กับ AED?",
@@ -197,7 +196,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "มีประกันหรือการรับประกันอะไรบ้าง?",
         answer:
-          "เครื่อง AED ใหม่ทุกเครื่องมีการรับประกันจากผู้ผลิต ส่วนบริการของเราให้การรับประกันความพึงพอใจในบริการติดตั้งและฝึกอบรม รวมถึงมีการรับประกันความเสียหายจากภัยธรรมชาติหรือการโจรกรรมในบางแพ็กเกจ (โปรดดูรายละเอียดในสัญญา)",
+          `เครื่อง AED ใหม่ทุกเครื่อง${warrantyLine} ส่วนบริการของเราให้การรับประกันความพึงพอใจในบริการติดตั้งและฝึกอบรม รวมถึงมีการรับประกันความเสียหายจากภัยธรรมชาติหรือการโจรกรรมในบางแพ็กเกจ (โปรดดูรายละเอียดในสัญญา)`,
       },
       faqSwitchPackage,
     ],
