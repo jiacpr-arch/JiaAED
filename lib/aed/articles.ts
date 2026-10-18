@@ -1,6 +1,6 @@
 import { LINE_OA_ID } from "./line";
 import { CONSUMABLE_LIFETIME_YEARS, primedicModels } from "./primedic";
-import { RENTAL_PRICES, rentToOwnBreakdowns, rentToOwnTotal } from "./rental";
+import { RENTAL_PRICES, RENTAL_TRAINING, rentToOwnBreakdowns, rentToOwnTotal } from "./rental";
 import { PRIMEDIC_REGULATORY, thaiDate } from "./regulatory";
 export type Article = {
   slug: string;
@@ -233,8 +233,9 @@ AHA Guideline 2010/2015
 เหมาะกับองค์กรที่ไม่อยากลงทุนก้อนใหญ่ หรืออยากให้มีคนดูแลเครื่องแทน:
 
 - รายเดือน (ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน) — ${baht(RENTAL_PRICES.flexMonthly)} บาท/เดือน เหมาะกับไซต์งานชั่วคราวหรือทดลองใช้
-- รายปี — ${baht(RENTAL_PRICES.annual)} บาท/ปี (เฉลี่ย ~${baht(Math.round(RENTAL_PRICES.annual / 12 / 10) * 10)} บาท/เดือน) รวมติดตั้ง อบรม เช็กสภาพประจำปี และเครื่องสำรองถ้าเสีย
+- รายปี — ${baht(RENTAL_PRICES.annual)} บาท/ปี (เฉลี่ย ~${baht(Math.round(RENTAL_PRICES.annual / 12 / 10) * 10)} บาท/เดือน) รวมติดตั้ง เช็กสภาพประจำปี และเครื่องสำรองถ้าเสีย
 - รายวันสำหรับอีเวนต์ — เริ่ม ${baht(RENTAL_PRICES.eventFirstDay)} บาท/วันแรก
+- แผนรายเดือนและรายปี: ${RENTAL_TRAINING.included} · ${RENTAL_TRAINING.onSite}
 
 จุดแข็งของการเช่าคือความพร้อมใช้เป็นความรับผิดชอบของผู้ให้เช่า — แผ่น/แบตหมดอายุมีคนเปลี่ยนให้ และหากใช้ช่วยชีวิตจริง เปลี่ยนแผ่นให้ฟรี
 

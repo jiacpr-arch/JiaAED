@@ -92,7 +92,7 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
 
 // Tier names that include a matrix feature, e.g. "PRO/ELITE" — so the
 // comparison below can't claim more than the matrix promises.
-function tiersWith(feature: string): string {
+export function tiersWith(feature: string): string {
   const row = subscriptionMatrix.find((r) => r.feature === feature);
   return subscriptionTiers
     .filter((t) => row && row.values[t.id] !== false)
