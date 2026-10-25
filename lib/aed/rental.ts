@@ -8,6 +8,7 @@ import {
 } from "./rental-prices";
 import { consumableLifetimeText, primedicModels } from "./primedic";
 import { RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE, RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
+import { ONLINE_CPR_SEATS_FEATURE, subscriptionMatrix, subscriptionTiers } from "./subscription";
 import {
   faqRentToOwnVsRental,
   faqMidContractCancel,
@@ -351,6 +352,11 @@ export const rentalFaqCategories: FaqCategory[] = [
 // สร้างจากข้อมูลแผนจริงด้านบนทั้งหมด — แก้ราคา/เงื่อนไขที่ data แล้ว prompt
 // ของทั้งสองบอทอัปเดตตามเอง ห้ามพิมพ์ตัวเลขซ้ำในไฟล์ prompt.
 
+function tierExtras(): string {
+  const seats = subscriptionMatrix.find((r) => r.feature === ONLINE_CPR_SEATS_FEATURE)!;
+  return subscriptionTiers.map((t) => `• ${t.name}: ${ONLINE_CPR_SEATS_FEATURE} ${seats.values[t.id]} + Pocket mask ติดเครื่อง`).join("\n");
+}
+
 export function rentalKnowledgeBlock(): string {
   const plans = rentalPlans
     .map(
@@ -394,6 +400,10 @@ ${RENTAL_EXPENSE_NOTE_LOCAL}
 ${rto}
 ${RENT_TO_OWN_ELIGIBILITY} — ลูกค้าบุคคลธรรมดา/ร้านค้า ให้ส่งต่อทีมขายพิจารณาเงื่อนไข ห้ามยืนยันมัดจำ 2 งวดเอง
 ${RENT_TO_OWN_OWNERSHIP_NOTE}
+
+### เช่ารายปีได้มากกว่าเครื่อง (จุดขายเทียบผู้ให้เช่าทั่วไป)
+${tierExtras()}
+คอร์สปฐมพยาบาลออนไลน์ firstaid.morroo.com เรียนฟรีทุกคน · ตู้/ป้าย/อุปกรณ์เสริมดูที่ ads.jia1669.com
 
 ### FAQ เรื่องเช่า
 ${faq}`;

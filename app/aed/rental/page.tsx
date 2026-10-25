@@ -16,6 +16,7 @@ import {
 } from "@/lib/aed/rental";
 import { subscriptionMatrix, subscriptionTiers } from "@/lib/aed/subscription";
 import { primedicModels } from "@/lib/aed/primedic";
+import { SISTER_SITES, rentalAdvantages } from "@/lib/aed/ecosystem";
 import { RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE } from "@/lib/aed/packages";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
@@ -133,7 +134,17 @@ export default function RentalPage() {
       <p className="market-note">ราคายังไม่รวม VAT · มัดจำ {plan("rent-annual").deposit} · <Link href="/aed/subscription" className="market-text-link">ดูตารางเทียบระดับบริการ ↗</Link></p>
     </div></section>
 
-    <section id="own" className="market-section market-section-cream"><div className="market-container">
+    <section id="why" className="market-section market-section-cream"><div className="market-container">
+      <div className="market-section-head"><div><p className="market-eyebrow">MORE THAN A DEVICE</p><h2>เช่ากับเรา<br /><em>ได้มากกว่าเครื่อง.</em></h2></div><p>เครื่องจะช่วยชีวิตได้ ต้องมีคนกล้าใช้ เราเป็นทั้งศูนย์อบรม คอร์สออนไลน์ และร้านอุปกรณ์ในเครือเดียวกัน ทีมของคุณจึงพร้อมตั้งแต่วันแรก</p></div>
+      <div className="market-table-wrap"><table className="market-table"><thead><tr><th scope="col">สิ่งที่ได้</th><th scope="col">เช่ากับ JiaAED</th><th scope="col">เช่าเครื่องทั่วไป</th></tr></thead><tbody>{rentalAdvantages.map((r) => <tr key={r.item}><th scope="row">{r.item}</th><td>{r.jiaaed}</td><td>{r.plain}</td></tr>)}</tbody></table></div>
+      <div className="market-feature-grid market-rental-extras">
+        <a className="market-feature" href={SISTER_SITES.onlineCpr.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_cpr"><b>{SISTER_SITES.onlineCpr.label} ↗</b><p>พนักงานเรียนผ่านมือถือ รับใบประกาศภาคทฤษฎี ทุกแผนรายปีได้สิทธิ์เรียนตามระดับ</p></a>
+        <a className="market-feature" href={SISTER_SITES.onlineFirstAid.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_firstaid"><b>{SISTER_SITES.onlineFirstAid.label} ↗</b><p>24 บทเรียนสั้น สถานการณ์จำลอง 40 แบบ ส่งลิงก์ให้ทั้งองค์กรได้เลย</p></a>
+        <a className="market-feature" href={SISTER_SITES.accessories.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_accessories"><b>{SISTER_SITES.accessories.label} ↗</b><p>ตู้ติดผนัง ป้ายจุดติดตั้ง แผ่นและแบตสำรอง AMBU และชุด pocket mask</p></a>
+      </div>
+    </div></section>
+
+    <section id="own" className="market-section"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">③ อยากเป็นเจ้าของ</p><h2>ผ่อนครบ<br /><em>แล้วเป็นเจ้าของ.</em></h2></div><p>สำหรับองค์กรที่อยากได้เครื่องเป็นทรัพย์สินของตัวเอง รู้ยอดรวมตลอดสัญญาก่อนตัดสินใจ</p></div>
       <div className="market-grid-3">
         {rentToOwnBreakdowns.map((p) => <article className="market-card" key={p.packageId}><div className="market-card-body"><span className="market-card-kicker">เช่าซื้อ</span><h3>{p.model}</h3><div className="market-price"><small>เดือนละ</small><strong>{thb(p.monthly)}</strong><span>× {p.months} เดือน</span></div><ul><li>มัดจำ {thb(p.deposit)} (นิติบุคคล)</li><li>รวมทั้งสัญญา {thb(rentToOwnTotal(p))} · {p.cashPriceLabel}</li><li>ผ่อนครบ เครื่องเป็นของท่าน</li></ul><LineLink cta={`rent_own_${p.packageId}`} product={p.packageId}>ขอเงื่อนไขเช่าซื้อ</LineLink></div></article>)}
@@ -142,8 +153,8 @@ export default function RentalPage() {
       <p className="market-note">{RENT_TO_OWN_ELIGIBILITY} · {RENT_TO_OWN_OWNERSHIP_NOTE} · เมื่อชำระครบสัญญา เครื่องเป็นของผู้เช่าซื้อ เงื่อนไขบริการและภาษีให้ยืนยันในใบเสนอราคา</p>
     </div></section>
 
-    <section className="market-section"><div className="market-container market-faq"><div><p className="market-eyebrow">BEFORE YOU DECIDE</p><h2>คำถามเรื่องการเช่า.</h2></div><div>{rentalFaqs.map((f) => <details key={f.question}><summary>{f.question}</summary><p>{f.answer}</p></details>)}</div></div></section>
-    <section className="market-section market-section-cream"><div className="market-container market-form-section"><div><p className="market-eyebrow">LET’S PLAN</p><h2>บอกวันและสถานที่<br />ทีมงานช่วยเลือกแผน.</h2><p>ฝากเบอร์ให้ติดต่อกลับ หรือส่งรายละเอียดหน้างานผ่านแบบฟอร์ม</p><div className="market-mini-nav"><Link href="/quote">กรอกแบบฟอร์มละเอียด ↗</Link><Link href="/aed">เทียบรุ่นสำหรับซื้อ</Link></div></div><MiniLeadForm variant="rental_redesign" theme="light" title="ฝากเบอร์ ทีมงานโทรกลับ" /></div></section>
+    <section className="market-section market-section-cream"><div className="market-container market-faq"><div><p className="market-eyebrow">BEFORE YOU DECIDE</p><h2>คำถามเรื่องการเช่า.</h2></div><div>{rentalFaqs.map((f) => <details key={f.question}><summary>{f.question}</summary><p>{f.answer}</p></details>)}</div></div></section>
+    <section className="market-section"><div className="market-container market-form-section"><div><p className="market-eyebrow">LET’S PLAN</p><h2>บอกวันและสถานที่<br />ทีมงานช่วยเลือกแผน.</h2><p>ฝากเบอร์ให้ติดต่อกลับ หรือส่งรายละเอียดหน้างานผ่านแบบฟอร์ม</p><div className="market-mini-nav"><Link href="/quote">กรอกแบบฟอร์มละเอียด ↗</Link><Link href="/aed">เทียบรุ่นสำหรับซื้อ</Link></div></div><MiniLeadForm variant="rental_redesign" theme="light" title="ฝากเบอร์ ทีมงานโทรกลับ" /></div></section>
     <MarketLead title="พร้อมเช่า AED สำหรับหน้างาน?" description="ทีมงานช่วยสรุปแผน ราคา มัดจำ และค่าใช้จ่ายรวมก่อนตัดสินใจ" />
   </MarketPage>;
 }

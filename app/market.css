@@ -90,3 +90,4 @@
 .market-tabs{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--m-line)}.market-tabs-inner{display:grid;grid-template-columns:repeat(3,1fr)}.market-tabs a{display:flex;flex-direction:column;gap:2px;padding:16px 18px;border-left:1px solid var(--m-line)}.market-tabs a:last-child{border-right:1px solid var(--m-line)}.market-tabs a:hover{background:var(--m-cream)}.market-tabs small{font-size:11px;font-weight:700;color:#63816a}.market-tabs b{font-size:15px;color:var(--m-ink)}.market-tabs span{font-size:12px;color:#c6503c;font-weight:700}.market-rental-extras{margin-top:18px}#short,#yearly,#own{scroll-margin-top:90px}
 @media(max-width:700px){.market-tabs a{padding:10px 8px}.market-tabs b{font-size:12px}.market-tabs small,.market-tabs span{font-size:10px}}
 @media(max-width:700px){.market-card:not(:has(.market-card-photo)){display:flex}}
+.market-feature-grid a.market-feature:hover{border-color:#81a68b}
