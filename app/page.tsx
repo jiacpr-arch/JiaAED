@@ -9,7 +9,7 @@ import { primedicModels } from "@/lib/aed/primedic";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { subscriptionMatrix, subscriptionTiers } from "@/lib/aed/subscription";
-import { RENTAL_PRICES } from "@/lib/aed/rental-prices";
+import { RENTAL_PRICES, THREE_YEAR_DISCOUNT } from "@/lib/aed/rental-prices";
 import { RENT_TO_OWN_TERMS } from "@/lib/aed/packages";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 
@@ -37,14 +37,14 @@ const features: Record<string, string[]> = {
 // for customers who hesitate). Prices and inclusions come from ./subscription.ts.
 const standardMonthly = subscriptionTiers[0].pricePerMonth;
 const tierImages: Record<string, string> = {
-  "managed-basic": "/images/primedic-y8-open.png",
+  "managed-basic": "/images/yuwell-gps-aed.webp",
   "managed-pro": "/images/aed-gps-tracking.png",
   "managed-elite": "/images/cloud-dashboard.png",
 };
 const tierBullets = (id: (typeof subscriptionTiers)[number]["id"]) =>
   subscriptionMatrix
     .filter((row) => row.values[id] !== false)
-    .slice(0, 5)
+    .slice(0, 6)
     .map((row) => (row.values[id] === true ? row.feature : `${row.feature.replace(/ \(ครั้ง\/ปี\)$/, "")}: ${row.values[id]}`));
 const rtoY8 = RENT_TO_OWN_TERMS["pkg-start-y8"];
 
@@ -62,7 +62,7 @@ export default function Home() {
     <ProductStructuredData include="homepage" />
     <FaqStructuredData items={homeFaqs.map((f) => ({ question: f.question, answer: f.link ? `${f.answer} ${f.link.label}` : f.answer }))} />
     <MarketHero eyebrow="เช่า AED สำหรับองค์กรและพื้นที่สาธารณะ" title={"เช่า AED\nพร้อมใช้ ไม่ต้องดูแลเอง."} description="ไม่ต้องจ่ายก้อนใหญ่ ทีม JiaAED ติดตั้ง ดูแลแบตและแผ่น มีเครื่องสำรองถ้าเสีย และอบรม CPR ให้ทีมของคุณตลอดสัญญา" image="/images/jiaaed-hero-2026.png">
-      <MarketButton href="#rental" lineCta="hero_rental">ดูแผนเช่า</MarketButton>
+      <MarketButton href="/aed/rental#choose" lineCta="hero_rental">เลือกระยะเวลาเช่า</MarketButton>
       <MarketButton href="/quote" lineCta="hero_quote" secondary>ขอใบเสนอราคา</MarketButton>
       <MarketButton href={LINE_OA} lineCta="hero_line" secondary>ทัก LINE {LINE_DISPLAY_ID}</MarketButton>
       <p className="market-hero-price">เช่าเริ่ม <strong>฿{standardMonthly.toLocaleString()}</strong>/เดือน · ซื้อขาดเริ่ม ฿{Math.min(...primedicModels.map((m) => m.price)).toLocaleString()} ก่อน VAT</p>
@@ -73,12 +73,12 @@ export default function Home() {
     </div></div>
     <section className="market-section market-section-cream" id="rental"><div className="market-container">
       <PriceViewTracker targetId="rental" />
-      <div className="market-section-head"><div><p className="market-eyebrow">RENT &amp; RELAX</p><h2>เช่า 3 ระดับ<br /><em>เลือกตามความพร้อมที่ต้องการ.</em></h2></div><p>ทุกระดับรวมเครื่อง ติดตั้ง เปลี่ยนแบตและแผ่นตามอายุ เครื่องสำรองถ้าเสีย และอบรม CPR สัญญา 1 ปี มัดจำคืนได้</p></div>
+      <div className="market-section-head"><div><p className="market-eyebrow">RENT &amp; RELAX</p><h2>เช่า 3 ระดับ<br /><em>เลือกตามความพร้อมที่ต้องการ.</em></h2></div><p>ทุกระดับใช้เครื่อง Yuwell GPS รวมติดตั้ง เปลี่ยนแบตและแผ่นตามอายุ เครื่องสำรองถ้าเสีย และอบรม CPR สัญญา 1 ปี มัดจำคืนได้</p></div>
       <div className="market-grid-3">{subscriptionTiers.map((t, i) => <article className={`market-card ${t.badge ? "market-card-featured" : ""}`} key={t.id}>
         <div className="market-card-photo"><Image src={tierImages[t.id]} alt={`เช่า AED ระดับ ${t.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{t.badge && <span className="market-card-tag">{t.badge}</span>}</div>
-        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {t.name}</span><h3>{t.name}</h3><p>เหมาะกับ {t.bestFor}</p><div className="market-price"><small>{i === 0 ? "เฉลี่ย" : "เดือนละ"}</small><strong>฿{t.pricePerMonth.toLocaleString()}</strong><span>/เดือน ก่อน VAT</span></div>{t.specialNote && <p className="market-note">{t.specialNote}</p>}<ul>{tierBullets(t.id).map((f) => <li key={f}>{f}</li>)}</ul><Link href={i === 0 ? "/aed/rental" : "/aed/subscription"} className="market-card-link" data-cta={`home_tier_${t.id}`}>ดูรายละเอียดแผนนี้ <span aria-hidden="true">↗</span></Link></div>
+        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {t.name}</span><h3>{t.name}</h3><p>เหมาะกับ {t.bestFor}</p><div className="market-price"><small>{i === 0 ? "เฉลี่ย" : "เดือนละ"}</small><strong>฿{t.pricePerMonth.toLocaleString()}</strong><span>/เดือน ก่อน VAT</span></div>{t.specialNote && <p className="market-note">{t.specialNote}</p>}<ul>{tierBullets(t.id).map((f) => <li key={f}>{f}</li>)}</ul><Link href="/aed/rental#yearly" className="market-card-link" data-cta={`home_tier_${t.id}`}>ดูรายละเอียดแผนนี้ <span aria-hidden="true">↗</span></Link></div>
       </article>)}</div>
-      <div className="market-mini-nav"><Link href="/aed/rental" data-cta="home_rental_event">ใช้งานอีเวนต์ ฿{RENTAL_PRICES.eventFirstDay.toLocaleString()}/วัน</Link><Link href="/aed/rental" data-cta="home_rental_flex">รายเดือน ฿{RENTAL_PRICES.flexMonthly.toLocaleString()} (ขั้นต่ำ {RENTAL_PRICES.flexMinMonths} เดือน)</Link><Link href="/aed/rental#rent-to-own" data-cta="home_rent_to_own">อยากเป็นเจ้าของ? เช่าซื้อ มัดจำ ฿{rtoY8.deposit.toLocaleString()} + ฿{rtoY8.monthly.toLocaleString()}/เดือน</Link></div>
+      <div className="market-mini-nav"><Link href="/aed/rental#short" data-cta="home_shortcut_short">ใช้ชั่วคราว: รายวัน ฿{RENTAL_PRICES.eventFirstDay.toLocaleString()} · สัปดาห์ ฿{RENTAL_PRICES.eventWeekly.toLocaleString()} · เดือน ฿{RENTAL_PRICES.oneMonth.toLocaleString()}</Link><Link href="/aed/rental#yearly" data-cta="home_shortcut_yearly">สัญญา 3 ปี ลด {Math.round(THREE_YEAR_DISCOUNT * 100)}%</Link><Link href="/aed/rental#own" data-cta="home_shortcut_own">อยากเป็นเจ้าของ? เช่าซื้อ ฿{rtoY8.monthly.toLocaleString()}/เดือน</Link></div>
     </div></section>
     <section className="market-section" id="models"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">PREFER TO OWN?</p><h2>อยากเป็นเจ้าของเครื่อง?<br /><em>ซื้อขาดก็ได้.</em></h2></div><p>สำหรับองค์กรที่มีงบลงทุนและดูแลเครื่องเองได้ ราคาทุกรุ่นแสดงชัด พร้อมจัดส่ง ติดตั้ง และอบรมการใช้งาน</p></div>

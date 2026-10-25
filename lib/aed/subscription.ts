@@ -4,12 +4,14 @@
 //
 // Owner, 25 ต.ค. 2026: one price ladder instead of a separate ANNUAL plan and a
 // BASIC tier that cost more but included less. STANDARD *is* the annual rental
-// plan (./rental.ts RENTAL_PRICES.annual, billed yearly, no GPS); PRO adds GPS,
-// alerts and on-site training. The id stays "managed-basic" because it is a
+// plan (./rental.ts RENTAL_PRICES.annual, billed yearly). Every rental unit is a
+// Yuwell GPS AED (owner: the rental fleet is GPS units only, Y0 isn't rented),
+// so tiers differ by service — PRO adds alerts and on-site check/training,
+// ELITE the dashboard, cabinet and a 24-hour swap. The id stays "managed-basic" because it is a
 // stored lead/product id (lead-validation allowlist, existing lead rows).
 
 import { SAFETY_PREMIUM_PRICING } from "./packages";
-import { RENTAL_PRICES } from "./rental-prices";
+import { RENTAL_PRICES, STANDARD_MONTHLY, THREE_YEAR_DISCOUNT, round10 } from "./rental-prices";
 
 export type SubscriptionTierId = "managed-basic" | "managed-pro" | "managed-elite";
 
@@ -17,6 +19,7 @@ export type SubscriptionTier = {
   id: SubscriptionTierId;
   name: string; // "STANDARD"
   pricePerMonth: number; // monthly equivalent, e.g. 1830
+  threeYearPerMonth: number; // same tier on a 3-year contract
   specialNote: string | null;
   bestFor: string;
   badge: string | null;
@@ -27,15 +30,19 @@ export const subscriptionTiers: SubscriptionTier[] = [
     id: "managed-basic",
     name: "STANDARD",
     // Monthly equivalent of the annual plan, rounded to ฿10 like the rental card.
-    pricePerMonth: Math.round(RENTAL_PRICES.annual / 12 / 10) * 10,
-    specialNote: `ชำระรายปี ฿${RENTAL_PRICES.annual.toLocaleString("en-US")} · เครื่องรุ่นไม่มี GPS`,
+    pricePerMonth: STANDARD_MONTHLY,
+    threeYearPerMonth: round10(STANDARD_MONTHLY * (1 - THREE_YEAR_DISCOUNT)),
+    specialNote: `ชำระรายปี ฿${RENTAL_PRICES.annual.toLocaleString("en-US")}`,
     bestFor: "SME · ร้านค้า · ฟิตเนส · คอนโด",
     badge: null,
   },
   {
     id: "managed-pro",
     name: "PRO",
-    pricePerMonth: 3990,
+    // Owner, 25 ต.ค. 2026: down from ฿3,990 to the market rate (~฿3,000/เดือน)
+    // so the step up from STANDARD is easy to take.
+    pricePerMonth: 2990,
+    threeYearPerMonth: round10(2990 * (1 - THREE_YEAR_DISCOUNT)),
     specialNote: null,
     bestFor: "โรงเรียน · โรงงาน · สำนักงาน",
     badge: "คุ้มค่าที่สุด",
@@ -43,7 +50,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
   {
     id: "managed-elite",
     name: "ELITE",
-    pricePerMonth: 4990,
+    pricePerMonth: 3990, // was ฿4,990 (owner, 25 ต.ค. 2026)
+    threeYearPerMonth: round10(3990 * (1 - THREE_YEAR_DISCOUNT)),
     specialNote: null,
     bestFor: "องค์กรขนาดใหญ่ / หลายสาขา",
     badge: null,
@@ -62,7 +70,7 @@ export type FeatureMatrixRow = {
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
     feature: "Yuwell GPS ติดตามตำแหน่ง",
-    values: { "managed-basic": false, "managed-pro": true, "managed-elite": true },
+    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   {
     feature: "เปลี่ยนเครื่องเมื่อเสีย (SLA)",

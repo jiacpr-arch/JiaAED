@@ -40,3 +40,24 @@ describe("rentalFaqCategories", () => {
     expect(rentalFaqCategories[1].category).toContain("เช่าซื้อ");
   });
 });
+
+describe("rental price ladder (owner, 25 ต.ค. 2026)", () => {
+  it("a longer rental never costs less in total, and always less per day", async () => {
+    const { RENTAL_PRICES: P } = await import("./rental-prices");
+    const ladder: [string, number, number][] = [
+      ["1 วัน", P.eventFirstDay, 1],
+      ["3 วัน", P.eventWeekend, 3],
+      ["7 วัน", P.eventWeekly, 7],
+      ["14 วัน", P.eventFortnight, 14],
+      ["1 เดือน", P.oneMonth, 30],
+      [`FLEX ${P.flexMinMonths} เดือน`, P.flexMonthly * P.flexMinMonths, 30 * P.flexMinMonths],
+      ["รายปี", P.annual, 365],
+    ];
+    for (let i = 1; i < ladder.length; i++) {
+      const [prevName, prevTotal, prevDays] = ladder[i - 1];
+      const [name, total, days] = ladder[i];
+      expect(total, `${name} total vs ${prevName}`).toBeGreaterThan(prevTotal);
+      expect(total / days, `${name} per day vs ${prevName}`).toBeLessThan(prevTotal / prevDays);
+    }
+  });
+});

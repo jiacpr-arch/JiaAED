@@ -13,7 +13,10 @@ describe("rentalKnowledgeBlock", () => {
     expect(block).toContain("แผนรายปี (STANDARD)");
     expect(block).toContain("฿22,000");
     expect(block).toContain("แผนยืดหยุ่น (FLEX)");
-    expect(block).toContain("฿1,990");
+    expect(block).toContain("฿2,990");
+    expect(block).toContain("แผนรายเดือน (MONTH)");
+    expect(block).toContain("฿7,900");
+    expect(block).toContain("สัญญา 3 ปี");
     expect(block).toContain("แผนอีเวนต์ (EVENT)");
   });
 

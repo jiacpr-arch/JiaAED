@@ -8,7 +8,7 @@
 
 import { PRICE_ON_REQUEST, primedicModels } from "./primedic";
 import { PACKAGE_TRAINING_PERK } from "./promotion";
-import { RENTAL_PRICES } from "./rental-prices";
+import { STANDARD_MONTHLY } from "./rental-prices";
 
 const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 
@@ -90,7 +90,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
     // Monthly price = the ดูแลครบ subscription tiers (STANDARD/PRO/ELITE).
     // STANDARD = the annual rental plan, shown as its monthly equivalent.
-    priceLabel: `เริ่ม ${thb(Math.round(RENTAL_PRICES.annual / 12 / 10) * 10)}/เดือน`,
+    priceLabel: `เริ่ม ${thb(STANDARD_MONTHLY)}/เดือน`,
     priceNote: `มัดจำ ${thb(SAFETY_CARE_DEPOSIT)} (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ STANDARD/PRO/ELITE`,
     deposit: `${thb(SAFETY_CARE_DEPOSIT)} (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)`,
     features: [

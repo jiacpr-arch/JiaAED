@@ -25,7 +25,7 @@ import { LINE_OA } from "@/lib/aed/line";
 export const metadata: Metadata = {
   title: `บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿${subscriptionTiers[0].pricePerMonth.toLocaleString("en-US")}/เดือน`,
   description:
-    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS (PRO/ELITE), Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ STANDARD / PRO / ELITE",
+    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS ทุกระดับ, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ STANDARD / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
   openGraph: {
     title: "บริการดูแล AED ครบวงจร (Safety Care) | JiaAED",
