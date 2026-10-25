@@ -9,12 +9,11 @@
 | ตัวแปร | ตัวอย่าง | จำเป็น |
 | --- | --- | --- |
 | `NEXT_PUBLIC_GA4_ID` | `G-XXXXXXXXXX` | สำหรับ GA4 analytics |
-| `NEXT_PUBLIC_GADS_ID` | `AW-873507669` | Google Ads conversion ID |
-| `NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL` | `-UU0CKTs79gcENXWwqAD` | label `Lead Form Submit` (ขีดกลางนำหน้าเป็นส่วนหนึ่งของ label) |
-| `NEXT_PUBLIC_GADS_CONVERSION_LABEL` | `M8fPCKHs79gcENXWwqAD` | label `LINE Click` — **ต้องตั้งเป็น Secondary ใน Google Ads** (§3) |
+> **Google Ads tag (ต.ค. 2026):** ใช้ `AW-10780588709` (บัญชี 461-594-5872 / Jia1669.com) และ label ชุดเดียวกับ jia1669.com —
+> ไลน์ `psuVCOSSpfcCEKX1ypQo` · โทร `i40LCO2SpfcCEKX1ypQo` · แชทกับเรา (ฟอร์ม) `ePoiCMySpfcCEKX1ypQo` · มูลค่า 494.8 บาท/ครั้ง
+> ค่าเหล่านี้ hard-code ใน `lib/aed/google-ads-tag.ts` — `NEXT_PUBLIC_GADS_*` **ไม่ถูกใช้แล้ว** ห้ามสร้าง conversion action ใหม่
+> (หัวข้อ §3/§7 ด้านล่างที่พูดถึง AW-873507669 / Lead Form Submit / LINE Click เป็นของเดิม)
 
-ทั้ง 3 ตัวมี **ค่า default อยู่ใน `lib/aed/google-ads-tag.ts` แล้ว** — ตั้ง env เพิ่มได้
-ถ้าอยากสลับบัญชี/label โดยไม่แก้โค้ด (env ชนะ default เสมอ)
 | `NEXT_PUBLIC_SITE_URL` | `https://jiaaed.vercel.app` | ใช้ใน Merchant Center feed |
 | `RESEND_API_KEY` | `re_...` | ส่งอีเมลตอบกลับลูกค้า (จาก resend.com) |
 | `RESEND_FROM_EMAIL` | `JiaAED <noreply@jiaaed.com>` | ต้อง verify domain ใน Resend |

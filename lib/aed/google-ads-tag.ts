@@ -1,28 +1,27 @@
-// Google Ads tag config — account 461-594-5872 (Jia1669.com).
+// Google Ads tag config — account 461-594-5872 (Jia1669.com), tag AW-10780588709.
 //
-// Defaults live here (not only in env) so the tag and its conversion labels ship
-// with the build instead of silently no-op'ing when a Vercel env var is missing.
-// Env still wins when set, so the account can be swapped without a code change.
+// These are the SAME conversion actions jia1669.com already reports to (ไลน์ /
+// โทร / แชทกับเรา), so every AED landing page lands its conversions in the one
+// account the AED campaigns run in. Rule: never create new conversion actions —
+// reuse these labels.
 //
-// NOTE: `process.env.NEXT_PUBLIC_*` must stay written out literally — Next.js
-// inlines these at build time by static analysis, so destructuring or dynamic
-// lookup would break the replacement.
+// Hard-coded on purpose (no NEXT_PUBLIC_* override): a leftover Vercel env var
+// pointing at the old AW-873507669 tag would otherwise silently send
+// conversions to the wrong account.
 
-export const GADS_ID = process.env.NEXT_PUBLIC_GADS_ID || "AW-873507669";
+export const GADS_ID = "AW-10780588709";
 
-// "Lead Form Submit" (category: Submit lead form) — the conversion Google Ads
-// bids on. The leading "-" is part of the label itself, not a typo.
-export const GADS_LEAD_CONVERSION_LABEL =
-  process.env.NEXT_PUBLIC_GADS_LEAD_CONVERSION_LABEL || "-UU0CKTs79gcENXWwqAD";
+// "แชทกับเรา" (form/chat submit) — fired when a lead/quote form submits.
+export const GADS_LEAD_CONVERSION_LABEL = "ePoiCMySpfcCEKX1ypQo";
 
-// "LINE Click" (category: Contact) — reported for MEASUREMENT ONLY. This action
-// must stay **Secondary** ("Use for bidding" off) in Google Ads: tapping the LINE
-// button is intent, not a confirmed contact — our own funnel shows LINE taps that
-// never turn into a chat — so bidding on it would train delivery to chase
-// clickers who never convert. Bidding stays on Lead Form Submit + offline
-// Sale Closed.
-export const GADS_LINE_CLICK_CONVERSION_LABEL =
-  process.env.NEXT_PUBLIC_GADS_CONVERSION_LABEL || "M8fPCKHs79gcENXWwqAD";
+// "ไลน์" (LINE click).
+export const GADS_LINE_CLICK_CONVERSION_LABEL = "psuVCOSSpfcCEKX1ypQo";
+
+// "โทร" (tel: link click).
+export const GADS_CALL_CLICK_CONVERSION_LABEL = "i40LCO2SpfcCEKX1ypQo";
+
+// Same per-lead value jia1669.com sends, so values stay comparable across sites.
+export const GADS_LEAD_VALUE_THB = 494.8;
 
 /**
  * Builds the `send_to` value for a gtag conversion event, or null when either
@@ -31,4 +30,11 @@ export const GADS_LINE_CLICK_CONVERSION_LABEL =
 export function gadsSendTo(label: string | undefined | null): string | null {
   if (!GADS_ID || !label) return null;
   return `${GADS_ID}/${label}`;
+}
+
+/** Full gtag `conversion` params for a label, including the lead value. */
+export function gadsConversionParams(label: string): Record<string, unknown> | null {
+  const sendTo = gadsSendTo(label);
+  if (!sendTo) return null;
+  return { send_to: sendTo, value: GADS_LEAD_VALUE_THB, currency: "THB" };
 }

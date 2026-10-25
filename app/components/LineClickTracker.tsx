@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { hasMarketingConsent } from "@/lib/aed/consent";
-import { GADS_LINE_CLICK_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
+import {
+  GADS_CALL_CLICK_CONVERSION_LABEL,
+  GADS_LINE_CLICK_CONVERSION_LABEL,
+  gadsConversionParams,
+} from "@/lib/aed/google-ads-tag";
 import { LineFallbackModal } from "./LineFallbackModal";
 
 declare global {
@@ -36,20 +40,16 @@ export function LineClickTracker() {
           product_id: productId ?? "none",
         });
 
-        // Report to Google as the `LINE Click` conversion — which is kept
-        // **Secondary** ("Use for bidding" off) in Google Ads on purpose. A button
-        // click is intent, not a confirmed friend-add, so letting bidding optimize
-        // on it would train Google to chase clickers who never add. As an
-        // observe-only action it gives visibility without steering delivery;
-        // bidding runs on Lead Form Submit + the offline Sale Closed upload.
+        // Report to Google as the shared "ไลน์" conversion (AW-10780588709) —
+        // the same action jia1669.com uses, so AED campaigns see these clicks.
         if (typeof window.gtag === "function") {
           window.gtag("event", "click_to_line", {
             cta_location: location,
             product_id: productId,
           });
-          const sendTo = gadsSendTo(GADS_LINE_CLICK_CONVERSION_LABEL);
-          if (sendTo) {
-            window.gtag("event", "conversion", { send_to: sendTo });
+          const conv = gadsConversionParams(GADS_LINE_CLICK_CONVERSION_LABEL);
+          if (conv) {
+            window.gtag("event", "conversion", conv);
           }
         }
 
@@ -88,6 +88,17 @@ export function LineClickTracker() {
           setShowLineHelp(true);
         }
         return;
+      }
+
+      // Phone taps → shared "โทร" conversion. No return: a tel link may also
+      // carry data-cta, which the cta_click tracking below still records.
+      const telAnchor = target.closest('a[href^="tel:"]') as HTMLAnchorElement | null;
+      if (telAnchor) {
+        trackEvent("call_click", { location: telAnchor.dataset.cta || "unknown" });
+        if (typeof window.gtag === "function") {
+          const conv = gadsConversionParams(GADS_CALL_CLICK_CONVERSION_LABEL);
+          if (conv) window.gtag("event", "conversion", conv);
+        }
       }
 
       const docAnchor = target.closest("a[data-doc-download]") as HTMLAnchorElement | null;

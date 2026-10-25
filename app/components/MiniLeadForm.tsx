@@ -5,7 +5,7 @@ import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { hasMarketingConsent } from "@/lib/aed/consent";
-import { GADS_LEAD_CONVERSION_LABEL, gadsSendTo } from "@/lib/aed/google-ads-tag";
+import { GADS_LEAD_CONVERSION_LABEL, gadsConversionParams } from "@/lib/aed/google-ads-tag";
 import { LINE_OA } from "@/lib/aed/line";
 
 type State = "idle" | "submitting" | "success" | "error";
@@ -227,9 +227,9 @@ export function MiniLeadForm({
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
         if (typeof gtag === "function") {
           gtag("event", "lead_form_submit", { variant });
-          const sendTo = gadsSendTo(GADS_LEAD_CONVERSION_LABEL);
-          if (sendTo) {
-            gtag("event", "conversion", { send_to: sendTo });
+          const conv = gadsConversionParams(GADS_LEAD_CONVERSION_LABEL);
+          if (conv) {
+            gtag("event", "conversion", conv);
           }
         }
 
