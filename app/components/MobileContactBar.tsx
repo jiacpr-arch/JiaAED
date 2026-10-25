@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { PHONE_HREF } from "@/lib/aed/contact";
 
 /**
@@ -42,7 +42,7 @@ export function MobileContactBar() {
             data-line-cta="mobile_sticky_bar"
             className="flex items-center justify-center gap-1.5 bg-[#06C755] text-white font-bold text-sm px-3 py-3 rounded-full hover:bg-[#05a847] transition-colors"
           >
-            💬 ทัก LINE ตอบทันที
+            💬 LINE {LINE_DISPLAY_ID}
           </a>
           <a
             href={PHONE_HREF}

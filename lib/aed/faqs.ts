@@ -22,8 +22,10 @@ const tierTraining = subscriptionTiers
   .filter((t) => trainingRow.values[t.id] !== false)
   .map((t) => `${t.name} ${trainingRow.values[t.id]}`)
   .join(" · ");
-const tiersWithoutTraining = subscriptionTiers
-  .filter((t) => trainingRow.values[t.id] === false)
+// Tiers whose devices include GPS — STANDARD (the annual plan) has none.
+const gpsRow = subscriptionMatrix.find((r) => r.feature === "Yuwell GPS ติดตามตำแหน่ง")!;
+const gpsTiers = subscriptionTiers
+  .filter((t) => gpsRow.values[t.id] !== false)
   .map((t) => t.name)
   .join("/");
 
@@ -139,7 +141,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "แพ็กเกจของท่านรวมอะไรบ้าง?",
         answer:
-          `ทุกแพ็กเกจรวมเครื่อง AED และบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — การอบรม: Safety Premium รวมอบรม CPR & AED สอนถึงที่ ส่วน Safety Care อบรมพนักงานตามระดับบริการ (${tierTraining}; ${tiersWithoutTraining} ไม่รวมอบรม) — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ทุกระดับ ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (สอบถามราคา) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร`,
+          `ทุกแพ็กเกจรวมเครื่อง AED และบริการหลังการขายตามแต่ละแพ็กเกจ เลือกเพิ่มตู้จัดเก็บมาตรฐานได้ — การอบรม: Safety Premium รวมอบรม CPR & AED สอนถึงที่ ส่วน Safety Care อบรมพนักงานตามระดับบริการ (${tierTraining}) — ระบบติดตาม GPS รวมอยู่ในแพ็กเช่าบริการ Safety Care ระดับ ${gpsTiers} ส่วนแพ็กซื้อขาด Safety Premium เลือกอัปเกรดเป็นรุ่น GPS ในตัวได้ (สอบถามราคา) — Safety Premium และ Safety Start ท่านจะได้เป็นเจ้าของอุปกรณ์ ส่วน Safety Care เป็นการเช่าบริการแบบครบวงจร`,
       },
       {
         question: "ทำไมต้องมี GPS คู่กับ AED?",
@@ -149,7 +151,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "จำเป็นต้องฝึกอบรมเพื่อใช้ AED ไหม?",
         answer:
-          `แนะนำอย่างยิ่ง แม้เครื่อง AED จะออกแบบให้ใช้งานง่ายด้วยคำแนะนำเสียง แต่การฝึกอบรมช่วยเพิ่มความมั่นใจ ลดความตื่นตระหนก และสอนเทคนิค CPR ที่จำเป็นควบคู่กับการใช้เครื่อง ซึ่งช่วยเพิ่มโอกาสรอดชีวิตได้อย่างมีนัยสำคัญ — แพ็กซื้อขาด Safety Premium จึงรวมอบรมสอนถึงที่ และแพ็กเช่าบริการ Safety Care มีอบรมประจำปีในระดับ ${tierTraining} (ระดับอื่นเลือกซื้อคอร์สอบรมเพิ่มได้)`,
+          `แนะนำอย่างยิ่ง แม้เครื่อง AED จะออกแบบให้ใช้งานง่ายด้วยคำแนะนำเสียง แต่การฝึกอบรมช่วยเพิ่มความมั่นใจ ลดความตื่นตระหนก และสอนเทคนิค CPR ที่จำเป็นควบคู่กับการใช้เครื่อง ซึ่งช่วยเพิ่มโอกาสรอดชีวิตได้อย่างมีนัยสำคัญ — แพ็กซื้อขาด Safety Premium จึงรวมอบรมสอนถึงที่ และแพ็กเช่าบริการ Safety Care มีอบรมทุกระดับ — ${tierTraining}`,
       },
     ],
   },
@@ -223,7 +225,7 @@ export const subscriptionFaqCategories: FaqCategory[] = [
       {
         question: "ค่าเช่าเริ่มต้นเท่าไหร่ และสัญญายาวแค่ไหน?",
         answer:
-          "เริ่มต้น 2,990 บาท/เดือน สัญญามาตรฐาน 1 ปี เลือกระดับบริการ BASIC / PRO / ELITE ได้ตามความเหมาะสมขององค์กร",
+          `เริ่มต้นเฉลี่ย ${subscriptionTiers[0].pricePerMonth.toLocaleString("en-US")} บาท/เดือน (STANDARD ${subscriptionTiers[0].specialNote}) สัญญามาตรฐาน 1 ปี เลือกระดับบริการ ${subscriptionTiers.map((t) => t.name).join(" / ")} ได้ตามความเหมาะสมขององค์กร`,
       },
     ],
   },
@@ -263,7 +265,7 @@ export const subscriptionFaqCategories: FaqCategory[] = [
       {
         question: "มีการอบรมพนักงานหรือไม่ บ่อยแค่ไหน?",
         answer:
-          `มี ตามระดับบริการ — ${tierTraining} (${tiersWithoutTraining} ไม่รวมอบรม เลือกซื้อคอร์สเพิ่มได้) สอนโดยวิทยากรที่ผ่าน BLS Instructor Course และระดับ ELITE ยังช่วยสร้างผู้สอนภายในองค์กรได้`,
+          `มี ทุกระดับบริการ — ${tierTraining} สอนโดยวิทยากรที่ผ่าน BLS Instructor Course และระดับ ELITE ยังช่วยสร้างผู้สอนภายในองค์กรได้`,
       },
     ],
   },

@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { hasMarketingConsent } from "@/lib/aed/consent";
 import { GADS_LEAD_CONVERSION_LABEL, gadsConversionParams } from "@/lib/aed/google-ads-tag";
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
 type State = "idle" | "submitting" | "success" | "error";
 
@@ -314,7 +314,7 @@ export function MiniLeadForm({
         data-line-cta={`${variant}_form_alt`}
         className="mt-2 flex items-center justify-center gap-1.5 rounded-xl bg-[#06C755] px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-[#05a847]"
       >
-        💬 คุยกับเราทาง LINE ง่ายกว่า — ตอบทันที
+        💬 ทัก LINE {LINE_DISPLAY_ID} — ตอบทันที
       </a>
 
       <p className={`text-[11px] mt-3 text-center ${t.footer}`}>

@@ -14,17 +14,18 @@ import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 import { SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
-import { tiersWith } from "@/lib/aed/subscription";
+import { subscriptionTiers, tiersWith } from "@/lib/aed/subscription";
 import { trustedBy } from "@/lib/aed/trust";
+import { RENTAL_PRICES } from "@/lib/aed/rental-prices";
 
 export const revalidate = 3600;
 
 import { LINE_OA } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
-  title: "บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿2,990/เดือน",
+  title: `บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿${subscriptionTiers[0].pricePerMonth.toLocaleString("en-US")}/เดือน`,
   description:
-    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ BASIC / PRO / ELITE",
+    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS ทุกระดับ, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ STANDARD / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
   openGraph: {
     title: "บริการดูแล AED ครบวงจร (Safety Care) | JiaAED",
@@ -65,13 +66,13 @@ export default function SubscriptionPage() {
           </div>
           <div className="space-y-3">
             {[
-              { icon: "📡", title: "GPS + Cloud Dashboard", desc: "เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time" },
+              { icon: "📡", title: "GPS + Cloud Dashboard", desc: `เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time (ระดับ ${tiersWith("Yuwell GPS ติดตามตำแหน่ง")})` },
               { icon: "🔔", title: "แจ้งเตือนอัตโนมัติ", desc: "แบตเตอรี่/แผ่นอิเล็กโทรดใกล้หมดอายุ ระบบเตือนก่อนเสมอ" },
               { icon: "♻️", title: "เครื่องสำรองถ้าเสีย", desc: "เปลี่ยนเครื่องให้ภายใน 24–48 ชม. ไม่มีช่วงที่จุดติดตั้งไม่มีเครื่อง" },
               {
                 icon: "🎓",
                 title: "อบรมพนักงานถึงที่",
-                desc: `ทีม BLS Instructor สอนการใช้ AED + CPR ให้ทีมงานของคุณ (ระดับ ${tiersWith("อบรมพนักงาน (ครั้ง/ปี)")})`,
+                desc: "ทีม BLS Instructor สอนการใช้ AED + CPR ให้ทีมงานของคุณ (PRO/ELITE สอนถึงที่ · STANDARD เรียน Mini Course ที่ The Street)",
               },
             ].map((b) => (
               <div key={b.title} className="flex items-start gap-3 rounded-2xl border border-gray-800 bg-gray-900 p-4">
@@ -90,7 +91,7 @@ export default function SubscriptionPage() {
           <FeatureMatrix />
         </div>
         <p className="text-center text-gray-600 text-xs mt-4">
-          * ราคา/เดือน ยังไม่รวม VAT · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
+          * ราคา/เดือน ยังไม่รวม VAT · STANDARD ชำระรายปี ฿{RENTAL_PRICES.annual.toLocaleString()} (เฉลี่ย ~฿{subscriptionTiers[0].pricePerMonth.toLocaleString()}/เดือน) · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
         </p>
       </section>
 

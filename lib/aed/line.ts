@@ -11,6 +11,13 @@
 export const LINE_OA_ID = "@273fzpzs";
 
 /**
+ * Handle shown on buttons and labels (owner, 25 ต.ค. 2026). Every link still
+ * goes to LINE_OA_ID above — this is display text only. Keep LINE_OA_ID for
+ * anything a customer has to type or copy into LINE.
+ */
+export const LINE_DISPLAY_ID = "@jiaaed";
+
+/**
  * Add-friend URL — https://line.me/R/ti/p/{OA_ID}
  *
  * This is the ONLY LINE link that produces a `follow` webhook event, and the

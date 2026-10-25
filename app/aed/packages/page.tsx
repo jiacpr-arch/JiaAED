@@ -17,7 +17,7 @@ import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
 export const metadata: Metadata = {
   title: "แพ็กเกจ AED + GPS — ซื้อขาด / เช่าได้ซื้อ / เช่าบริการ",
@@ -77,7 +77,7 @@ export default function PackagesPage() {
             href="/aed/subscription"
             className="inline-block bg-yellow-400/10 text-yellow-400 font-bold px-6 py-3 rounded-full border border-yellow-400/30 hover:bg-yellow-400/20"
           >
-            ดูแพ็กเกจ ดูแลครบ (BASIC / PRO / ELITE) →
+            ดูแพ็กเกจ ดูแลครบ (STANDARD / PRO / ELITE) →
           </Link>
         </div>
       </section>
@@ -135,7 +135,7 @@ export default function PackagesPage() {
           data-line-cta="packages_footer"
           className="inline-block bg-[#06C755] text-white font-bold text-lg px-10 py-4 rounded-full hover:bg-[#05a847] shadow-2xl shadow-[#06C755]/40"
         >
-          💬 ปรึกษาฟรีทาง LINE
+          💬 ปรึกษาฟรี LINE {LINE_DISPLAY_ID}
         </a>
       </section>
 

@@ -1,4 +1,11 @@
 import { PRIMEDIC_REGULATORY, fdaLine, regLine } from "./regulatory";
+import {
+  RENTAL_CREDIT_NOTE,
+  RENTAL_EXPENSE_NOTE as RENTAL_EXPENSE_NOTE_LOCAL,
+  RENTAL_PRICES,
+  STANDARD_MONTHLY,
+  THREE_YEAR_DISCOUNT as THREE_YEAR_DISCOUNT_LOCAL,
+} from "./rental-prices";
 import { consumableLifetimeText, primedicModels } from "./primedic";
 import { RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
 import {
@@ -16,13 +23,15 @@ const thbRange = (lo: number, hi: number) =>
 // ─── Rental prices & deposits ─────────────────────────────────────────────────
 // Every rental number lives here once; the plan cards, FAQs, comparison table,
 // bots and the price-guide article all read from these constants.
-export const RENTAL_PRICES = {
-  eventFirstDay: 1_500,
-  eventNextDay: 900,
-  annual: 22_000,
-  flexMonthly: 1_990,
-  flexMinMonths: 3,
-} as const;
+// (Defined in ./rental-prices.ts so ./subscription.ts can read it without an
+// import cycle through ./faqs.ts.)
+export {
+  RENTAL_PRICES,
+  RENTAL_CREDIT_NOTE,
+  RENTAL_EXPENSE_NOTE,
+  STANDARD_MONTHLY,
+  THREE_YEAR_DISCOUNT,
+} from "./rental-prices";
 
 // Training on the rental plans, as the owner's rental comparison table and
 // flyers state it (Jun 2026) — a Sep 2026 annual quotation also says on-site
@@ -78,27 +87,46 @@ export const rentalPlans: RentalPlan[] = [
     image: "/images/primedic-kit.png",
   },
   {
+    id: "rent-month",
+    subtitle: "รายเดือน — 1 เดือน",
+    name: "แผนรายเดือน (MONTH)",
+    price: RENTAL_PRICES.oneMonth,
+    unit: "/ เดือน",
+    deposit: `${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)})`,
+    depositRange: [DEPOSITS.flexCorporate, DEPOSITS.flex],
+    features: [
+      "ไม่มีขั้นต่ำ — ใช้ 1 เดือนพอดี",
+      "เหมาะกับไซต์งานระยะสั้น ออฟฟิศชั่วคราว ทดลองใช้",
+      "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
+      RENTAL_TRAINING.event,
+      RENTAL_CREDIT_NOTE,
+    ],
+    badge: "",
+    image: "/images/yuwell-y2-main.jpg",
+  },
+  {
     id: "rent-annual",
-    subtitle: "รายปี — คุ้มที่สุด",
-    name: "แผนรายปี (ANNUAL)",
+    subtitle: "รายปี STANDARD — คุ้มที่สุด",
+    name: "แผนรายปี (STANDARD)",
     price: RENTAL_PRICES.annual,
     unit: "/ ปี",
     deposit: `${thb(DEPOSITS.annual)} (ยกเว้นได้ถ้ามี PO)`,
     depositRange: [DEPOSITS.annual, DEPOSITS.annual],
     features: [
-      `เฉลี่ยเพียง ~${thb(Math.round(RENTAL_PRICES.annual / 12 / 10) * 10)}/เดือน`,
+      `เฉลี่ยเพียง ~${thb(STANDARD_MONTHLY)}/เดือน`,
       "รวมส่ง+ติดตั้ง",
       RENTAL_TRAINING.included,
       RENTAL_TRAINING.onSite,
       "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย",
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
+      "เครื่อง Yuwell GPS ทีมงานติดตามตำแหน่งและสถานะให้",
     ],
     badge: "คุ้มที่สุด",
     image: "/images/primedic-y2-open.jpg",
   },
   {
     id: "rent-flex",
-    subtitle: "รายเดือน",
+    subtitle: `ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน`,
     name: "แผนยืดหยุ่น (FLEX)",
     price: RENTAL_PRICES.flexMonthly,
     unit: "/ เดือน",
@@ -107,7 +135,7 @@ export const rentalPlans: RentalPlan[] = [
     features: [
       `ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน`,
       "เหมาะกับออฟฟิศชั่วคราว ไซต์งาน ทดลองใช้",
-      "ค่าเช่าที่จ่ายแล้วหักเป็นส่วนลดเมื่อแปลงเป็นรายปี",
+      RENTAL_CREDIT_NOTE,
       "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่",
       RENTAL_TRAINING.included,
       RENTAL_TRAINING.onSite,
@@ -140,24 +168,24 @@ export const eventPackages: EventPackage[] = [
     name: "WEEKEND",
     nameTh: "สุดสัปดาห์",
     duration: "ศุกร์–อาทิตย์ 3 วัน",
-    price: 3500,
-    priceNote: "flat ฿3,500",
+    price: RENTAL_PRICES.eventWeekend,
+    priceNote: `flat ${thb(RENTAL_PRICES.eventWeekend)}`,
   },
   {
     id: "event-weekly",
     name: "WEEKLY",
     nameTh: "รายสัปดาห์",
     duration: "7 วัน",
-    price: 6000,
-    priceNote: "flat ฿6,000",
+    price: RENTAL_PRICES.eventWeekly,
+    priceNote: `flat ${thb(RENTAL_PRICES.eventWeekly)}`,
   },
   {
     id: "event-extended",
     name: "EXTENDED",
     nameTh: "ยาวพิเศษ",
     duration: "14 วัน",
-    price: 10000,
-    priceNote: "flat ฿10,000",
+    price: RENTAL_PRICES.eventFortnight,
+    priceNote: `flat ${thb(RENTAL_PRICES.eventFortnight)}`,
   },
 ];
 
@@ -169,8 +197,8 @@ export type MultiUnitTier = {
 
 export const multiUnitPricing: MultiUnitTier[] = [
   { units: "1 เครื่อง", pricePerUnit: RENTAL_PRICES.annual },
-  { units: "2–4 เครื่อง", pricePerUnit: 20000, badge: "ประหยัด" },
-  { units: "5+ เครื่อง", pricePerUnit: 18000, badge: "ราคาพิเศษองค์กร" },
+  { units: "2–4 เครื่อง", pricePerUnit: RENTAL_PRICES.annual2to4Units, badge: "ประหยัด" },
+  { units: "5+ เครื่อง", pricePerUnit: RENTAL_PRICES.annual5PlusUnits, badge: "ราคาพิเศษองค์กร" },
 ];
 
 // Why renting is safe to say yes to — each point restates a commitment already
@@ -252,7 +280,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
   },
   {
     dimension: "ค่าใช้จ่ายต่อเดือน",
-    rent: `เริ่ม ${thb(RENTAL_PRICES.flexMonthly)}/เดือน`,
+    rent: `เริ่ม ${thb(STANDARD_MONTHLY)}/เดือน (สัญญารายปี)`,
     rentToOwn: `${thbRange(Math.min(...rtoMonthly), Math.max(...rtoMonthly))} × ${rtoMonthsLabel} เดือน`,
     buy: "ไม่มี (มีค่าวัสดุสิ้นเปลืองเมื่อหมดอายุ)",
   },
@@ -270,7 +298,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
   },
   {
     dimension: "ระยะสัญญา",
-    rent: `รายวัน · รายเดือน (ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน) · รายปี`,
+    rent: "รายวัน · รายสัปดาห์ · รายเดือน · รายปี (1 หรือ 3 ปี)",
     rentToOwn: `${rtoMonthsLabel} เดือน`,
     buy: "—",
   },
@@ -285,11 +313,11 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
-    answer: `แผนรายปี (ANNUAL) มัดจำ ${thb(DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
+    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
   },
   {
-    question: "แผนยืดหยุ่น (FLEX) มีขั้นต่ำกี่เดือน?",
-    answer: `ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน เริ่ม ${thb(RENTAL_PRICES.flexMonthly)}/เดือน หากใช้ครบปีแนะนำเปลี่ยนเป็นแผนรายปี (ANNUAL) ${thb(RENTAL_PRICES.annual)} จะคุ้มกว่า และค่าเช่าที่จ่ายมาแล้วนำมาหักเป็นส่วนลดได้`,
+    question: "เช่ารายเดือนมีขั้นต่ำไหม?",
+    answer: `เช่า 1 เดือนได้ ไม่มีขั้นต่ำ ${thb(RENTAL_PRICES.oneMonth)} · ถ้าใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน แผนยืดหยุ่น (FLEX) ${thb(RENTAL_PRICES.flexMonthly)}/เดือน · ถ้าใช้ครบปี แผนรายปี (STANDARD) ${thb(RENTAL_PRICES.annual)}/ปี คุ้มที่สุด — ${RENTAL_CREDIT_NOTE}`,
   },
   {
     question: "ถ้าเครื่องชำรุดหรือสูญหายระหว่างเช่าทำอย่างไร?",
@@ -299,7 +327,7 @@ export const rentalFaqs = [
   {
     question: "ใช้ช็อตช่วยชีวิตจริงแล้วต้องเปลี่ยนแผ่นไหม?",
     answer:
-      "ต้องเปลี่ยนแผ่นอิเล็กโทรดชุดใหม่ทุกครั้งหลังใช้งานจริง สำหรับแผนรายปี/แผนยืดหยุ่นเราเปลี่ยนแผ่นให้ฟรี ส่วนแผนอีเวนต์คิดค่าแผ่นตามจริง",
+      "ต้องเปลี่ยนแผ่นอิเล็กโทรดชุดใหม่ทุกครั้งหลังใช้งานจริง สำหรับแผนรายปี/แผนยืดหยุ่นเราเปลี่ยนแผ่นให้ฟรี ส่วนแผนอีเวนต์และรายเดือน (1 เดือน) คิดค่าแผ่นตามจริง",
   },
   {
     question: "AED ที่ให้เช่าผ่าน อย. หรือไม่?",
@@ -357,8 +385,10 @@ ${plans}
 แพ็กอีเวนต์แบบเหมา:
 ${events}
 
-ราคารายปีต่อเครื่องเมื่อเช่าหลายเครื่อง:
+ราคารายปีต่อเครื่องเมื่อเช่าหลายเครื่อง (แผน STANDARD):
 ${multi}
+สัญญา 3 ปี ลด ${Math.round(THREE_YEAR_DISCOUNT_LOCAL * 100)}% ทุกระดับรายปี (STANDARD / PRO / ELITE)
+${RENTAL_EXPENSE_NOTE_LOCAL}
 
 ### เช่าซื้อ (Rent-to-Own) — ผ่อน ${rtoMonthsLabel} งวด จบสัญญาเป็นเจ้าของ
 ${rto}

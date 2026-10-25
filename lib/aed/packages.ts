@@ -1,26 +1,30 @@
 // ─── Acquisition packages — "3 วิธีได้ AED มาใช้" ──────────────────────────────
 // The top-level way customers choose how to get an AED: buy outright, rent-to-own,
 // or managed rental. The managed-rental package (pkg-care) is the gateway to the
-// ดูแลครบ BASIC / PRO / ELITE subscription tiers in ./subscription.ts.
+// ดูแลครบ STANDARD / PRO / ELITE subscription tiers in ./subscription.ts.
 //
 // Prices are PROVISIONAL (wholesale being finalized). Update here only — the
 // rental table, FAQs, subscription comparison and bots read these constants.
 
 import { PRICE_ON_REQUEST, primedicModels } from "./primedic";
 import { PACKAGE_TRAINING_PERK } from "./promotion";
+import { STANDARD_MONTHLY } from "./rental-prices";
 
 const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 
 // ─── Rent-to-own (Safety Start) contract terms ────────────────────────────────
 // The only place these numbers live — rental.ts derives its breakdown table and
 // contract totals from here.
-//   Y8: 16,000 + 2,600 × 18 = ฿62,800 (≈1.40× ราคาสด 44,900) — owner approved 2026-07-19
-//   Y2: 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999) — สัดส่วนพรีเมียมเดียวกัน
+//   Owner, 25 ต.ค. 2026: lower the deposit to 2 งวด, same monthly and term —
+//   the old 16,000/22,000 deposits contradicted "ไม่ต้องจ่ายก้อนใหญ่".
+//   Y8: 5,200 + 2,600 × 18 = ฿52,000 (≈1.16× ราคาสด 44,900)
+//   Y2: 6,800 + 3,400 × 18 = ฿68,000 (≈1.13× ราคาสด 59,999)
+//   (was 16,000/22,000 → ฿62,800/฿83,200, approved 2026-07-19)
 export type RentToOwnTerms = { deposit: number; monthly: number; months: number };
 
 export const RENT_TO_OWN_TERMS = {
-  "pkg-start-y8": { deposit: 16_000, monthly: 2_600, months: 18 },
-  "pkg-start-y2": { deposit: 22_000, monthly: 3_400, months: 18 },
+  "pkg-start-y8": { deposit: 5_200, monthly: 2_600, months: 18 },
+  "pkg-start-y2": { deposit: 6_800, monthly: 3_400, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
 
 const rentToOwnNote = (t: RentToOwnTerms) =>
@@ -44,7 +48,8 @@ export const SAFETY_PREMIUM_PRICING = {
 } as const;
 
 // Safety Care (managed rental) — refundable deposit for the 1-year contract.
-// The monthly "เริ่ม ฿2,990" is the BASIC tier in ./subscription.ts
+// The monthly "เริ่ม" price is the STANDARD tier in ./subscription.ts (= the
+// annual rental plan)
 // (catalog-consistency.test.ts keeps the two in step).
 export const SAFETY_CARE_DEPOSIT = 5_000;
 
@@ -83,10 +88,10 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     name: "Safety Care",
     nameTh: "เช่าบริการครบวงจร",
     tagline: "มีทีมดูแลความพร้อมให้ตลอดสัญญา",
-    // Monthly price = the ดูแลครบ subscription tiers (BASIC/PRO/ELITE).
-    // BASIC tier starts at ฿2,990/month.
-    priceLabel: "เริ่ม ฿2,990/เดือน",
-    priceNote: `มัดจำ ${thb(SAFETY_CARE_DEPOSIT)} (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ BASIC/PRO/ELITE`,
+    // Monthly price = the ดูแลครบ subscription tiers (STANDARD/PRO/ELITE).
+    // STANDARD = the annual rental plan, shown as its monthly equivalent.
+    priceLabel: `เริ่ม ${thb(STANDARD_MONTHLY)}/เดือน`,
+    priceNote: `มัดจำ ${thb(SAFETY_CARE_DEPOSIT)} (คืนได้) · สัญญา 1 ปี · เลือกระดับบริการ STANDARD/PRO/ELITE`,
     deposit: `${thb(SAFETY_CARE_DEPOSIT)} (คืนเต็มเมื่อจบสัญญาและคืนเครื่องครบสภาพ)`,
     features: [
       "บริการครบวงจร ไม่ต้องดูแลอุปกรณ์เอง",
