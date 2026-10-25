@@ -91,3 +91,6 @@
 @media(max-width:700px){.market-tabs a{padding:10px 8px}.market-tabs b{font-size:12px}.market-tabs small,.market-tabs span{font-size:10px}}
 @media(max-width:700px){.market-card:not(:has(.market-card-photo)){display:flex}}
 .market-feature-grid a.market-feature:hover{border-color:#81a68b}
+#why{scroll-margin-top:90px}
+/* Rental comparison on phones: one card per row, no sideways scroll */
+@media(max-width:700px){.market-compare{min-width:0}.market-compare thead{display:none}.market-compare tr{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:14px 16px;border-bottom:1px solid var(--m-line)}.market-compare tbody th{grid-column:1/-1;padding:0;border:0;font-size:14px}.market-compare td{padding:0;border:0;font-size:12px}.market-compare td::before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:#63816a}.market-compare td:first-of-type{color:#1c3026;font-weight:700}.market-compare td:last-of-type{color:#8a968d}#short,#yearly,#why,#own{scroll-margin-top:80px}}
