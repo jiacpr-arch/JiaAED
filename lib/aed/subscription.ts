@@ -62,6 +62,8 @@ export const subscriptionTiers: SubscriptionTier[] = [
 //   true   → ✓
 //   false  → –
 //   string → rendered literally
+export const ONLINE_CPR_SEATS_FEATURE = "คอร์ส CPR & AED ออนไลน์ให้พนักงาน (cpr.morroo.com)";
+
 export type FeatureMatrixRow = {
   feature: string;
   values: Record<SubscriptionTierId, string | boolean>;
@@ -70,6 +72,17 @@ export type FeatureMatrixRow = {
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
     feature: "Yuwell GPS ติดตามตำแหน่ง",
+    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
+  },
+  // Owner, 25 ต.ค. 2026: lean on what plain-device renters can't offer — the
+  // group's own online course (cpr.morroo.com, normally ฿100/คน, enrolled with
+  // an organisation code) and a pocket mask kept with the unit.
+  {
+    feature: ONLINE_CPR_SEATS_FEATURE,
+    values: { "managed-basic": "10 คน", "managed-pro": "30 คน", "managed-elite": "ไม่จำกัด" },
+  },
+  {
+    feature: "Pocket mask ติดเครื่อง",
     values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   {
