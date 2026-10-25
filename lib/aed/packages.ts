@@ -27,8 +27,16 @@ export const RENT_TO_OWN_TERMS = {
   "pkg-start-y2": { deposit: 6_800, monthly: 3_400, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
 
+// Owner, 25 ต.ค. 2026: the low 2-งวด deposit is for registered companies only
+// (checked with DBD); individuals and small shops get terms case by case. The
+// unit stays the company's until the last instalment (ป.พ.พ. เช่าซื้อ).
+export const RENT_TO_OWN_ELIGIBILITY =
+  "มัดจำนี้สำหรับนิติบุคคล · บุคคลธรรมดาและร้านค้าสอบถามเงื่อนไข";
+export const RENT_TO_OWN_OWNERSHIP_NOTE =
+  "เครื่องเป็นกรรมสิทธิ์ของบริษัทจนชำระครบ หากผิดนัด 2 งวดติดกัน บริษัทบอกเลิกสัญญาและรับเครื่องคืนได้";
+
 const rentToOwnNote = (t: RentToOwnTerms) =>
-  `มัดจำ ${thb(t.deposit)} + ผ่อน ${thb(t.monthly)}/เดือน × ${t.months} เดือน แล้วเป็นเจ้าของ`;
+  `มัดจำ ${thb(t.deposit)} (นิติบุคคล) + ผ่อน ${thb(t.monthly)}/เดือน × ${t.months} เดือน แล้วเป็นเจ้าของ`;
 
 // ─── Safety Premium (ซื้อขาด) price build-up ──────────────────────────────────
 // Owner confirmed 2026-09-24: ฿42,900 = Yuwell Y0 (ขายเดี่ยว ฿39,000) + ฿3,900
@@ -114,7 +122,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
     priceLabel: `${thb(startY8.monthly)}/เดือน`,
     priceNote: rentToOwnNote(startY8),
-    deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง)`,
+    deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
       "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
       "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
@@ -135,7 +143,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     tagline: "ผ่อนเบา ๆ ได้เครื่องรุ่นท็อป จอ EKG ดู CPR สด ๆ",
     priceLabel: `${thb(startY2.monthly)}/เดือน`,
     priceNote: rentToOwnNote(startY2),
-    deposit: `${thb(startY2.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง)`,
+    deposit: `${thb(startY2.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
       "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
       "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
