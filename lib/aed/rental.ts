@@ -7,7 +7,7 @@ import {
   THREE_YEAR_DISCOUNT as THREE_YEAR_DISCOUNT_LOCAL,
 } from "./rental-prices";
 import { consumableLifetimeText, primedicModels } from "./primedic";
-import { RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
+import { RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE, RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
 import {
   faqRentToOwnVsRental,
   faqMidContractCancel,
@@ -392,6 +392,8 @@ ${RENTAL_EXPENSE_NOTE_LOCAL}
 
 ### เช่าซื้อ (Rent-to-Own) — ผ่อน ${rtoMonthsLabel} งวด จบสัญญาเป็นเจ้าของ
 ${rto}
+${RENT_TO_OWN_ELIGIBILITY} — ลูกค้าบุคคลธรรมดา/ร้านค้า ให้ส่งต่อทีมขายพิจารณาเงื่อนไข ห้ามยืนยันมัดจำ 2 งวดเอง
+${RENT_TO_OWN_OWNERSHIP_NOTE}
 
 ### FAQ เรื่องเช่า
 ${faq}`;
