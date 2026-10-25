@@ -131,7 +131,7 @@ ${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
 - หน้า /aed/primedic — ไลน์อัป PRIMEDIC HeartSave และตารางสเปค
 - หน้า /aed/packages — แพ็กเกจซื้อขาด / เช่าซื้อ / เช่าบริการ
 - หน้า /aed/rental — เช่า & เช่าซื้อ
-- หน้า /aed/subscription — เช่าบริการครบวงจร Safety Care (BASIC / PRO / ELITE)
+- หน้า /aed/subscription — เช่าบริการครบวงจร Safety Care (STANDARD / PRO / ELITE)
 - หน้า /training — อบรม CPR & AED
 - หน้า /docs — เอกสารดาวน์โหลด (ตามรายการด้านบน)
 - หน้า /articles — บทความเกี่ยวกับ AED

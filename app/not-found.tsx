@@ -1,6 +1,6 @@
 import { MarketPage } from "@/app/components/MarketShell";
 import Link from "next/link";
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
 // Branded 404 — before this, dead links landed on Next's bare white default
 // with no nav and no way back into the site.
@@ -32,7 +32,7 @@ export default function NotFound() {
               data-line-cta="not_found"
               className="inline-block bg-[#06C755] text-white font-bold px-8 py-3.5 rounded-full hover:bg-[#05a847] transition-colors"
             >
-              💬 ถามทีมงานทาง LINE
+              💬 ถามทีมงาน LINE {LINE_DISPLAY_ID}
             </a>
           </div>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-10 text-sm text-gray-500">

@@ -1,15 +1,22 @@
 // ─── ดูแลครบ managed-rental subscription tiers ─────────────────────────────
-// BASIC / PRO / ELITE are the monthly service levels of the ดูแลครบ
-// managed-rental package (see ./packages.ts). Prices are PROVISIONAL.
+// STANDARD / PRO / ELITE are the service levels of the ดูแลครบ managed-rental
+// package (see ./packages.ts). Prices are PROVISIONAL.
+//
+// Owner, 25 ต.ค. 2026: one price ladder instead of a separate ANNUAL plan and a
+// BASIC tier that cost more but included less. STANDARD *is* the annual rental
+// plan (./rental.ts RENTAL_PRICES.annual, billed yearly, no GPS); PRO adds GPS,
+// alerts and on-site training. The id stays "managed-basic" because it is a
+// stored lead/product id (lead-validation allowlist, existing lead rows).
 
 import { SAFETY_PREMIUM_PRICING } from "./packages";
+import { RENTAL_PRICES } from "./rental-prices";
 
 export type SubscriptionTierId = "managed-basic" | "managed-pro" | "managed-elite";
 
 export type SubscriptionTier = {
   id: SubscriptionTierId;
-  name: string; // "BASIC"
-  pricePerMonth: number; // 2990
+  name: string; // "STANDARD"
+  pricePerMonth: number; // monthly equivalent, e.g. 1830
   specialNote: string | null;
   bestFor: string;
   badge: string | null;
@@ -18,9 +25,10 @@ export type SubscriptionTier = {
 export const subscriptionTiers: SubscriptionTier[] = [
   {
     id: "managed-basic",
-    name: "BASIC",
-    pricePerMonth: 2990,
-    specialNote: null,
+    name: "STANDARD",
+    // Monthly equivalent of the annual plan, rounded to ฿10 like the rental card.
+    pricePerMonth: Math.round(RENTAL_PRICES.annual / 12 / 10) * 10,
+    specialNote: `ชำระรายปี ฿${RENTAL_PRICES.annual.toLocaleString("en-US")} · เครื่องรุ่นไม่มี GPS`,
     bestFor: "SME · ร้านค้า · ฟิตเนส · คอนโด",
     badge: null,
   },
@@ -54,7 +62,7 @@ export type FeatureMatrixRow = {
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
     feature: "Yuwell GPS ติดตามตำแหน่ง",
-    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
+    values: { "managed-basic": false, "managed-pro": true, "managed-elite": true },
   },
   {
     feature: "เปลี่ยนเครื่องเมื่อเสีย (SLA)",
@@ -66,11 +74,11 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
   },
   {
     feature: "ตรวจเช็กหน้างาน (ครั้ง/ปี)",
-    values: { "managed-basic": false, "managed-pro": "1 ครั้ง/ปี", "managed-elite": "2 ครั้ง/ปี" },
+    values: { "managed-basic": "1 ครั้ง/ปี", "managed-pro": "1 ครั้ง/ปี", "managed-elite": "2 ครั้ง/ปี" },
   },
   {
     feature: "อบรมพนักงาน (ครั้ง/ปี)",
-    values: { "managed-basic": false, "managed-pro": "1 ครั้ง/ปี", "managed-elite": "2 ครั้ง/ปี" },
+    values: { "managed-basic": "Mini Course ที่ The Street", "managed-pro": "1 ครั้ง/ปี ถึงที่", "managed-elite": "2 ครั้ง/ปี ถึงที่" },
   },
   {
     feature: "สร้างผู้สอน (Instructor) ในองค์กร",
@@ -121,10 +129,10 @@ export const rentVsBuy: { dimension: string; buy: string; subscribe: string }[] 
   },
   {
     // Safety Premium includes the first on-site course (see ./packages.ts);
-    // recurring training is a PRO/ELITE subscription feature, BASIC has none.
+    // on-site training is PRO/ELITE; STANDARD gets the Mini Course at The Street.
     dimension: "การอบรมพนักงาน",
     buy: "อบรมครั้งแรกรวมในแพ็กซื้อขาด (Safety Premium) — ครั้งต่อไปจัดเอง/ซื้อคอร์สเพิ่ม",
-    subscribe: `อบรมประจำปีในระดับ ${tiersWith("อบรมพนักงาน (ครั้ง/ปี)")} (BASIC ซื้อคอร์สเพิ่มได้)`,
+    subscribe: "ทุกระดับมีอบรม — STANDARD เรียน Mini Course ที่ The Street · PRO/ELITE สอนถึงที่ทุกปี",
   },
   {
     dimension: "เหมาะกับองค์กรแบบใด",

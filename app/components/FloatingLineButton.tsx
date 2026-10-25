@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { WEB_CHAT_TOGGLE_EVENT } from "./WebChat";
 const DISMISS_KEY = "jiaaed_floating_line_dismissed";
 
@@ -77,10 +77,10 @@ export function FloatingLineButton() {
         rel="noopener noreferrer"
         data-line-cta="floating_button"
         className="flex items-center gap-2 py-3 pl-5 pr-2"
-        aria-label="คุยทาง LINE"
+        aria-label={`คุยทาง LINE ${LINE_DISPLAY_ID}`}
       >
         <span className="text-xl leading-none">💬</span>
-        <span className="hidden sm:inline">ปรึกษาฟรี LINE</span>
+        <span className="hidden sm:inline">LINE {LINE_DISPLAY_ID}</span>
         <span className="sm:hidden">LINE</span>
       </a>
       <button

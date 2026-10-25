@@ -17,8 +17,8 @@ describe("rentToOwnBreakdowns", () => {
     const totals = Object.fromEntries(
       rentToOwnBreakdowns.map((b) => [b.packageId, rentToOwnTotal(b)]),
     );
-    expect(totals["pkg-start-y8"]).toBe(62_800);
-    expect(totals["pkg-start-y2"]).toBe(83_200);
+    expect(totals["pkg-start-y8"]).toBe(52_000); // deposit cut to 2 งวด, owner 25 ต.ค. 2026
+    expect(totals["pkg-start-y2"]).toBe(68_000);
   });
 
   it("breakdown numbers appear verbatim in the package priceNote", () => {

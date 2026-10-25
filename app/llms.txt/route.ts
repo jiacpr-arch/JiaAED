@@ -34,7 +34,7 @@ const PAGES: { path: string; label: string; note: string }[] = [
   { path: "/aed/primedic", label: "ไลน์อัป Yuwell / PRIMEDIC HeartSave", note: "เปรียบเทียบ Y0 / Y8 / Y2 / GPS" },
   { path: "/aed/packages", label: "แพ็กเกจ", note: "3 วิธีได้ AED — ซื้อขาด เช่าซื้อ เช่าบริการ" },
   { path: "/aed/rental", label: "เช่า & เช่าซื้อ AED", note: "รายวัน รายเดือน รายปี และผ่อน 18 เดือน" },
-  { path: "/aed/subscription", label: "เช่าบริการครบวงจร (ดูแลครบ)", note: "แพ็กรายเดือน BASIC / PRO / ELITE" },
+  { path: "/aed/subscription", label: "เช่าบริการครบวงจร (ดูแลครบ)", note: "แพ็ก STANDARD / PRO / ELITE" },
   { path: "/training", label: "อบรม CPR & AED", note: "คอร์สอบรมถึงที่ โดยทีม BLS Instructor" },
   { path: "/articles", label: "บทความความรู้", note: "AED คืออะไร วิธีใช้ กฎหมาย ฯลฯ" },
   { path: "/docs", label: "เอกสารดาวน์โหลด", note: "สเปกชีต ใบเสนอราคา เอกสารจัดซื้อ" },

@@ -7,7 +7,7 @@ import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking"
 import { hasMarketingConsent } from "@/lib/aed/consent";
 import { GADS_LEAD_CONVERSION_LABEL, gadsConversionParams } from "@/lib/aed/google-ads-tag";
 
-import { LINE_OA } from "@/lib/aed/line";
+import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 const UTM_KEYS = ["source", "medium", "campaign", "term", "content"] as const;
 const UNIT_OPTIONS = ["1 เครื่อง", "2–10 เครื่อง", "มากกว่า 10 เครื่อง"] as const;
 
@@ -212,7 +212,7 @@ export function QuoteForm({
           data-line-cta="quote_success"
           className="inline-block bg-[#06C755] text-white font-bold px-8 py-3 rounded-full hover:bg-[#05a847] transition-colors"
         >
-          💬 ทักทาง LINE
+          💬 ทัก LINE {LINE_DISPLAY_ID}
         </a>
       </div>
     );

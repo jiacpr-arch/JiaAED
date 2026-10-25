@@ -1,4 +1,5 @@
 import { PRIMEDIC_REGULATORY, fdaLine, regLine } from "./regulatory";
+import { RENTAL_PRICES } from "./rental-prices";
 import { consumableLifetimeText, primedicModels } from "./primedic";
 import { RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
 import {
@@ -16,13 +17,9 @@ const thbRange = (lo: number, hi: number) =>
 // ─── Rental prices & deposits ─────────────────────────────────────────────────
 // Every rental number lives here once; the plan cards, FAQs, comparison table,
 // bots and the price-guide article all read from these constants.
-export const RENTAL_PRICES = {
-  eventFirstDay: 1_500,
-  eventNextDay: 900,
-  annual: 22_000,
-  flexMonthly: 1_990,
-  flexMinMonths: 3,
-} as const;
+// (Defined in ./rental-prices.ts so ./subscription.ts can read it without an
+// import cycle through ./faqs.ts.)
+export { RENTAL_PRICES } from "./rental-prices";
 
 // Training on the rental plans, as the owner's rental comparison table and
 // flyers state it (Jun 2026) — a Sep 2026 annual quotation also says on-site
@@ -79,8 +76,8 @@ export const rentalPlans: RentalPlan[] = [
   },
   {
     id: "rent-annual",
-    subtitle: "รายปี — คุ้มที่สุด",
-    name: "แผนรายปี (ANNUAL)",
+    subtitle: "รายปี STANDARD — คุ้มที่สุด",
+    name: "แผนรายปี (STANDARD)",
     price: RENTAL_PRICES.annual,
     unit: "/ ปี",
     deposit: `${thb(DEPOSITS.annual)} (ยกเว้นได้ถ้ามี PO)`,
@@ -92,6 +89,7 @@ export const rentalPlans: RentalPlan[] = [
       RENTAL_TRAINING.onSite,
       "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย",
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
+      "อยากได้ GPS + ทีมสอนถึงที่ → อัปเกรดเป็น PRO",
     ],
     badge: "คุ้มที่สุด",
     image: "/images/primedic-y2-open.jpg",
@@ -285,11 +283,11 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
-    answer: `แผนรายปี (ANNUAL) มัดจำ ${thb(DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
+    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
   },
   {
     question: "แผนยืดหยุ่น (FLEX) มีขั้นต่ำกี่เดือน?",
-    answer: `ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน เริ่ม ${thb(RENTAL_PRICES.flexMonthly)}/เดือน หากใช้ครบปีแนะนำเปลี่ยนเป็นแผนรายปี (ANNUAL) ${thb(RENTAL_PRICES.annual)} จะคุ้มกว่า และค่าเช่าที่จ่ายมาแล้วนำมาหักเป็นส่วนลดได้`,
+    answer: `ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน เริ่ม ${thb(RENTAL_PRICES.flexMonthly)}/เดือน หากใช้ครบปีแนะนำเปลี่ยนเป็นแผนรายปี (STANDARD) ${thb(RENTAL_PRICES.annual)} จะคุ้มกว่า และค่าเช่าที่จ่ายมาแล้วนำมาหักเป็นส่วนลดได้`,
   },
   {
     question: "ถ้าเครื่องชำรุดหรือสูญหายระหว่างเช่าทำอย่างไร?",

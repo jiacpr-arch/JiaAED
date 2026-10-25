@@ -12,7 +12,7 @@ const EXTRA_PRODUCT_IDS = [
   "pkg-premium",
   "pkg-start",
   "pkg-care",
-  // ดูแลครบ subscription tiers (BASIC / PRO / ELITE)
+  // ดูแลครบ subscription tiers (STANDARD — id managed-basic — / PRO / ELITE)
   "managed-basic",
   "managed-pro",
   "managed-elite",
