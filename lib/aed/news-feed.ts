@@ -32,7 +32,9 @@ export const NEWS_QUERIES = [
 const MAX_CANDIDATES = 50;
 const MAX_INSERT_PER_RUN = 12;
 
-const MODEL = "claude-sonnet-5-5";
+// Picking relevant headlines and writing a short Thai blurb doesn't need
+// Sonnet; Haiku keeps the daily run to a fraction of the cost.
+const MODEL = "claude-haiku-5-5";
 
 export type RawNewsItem = {
   guid: string;
