@@ -24,3 +24,11 @@ describe("rental terms", () => {
     expect(rentalKnowledgeBlock()).toContain("/aed/rental/terms");
   });
 });
+
+describe("replacement values", () => {
+  it("charge pads and battery at their retail price", async () => {
+    const { AED_PRODUCTS } = await import("./pricing");
+    expect(RENTAL_REPLACEMENT_VALUE.pads).toBe(AED_PRODUCTS["pad-adult"].startingPrice);
+    expect(RENTAL_REPLACEMENT_VALUE.battery).toBe(AED_PRODUCTS["battery"].startingPrice);
+  });
+});

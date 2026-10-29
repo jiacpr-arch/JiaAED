@@ -41,11 +41,12 @@ export const RENTAL_EXPENSE_NOTE =
 
 // ─── Rental terms the owner set on 29 ต.ค. 2026 (หน้า /aed/rental/terms) ────────
 // Loss/damage replacement values: the unit value replaces the old FAQ's "~30,000"
-// (owner chose the Y8 cash price); pad/battery values carry over from that FAQ.
+// (owner chose the Y8 cash price); pads/battery follow the retail prices in
+// ./pricing.ts (were ~2,000 / ~5,000 in the old FAQ).
 export const RENTAL_REPLACEMENT_VALUE = {
   unit: 44_900,
-  pads: 2_000,
-  battery: 5_000,
+  pads: 5_000,
+  battery: 7_500,
 } as const;
 
 /** Late return on short rentals is charged at the next-day event rate. */
