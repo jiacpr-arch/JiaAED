@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG · ซื้อสดหรือผ่อนได้`,
     description:
-      "รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿3,400/เดือน × 18 เดือน",
+      `รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
     url: "/aed/yuwell-y2",
     images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254 }],
     type: "website",
