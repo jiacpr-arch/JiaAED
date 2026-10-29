@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
-import { RENT_TO_OWN_ELIGIBILITY } from "@/lib/aed/packages";
+import { RENT_TO_OWN_CABINET_ADDON, RENT_TO_OWN_ELIGIBILITY } from "@/lib/aed/packages";
 import { SAMPLE_CONTRACT_TERMS, sampleContractClauses, sampleContractDocuments } from "@/lib/aed/rent-to-own-contract";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
@@ -20,7 +20,7 @@ const VAT = 0.07;
 const withVat = (n: number) => thb(Math.round(n * (1 + VAT) * 100) / 100);
 
 const summary = [
-  ["ทรัพย์สิน", `เครื่อง AED ${s.model} (เพิ่มตู้เก็บเครื่องได้)`],
+  ["ทรัพย์สิน", `เครื่อง AED ${s.model} · เพิ่มตู้ติดผนัง +${thb(RENT_TO_OWN_CABINET_ADDON)} รวมในสัญญาได้`],
   ["เงินดาวน์ (วันทำสัญญา)", `${thb(s.deposit)} + VAT`],
   ["ค่างวด", `${thb(s.monthly)} × ${s.months} เดือน + VAT`],
   ["ราคาเช่าซื้อรวม", `${thb(s.total)} + VAT (รวม VAT ${withVat(s.total)})`],
