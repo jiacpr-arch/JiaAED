@@ -101,9 +101,9 @@ export const yuwellGpsAed = {
   // Price on request (owner, Oct 2026): the ฿60,000 shown before had no source
   // and sat above what the team actually quotes. Pages print "สอบถามราคา" while
   // this is null; the LINE bot still quotes from AED_PRODUCTS in ./pricing.ts.
-  // Owner, 29 ต.ค. 2026: ฿52,000 — between Y8 (44,900) and the rent-to-own Y8
-  // GPS contract (62,000), so each step up has a reason a customer can see.
-  price: 52_000 as number | null, // before VAT
+  // Owner, 29 ต.ค. 2026: ฿55,000 (raised from 52,000 the same day) — between Y8
+  // (44,900) and the rent-to-own Y8 GPS contract (62,000).
+  price: 55_000 as number | null, // before VAT
   warrantyYears: 8, // same as the Y8 it's built on, per the owner's GPS quotations
   // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds
   // the Google product JSON-LD (StructuredData) and lineup.ts.
