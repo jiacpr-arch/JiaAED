@@ -123,7 +123,10 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     // Replaces the discontinued Amoul i7 pkg-start (มัดจำ 15,000 + 2,500 × 18).
     id: "pkg-start-y8",
     kind: "rent-to-own",
-    name: "Safety Start — Yuwell Y8",
+    // Owner, 29 ต.ค. 2026: rent-to-own Y8 ships as the GPS unit (Y8 hardware +
+    // GPS module), stated openly — the team monitors readiness remotely instead
+    // of visiting every 6 months.
+    name: "Safety Start — Yuwell Y8 GPS",
     nameTh: "เช่าแล้วได้ซื้อ",
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
     priceLabel: `${thb(startY8.monthly)}/เดือน`,
@@ -131,6 +134,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
       "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
+      "GPS ในตัว — ทีมงานตรวจสอบตำแหน่งและความพร้อมของเครื่องออนไลน์ 24 ชม. รู้ทันทีเมื่อแบต/แผ่นใกล้หมด",
       "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
       `รวม${PACKAGE_TRAINING_PERK} (ต่างจังหวัดสอบถาม)`,
       `ครบ ${startY8.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
@@ -140,7 +144,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     ctaProductHint: "primedic-y8",
     href: "/quote",
     image: "/images/primedic-y8-open.png",
-    imageAlt: "เช่าแล้วได้ซื้อ AED Yuwell/PRIMEDIC HeartSave Y8",
+    imageAlt: "เช่าแล้วได้ซื้อ AED Yuwell/PRIMEDIC HeartSave Y8 รุ่น GPS ในตัว",
   },
   {
     id: "pkg-start-y2",
