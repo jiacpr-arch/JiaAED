@@ -5,6 +5,7 @@ import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { RENT_TO_OWN_CABINET_ADDON, RENT_TO_OWN_ELIGIBILITY } from "@/lib/aed/packages";
 import { SAMPLE_CONTRACT_TERMS, sampleContractClauses, sampleContractDocuments } from "@/lib/aed/rent-to-own-contract";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
+import { PACKAGE_TRAINING_PERK } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -27,6 +28,7 @@ const summary = [
   ["กรรมสิทธิ์", "เป็นของผู้เช่าซื้อทันทีเมื่อชำระครบ ไม่มีค่าใช้จ่ายเพิ่ม"],
   ["รับประกันตัวเครื่อง", `${s.warrantyYears} ปี`],
   ["ตรวจเครื่องฟรี", "ทุก 6 เดือนตลอดสัญญา"],
+  ["อบรมฟรี", PACKAGE_TRAINING_PERK],
   ["ผู้ค้ำประกัน", "กรรมการผู้มีอำนาจลงนาม 1 คน"],
 ];
 

@@ -15,3 +15,15 @@ describe("sample rent-to-own contract", () => {
     expect(text.replace("มิใช่มัดจำ", "")).not.toContain("มัดจำ");
   });
 });
+
+describe("rent-to-own training perk", () => {
+  it("is in both Safety Start packages and the sample contract", async () => {
+    const { PACKAGE_TRAINING_PERK } = await import("./promotion");
+    const { acquisitionPackages } = await import("./packages");
+    for (const id of ["pkg-start-y8", "pkg-start-y2"]) {
+      const pkg = acquisitionPackages.find((p) => p.id === id)!;
+      expect(pkg.features.join(" ")).toContain(PACKAGE_TRAINING_PERK);
+    }
+    expect(sampleContractClauses.flatMap((c) => c.items).join(" ")).toContain(PACKAGE_TRAINING_PERK);
+  });
+});

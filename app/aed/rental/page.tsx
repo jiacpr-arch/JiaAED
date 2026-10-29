@@ -19,6 +19,7 @@ import { primedicModels } from "@/lib/aed/primedic";
 import { SISTER_SITES, rentalAdvantages } from "@/lib/aed/ecosystem";
 import { RENT_TO_OWN_CABINET_ADDON, RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE } from "@/lib/aed/packages";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
+import { PACKAGE_TRAINING_PERK } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 export const metadata: Metadata = {
@@ -147,7 +148,7 @@ export default function RentalPage() {
     <section id="own" className="market-section"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">③ อยากเป็นเจ้าของ</p><h2>ผ่อนครบ<br /><em>แล้วเป็นเจ้าของ.</em></h2></div><p>สำหรับองค์กรที่อยากได้เครื่องเป็นทรัพย์สินของตัวเอง รู้ยอดรวมตลอดสัญญาก่อนตัดสินใจ</p></div>
       <div className="market-grid-3">
-        {rentToOwnBreakdowns.map((p) => <article className="market-card" key={p.packageId}><div className="market-card-body"><span className="market-card-kicker">เช่าซื้อ</span><h3>{p.model}</h3><div className="market-price"><small>เดือนละ</small><strong>{thb(p.monthly)}</strong><span>× {p.months} เดือน</span></div><ul><li>เงินดาวน์ {thb(p.deposit)} (นิติบุคคล)</li><li>รวมทั้งสัญญา {thb(rentToOwnTotal(p))} · {p.cashPriceLabel}</li><li>เพิ่มตู้ติดผนัง +{thb(RENT_TO_OWN_CABINET_ADDON)} รวมในสัญญาผ่อนได้</li><li>ผ่อนครบ เครื่องเป็นของท่าน</li></ul><LineLink cta={`rent_own_${p.packageId}`} product={p.packageId}>ขอเงื่อนไขเช่าซื้อ</LineLink></div></article>)}
+        {rentToOwnBreakdowns.map((p) => <article className="market-card" key={p.packageId}><div className="market-card-body"><span className="market-card-kicker">เช่าซื้อ</span><h3>{p.model}</h3><div className="market-price"><small>เดือนละ</small><strong>{thb(p.monthly)}</strong><span>× {p.months} เดือน</span></div><ul><li>เงินดาวน์ {thb(p.deposit)} (นิติบุคคล)</li><li>รวมทั้งสัญญา {thb(rentToOwnTotal(p))} · {p.cashPriceLabel}</li><li>เพิ่มตู้ติดผนัง +{thb(RENT_TO_OWN_CABINET_ADDON)} รวมในสัญญาผ่อนได้</li><li>รวม{PACKAGE_TRAINING_PERK}</li><li>ผ่อนครบ เครื่องเป็นของท่าน</li></ul><LineLink cta={`rent_own_${p.packageId}`} product={p.packageId}>ขอเงื่อนไขเช่าซื้อ</LineLink></div></article>)}
         <article className="market-card"><div className="market-card-body"><span className="market-card-kicker">ซื้อขาด</span><h3>จ่ายครั้งเดียว</h3><div className="market-price"><small>เริ่ม</small><strong>{thb(cheapestBuy)}</strong><span>ก่อน VAT</span></div><ul><li>เทียบรุ่น Y0 / Y8 / Y2</li><li>จัดส่ง ติดตั้ง และอบรมการใช้งาน</li><li>ออกใบกำกับภาษีได้</li></ul><Link href="/aed" className="market-card-link" data-cta="rent_own_buy">ดูรุ่นและราคาซื้อ <span aria-hidden="true">↗</span></Link></div></article>
       </div>
       <p className="market-note">{RENT_TO_OWN_ELIGIBILITY} · {RENT_TO_OWN_OWNERSHIP_NOTE} · เมื่อชำระครบสัญญา เครื่องเป็นของผู้เช่าซื้อ เงื่อนไขบริการและภาษีให้ยืนยันในใบเสนอราคา · <Link href="/aed/rental/contract" className="market-text-link" data-cta="rent_own_contract">อ่านตัวอย่างสัญญาเช่าซื้อ</Link></p>

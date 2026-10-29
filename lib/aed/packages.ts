@@ -132,6 +132,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     features: [
       "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
       "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
+      `รวม${PACKAGE_TRAINING_PERK} (ต่างจังหวัดสอบถาม)`,
       `ครบ ${startY8.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
@@ -153,6 +154,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     features: [
       "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
       "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
+      `รวม${PACKAGE_TRAINING_PERK} (ต่างจังหวัดสอบถาม)`,
       `ครบ ${startY2.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นเรือธงแต่ผ่อนเบา ๆ",
