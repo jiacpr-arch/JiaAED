@@ -38,3 +38,20 @@ export const RENTAL_CREDIT_NOTE = `ค่าเช่าที่จ่ายแ
 // that rents for its business; the buyer's accountant confirms their own case.
 export const RENTAL_EXPENSE_NOTE =
   "ค่าเช่าบันทึกเป็นค่าใช้จ่ายของกิจการได้ ไม่ต้องตั้งเป็นสินทรัพย์ (ยืนยันกับฝ่ายบัญชีของท่าน)";
+
+// ─── Rental terms the owner set on 29 ต.ค. 2026 (หน้า /aed/rental/terms) ────────
+// Loss/damage replacement values: the unit value replaces the old FAQ's "~30,000"
+// (owner chose the Y8 cash price); pads/battery follow the retail prices in
+// ./pricing.ts (were ~2,000 / ~5,000 in the old FAQ).
+export const RENTAL_REPLACEMENT_VALUE = {
+  unit: 44_900,
+  pads: 5_000,
+  battery: 7_500,
+} as const;
+
+/** Late return on short rentals is charged at the next-day event rate. */
+export const RENTAL_LATE_RETURN_PER_DAY = RENTAL_PRICES.eventNextDay;
+/** Ending an annual contract early: this share of the rent for the months left. */
+export const ANNUAL_EARLY_TERMINATION_SHARE = 0.5;
+/** No auto-renewal; the customer is reminded this many days before the end. */
+export const RENEWAL_REMINDER_DAYS = 30;
