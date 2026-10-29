@@ -33,12 +33,12 @@ export const RENT_TO_OWN_TERMS = {
 // (checked with DBD); individuals and small shops get terms case by case. The
 // unit stays the company's until the last instalment (ป.พ.พ. เช่าซื้อ).
 export const RENT_TO_OWN_ELIGIBILITY =
-  "มัดจำนี้สำหรับนิติบุคคล · บุคคลธรรมดาและร้านค้าสอบถามเงื่อนไข";
+  "เงินดาวน์นี้สำหรับนิติบุคคล · บุคคลธรรมดาและร้านค้าสอบถามเงื่อนไข";
 export const RENT_TO_OWN_OWNERSHIP_NOTE =
   "เครื่องเป็นกรรมสิทธิ์ของบริษัทจนชำระครบ หากผิดนัด 2 งวดติดกัน บริษัทบอกเลิกสัญญาและรับเครื่องคืนได้";
 
 const rentToOwnNote = (t: RentToOwnTerms) =>
-  `มัดจำ ${thb(t.deposit)} (นิติบุคคล) + ผ่อน ${thb(t.monthly)}/เดือน × ${t.months} เดือน แล้วเป็นเจ้าของ`;
+  `ดาวน์ ${thb(t.deposit)} (นิติบุคคล) + ผ่อน ${thb(t.monthly)}/เดือน × ${t.months} เดือน แล้วเป็นเจ้าของ`;
 
 // ─── Safety Premium (ซื้อขาด) price build-up ──────────────────────────────────
 // Owner confirmed 2026-09-24: ฿42,900 = Yuwell Y0 (ขายเดี่ยว ฿39,000) + ฿3,900
