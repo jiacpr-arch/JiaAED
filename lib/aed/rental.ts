@@ -3,6 +3,7 @@ import {
   RENTAL_CREDIT_NOTE,
   RENTAL_EXPENSE_NOTE as RENTAL_EXPENSE_NOTE_LOCAL,
   RENTAL_PRICES,
+  RENTAL_REPLACEMENT_VALUE,
   STANDARD_MONTHLY,
   THREE_YEAR_DISCOUNT as THREE_YEAR_DISCOUNT_LOCAL,
 } from "./rental-prices";
@@ -45,7 +46,7 @@ export const RENTAL_TRAINING = {
   event: "แนะนำการใช้งานเบื้องต้น (ไม่ใช่คอร์สอบรม)",
 } as const;
 
-const DEPOSITS = {
+export const RENTAL_DEPOSITS = {
   eventCardHold: 30_000,
   eventCash: 25_000,
   annual: 5_000,
@@ -75,8 +76,8 @@ export const rentalPlans: RentalPlan[] = [
     name: "แผนอีเวนต์ (EVENT)",
     price: RENTAL_PRICES.eventFirstDay,
     unit: "/ วันแรก",
-    deposit: `บัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือเงินสด ${thb(DEPOSITS.eventCash)}`,
-    depositRange: [DEPOSITS.eventCash, DEPOSITS.eventCardHold],
+    deposit: `บัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)}`,
+    depositRange: [RENTAL_DEPOSITS.eventCash, RENTAL_DEPOSITS.eventCardHold],
     features: [
       `วันถัดไป ${thb(RENTAL_PRICES.eventNextDay)}/วัน`,
       "ส่ง-รับถึงงาน (คิดตามระยะทาง)",
@@ -93,8 +94,8 @@ export const rentalPlans: RentalPlan[] = [
     name: "แผนรายเดือน (MONTH)",
     price: RENTAL_PRICES.oneMonth,
     unit: "/ เดือน",
-    deposit: `${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)})`,
-    depositRange: [DEPOSITS.flexCorporate, DEPOSITS.flex],
+    deposit: `${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)})`,
+    depositRange: [RENTAL_DEPOSITS.flexCorporate, RENTAL_DEPOSITS.flex],
     features: [
       "ไม่มีขั้นต่ำ — ใช้ 1 เดือนพอดี",
       "เหมาะกับไซต์งานระยะสั้น ออฟฟิศชั่วคราว ทดลองใช้",
@@ -111,8 +112,8 @@ export const rentalPlans: RentalPlan[] = [
     name: "แผนรายปี (STANDARD)",
     price: RENTAL_PRICES.annual,
     unit: "/ ปี",
-    deposit: `${thb(DEPOSITS.annual)} (ยกเว้นได้ถ้ามี PO)`,
-    depositRange: [DEPOSITS.annual, DEPOSITS.annual],
+    deposit: `${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้ถ้ามี PO)`,
+    depositRange: [RENTAL_DEPOSITS.annual, RENTAL_DEPOSITS.annual],
     features: [
       `เฉลี่ยเพียง ~${thb(STANDARD_MONTHLY)}/เดือน`,
       "รวมส่ง+ติดตั้ง",
@@ -131,8 +132,8 @@ export const rentalPlans: RentalPlan[] = [
     name: "แผนยืดหยุ่น (FLEX)",
     price: RENTAL_PRICES.flexMonthly,
     unit: "/ เดือน",
-    deposit: `${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)})`,
-    depositRange: [DEPOSITS.flexCorporate, DEPOSITS.flex],
+    deposit: `${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)})`,
+    depositRange: [RENTAL_DEPOSITS.flexCorporate, RENTAL_DEPOSITS.flex],
     features: [
       `ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน`,
       "เหมาะกับออฟฟิศชั่วคราว ไซต์งาน ทดลองใช้",
@@ -314,7 +315,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
-    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(DEPOSITS.flex)} (นิติบุคคล ${thb(DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
+    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
   },
   {
     question: "เช่ารายเดือนมีขั้นต่ำไหม?",
@@ -322,8 +323,7 @@ export const rentalFaqs = [
   },
   {
     question: "ถ้าเครื่องชำรุดหรือสูญหายระหว่างเช่าทำอย่างไร?",
-    answer:
-      "หากเครื่องชำรุดจากการใช้งานปกติ เรามีเครื่องสำรองเปลี่ยนให้ภายใน 24–48 ชม. แต่หากสูญหายหรือเสียหายจากการใช้งานผิดวิธี ผู้เช่าชดใช้ตามมูลค่าทดแทน (เครื่อง ~30,000 · แผ่น ~2,000 · แบต ~5,000) โดยหักจากมัดจำก่อน",
+    answer: `หากเครื่องชำรุดจากการใช้งานปกติ เรามีเครื่องสำรองเปลี่ยนให้ภายใน 24–48 ชม. แต่หากสูญหายหรือเสียหายจากการใช้งานผิดวิธี ผู้เช่าชดใช้ตามมูลค่าทดแทน (เครื่อง ${thb(RENTAL_REPLACEMENT_VALUE.unit)} · แผ่น ${thb(RENTAL_REPLACEMENT_VALUE.pads)} · แบต ${thb(RENTAL_REPLACEMENT_VALUE.battery)}) โดยหักจากมัดจำก่อน`,
   },
   {
     question: "ใช้ช็อตช่วยชีวิตจริงแล้วต้องเปลี่ยนแผ่นไหม?",
@@ -406,5 +406,8 @@ ${tierExtras()}
 คอร์สปฐมพยาบาลออนไลน์ firstaid.morroo.com เรียนฟรีทุกคน · ตู้/ป้าย/อุปกรณ์เสริมดูที่ ads.jia1669.com
 
 ### FAQ เรื่องเช่า
-${faq}`;
+${faq}
+
+เงื่อนไขการเช่าฉบับเต็ม (ส่งลิงก์ให้ลูกค้าได้): https://jiaaed.com/aed/rental/terms
+ตัวอย่างสัญญาเช่าซื้อ: https://jiaaed.com/aed/rental/contract`;
 }
