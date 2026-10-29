@@ -249,7 +249,7 @@ function rentToOwnBreakdown(
 }
 
 export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
-  rentToOwnBreakdown("pkg-start-y8", "primedic-y8", "Yuwell Y8", "Y8"),
+  rentToOwnBreakdown("pkg-start-y8", "primedic-y8", "Yuwell Y8 GPS", "Y8 (รุ่นไม่มี GPS)"),
   rentToOwnBreakdown("pkg-start-y2", "primedic-y2", "Yuwell Y2", "Y2"),
 ];
 
