@@ -214,7 +214,7 @@ export const rentalTrustSignals: RentalTrustSignal[] = [
 ];
 
 // ─── เช่าซื้อ (Rent-to-Own) ────────────────────────────────────────────────────
-// มัดจำ/ค่างวด/จำนวนงวด มาจาก RENT_TO_OWN_TERMS (./packages.ts) และราคาซื้อสด
+// เงินดาวน์/ค่างวด/จำนวนงวด มาจาก RENT_TO_OWN_TERMS (./packages.ts) และราคาซื้อสด
 // มาจาก primedicModels — ที่นี่ไม่มีตัวเลขพิมพ์เอง. ยอดรวมทั้งสัญญา derive ด้วย
 // rentToOwnTotal เสมอ.
 
@@ -276,7 +276,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
   {
     dimension: "เงินก้อนแรก",
     rent: `มัดจำ ${thbRange(rentDepositLo, rentDepositHi)} ตามแผน (คืนได้)`,
-    rentToOwn: `มัดจำ ${thbRange(Math.min(...rtoDeposits), Math.max(...rtoDeposits))} (นับเป็นค่าเครื่อง)`,
+    rentToOwn: `เงินดาวน์ ${thbRange(Math.min(...rtoDeposits), Math.max(...rtoDeposits))} (นับเป็นค่าเครื่อง)`,
     buy: `จ่ายเต็ม เงินสด ${thb(SAFETY_PREMIUM_PRICING.cash)}`,
   },
   {
@@ -379,7 +379,7 @@ export function rentalKnowledgeBlock(): string {
   const rto = rentToOwnBreakdowns
     .map(
       (b) =>
-        `• ${b.model}: มัดจำ ${thb(b.deposit)} + ${thb(b.monthly)}/เดือน × ${b.months} งวด = รวม ${thb(rentToOwnTotal(b))} จบสัญญาเครื่องเป็นของลูกค้าทันที (เทียบ${b.cashPriceLabel})`,
+        `• ${b.model}: ดาวน์ ${thb(b.deposit)} + ${thb(b.monthly)}/เดือน × ${b.months} งวด = รวม ${thb(rentToOwnTotal(b))} จบสัญญาเครื่องเป็นของลูกค้าทันที (เทียบ${b.cashPriceLabel})`,
     )
     .join("\n");
 
@@ -398,7 +398,7 @@ ${RENTAL_EXPENSE_NOTE_LOCAL}
 
 ### เช่าซื้อ (Rent-to-Own) — ผ่อน ${rtoMonthsLabel} งวด จบสัญญาเป็นเจ้าของ
 ${rto}
-${RENT_TO_OWN_ELIGIBILITY} — ลูกค้าบุคคลธรรมดา/ร้านค้า ให้ส่งต่อทีมขายพิจารณาเงื่อนไข ห้ามยืนยันเงื่อนไขมัดจำเอง
+${RENT_TO_OWN_ELIGIBILITY} — ลูกค้าบุคคลธรรมดา/ร้านค้า ให้ส่งต่อทีมขายพิจารณาเงื่อนไข ห้ามยืนยันเงื่อนไขเงินดาวน์เอง
 ${RENT_TO_OWN_OWNERSHIP_NOTE}
 
 ### เช่ารายปีได้มากกว่าเครื่อง (จุดขายเทียบผู้ให้เช่าทั่วไป)

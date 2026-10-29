@@ -175,7 +175,7 @@ export default function YuwellY2Landing() {
             <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
             <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
             <div className="market-product-price"><strong>{Y2_PRICE}</strong><span>ยังไม่รวม VAT</span></div>
-            <p>หรือผ่อน {y2Installment.priceLabel} × {y2InstallmentTerms.months} เดือน (มัดจำ ฿{y2InstallmentTerms.deposit.toLocaleString()}) แล้วเป็นเจ้าของ</p>
+            <p>หรือผ่อน {y2Installment.priceLabel} × {y2InstallmentTerms.months} เดือน (ดาวน์ ฿{y2InstallmentTerms.deposit.toLocaleString()}) แล้วเป็นเจ้าของ</p>
             <div className="market-actions"><MarketButton href={LINE_Y2} lineCta="y2_hero" product="primedic-y2">สอบถาม / ขอใบเสนอราคา</MarketButton><MarketButton href={PHONE_HREF} secondary>โทร {PHONE_DISPLAY}</MarketButton></div>
           </div>
           <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>

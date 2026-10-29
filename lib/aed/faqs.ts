@@ -125,7 +125,7 @@ export const faqRentToOwnVsRental: FAQ = {
 export const faqMidContractCancel: FAQ = {
   question: "หากต้องการยกเลิกสัญญากลางคัน (Safety Start / Care) จะเป็นอย่างไร?",
   answer:
-    `Safety Start (เช่าแล้วได้ซื้อ): หากยกเลิกกลางคัน ค่ามัดจำถือเป็นค่าเสียหายและไม่คืน ส่วนอุปกรณ์ต้องส่งคืนในสภาพดี — ${RENT_TO_OWN_OWNERSHIP_NOTE} · Safety Care (เช่าบริการ): แจ้งยกเลิกได้เมื่อครบกำหนดสัญญารายปี ค่ามัดจำคืนหลังตรวจรับอุปกรณ์ครบและสภาพสมบูรณ์`,
+    `Safety Start (เช่าแล้วได้ซื้อ): หากยกเลิกกลางคัน เงินดาวน์และค่างวดที่ชำระแล้วไม่คืน ส่วนอุปกรณ์ต้องส่งคืนในสภาพดี — ${RENT_TO_OWN_OWNERSHIP_NOTE} · Safety Care (เช่าบริการ): แจ้งยกเลิกได้เมื่อครบกำหนดสัญญารายปี ค่ามัดจำคืนหลังตรวจรับอุปกรณ์ครบและสภาพสมบูรณ์`,
 };
 
 export const faqSwitchPackage: FAQ = {
