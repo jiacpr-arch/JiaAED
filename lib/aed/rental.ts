@@ -8,7 +8,7 @@ import {
   THREE_YEAR_DISCOUNT as THREE_YEAR_DISCOUNT_LOCAL,
 } from "./rental-prices";
 import { consumableLifetimeText, primedicModels } from "./primedic";
-import { RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE, RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
+import { RENT_TO_OWN_CABINET_ADDON, RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE, RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
 import { ONLINE_CPR_SEATS_FEATURE, subscriptionMatrix, subscriptionTiers } from "./subscription";
 import {
   faqRentToOwnVsRental,
@@ -398,6 +398,7 @@ ${RENTAL_EXPENSE_NOTE_LOCAL}
 
 ### เช่าซื้อ (Rent-to-Own) — ผ่อน ${rtoMonthsLabel} งวด จบสัญญาเป็นเจ้าของ
 ${rto}
+เพิ่มตู้ติดผนังได้ +${thb(RENT_TO_OWN_CABINET_ADDON)} (ก่อน VAT) รวมในสัญญาผ่อนเดียวกัน — ยอดรวมใหม่และค่างวดให้ทีมขายคำนวณในใบเสนอราคา
 ${RENT_TO_OWN_ELIGIBILITY} — ลูกค้าบุคคลธรรมดา/ร้านค้า ให้ส่งต่อทีมขายพิจารณาเงื่อนไข ห้ามยืนยันเงื่อนไขเงินดาวน์เอง
 ${RENT_TO_OWN_OWNERSHIP_NOTE}
 

@@ -15,19 +15,23 @@ const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 // ─── Rent-to-own (Safety Start) contract terms ────────────────────────────────
 // The only place these numbers live — rental.ts derives its breakdown table and
 // contract totals from here.
-//   Owner, 29 ต.ค. 2026: higher deposit, lower monthly, SAME contract total —
-//   the big deposit covers most of the unit cost on day one, so a default or a
-//   unit that disappears costs far less.
-//   Y8: 16,000 + 2,000 × 18 = ฿52,000 (≈1.16× ราคาสด 44,900)
-//   Y2: 21,200 + 2,600 × 18 = ฿68,000 (≈1.13× ราคาสด 59,999)
-//   (was 5,200 + 2,600 / 6,800 + 3,400 from 25 ต.ค.; 16,000 + 2,600 /
-//   22,000 + 3,400 → ฿62,800/฿83,200 before that)
+//   Owner, 29 ต.ค. 2026 (later the same day): match the signed-contract pricing
+//   — the first real deal closed at เครื่อง 62,000 + ตู้ 6,000. Big deposit still
+//   covers most of the unit cost on day one.
+//   Y8: 17,000 + 2,500 × 18 = ฿62,000 (≈1.38× ราคาสด 44,900)
+//   Y2: 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999)
+//   + wall cabinet RENT_TO_OWN_CABINET_ADDON, financed in the same contract.
+//   (earlier that day 16,000 + 2,000 / 21,200 + 2,600 → ฿52,000/฿68,000;
+//   5,200 + 2,600 / 6,800 + 3,400 from 25 ต.ค.)
 export type RentToOwnTerms = { deposit: number; monthly: number; months: number };
 
 export const RENT_TO_OWN_TERMS = {
-  "pkg-start-y8": { deposit: 16_000, monthly: 2_000, months: 18 },
-  "pkg-start-y2": { deposit: 21_200, monthly: 2_600, months: 18 },
+  "pkg-start-y8": { deposit: 17_000, monthly: 2_500, months: 18 },
+  "pkg-start-y2": { deposit: 22_000, monthly: 3_400, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
+
+/** Optional wall cabinet added to a rent-to-own contract (before VAT). */
+export const RENT_TO_OWN_CABINET_ADDON = 6_000;
 
 // Owner, 25 ต.ค. 2026: this deposit is for registered companies only
 // (checked with DBD); individuals and small shops get terms case by case. The
