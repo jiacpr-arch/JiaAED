@@ -16,13 +16,14 @@ export type Promotion = {
   conditionNote: string;
 };
 
-// Training on a purchase comes with the Safety Premium package only (owner, Oct
-// 2026): a machine bought on its own ships without a course — quotations for a
+// Training on a purchase comes with the Safety Premium package and, since owner
+// 29 ต.ค. 2026, the Safety Start rent-to-own packages (it justifies their price
+// over cash). A machine bought on its own ships without a course — quotations for a
 // bare unit carry none — and on-site training is added for a fee. FAQs, pages
 // and both bots quote these strings so the offer reads the same everywhere.
 // (Managed-rental training is per subscription tier instead, see ./subscription.ts.)
 export const PACKAGE_TRAINING_PERK = "Mini Course CPR & AED 5–7 ท่าน (2 ชม.) สอนถึงที่ในกรุงเทพฯ";
-export const TRAINING_POLICY = `แพ็ก Safety Premium รวม${PACKAGE_TRAINING_PERK} · ซื้อเครื่องเดี่ยวไม่รวมคอร์ส (เพิ่มคอร์สอบรมได้ สอบถามทีมขาย)`;
+export const TRAINING_POLICY = `แพ็ก Safety Premium และเช่าซื้อ Safety Start รวม${PACKAGE_TRAINING_PERK} · ซื้อเครื่องเดี่ยวไม่รวมคอร์ส (เพิ่มคอร์สอบรมได้ สอบถามทีมขาย)`;
 
 // "รอดแล้วให้ ฿10,000" — the headline trust offer.
 export const survivorReward: Promotion = {
@@ -32,7 +33,7 @@ export const survivorReward: Promotion = {
   subtitle:
     "เรามั่นใจในเครื่องและการอบรมของเรา — ถ้าใช้ AED ของ JIA CPR ช่วยชีวิตคนได้สำเร็จ (ผู้ป่วยรอดชีวิต) เรามอบเงิน ฿10,000 ร่วมยินดีกับทุกชีวิตที่รอด",
   points: [
-    `แพ็ก Safety Premium มาพร้อม${PACKAGE_TRAINING_PERK} ฟรี`,
+    `แพ็ก Safety Premium และเช่าซื้อ Safety Start มาพร้อม${PACKAGE_TRAINING_PERK} ฟรี`,
     "ทีมงานพร้อมให้คำปรึกษาและดูแลหลังการขายตลอดอายุการใช้งาน",
     "ยืนยันเหตุการณ์และการใช้งานจริงผ่าน LINE — รับเงินรางวัล ฿10,000",
   ],
