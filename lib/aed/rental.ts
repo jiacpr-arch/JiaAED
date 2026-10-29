@@ -7,7 +7,7 @@ import {
   STANDARD_MONTHLY,
   THREE_YEAR_DISCOUNT as THREE_YEAR_DISCOUNT_LOCAL,
 } from "./rental-prices";
-import { consumableLifetimeText, primedicModels } from "./primedic";
+import { consumableLifetimeText, primedicModels, yuwellGpsAed } from "./primedic";
 import { PACKAGE_TRAINING_PERK } from "./promotion";
 import { RENT_TO_OWN_CABINET_ADDON, RENT_TO_OWN_ELIGIBILITY, RENT_TO_OWN_OWNERSHIP_NOTE, RENT_TO_OWN_TERMS, SAFETY_PREMIUM_PRICING } from "./packages";
 import { ONLINE_CPR_SEATS_FEATURE, subscriptionMatrix, subscriptionTiers } from "./subscription";
@@ -234,11 +234,15 @@ export const rentToOwnTotal = (b: RentToOwnBreakdown) => b.deposit + b.monthly *
 
 function rentToOwnBreakdown(
   packageId: RentToOwnBreakdown["packageId"],
-  modelId: "primedic-y8" | "primedic-y2",
+  modelId: "yuwell-gps" | "primedic-y2",
   model: string,
   shortName: string,
 ): RentToOwnBreakdown {
-  const cashPrice = primedicModels.find((m) => m.id === modelId)!.price;
+  // Compare with the cash price of the same unit (Y8 rent-to-own ships as GPS).
+  const cashPrice =
+    modelId === "yuwell-gps"
+      ? (yuwellGpsAed.price ?? primedicModels.find((m) => m.id === "primedic-y8")!.price)
+      : primedicModels.find((m) => m.id === modelId)!.price;
   return {
     packageId,
     model,
@@ -249,7 +253,7 @@ function rentToOwnBreakdown(
 }
 
 export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
-  rentToOwnBreakdown("pkg-start-y8", "primedic-y8", "Yuwell Y8 GPS", "Y8 (รุ่นไม่มี GPS)"),
+  rentToOwnBreakdown("pkg-start-y8", "yuwell-gps", "Yuwell Y8 GPS", "Y8 GPS"),
   rentToOwnBreakdown("pkg-start-y2", "primedic-y2", "Yuwell Y2", "Y2"),
 ];
 

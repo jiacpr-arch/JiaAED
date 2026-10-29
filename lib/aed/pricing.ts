@@ -118,9 +118,9 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
     nameTh: "เครื่อง AED Yuwell พร้อม GPS ในตัว",
     description: "เครื่อง AED ที่มีระบบ GPS ในตัว ติดตามตำแหน่งและสถานะแบบเรียลไทม์",
     msrp: 60_000,
-    startingPrice: 60_000,
-    bestPrice: 60_000,
-    minPrice: 58_000, // ทุน 35,000 → ขั้นต่ำยังเหลือกำไร 23,000
+    startingPrice: 52_000, // owner 29 ต.ค. 2026 — ต้องตรงกับ yuwellGpsAed.price
+    bestPrice: 52_000,
+    minPrice: 50_000, // ทุน 35,000 → ขั้นต่ำยังเหลือกำไร 15,000
     vatRate: 0.07,
     faProductCode: "AED-Y8GPS", // the GPS unit's code in FlowAccount
   },
