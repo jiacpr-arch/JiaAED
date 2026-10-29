@@ -17,7 +17,7 @@ describe("rentToOwnBreakdowns", () => {
     const totals = Object.fromEntries(
       rentToOwnBreakdowns.map((b) => [b.packageId, rentToOwnTotal(b)]),
     );
-    expect(totals["pkg-start-y8"]).toBe(52_000); // deposit cut to 2 งวด, owner 25 ต.ค. 2026
+    expect(totals["pkg-start-y8"]).toBe(52_000); // higher deposit, same total — owner 29 ต.ค. 2026
     expect(totals["pkg-start-y2"]).toBe(68_000);
   });
 

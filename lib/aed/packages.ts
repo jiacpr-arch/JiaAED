@@ -15,19 +15,21 @@ const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 // ─── Rent-to-own (Safety Start) contract terms ────────────────────────────────
 // The only place these numbers live — rental.ts derives its breakdown table and
 // contract totals from here.
-//   Owner, 25 ต.ค. 2026: lower the deposit to 2 งวด, same monthly and term —
-//   the old 16,000/22,000 deposits contradicted "ไม่ต้องจ่ายก้อนใหญ่".
-//   Y8: 5,200 + 2,600 × 18 = ฿52,000 (≈1.16× ราคาสด 44,900)
-//   Y2: 6,800 + 3,400 × 18 = ฿68,000 (≈1.13× ราคาสด 59,999)
-//   (was 16,000/22,000 → ฿62,800/฿83,200, approved 2026-07-19)
+//   Owner, 29 ต.ค. 2026: higher deposit, lower monthly, SAME contract total —
+//   the big deposit covers most of the unit cost on day one, so a default or a
+//   unit that disappears costs far less.
+//   Y8: 16,000 + 2,000 × 18 = ฿52,000 (≈1.16× ราคาสด 44,900)
+//   Y2: 21,200 + 2,600 × 18 = ฿68,000 (≈1.13× ราคาสด 59,999)
+//   (was 5,200 + 2,600 / 6,800 + 3,400 from 25 ต.ค.; 16,000 + 2,600 /
+//   22,000 + 3,400 → ฿62,800/฿83,200 before that)
 export type RentToOwnTerms = { deposit: number; monthly: number; months: number };
 
 export const RENT_TO_OWN_TERMS = {
-  "pkg-start-y8": { deposit: 5_200, monthly: 2_600, months: 18 },
-  "pkg-start-y2": { deposit: 6_800, monthly: 3_400, months: 18 },
+  "pkg-start-y8": { deposit: 16_000, monthly: 2_000, months: 18 },
+  "pkg-start-y2": { deposit: 21_200, monthly: 2_600, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
 
-// Owner, 25 ต.ค. 2026: the low 2-งวด deposit is for registered companies only
+// Owner, 25 ต.ค. 2026: this deposit is for registered companies only
 // (checked with DBD); individuals and small shops get terms case by case. The
 // unit stays the company's until the last instalment (ป.พ.พ. เช่าซื้อ).
 export const RENT_TO_OWN_ELIGIBILITY =
@@ -125,7 +127,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
       "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
-      "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
+      "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
       `ครบ ${startY8.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
@@ -146,7 +148,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     deposit: `${thb(startY2.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
       "จอสี EKG — ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
-      "กระจายภาระลงทุน ไม่ต้องจ่ายก้อนใหญ่",
+      "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
       `ครบ ${startY2.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นเรือธงแต่ผ่อนเบา ๆ",
