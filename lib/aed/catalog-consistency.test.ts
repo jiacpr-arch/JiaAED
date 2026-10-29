@@ -91,7 +91,9 @@ describe("packages", () => {
 describe("rental numbers are derived, not re-typed", () => {
   it("rent-to-own breakdowns use the package terms and the model cash price", () => {
     const cash: Record<string, number> = {
-      "pkg-start-y8": model("primedic-y8").price,
+      // Rent-to-own Y8 ships as the GPS unit (owner 29 ต.ค. 2026), so it is
+      // compared with the GPS unit's cash price.
+      "pkg-start-y8": yuwellGpsAed.price ?? model("primedic-y8").price,
       "pkg-start-y2": model("primedic-y2").price,
     };
     for (const b of rentToOwnBreakdowns) {

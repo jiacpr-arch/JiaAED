@@ -6,7 +6,7 @@
 // Prices are PROVISIONAL (wholesale being finalized). Update here only — the
 // rental table, FAQs, subscription comparison and bots read these constants.
 
-import { PRICE_ON_REQUEST, primedicModels } from "./primedic";
+import { PRICE_ON_REQUEST, primedicModels, yuwellGpsAed } from "./primedic";
 import { PACKAGE_TRAINING_PERK } from "./promotion";
 import { STANDARD_MONTHLY } from "./rental-prices";
 
@@ -88,6 +88,9 @@ export type AcquisitionPackage = {
   imageAlt: string;
 };
 
+// GPS upgrade on Safety Premium: the GPS unit's own cash price, or "สอบถามราคา".
+const gpsUpgrade = yuwellGpsAed.price === null ? PRICE_ON_REQUEST : `เครื่อง GPS ${thb(yuwellGpsAed.price)}`;
+
 const startY8 = RENT_TO_OWN_TERMS["pkg-start-y8"];
 const startY2 = RENT_TO_OWN_TERMS["pkg-start-y2"];
 const premium = SAFETY_PREMIUM_PRICING;
@@ -143,7 +146,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: "ยอดนิยม",
     ctaProductHint: "primedic-y8",
     href: "/quote",
-    image: "/images/primedic-y8-open.png",
+    image: "/images/yuwell-gps-aed.webp",
     imageAlt: "เช่าแล้วได้ซื้อ AED Yuwell/PRIMEDIC HeartSave Y8 รุ่น GPS ในตัว",
   },
   {
@@ -178,12 +181,12 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     priceNote:
       `เงินสด ${thb(premium.cash)} (Yuwell Y0 ไม่รวมตู้) / รวมตู้ ${thb(premium.cashWithCabinet)} · ` +
       `ราคาเครดิต/ราชการ ${thb(premium.credit)} (สำหรับเทอมเครดิตยาว) · ` +
-      `อัปเกรดรุ่น GPS ในตัวได้ (${PRICE_ON_REQUEST}) · ออกใบกำกับภาษีได้`,
+      `อัปเกรดรุ่น GPS ในตัวได้ (${gpsUpgrade}) · ออกใบกำกับภาษีได้`,
     deposit: null,
     features: [
       "เครื่อง AED Yuwell Y0 เป็นกรรมสิทธิ์ขององค์กร",
       `เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้ (รวมตู้ ${thb(premium.cashWithCabinet)})`,
-      `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ (${PRICE_ON_REQUEST})`,
+      `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ (${gpsUpgrade})`,
       `รวม${PACKAGE_TRAINING_PERK} โดยทีม BLS Instructor (ต่างจังหวัดสอบถาม)`,
       "ชุดอุปกรณ์ฝึกสอน + บริการหลังการขาย",
     ],
