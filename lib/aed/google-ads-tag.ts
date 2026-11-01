@@ -1,24 +1,19 @@
-// Google Ads tag config — account 461-594-5872 (Jia1669.com), tag AW-10780588709.
-//
-// These are the SAME conversion actions jia1669.com already reports to (ไลน์ /
-// โทร / แชทกับเรา), so every AED landing page lands its conversions in the one
-// account the AED campaigns run in. Rule: never create new conversion actions —
-// reuse these labels.
-//
-// Hard-coded on purpose (no NEXT_PUBLIC_* override): a leftover Vercel env var
-// pointing at the old AW-873507669 tag would otherwise silently send
-// conversions to the wrong account.
+// Existing Google tag and form destination. Ownership of AW-10780588709 has
+// not been verified; keep the current form route unchanged in this scoped edit.
+// Jia1669.com (461-594-5872) tag setup verified AW-873507669 and the LINE /
+// phone conversion labels below. Only those two click actions use that ID.
 
 export const GADS_ID = "AW-10780588709";
+export const GADS_VERIFIED_LEAD_ID = "AW-873507669";
 
 // "แชทกับเรา" (form/chat submit) — fired when a lead/quote form submits.
 export const GADS_LEAD_CONVERSION_LABEL = "ePoiCMySpfcCEKX1ypQo";
 
 // "ไลน์" (LINE click).
-export const GADS_LINE_CLICK_CONVERSION_LABEL = "psuVCOSSpfcCEKX1ypQo";
+export const GADS_LINE_CLICK_CONVERSION_LABEL = "nOwLCPvsjdgYENXWwqAD";
 
 // "โทร" (tel: link click).
-export const GADS_CALL_CLICK_CONVERSION_LABEL = "i40LCO2SpfcCEKX1ypQo";
+export const GADS_CALL_CLICK_CONVERSION_LABEL = "n5asCPjsjdgYENXWwqAD";
 
 // Same per-lead value jia1669.com sends, so values stay comparable across sites.
 export const GADS_LEAD_VALUE_THB = 494.8;
@@ -29,7 +24,9 @@ export const GADS_LEAD_VALUE_THB = 494.8;
  */
 export function gadsSendTo(label: string | undefined | null): string | null {
   if (!GADS_ID || !label) return null;
-  return `${GADS_ID}/${label}`;
+  const id = label === GADS_LINE_CLICK_CONVERSION_LABEL || label === GADS_CALL_CLICK_CONVERSION_LABEL
+    ? GADS_VERIFIED_LEAD_ID : GADS_ID;
+  return `${id}/${label}`;
 }
 
 /** Full gtag `conversion` params for a label, including the lead value. */
