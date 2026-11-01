@@ -40,9 +40,8 @@ export function LineClickTracker() {
           product_id: productId ?? "none",
         });
 
-        // Report to Google as the shared "ไลน์" conversion (AW-10780588709) —
-        // the same action jia1669.com uses, so AED campaigns see these clicks.
-        if (typeof window.gtag === "function") {
+        // Report to the verified Jia1669.com "ไลน์" conversion (AW-873507669).
+        if (hasMarketingConsent() && typeof window.gtag === "function") {
           window.gtag("event", "click_to_line", {
             cta_location: location,
             product_id: productId,
@@ -95,7 +94,7 @@ export function LineClickTracker() {
       const telAnchor = target.closest('a[href^="tel:"]') as HTMLAnchorElement | null;
       if (telAnchor) {
         trackEvent("call_click", { location: telAnchor.dataset.cta || "unknown" });
-        if (typeof window.gtag === "function") {
+        if (hasMarketingConsent() && typeof window.gtag === "function") {
           const conv = gadsConversionParams(GADS_CALL_CLICK_CONVERSION_LABEL);
           if (conv) window.gtag("event", "conversion", conv);
         }
