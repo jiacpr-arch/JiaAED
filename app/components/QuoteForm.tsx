@@ -178,7 +178,7 @@ export function QuoteForm({
         pixelLeadCreated();
         trackEvent("lead_form_submit", { variant, product_id: productId || "none" });
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
-        if (typeof gtag === "function") {
+        if (hasMarketingConsent() && typeof gtag === "function") {
           gtag("event", "lead_form_submit", { product_id: productId || null });
           const conv = gadsConversionParams(GADS_LEAD_CONVERSION_LABEL);
           if (conv) {
