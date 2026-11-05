@@ -71,7 +71,7 @@ export function CookieConsent() {
           <div className="cookie-consent-card" role="dialog" aria-label="ตั้งค่าคุกกี้">
             <p className="cookie-consent-label">ความเป็นส่วนตัว</p>
             <p className="cookie-consent-copy">
-              หากกด &quot;ยอมรับทั้งหมด&quot; เราจะใช้คุกกี้และเครื่องมือวัดผล/โฆษณา (เช่น Google Analytics/Ads, Meta และ
+              หากกด &quot;ยอมรับทั้งหมด&quot; เราจะใช้คุกกี้และเครื่องมือวัดผล/โฆษณา (เช่น Google Analytics/Ads, Meta, OpenAI และ
               PostHog) เพื่อวัดการเข้าชมและผลโฆษณา และแจ้งการกดติดต่อ/การส่งฟอร์มให้แพลตฟอร์มโฆษณา
               (ข้อมูลติดต่อถูกเข้ารหัสแบบ hash ก่อนส่ง) หากเลือก &quot;ใช้เท่าที่จำเป็น&quot; จะไม่มีการส่งข้อมูลเหล่านี้
               เปลี่ยนใจได้ทุกเมื่อจากลิงก์ &quot;ตั้งค่าคุกกี้&quot; ด้านล่างของหน้า อ่านรายละเอียดใน{" "}
