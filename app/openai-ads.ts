@@ -1,7 +1,7 @@
 // Public Pixel identifier confirmed in Ads Manager; never put CAPI keys here.
-export const PIXEL_ID = "BdD4WtpgY9GTcdMr3mEhys";
-// Keep disabled until automatic customer matching is resolved and activation is approved.
-export const OPENAI_ADS_ENABLED = false;
+export const PIXEL_ID = "8Qwm1bqunw9i9Ad4LXxZeX";
+// Owner requested activation for the selected Ads Manager account; cookie consent remains required.
+export const OPENAI_ADS_ENABLED = true;
 const ALLOWED_HOSTS = ["jiaaed.com", "www.jiaaed.com"];
 
 function allowedHost() {
