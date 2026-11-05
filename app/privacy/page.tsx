@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-const UPDATED = "18 ตุลาคม 2569";
+const UPDATED = "5 พฤศจิกายน 2569";
 
 function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="text-xl font-bold text-white mt-10 mb-3">{children}</h2>;
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
             <li>FlowAccount — จัดทำใบเสนอราคาและเอกสารบัญชี</li>
             <li>Google (Analytics / Ads) — วิเคราะห์การใช้งานและวัดผลโฆษณา รวมถึงแจ้งการส่งฟอร์มพร้อมอีเมล/เบอร์โทรที่เข้ารหัสแบบ hash (Enhanced Conversions)*</li>
             <li>Meta (Facebook/Instagram Pixel &amp; Conversions API) — วัดผลโฆษณา โดยส่งเหตุการณ์การกดติดต่อ/ส่งฟอร์มจากเบราว์เซอร์และเซิร์ฟเวอร์ (พร้อม IP, ข้อมูลเบราว์เซอร์ และอีเมล/เบอร์โทรแบบ hash)*</li>
-            <li>OpenAI Pixel — วัดการเข้าชม การกด LINE/โทรศัพท์ และคำขอที่ส่งสำเร็จ โดยไม่แนบข้อมูลส่วนบุคคลหรือรายละเอียดฟอร์ม*</li>
+            <li>OpenAI Pixel — วัดการเข้าชม การกด LINE/โทรศัพท์ และคำขอที่ส่งสำเร็จ โค้ดเหตุการณ์ของเราไม่แนบรายละเอียดฟอร์ม ทั้งนี้ระบบจับคู่ขั้นสูงอัตโนมัติของ Pixel อาจตรวจข้อมูลติดต่อที่รองรับ ปรับรูปแบบและแฮชในเบราว์เซอร์ก่อนส่งให้ OpenAI เพื่อจับคู่ผลโฆษณา โดยไม่ส่งข้อมูลติดต่อดิบผ่านระบบจับคู่นี้*</li>
             <li>PostHog — วิเคราะห์พฤติกรรมการใช้งานเว็บไซต์*</li>
           </ul>
           <p className="text-gray-500 mt-2">* ทำงานเฉพาะเมื่อท่านยอมรับคุกกี้เท่านั้น</p>
