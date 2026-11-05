@@ -17,11 +17,22 @@ describe("Google Ads destination routing", () => {
     expect(gadsConversionParams(GADS_LINE_CLICK_CONVERSION_LABEL)).toEqual({
       send_to: "AW-873507669/nOwLCPvsjdgYENXWwqAD", value: 494.8, currency: "THB",
     });
+    expect(gadsConversionParams(GADS_CALL_CLICK_CONVERSION_LABEL)).toEqual({
+      send_to: "AW-873507669/n5asCPjsjdgYENXWwqAD", value: 494.8, currency: "THB",
+    });
   });
 
-  it("preserves the existing unverified form route and skips missing labels", () => {
+  it("routes successful forms to Lead Form Submit without an assigned monetary value", () => {
+    expect(gadsSendTo(GADS_LEAD_CONVERSION_LABEL)).toBe("AW-873507669/-UU0CKTs79gcENXWwqAD");
+    expect(gadsConversionParams(GADS_LEAD_CONVERSION_LABEL)).toEqual({
+      send_to: "AW-873507669/-UU0CKTs79gcENXWwqAD", value: 0, currency: "THB",
+    });
+  });
+
+  it("preserves the loader configuration and skips missing labels", () => {
     expect(GADS_ID).toBe("AW-10780588709");
-    expect(gadsSendTo(GADS_LEAD_CONVERSION_LABEL)).toBe("AW-10780588709/ePoiCMySpfcCEKX1ypQo");
     expect(gadsSendTo(null)).toBeNull();
+    expect(gadsSendTo(undefined)).toBeNull();
+    expect(gadsConversionParams("")).toBeNull();
   });
 });
