@@ -1,8 +1,6 @@
-// Weekly conversion-tracking reconciliation (Monday 12:30 น. ไทย = 05:30 UTC) —
-// checks what fraction of real leads (aed_leads) actually made it into a
-// 'sent' row in aed_conversion_log, so ads-round2's CPL-based budget
-// recommendations aren't silently computed on incomplete data. See
-// lib/aed/conversion-audit.ts.
+// Weekly offline upload audit (Monday 12:30 น. ไทย = 05:30 UTC).
+// Raw enquiries are measured by the browser Lead Form Submit action, not this
+// offline log. Alert on failed/skipped explicit offline uploads only.
 import { NextResponse } from "next/server";
 import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { claimDailyCronRun } from "@/lib/aed/cron-once";

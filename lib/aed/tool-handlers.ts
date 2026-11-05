@@ -14,7 +14,6 @@ import {
 } from "./pricing";
 import { createQuotation } from "./flowaccount";
 import { notifyEscalation, notifyNewQuotation } from "./notify-owner";
-import { recordConversion } from "./conversion";
 import {
   updateCustomer,
   createDeal,
@@ -74,15 +73,13 @@ export async function handleUpdateCustomerInfo(
     ...(input.customer_type && { customer_type: input.customer_type, is_company: input.customer_type !== "individual" }),
   });
 
-  // First time a contact is secured in this chat → log a real lead and report it
-  // to Google Ads. LINE carries no gclid, so this relies on enhanced-conversion
-  // matching of the hashed phone/email. recordConversion is a safe no-op (logged
-  // to aed_conversion_log) until the GOOGLE_ADS_* offline-import env is set.
+  // First contact in this chat is a CRM lead, not a purchase or a verified
+  // offline outcome. Do not upload it to the default Google Ads purchase action.
   const hadContact = Boolean(ctx.customer.phone || ctx.customer.email);
   const phone = input.phone ?? ctx.customer.phone ?? null;
   const email = input.email ?? ctx.customer.email ?? null;
   if (!hadContact && (phone || email)) {
-    const leadId = await createChatLead({
+    await createChatLead({
       customerId: ctx.customer.id,
       conversationId: ctx.conversation.id,
       channel: ctx.conversation.channel,
@@ -91,12 +88,7 @@ export async function handleUpdateCustomerInfo(
       email,
       companyName: input.company_name ?? ctx.customer.company_name ?? null,
     });
-    // Awaited: this runs inside the webhook's waitUntil chain, and a floating
-    // promise there can be dropped when the function is frozen.
-    await recordConversion({ phone, email, orderId: leadId ?? undefined }).catch((e) =>
-      console.error("[AED] chat conversion failed:", e),
-    );
-    // Reflect locally so repeated calls within the same turn don't double-fire.
+    // Reflect locally so repeated calls within the same turn don't duplicate leads.
     ctx.customer.phone = phone;
     ctx.customer.email = email;
   }

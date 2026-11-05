@@ -3,7 +3,6 @@ import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
 import { sendLeadAutoReply, sendLeadOwnerNotification } from "@/lib/aed/email";
-import { recordConversion } from "@/lib/aed/conversion";
 import { sendMetaLeadEvent } from "@/lib/aed/meta-capi";
 import { products } from "@/lib/aed/products";
 import {
@@ -240,18 +239,9 @@ export async function POST(req: Request) {
       .catch((e) => console.error("[AED] owner lead email failed:", e)),
   );
 
-  // Report the lead to Google Ads (gclid click-conversion, or enhanced match on
-  // phone/email). No-op-but-logged until GOOGLE_ADS_* env + conversion action id
-  // are configured. orderId = lead id so Google dedupes re-submissions. Without
-  // consent it's still logged (as no-attribution) but carries no user data.
-  waitUntil(
-    recordConversion({
-      gclid: marketingConsent ? gclid : null,
-      email: marketingConsent ? email : null,
-      phone: marketingConsent ? phone : null,
-      orderId: data.id,
-    }).catch((e) => console.error("[AED] conversion record failed:", e)),
-  );
+  // A raw enquiry is not a purchase or a verified offline outcome. The browser
+  // reports the consented Lead Form Submit after this request succeeds. Reserve
+  // the protected Google Ads upload endpoint for verified offline outcomes.
 
   // Report the lead to Meta via Conversions API (server-side), sharing eventId
   // with the browser pixel for dedup. Must use waitUntil — bare void fetch is
