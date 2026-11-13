@@ -20,7 +20,7 @@ export const products: Product[] = [
   {
     id: "i7",
     name: "AED Yuwell Y2",
-    subtitle: "รุ่นเรือธง · จอสี EKG",
+    subtitle: "รุ่นแนะนำ · จอสี EKG",
     price: AED_PRODUCTS.i7.startingPrice,
     msrp: AED_PRODUCTS.i7.msrp,
     description:
@@ -31,7 +31,7 @@ export const products: Product[] = [
       "Escalating 200-360J ผู้ใหญ่ · 50-100J เด็ก",
       "จอสี EKG + เซ็นเซอร์ CPR feedback มาตรฐาน",
     ],
-    badge: "เรือธง",
+    badge: "แนะนำ",
   },
   {
     id: "i7-cabinet",

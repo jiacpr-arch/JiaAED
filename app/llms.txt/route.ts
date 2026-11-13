@@ -30,7 +30,7 @@ const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 
 const PAGES: { path: string; label: string; note: string }[] = [
   { path: "/", label: "หน้าแรก", note: "ภาพรวมสินค้า ราคา และ FAQ" },
-  { path: "/aed/yuwell-y2", label: "AED Yuwell Y2", note: "รุ่นเรือธง จอสี EKG" },
+  { path: "/aed/yuwell-y2", label: "AED Yuwell Y2", note: "รุ่นแนะนำ จอสี EKG" },
   { path: "/aed/primedic", label: "ไลน์อัป Yuwell / PRIMEDIC HeartSave", note: "เปรียบเทียบ Y0 / Y8 / Y2 / GPS" },
   { path: "/aed/packages", label: "แพ็กเกจ", note: "3 วิธีได้ AED — ซื้อขาด เช่าซื้อ เช่าบริการ" },
   { path: "/aed/rental", label: "เช่า & เช่าซื้อ AED", note: "รายวัน รายเดือน รายปี และผ่อน 18 เดือน" },

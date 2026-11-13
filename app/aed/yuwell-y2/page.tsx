@@ -38,7 +38,7 @@ const LINE_Y2_INSTALLMENT = lineOaUrl("สนใจ AED Yuwell Y2 แบบผ�
 export const metadata: Metadata = {
   title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
   description:
-    `AED Yuwell Y2 (You Too) รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ยังไม่รวม VAT) ` +
+    `AED Yuwell Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ยังไม่รวม VAT) ` +
     `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · ` +
     `โทร 090-979-1212 หรือ LINE ${LINE_DISPLAY_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG · ซื้อสดหรือผ่อนได้`,
     description:
-      `รุ่นเรือธง จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
+      `รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
     url: "/aed/yuwell-y2",
     images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254 }],
     type: "website",
@@ -122,7 +122,7 @@ const FEATURED_KHOP_FLYER = {
 const SPEC_PREVIEW_ROWS = 8;
 
 const gallery: { src: string; alt: string }[] = [
-  { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)" },
+  { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)" },
   { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
   // Clean photos only: text posters/infographics don't read at tile size.
   // primedic-y2-vital-launch.webp is also out — it bakes in the old ฿59,000.
@@ -171,7 +171,7 @@ export default function YuwellY2Landing() {
 
       <section className="market-product-hero">
         <div className="market-container market-product-grid">
-          <div><p className="market-eyebrow">เรือธง · จอสี EKG · You Too</p>
+          <div><p className="market-eyebrow">รุ่นแนะนำ · จอสี EKG · You Too</p>
             <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
             <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
             <div className="market-product-price"><strong>{Y2_PRICE}</strong><span>ยังไม่รวม VAT</span></div>

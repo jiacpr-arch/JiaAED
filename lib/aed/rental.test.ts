@@ -18,7 +18,7 @@ describe("rentToOwnBreakdowns", () => {
       rentToOwnBreakdowns.map((b) => [b.packageId, rentToOwnTotal(b)]),
     );
     expect(totals["pkg-start-y8"]).toBe(62_000); // matches the first signed contract — owner 29 ต.ค. 2026
-    expect(totals["pkg-start-y2"]).toBe(83_200);
+    expect(totals["pkg-start-y2"]).toBe(68_200); // owner 13 พ.ย. 2026: 16,000 + 2,900 × 18
   });
 
   it("breakdown numbers appear verbatim in the package priceNote", () => {

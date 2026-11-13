@@ -44,10 +44,10 @@ const cards: Card[] = [
     keyDiff: primedicModels[1].keyDiff,
     bestFor: primedicModels[1].bestFor,
     accent: "border-red-400/70 text-red-300",
-    tag: "มี CPR feedback",
+    tag: "Y0 + แผ่น CPR feedback",
   },
   {
-    // รุ่นเรือธงที่ดัน — accent สีเหลืองให้เด่นกว่าตัวอื่น
+    // รุ่นแนะนำที่ดัน (เจ้าของ 13 พ.ย. 2026) — accent สีเหลืองให้เด่นกว่าตัวอื่น
     id: primedicModels[2].id,
     name: primedicModels[2].name,
     price: primedicModels[2].price,
@@ -55,7 +55,7 @@ const cards: Card[] = [
     keyDiff: primedicModels[2].keyDiff,
     bestFor: primedicModels[2].bestFor,
     accent: "border-yellow-400/70 text-yellow-300",
-    tag: "🚩 เรือธง · จอ EKG + ดู CPR สด",
+    tag: "⭐ แนะนำ · จอ EKG + ดู CPR สด",
   },
   {
     id: yuwellGpsAed.id,

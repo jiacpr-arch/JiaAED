@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     template: "%s · JiaAED",
   },
   description:
-    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (เรือธง จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย" +
+    "เครื่องกระตุกหัวใจไฟฟ้า (AED) Yuwell / PRIMEDIC HeartSave — Y0, Y8, Y2 (รุ่นแนะนำ จอสี EKG) พร้อม Yuwell AED รุ่นมี GPS ในตัว · เสียงแนะนำภาษาไทย" +
     (PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · ทะเบียน อย. ${PRIMEDIC_REGULATORY.fda}` : ""),
   keywords: [
     "AED",

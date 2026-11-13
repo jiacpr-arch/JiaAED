@@ -30,7 +30,7 @@ const modelPrice = Object.fromEntries(
 export const metadata: Metadata = {
   title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม",
   description:
-    `ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (${modelPrice["primedic-y0"]}), Y8 (${modelPrice["primedic-y8"]}) พร้อมเซ็นเซอร์ CPR feedback และรุ่นเรือธง Yuwell Y2 (${modelPrice["primedic-y2"]}) จอสี EKG ดูคุณภาพ CPR สด ๆ`,
+    `ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (${modelPrice["primedic-y0"]}), Y8 (${modelPrice["primedic-y8"]}) พร้อมเซ็นเซอร์ CPR feedback และรุ่นแนะนำ Yuwell Y2 (${modelPrice["primedic-y2"]}) จอสี EKG ดูคุณภาพ CPR สด ๆ`,
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export default function PrimedicPage() {
   return (
     <MarketPage>
-      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"PRIMEDIC HeartSave\nY0 / Y8 / Yuwell Y2."} description="เครื่องกระตุกหัวใจไฟฟ้ากึ่งอัตโนมัติ ใช้งานง่าย พร้อมเสียงนำทาง CPR และเซ็นเซอร์ feedback — รุ่นเรือธง Y2 มีจอ EKG ดูคุณภาพ CPR สด ๆ"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"PRIMEDIC HeartSave\nY0 / Y8 / Yuwell Y2."} description="AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม — Yuwell Y2 จอสีแสดงความเร็ว ความลึก และการปล่อยหน้าอกสด ๆ ขณะช่วยชีวิต · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
       <div className="market-content">
       <ProductStructuredData include="primedic" />
       <BreadcrumbStructuredData
@@ -69,9 +69,10 @@ export default function PrimedicPage() {
             <ul className="space-y-2">
               {(
                 [
-                  { model: "Y0", price: modelPrice["primedic-y0"], diff: "เซ็นเซอร์ CPR feedback เป็นตัวเลือก" },
-                  { model: "Y8", price: modelPrice["primedic-y8"], diff: "เซ็นเซอร์ CPR feedback มาตรฐาน" },
-                  { model: "Yuwell Y2", price: modelPrice["primedic-y2"], diff: "รุ่นเรือธง — จอสี EKG ดูคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
+                  // Y2 ขึ้นก่อน = รุ่นแนะนำ (เจ้าของ 13 พ.ย. 2026). Y8 บอกตรง ๆ ว่าคือ Y0 + แผ่น feedback.
+                  { model: "Yuwell Y2", price: modelPrice["primedic-y2"], diff: "⭐ รุ่นแนะนำ — จอสี EKG เห็นคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
+                  { model: "Y8", price: modelPrice["primedic-y8"], diff: "ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback (เสียงบอก) · เพิ่มอีก ฿4,000 ได้ Y2 ดูบนจอสี" },
+                  { model: "Y0", price: modelPrice["primedic-y0"], diff: "รุ่นมาตรฐาน — เพิ่มแผ่น CPR feedback ทีหลังได้" },
                 ] as { model: string; price: string; diff: string; href?: string }[]
               ).map((m) => (
                 <li key={m.model} className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900 px-4 py-3">
@@ -96,12 +97,26 @@ export default function PrimedicPage() {
               target="_blank"
               rel="noopener noreferrer"
               data-line-cta="primedic_hero"
-              data-product="primedic-y8"
+              data-product="primedic-y2"
               className="inline-block bg-[#06C755] text-white font-bold text-lg px-8 py-4 rounded-full hover:bg-[#05a847] shadow-2xl shadow-[#06C755]/40"
             >
               💬 สอบถามราคา / กำหนดวางจำหน่าย
             </a>
           </div>
+        </div>
+
+        {/* ทำไมต้อง Y2 — ขายด้วยคุณภาพการปั๊ม ไม่ใช่สเปก (เจ้าของ 13 พ.ย. 2026) */}
+        <div className="mt-8 rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
+          <h2 className="text-lg font-extrabold text-white">ทำไมควรเลือก Yuwell Y2</h2>
+          <ul className="mt-3 space-y-2 text-sm text-gray-200">
+            <li>• เครื่อง AED ช็อกแค่ไม่กี่วินาที — เวลาที่เหลือคือการปั๊มหัวใจ</li>
+            <li>• คนที่ไม่ได้ทำ CPR บ่อยมักกดตื้นหรือเร็วเกินโดยไม่รู้ตัว — Y2 แสดงบนจอทันที ปรับท่าได้ระหว่างช่วยชีวิต</li>
+            <li>• ต่างจาก Y8 แค่ ฿4,000 — ใช้ 4 ปี เฉลี่ยวันละไม่ถึง 3 บาท</li>
+            <li>• มาลองปั๊มหุ่นและดูจอ Y2 ได้ที่ JIA TRAINER CENTER เดอะสตรีท รัชดา</li>
+          </ul>
+          <Link href="/aed/yuwell-y2" className="mt-4 inline-block text-yellow-400 hover:text-yellow-300 font-semibold">
+            ดูรายละเอียด Yuwell Y2 →
+          </Link>
         </div>
 
         {/* Regulatory line — real อย./ฆพ. once published, else a neutral pending note.
@@ -137,7 +152,7 @@ export default function PrimedicPage() {
             flyers (ฆพ.2475/2569 Y0/Y2, ฆพ.287/2567 Y8) supplied by the owner ก.ค. 2026 */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
-            { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นเรือธง)", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)", w: 1254, h: 1254 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่

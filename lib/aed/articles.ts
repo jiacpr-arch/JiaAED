@@ -219,8 +219,8 @@ AHA Guideline 2010/2015
 ราคาเครื่อง AED ในไทยปี 2026 อยู่ราว 40,000–90,000 บาทต่อเครื่อง ขึ้นกับแบรนด์และฟีเจอร์ เช่น เซ็นเซอร์ CPR feedback, GPS หรือระบบรายงานสถานะออนไลน์ ตัวอย่างราคาซื้อขาดของเรา (ก่อน VAT):
 
 - PRIMEDIC HeartSave Y0 เครื่องเปล่า — ${baht(modelPrice("primedic-y0"))} บาท
-- PRIMEDIC HeartSave Y8 (มีเซ็นเซอร์ CPR feedback) — ${baht(modelPrice("primedic-y8"))} บาท
-- Yuwell Y2 รุ่นเรือธง (จอสี EKG) — ${baht(modelPrice("primedic-y2"))} บาท
+- PRIMEDIC HeartSave Y8 (Y0 + แผ่น CPR feedback) — ${baht(modelPrice("primedic-y8"))} บาท
+- Yuwell Y2 รุ่นแนะนำ (จอสี EKG) — ${baht(modelPrice("primedic-y2"))} บาท
 
 แต่ราคาซื้อเครื่องเป็นเพียงส่วนแรก — ค่าใช้จ่ายที่หลายองค์กรลืมคิดคือ "ค่าดูแลตลอดอายุเครื่อง": แผ่นอิเล็กโทรดและแบตเตอรี่ต้องเปลี่ยนตามวันหมดอายุ (เครื่องที่เราจำหน่ายอายุไม่น้อยกว่า ${CONSUMABLE_LIFETIME_YEARS.pads} ปีนับจากวันผลิต) และการเช็กสภาพประจำปี
 

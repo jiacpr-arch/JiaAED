@@ -57,7 +57,7 @@ export const primedicModels: PrimedicModel[] = [
     shockMode: "semi-auto",
     cprFeedback: "optional",
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
-    keyDiff: "รุ่นเริ่มต้น — ยังไม่มีเซ็นเซอร์ CPR (เพิ่มทีหลังได้)",
+    keyDiff: "รุ่นเริ่มต้น — ยังไม่มีแผ่น CPR feedback (เพิ่มทีหลังได้)",
     bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
     image: "/images/primedic-y-series.png",
     badge: null,
@@ -66,14 +66,15 @@ export const primedicModels: PrimedicModel[] = [
   {
     id: "primedic-y8",
     name: "HeartSave Y8",
-    price: 44_900,
+    // ตัวเครื่องเดียวกับ Y0 ต่างกันที่แผ่น CPR feedback — บอกลูกค้าตรง ๆ (เจ้าของ 13 พ.ย. 2026)
+    price: 45_900,
     shockMode: "semi-auto",
     cprFeedback: "standard",
-    summary: "กึ่งอัตโนมัติ + เซ็นเซอร์ CPR feedback มาตรฐาน",
-    keyDiff: "เพิ่มเซ็นเซอร์ CPR feedback — วัดแรง/จังหวะกดหน้าอกแบบเรียลไทม์",
+    summary: "ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback",
+    keyDiff: "แผ่นวัดแรง/จังหวะกดหน้าอก (เสียงบอก) · เพิ่มอีก ฿4,000 → Y2 เห็นคุณภาพ CPR บนจอสี",
     bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
     image: "/images/primedic-y8-open.png",
-    badge: "แนะนำ",
+    badge: null,
     warrantyYears: 8,
   },
   {
@@ -81,14 +82,14 @@ export const primedicModels: PrimedicModel[] = [
     // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
     id: "primedic-y2",
     name: "Yuwell Y2",
-    price: 59_999,
+    price: 49_900,
     shockMode: "semi-auto",
     cprFeedback: "standard",
-    summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นท็อป (You Too)",
+    summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นแนะนำ (You Too)",
     keyDiff: "จอแสดงคุณภาพ CPR เรียลไทม์ — ความเร็ว/ความลึก/การปล่อยสุด (full recoil) + คลื่น EKG",
     bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการ CPR คุณภาพสูงสุด · เห็นบนจอ ปรับท่าปั๊มได้ทันที",
     image: "/images/primedic-y2-open.jpg",
-    badge: "เรือธง",
+    badge: "แนะนำ",
     warrantyYears: 4,
   },
 ];
@@ -102,7 +103,7 @@ export const yuwellGpsAed = {
   // and sat above what the team actually quotes. Pages print "สอบถามราคา" while
   // this is null; the LINE bot still quotes from AED_PRODUCTS in ./pricing.ts.
   // Owner, 29 ต.ค. 2026: ฿55,000 (raised from 52,000 the same day) — between Y8
-  // (44,900) and the rent-to-own Y8 GPS contract (62,000).
+  // (44,900 at the time) and the rent-to-own Y8 GPS contract (62,000).
   price: 55_000 as number | null, // before VAT
   warrantyYears: 8, // same as the Y8 it's built on, per the owner's GPS quotations
   // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds

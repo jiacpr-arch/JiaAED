@@ -25,12 +25,12 @@ export const metadata: Metadata = {
 const fits: Record<string, string> = {
   "primedic-y0": "เหมาะกับออฟฟิศ ร้านค้า และพื้นที่ส่วนกลางที่ต้องการเครื่องใช้ง่าย",
   "primedic-y8": "เหมาะกับโรงเรียน ฟิตเนส และโรงงานที่ต้องการตัวช่วยระหว่างทำ CPR",
-  "primedic-y2": "เหมาะกับคลินิก หน่วยกู้ชีพ และองค์กรที่ต้องการเห็นข้อมูล CPR บนจอ",
+  "primedic-y2": "รุ่นแนะนำ — AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม เหมาะกับทุกองค์กร",
 };
 const features: Record<string, string[]> = {
   "primedic-y0": ["เสียงนำทางภาษาไทยทีละขั้นตอน", "CPR feedback เพิ่มเป็นอุปกรณ์เสริมได้"],
-  "primedic-y8": ["เซ็นเซอร์ช่วยบอกจังหวะและแรงกดหน้าอก", "เสียงนำทางภาษาไทยทีละขั้นตอน"],
-  "primedic-y2": ["จอสีแสดง EKG และข้อมูล CPR", "เซ็นเซอร์ CPR feedback ในรุ่น"],
+  "primedic-y8": ["ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback", "เพิ่มอีก ฿4,000 → Y2 เห็นคุณภาพ CPR บนจอสี"],
+  "primedic-y2": ["จอสีแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ", "เห็นบนจอ ปรับท่าปั๊มได้ทันที"],
 };
 
 // Home rental ladder (owner, 25 ต.ค. 2026: rental first, buying as the fallback
@@ -82,9 +82,9 @@ export default function Home() {
     </div></section>
     <section className="market-section" id="models"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">PREFER TO OWN?</p><h2>อยากเป็นเจ้าของเครื่อง?<br /><em>ซื้อขาดก็ได้.</em></h2></div><p>สำหรับองค์กรที่มีงบลงทุนและดูแลเครื่องเองได้ ราคาทุกรุ่นแสดงชัด พร้อมจัดส่ง ติดตั้ง และอบรมการใช้งาน</p></div>
-      <div className="market-grid-3">{primedicModels.map((m, i) => <article className={`market-card ${m.id === "primedic-y8" ? "market-card-featured" : ""}`} key={m.id}>
-        <div className="market-card-photo"><Image src={m.image} alt={`เครื่อง AED ${m.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{m.id === "primedic-y8" && <span className="market-card-tag">รุ่นแนะนำ</span>}</div>
-        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {i === 0 ? "ESSENTIAL" : i === 1 ? "RECOMMENDED" : "ADVANCED"}</span><h3>{m.name}</h3><p>{fits[m.id]}</p><div className="market-price"><small>เริ่มต้น</small><strong>฿{m.price.toLocaleString()}</strong><span>ก่อน VAT</span></div><ul>{features[m.id].map((f) => <li key={f}>{f}</li>)}</ul><Link href={m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link" data-cta={`home_model_${m.id}`}>ดูรายละเอียดและขอราคา <span aria-hidden="true">↗</span></Link></div>
+      <div className="market-grid-3">{primedicModels.map((m, i) => <article className={`market-card ${m.id === "primedic-y2" ? "market-card-featured" : ""}`} key={m.id}>
+        <div className="market-card-photo"><Image src={m.image} alt={`เครื่อง AED ${m.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{m.id === "primedic-y2" && <span className="market-card-tag">รุ่นแนะนำ</span>}</div>
+        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {i === 0 ? "ESSENTIAL" : i === 1 ? "+ CPR FEEDBACK" : "RECOMMENDED"}</span><h3>{m.name}</h3><p>{fits[m.id]}</p><div className="market-price"><small>เริ่มต้น</small><strong>฿{m.price.toLocaleString()}</strong><span>ก่อน VAT</span></div><ul>{features[m.id].map((f) => <li key={f}>{f}</li>)}</ul><Link href={m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link" data-cta={`home_model_${m.id}`}>ดูรายละเอียดและขอราคา <span aria-hidden="true">↗</span></Link></div>
       </article>)}</div>
       <p className="market-note">ราคาเริ่มต้นก่อน VAT ขึ้นอยู่กับชุดอุปกรณ์และเงื่อนไขจัดซื้อ <Link href="/aed" className="market-text-link">ดูตารางเทียบรุ่นและสเปก ↗</Link></p>
     </div></section>

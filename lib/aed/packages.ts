@@ -19,7 +19,8 @@ const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
 //   — the first real deal closed at เครื่อง 62,000 + ตู้ 6,000. Big deposit still
 //   covers most of the unit cost on day one.
 //   Y8: 17,000 + 2,500 × 18 = ฿62,000 (≈1.38× ราคาสด 44,900)
-//   Y2: 22,000 + 3,400 × 18 = ฿83,200 (≈1.39× ราคาสด 59,999)
+//   Y2 (owner 13 พ.ย. 2026, ราคาสดลดเหลือ 49,900):
+//       16,000 + 2,900 × 18 = ฿68,200 (≈1.37× ราคาสด) — เดิม 22,000 + 3,400
 //   + wall cabinet RENT_TO_OWN_CABINET_ADDON, financed in the same contract.
 //   (earlier that day 16,000 + 2,000 / 21,200 + 2,600 → ฿52,000/฿68,000;
 //   5,200 + 2,600 / 6,800 + 3,400 from 25 ต.ค.)
@@ -27,7 +28,7 @@ export type RentToOwnTerms = { deposit: number; monthly: number; months: number 
 
 export const RENT_TO_OWN_TERMS = {
   "pkg-start-y8": { deposit: 17_000, monthly: 2_500, months: 18 },
-  "pkg-start-y2": { deposit: 22_000, monthly: 3_400, months: 18 },
+  "pkg-start-y2": { deposit: 16_000, monthly: 2_900, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
 
 /** Optional wall cabinet added to a rent-to-own contract (before VAT). */
@@ -153,7 +154,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     id: "pkg-start-y2",
     kind: "rent-to-own",
     name: "Safety Start — Yuwell Y2",
-    nameTh: "เช่าแล้วได้ซื้อ · รุ่นเรือธง",
+    nameTh: "เช่าแล้วได้ซื้อ · รุ่นแนะนำ",
     tagline: "ผ่อนเบา ๆ ได้เครื่องรุ่นท็อป จอ EKG ดู CPR สด ๆ",
     priceLabel: `${thb(startY2.monthly)}/เดือน`,
     priceNote: rentToOwnNote(startY2),
@@ -164,8 +165,8 @@ export const acquisitionPackages: AcquisitionPackage[] = [
       `รวม${PACKAGE_TRAINING_PERK} (ต่างจังหวัดสอบถาม)`,
       `ครบ ${startY2.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
-    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นเรือธงแต่ผ่อนเบา ๆ",
-    badge: "ผ่อนรุ่นเรือธง",
+    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่อยากได้รุ่นแนะนำแต่ผ่อนเบา ๆ",
+    badge: "ผ่อนรุ่นแนะนำ",
     ctaProductHint: "primedic-y2",
     href: "/quote",
     image: "/images/primedic-y2-open.jpg",
