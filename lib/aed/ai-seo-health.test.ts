@@ -7,7 +7,7 @@ import {
   formatHealthReport,
   checkWwwRedirect,
 } from "./ai-seo-health";
-import { primedicModels } from "./primedic";
+import { listedPrimedicModels } from "./primedic";
 
 // The weekly health check is the alarm that tells the owner a deploy silently
 // broke the AI-facing surface (llms.txt prices, JSON-LD, sitemap). A false
@@ -52,9 +52,9 @@ describe("checkPageSignals", () => {
 });
 
 describe("requiredLlmsTxtStrings", () => {
-  it("demands the current price of every model (Thai-formatted)", () => {
+  it("demands the current price of every listed model (Thai-formatted)", () => {
     const needles = requiredLlmsTxtStrings().map((r) => r.needle);
-    for (const m of primedicModels) {
+    for (const m of listedPrimedicModels) {
       expect(needles).toContain(`฿${m.price.toLocaleString("th-TH")}`);
     }
   });
@@ -120,14 +120,14 @@ describe("runAiSeoHealthCheck", () => {
   it("fails llms.txt when a live price no longer matches lib data", async () => {
     const site = healthySite();
     site["/llms.txt"] = site["/llms.txt"].replace(
-      `฿${primedicModels[0].price.toLocaleString("th-TH")}`,
+      `฿${listedPrimedicModels[0].price.toLocaleString("th-TH")}`,
       "฿99,999",
     );
     const report = await runAiSeoHealthCheck(fakeFetch(site));
     const llmsCheck = report.checks.find((c) => c.name === "llms.txt");
     expect(report.ok).toBe(false);
     expect(llmsCheck?.ok).toBe(false);
-    expect(llmsCheck?.detail).toContain(primedicModels[0].name);
+    expect(llmsCheck?.detail).toContain(listedPrimedicModels[0].name);
   });
 
   it("fails robots.txt when an AI bot disappears", async () => {

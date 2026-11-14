@@ -52,7 +52,11 @@ const rentToOwnNote = (t: RentToOwnTerms) =>
 // GPS figures had no source; see yuwellGpsAed in ./primedic.ts).
 // The credit/government prices are a different payment term (เทอมเครดิตยาว), NOT a
 // former price — never render them struck-through as a "was" price.
-const PREMIUM_SERVICE_ADDON = 3_900;
+// 15 พ.ย. 2026: Y0 went 39,000 → 39,999 but Safety Premium stays at the
+// owner-confirmed 42,900 / 49,000, so the service add-on is what's left over.
+const SAFETY_PREMIUM_CASH = 42_900;
+const y0Price = primedicModels.find((m) => m.id === "primedic-y0")!.price;
+const PREMIUM_SERVICE_ADDON = SAFETY_PREMIUM_CASH - y0Price;
 const PREMIUM_CABINET_ADDON = 6_100;
 const y0 = primedicModels.find((m) => m.id === "primedic-y0")!;
 
@@ -130,7 +134,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     // Owner, 29 ต.ค. 2026: rent-to-own Y8 ships as the GPS unit (Y8 hardware +
     // GPS module), stated openly — the team monitors readiness remotely instead
     // of visiting every 6 months.
-    name: "Safety Start — Yuwell Y8 GPS",
+    name: "Safety Start — Yuwell GPS",
     nameTh: "เช่าแล้วได้ซื้อ",
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
     priceLabel: `${thb(startY8.monthly)}/เดือน`,

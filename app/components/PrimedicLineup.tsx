@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { PRICE_ON_REQUEST, primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
+import { PRICE_ON_REQUEST, listedPrimedicModels, Y8_ON_REQUEST_NOTE, yuwellGpsAed } from "@/lib/aed/primedic";
 
 import { LINE_OA } from "@/lib/aed/line";
 
@@ -25,38 +25,22 @@ type Card = {
 
 // Three side-by-side options with their ONE distinguishing feature called out,
 // each in a distinct accent — so Y0 / Y8 / GPS no longer blur together.
+// Listed models (Y2 recommended, then Y0) + the GPS unit — Y8 is quote-only
+// (owner, 15 พ.ย. 2026; see LISTED_MODEL_IDS).
+const modelAccent: Record<string, { accent: string; tag: string }> = {
+  "primedic-y2": { accent: "border-yellow-400/70 text-yellow-300", tag: "⭐ แนะนำ · แผ่น feedback + จอ CPR สด" },
+  "primedic-y0": { accent: "border-red-500/50 text-red-400", tag: "รุ่นประหยัด" },
+};
 const cards: Card[] = [
-  {
-    id: primedicModels[0].id,
-    name: primedicModels[0].name,
-    price: primedicModels[0].price,
-    warrantyYears: primedicModels[0].warrantyYears,
-    keyDiff: primedicModels[0].keyDiff,
-    bestFor: primedicModels[0].bestFor,
-    accent: "border-red-500/50 text-red-400",
-    tag: "เริ่มต้น",
-  },
-  {
-    id: primedicModels[1].id,
-    name: primedicModels[1].name,
-    price: primedicModels[1].price,
-    warrantyYears: primedicModels[1].warrantyYears,
-    keyDiff: primedicModels[1].keyDiff,
-    bestFor: primedicModels[1].bestFor,
-    accent: "border-red-400/70 text-red-300",
-    tag: "Y0 + แผ่น CPR feedback",
-  },
-  {
-    // รุ่นแนะนำที่ดัน (เจ้าของ 13 พ.ย. 2026) — accent สีเหลืองให้เด่นกว่าตัวอื่น
-    id: primedicModels[2].id,
-    name: primedicModels[2].name,
-    price: primedicModels[2].price,
-    warrantyYears: primedicModels[2].warrantyYears,
-    keyDiff: primedicModels[2].keyDiff,
-    bestFor: primedicModels[2].bestFor,
-    accent: "border-yellow-400/70 text-yellow-300",
-    tag: "⭐ แนะนำ · จอ EKG + ดู CPR สด",
-  },
+  ...listedPrimedicModels.map((m) => ({
+    id: m.id,
+    name: m.name,
+    price: m.price,
+    warrantyYears: m.warrantyYears,
+    keyDiff: m.keyDiff,
+    bestFor: m.bestFor,
+    ...modelAccent[m.id],
+  })),
   {
     id: yuwellGpsAed.id,
     name: yuwellGpsAed.name,
@@ -75,13 +59,13 @@ export function PrimedicLineup() {
       {/* One-line decision guide so the difference is obvious at a glance */}
       <div className="rounded-xl border border-gray-800 bg-gray-900 px-4 py-3 text-sm text-gray-300 mb-5">
         <span className="text-gray-500">เลือกรุ่นไหนดี?</span>{" "}
-        งบจำกัด → <span className="text-red-400 font-semibold">Y0</span> · อยากได้ CPR feedback →{" "}
-        <span className="text-red-300 font-semibold">Y8</span> · อยากเห็นคุณภาพ CPR บนจอ →{" "}
-        <span className="text-yellow-300 font-semibold">Y2</span> · หลายสาขา/ติดตามออนไลน์ →{" "}
+        อยากรู้ว่าปั๊มหัวใจถูกไหม (แผ่น feedback + จอ) →{" "}
+        <span className="text-yellow-300 font-semibold">Y2</span> · งบจำกัด →{" "}
+        <span className="text-red-400 font-semibold">Y0</span> · หลายสาขา/ติดตามออนไลน์ →{" "}
         <span className="text-red-400 font-semibold">GPS</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c) => (
           <div
             key={c.id}
@@ -133,6 +117,7 @@ export function PrimedicLineup() {
         ))}
       </div>
       <p className="text-center text-gray-600 text-xs mt-3">ราคายังไม่รวม VAT</p>
+      <p className="text-center text-gray-400 text-xs mt-1">{Y8_ON_REQUEST_NOTE}</p>
     </div>
   );
 }

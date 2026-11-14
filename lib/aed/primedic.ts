@@ -53,7 +53,7 @@ export const primedicModels: PrimedicModel[] = [
   {
     id: "primedic-y0",
     name: "HeartSave Y0",
-    price: 39_000,
+    price: 39_999, // Yuwell OK'd 39,999 for Y0 (owner, 15 พ.ย. 2026)
     shockMode: "semi-auto",
     cprFeedback: "optional",
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
@@ -93,6 +93,27 @@ export const primedicModels: PrimedicModel[] = [
     warrantyYears: 4,
   },
 ];
+
+// ─── Models listed for outright sale on the site (owner, 15 พ.ย. 2026) ─────────
+// Y2 (recommended) then Y0. Y8 = Y0 + feedback pads and costs the same as Y2
+// wholesale, so it is quote-only: no price card, a "ask on LINE" line instead,
+// and the bots steer Y8 askers to Y2. Y8 stays in primedicModels/AED_PRODUCTS
+// so quotes, rent-to-own (GPS = Y8 hardware) and the bots still know it.
+export const LISTED_MODEL_IDS = ["primedic-y2", "primedic-y0"] as const;
+export const listedPrimedicModels: PrimedicModel[] = LISTED_MODEL_IDS.map(
+  (id) => primedicModels.find((m) => m.id === id)!,
+);
+
+export const Y8_ON_REQUEST_NOTE =
+  "ต้องการรุ่น Y8 (ตัวเครื่อง Y0 + แผ่น CPR feedback)? สอบถามทาง LINE — ทีมแนะนำ Y2 ที่มีแผ่น feedback และจอแสดงคุณภาพ CPR ในตัว";
+
+/** How both bots answer a customer who asks for Y8 (owner's script, 15 พ.ย. 2026). */
+export function y8BotRule(): string {
+  const y8 = primedicModels.find((m) => m.id === "primedic-y8")!;
+  const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
+  const fmt = (n: number) => `฿${n.toLocaleString("en-US")}`;
+  return `ถ้าลูกค้าถามรุ่น Y8: ตอบราคา Y8 ${fmt(y8.price)} (ก่อน VAT) ตามจริง และบอกตรง ๆ ว่าตัวเครื่องเดียวกับ Y0 เพิ่มแผ่นวัดการกดหน้าอก (เสียงบอก) — แล้วเสนอต่อทันทีว่าเพิ่มอีก ${fmt(y2.price - y8.price)} เป็น Yuwell Y2 (${fmt(y2.price)}) ได้แผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ ทีมแนะนำ Y2 · ถ้าลูกค้ายืนยัน Y8 (เช่น ระบุใน TOR) ขาย Y8 ได้ แต่ห้ามลดต่ำกว่าราคายกล็อต ถ้าลูกค้าต่อราคา ให้เสนอ Y2 แทน · ห้ามเสนอ Y8 เองถ้าลูกค้าไม่ได้ถาม`;
+}
 
 // Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
 // networking module) — sold as its own product.

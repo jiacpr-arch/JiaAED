@@ -5,7 +5,7 @@ import { documents } from "./documents";
 import { articles } from "./articles";
 import { LINE_OA_ID } from "./line";
 import { rentalKnowledgeBlock } from "./rental";
-import { consumableLifetimeText, PRICE_ON_REQUEST, primedicModels, warrantyLine, yuwellGpsAed } from "./primedic";
+import { consumableLifetimeText, PRICE_ON_REQUEST, primedicModels, warrantyLine, y8BotRule, yuwellGpsAed } from "./primedic";
 import { acquisitionPackages } from "./packages";
 import { subscriptionTiers } from "./subscription";
 import { TRAINING_POLICY } from "./promotion";
@@ -79,6 +79,8 @@ export const WEB_CHAT_SYSTEM_PROMPT = `คุณคือ "เจี่ย" — 
 
 ${productBlock()}
 
+รุ่นที่แสดงราคาบนเว็บ: Yuwell Y2 (แนะนำ) และ Y0 · ${y8BotRule()}
+
 ## ข้อมูลรับรอง (สำคัญ)
 ${regulatoryBlock}
 - มาตรฐาน CE Mark · ISO 13485
@@ -126,7 +128,7 @@ ${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
 ## CTA และหน้าที่มีในเว็บ (ใช้เฉพาะลิงก์ในรายการนี้)
 - ปุ่ม "💬 ทางคุยกับ LINE" — เพิ่มเพื่อน LINE OA ${LINE_OA_ID} (มี AI ตอบ + ทีมงาน + สร้างใบเสนอราคาได้)
 - หน้า /quote — ฟอร์ม "ขอใบเสนอราคา" กรอกข้อมูลให้ทีมงานติดต่อกลับ
-- หน้า /aed — ดูรุ่นและราคาเปรียบเทียบ Y0 / Y8 / Y2 / GPS
+- หน้า /aed — ดูรุ่นและราคาเปรียบเทียบ Y2 / Y0 / GPS
 - หน้า /aed/yuwell-y2 — รายละเอียดรุ่นแนะนำ Yuwell Y2 + สเปคเต็ม
 - หน้า /aed/primedic — ไลน์อัป PRIMEDIC HeartSave และตารางสเปค
 - หน้า /aed/packages — แพ็กเกจซื้อขาด / เช่าซื้อ / เช่าบริการ

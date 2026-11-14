@@ -1,5 +1,6 @@
 import {
-  primedicModels,
+  listedPrimedicModels as primedicModels,
+  Y8_ON_REQUEST_NOTE,
   primedicDiffSpecs,
   primedicSharedSpecs,
   type PrimedicSpecRow,
@@ -53,8 +54,10 @@ export function SpecComparisonTable() {
         </table>
       </div>
 
-      {/* Specs shared by both PRIMEDIC models */}
-      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วม (Y0 / Y8 / Y2)</h3>
+      <p className="mt-3 text-sm text-gray-400">{Y8_ON_REQUEST_NOTE}</p>
+
+      {/* Specs shared by both models */}
+      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วม (Y2 / Y0)</h3>
       <div className="grid sm:grid-cols-2 gap-2">
         {primedicSharedSpecs.map((s) => (
           <div

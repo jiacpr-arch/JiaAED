@@ -5,7 +5,7 @@
 // dropped to ฿39,000).
 import {
   PRICE_ON_REQUEST,
-  primedicModels,
+  listedPrimedicModels,
   yuwellGpsAed,
   primedicSharedSpecs,
 } from "@/lib/aed/primedic";
@@ -50,7 +50,7 @@ export function GET() {
   ).join("\n");
 
   const mainUnits = [
-    ...primedicModels.map((m) => ({
+    ...listedPrimedicModels.map((m) => ({
       id: m.id,
       name: m.name,
       price: thb(m.price),

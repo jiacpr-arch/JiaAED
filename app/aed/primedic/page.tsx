@@ -9,7 +9,7 @@ import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
-import { primedicCertifications, primedicModels } from "@/lib/aed/primedic";
+import { primedicCertifications, primedicModels, Y8_ON_REQUEST_NOTE } from "@/lib/aed/primedic";
 import { survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
@@ -28,9 +28,9 @@ const modelPrice = Object.fromEntries(
 ) as Record<(typeof primedicModels)[number]["id"], string>;
 
 export const metadata: Metadata = {
-  title: "PRIMEDIC HeartSave Y0 / Y8 / Yuwell Y2 — AED รุ่นพรีเมียม",
+  title: "AED Yuwell Y2 / PRIMEDIC HeartSave Y0 — เทียบรุ่นและราคา",
   description:
-    `ไลน์ AED พรีเมียม กึ่งอัตโนมัติ — Y0 (${modelPrice["primedic-y0"]}), Y8 (${modelPrice["primedic-y8"]}) พร้อมเซ็นเซอร์ CPR feedback และรุ่นแนะนำ Yuwell Y2 (${modelPrice["primedic-y2"]}) จอสี EKG ดูคุณภาพ CPR สด ๆ`,
+    `AED กึ่งอัตโนมัติ เสียงนำทางภาษาไทย — รุ่นแนะนำ Yuwell Y2 (${modelPrice["primedic-y2"]}) แผ่น CPR feedback + จอสีดูคุณภาพ CPR สด ๆ และรุ่นประหยัด Y0 (${modelPrice["primedic-y0"]})`,
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 export default function PrimedicPage() {
   return (
     <MarketPage>
-      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"PRIMEDIC HeartSave\nY0 / Y8 / Yuwell Y2."} description="AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม — Yuwell Y2 จอสีแสดงความเร็ว ความลึก และการปล่อยหน้าอกสด ๆ ขณะช่วยชีวิต · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"Yuwell Y2\nและ HeartSave Y0."} description="AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม — Yuwell Y2 จอสีแสดงความเร็ว ความลึก และการปล่อยหน้าอกสด ๆ ขณะช่วยชีวิต · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
       <div className="market-content">
       <ProductStructuredData include="primedic" />
       <BreadcrumbStructuredData
@@ -71,8 +71,7 @@ export default function PrimedicPage() {
                 [
                   // Y2 ขึ้นก่อน = รุ่นแนะนำ (เจ้าของ 13 พ.ย. 2026). Y8 บอกตรง ๆ ว่าคือ Y0 + แผ่น feedback.
                   { model: "Yuwell Y2", price: modelPrice["primedic-y2"], diff: "⭐ รุ่นแนะนำ — จอสี EKG เห็นคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
-                  { model: "Y8", price: modelPrice["primedic-y8"], diff: "ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback (เสียงบอก) · เพิ่มอีก ฿4,000 ได้ Y2 ดูบนจอสี" },
-                  { model: "Y0", price: modelPrice["primedic-y0"], diff: "รุ่นมาตรฐาน — เพิ่มแผ่น CPR feedback ทีหลังได้" },
+                  { model: "Y0", price: modelPrice["primedic-y0"], diff: "รุ่นประหยัด — ช็อก + เสียงนำทางภาษาไทย (ไม่มีแผ่น feedback / จอ)" },
                 ] as { model: string; price: string; diff: string; href?: string }[]
               ).map((m) => (
                 <li key={m.model} className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900 px-4 py-3">
@@ -111,9 +110,10 @@ export default function PrimedicPage() {
           <ul className="mt-3 space-y-2 text-sm text-gray-200">
             <li>• เครื่อง AED ช็อกแค่ไม่กี่วินาที — เวลาที่เหลือคือการปั๊มหัวใจ</li>
             <li>• คนที่ไม่ได้ทำ CPR บ่อยมักกดตื้นหรือเร็วเกินโดยไม่รู้ตัว — Y2 แสดงบนจอทันที ปรับท่าได้ระหว่างช่วยชีวิต</li>
-            <li>• ต่างจาก Y8 แค่ ฿4,000 — ใช้ 4 ปี เฉลี่ยวันละไม่ถึง 3 บาท</li>
+            <li>• Y2 ได้ทั้งแผ่นวัดการกดหน้าอกและจอแสดงผลสด — เพิ่มจาก Y0 ประมาณ ฿10,000 ใช้ 4 ปี ตกวันละไม่ถึง 7 บาท</li>
             <li>• มาลองปั๊มหุ่นและดูจอ Y2 ได้ที่ JIA TRAINER CENTER เดอะสตรีท รัชดา</li>
           </ul>
+          <p className="mt-3 text-xs text-gray-400">{Y8_ON_REQUEST_NOTE}</p>
           <Link href="/aed/yuwell-y2" className="mt-4 inline-block text-yellow-400 hover:text-yellow-300 font-semibold">
             ดูรายละเอียด Yuwell Y2 →
           </Link>
@@ -158,7 +158,6 @@ export default function PrimedicPage() {
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่
             { src: "/images/yuwell-y2-features.webp", alt: "Yuwell Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทุกวัย", w: 1536, h: 1024 },
             { src: "/images/primedic-y0-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1957, h: 2142 },
-            { src: "/images/primedic-y8-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y8 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.287/2567", w: 1957, h: 2143 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
               <Image
@@ -218,7 +217,7 @@ export default function PrimedicPage() {
       {/* 3-way lineup — Y0 vs Y8 vs GPS, each with its key difference called out */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <SectionHeading
-          title="3 รุ่นต่างกันยังไง?"
+          title="เลือกรุ่นไหนดี?"
           subtitle="เลือกให้เหมาะกับการใช้งานและงบประมาณ — ดูจุดต่างของแต่ละรุ่นได้ที่นี่"
         />
         <div className="mt-6">
@@ -226,11 +225,11 @@ export default function PrimedicPage() {
         </div>
       </section>
 
-      {/* Detailed spec comparison (Y0 vs Y8) */}
+      {/* Detailed spec comparison (Y2 vs Y0) */}
       <section className="max-w-6xl mx-auto px-4 py-6">
         <PriceViewTracker targetId="primedic-specs" />
         <div id="primedic-specs">
-          <SectionHeading title="เปรียบเทียบสเปกละเอียด — Y0 vs Y8" />
+          <SectionHeading title="เปรียบเทียบสเปกละเอียด — Y2 vs Y0" />
           {/* The manufacturer's feature infographic used to sit here; it printed
               "8 year warranty" under a Y0 vs Y8 heading, while Jia's terms differ
               per model (see warrantyLine) — removed Oct 2026. */}

@@ -1,5 +1,5 @@
 import { products } from "@/lib/aed/products";
-import { primedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
+import { listedPrimedicModels, yuwellGpsAed } from "@/lib/aed/primedic";
 import { faqs, type FAQ } from "@/lib/aed/faqs";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA } from "@/lib/aed/line";
@@ -203,7 +203,7 @@ export function ProductStructuredData({
   }));
 
   const primedicSchemas = [
-    ...primedicModels.map((m) => ({
+    ...listedPrimedicModels.map((m) => ({
       "@context": "https://schema.org",
       "@type": "Product",
       name: m.name,
@@ -258,7 +258,7 @@ export function ProductStructuredData({
   };
 
   const blob = include === "homepage"
-    ? primedicSchemas.slice(0, primedicModels.length)
+    ? primedicSchemas.slice(0, listedPrimedicModels.length)
     : include === "primedic"
       ? primedicSchemas
       : [faqPage, ...productSchemas, ...primedicSchemas];

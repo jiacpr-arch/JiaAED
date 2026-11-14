@@ -43,7 +43,7 @@ export const faqs: FAQ[] = [
     // cheaper Y0/Y8 so "how much is an AED" never reads as "from ฿59,999".
     question: "AED Yuwell Y2 ราคาเท่าไหร่?",
     answer:
-      `Yuwell Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ยังไม่รวม VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท และ Y8 (Y0 + แผ่น CPR feedback) ${baht(modelPrice("primedic-y8"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
+      `Yuwell Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ยังไม่รวม VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
   },
   {
     // เจี่ยรักษา is the seller and ฆพ. holder — the importer/registrant is Yuwell

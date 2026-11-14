@@ -9,7 +9,7 @@
 // Pure helpers (parseSitemapLocs / checkPageSignals / formatHealthReport) are
 // separated from I/O so they're unit-testable without a network.
 
-import { primedicModels, yuwellGpsAed } from "./primedic";
+import { listedPrimedicModels, yuwellGpsAed } from "./primedic";
 import { PRIMEDIC_REGULATORY } from "./regulatory";
 import { articles } from "./articles";
 
@@ -76,7 +76,7 @@ export function pagesToCheck(): { path: string; jsonLd: string[] }[] {
 /** Strings that must appear in the live llms.txt (current prices + อย. number). */
 export function requiredLlmsTxtStrings(): { label: string; needle: string }[] {
   return [
-    ...primedicModels.map((m) => ({
+    ...listedPrimedicModels.map((m) => ({
       label: `ราคา ${m.name}`,
       needle: thb(m.price),
     })),
