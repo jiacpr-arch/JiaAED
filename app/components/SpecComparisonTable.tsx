@@ -64,7 +64,7 @@ export function SpecComparisonTable() {
       <p className="mt-3 text-sm text-gray-400">{Y8_ON_REQUEST_NOTE}</p>
 
       {/* Who should buy which — so the buyer can decide, including "don't buy, rent" */}
-      <div className="mt-6 grid gap-3 md:grid-cols-3">
+      <div className="mt-6 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {modelChooser.map((c) => (
           <div
             key={c.id}
@@ -75,6 +75,9 @@ export function SpecComparisonTable() {
               {c.pick.map((t) => <li key={t}>✓ {t}</li>)}
               {c.skip.map((t) => <li key={t} className="text-gray-500">– {t}</li>)}
             </ul>
+            {c.id === "yuwell-gps" && (
+              <Link href="/aed/packages" className="mt-2 inline-block text-sm font-semibold text-yellow-400 hover:text-yellow-300">ดูรุ่น GPS และเช่าซื้อ →</Link>
+            )}
             {c.id === "rent" && (
               <Link href="/aed/rental" className="mt-2 inline-block text-sm font-semibold text-yellow-400 hover:text-yellow-300">ดูแพ็กเกจเช่า →</Link>
             )}

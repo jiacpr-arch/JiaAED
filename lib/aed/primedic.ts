@@ -133,11 +133,12 @@ export const yuwellGpsAed = {
   // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds
   // the Google product JSON-LD (StructuredData) and lineup.ts.
   image: "/images/yuwell-gps-aed.webp",
-  keyDiff: "มี GPS + ติดตามตำแหน่ง/สถานะออนไลน์ในตัวเครื่อง",
+  keyDiff: "เครื่อง Y8 (แถมแผ่น CPR feedback) + GPS ติดตามตำแหน่ง/สถานะออนไลน์",
   bestFor: "องค์กรหลายสาขา · ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ตลอดเวลา",
   description:
     "เครื่อง AED พร้อมระบบ GPS ในตัว — ติดตามตำแหน่งและสถานะเครื่องแบบเรียลไทม์ เหมาะกับองค์กรหลายสาขา",
   features: [
+    "ตัวเครื่อง HeartSave Y8 + แผ่น CPR feedback",
     "GPS ติดตามตำแหน่งในตัวเครื่อง",
     "เชื่อมระบบแจ้งเตือน/ติดตามสถานะ",
     "เสียงนำทางการกู้ชีพ",
@@ -256,7 +257,7 @@ export const comparisonModels: PrimedicModel[] = (["primedic-y0", "primedic-y8",
 );
 
 /** Who should buy which — shown next to the comparison so buyers can decide. */
-export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "rent"; title: string; pick: string[]; skip: string[] }[] = [
+export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | "rent"; title: string; pick: string[]; skip: string[] }[] = [
   {
     id: "primedic-y2",
     title: "เลือก Yuwell Y2 ⭐ ถ้า…",
@@ -274,7 +275,16 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "rent"; title: 
       "อยากมี AED พร้อมใช้ในราคาประหยัดที่สุด",
       "สำนักงาน ร้านค้า คอนโด ที่มีคนผ่านการอบรม CPR",
     ],
-    skip: ["Y0 ไม่บอกว่ากดหน้าอกถูกไหม — ถ้าอยากได้ส่วนนี้ เลือก Y2"],
+    skip: ["แผ่นที่แถมไม่มี CPR feedback (ไม่ขายแยก) — ถ้าอยากได้ เลือก Y2"],
+  },
+  {
+    id: "yuwell-gps",
+    title: "เลือกรุ่น GPS ถ้า…",
+    pick: [
+      "มีหลายสาขา/หลายจุด ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ไหม",
+      "ไม่มีคนเดินเช็คเครื่องเป็นประจำ — ให้ทีมเราเช็คออนไลน์แทน",
+    ],
+    skip: ["ไม่มีจอแสดงผล CPR — ถ้าอยากเห็นคุณภาพการปั๊มบนจอ เลือก Y2"],
   },
   {
     id: "rent",
