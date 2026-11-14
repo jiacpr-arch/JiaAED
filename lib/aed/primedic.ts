@@ -57,7 +57,7 @@ export const primedicModels: PrimedicModel[] = [
     shockMode: "semi-auto",
     cprFeedback: "optional",
     summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
-    keyDiff: "รุ่นเริ่มต้น — ยังไม่มีแผ่น CPR feedback (เพิ่มทีหลังได้)",
+    keyDiff: "รุ่นประหยัด — แผ่นที่แถมมาเป็นแบบไม่มี CPR feedback",
     bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
     image: "/images/primedic-y-series.png",
     badge: null,
@@ -115,7 +115,7 @@ export const Y8_ON_REQUEST_NOTE =
 export function y8BotRule(): string {
   const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
   const fmt = (n: number) => `฿${n.toLocaleString("en-US")}`;
-  return `ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
+  return `แผ่น CPR feedback ไม่ขายแยก (เจ้าของ 15 พ.ย. 2026) — ขายเป็นแผ่นเปลี่ยนให้ลูกค้าที่มี Y8 อยู่แล้วเท่านั้น ถ้าลูกค้า Y0 อยากได้ feedback ให้แนะนำ Y2 · ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
 }
 
 // Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
