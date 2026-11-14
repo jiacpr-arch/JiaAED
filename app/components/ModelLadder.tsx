@@ -32,7 +32,7 @@ const steps: Step[] = [
     imageAlt: "เครื่อง AED PRIMEDIC HeartSave Y0",
     price: thb(price("primedic-y0")),
     yes: ["ช็อก + เสียงนำทางภาษาไทย", "ใช้กับเด็กได้"],
-    no: ["ไม่บอกว่ากดหน้าอกถูกไหม", "ไม่มีจอแสดงผล CPR"],
+    no: ["แผ่นที่แถมมาเป็นแบบไม่มี CPR feedback", "ไม่มีจอแสดงผล CPR"],
     href: "/aed/primedic#primedic-specs",
   },
   {
@@ -42,7 +42,7 @@ const steps: Step[] = [
     image: "/images/primedic-y8-open.png",
     imageAlt: "เครื่อง AED PRIMEDIC HeartSave Y8 (งดจำหน่าย)",
     price: Y8_STATUS,
-    yes: ["ช็อก + เสียงนำทางภาษาไทย", "เสียงบอกแรง/จังหวะกด"],
+    yes: ["เครื่องเดียวกับ Y0", "แถมแผ่น CPR feedback — เสียงบอกแรง/จังหวะกด"],
     no: ["ไม่มีจอแสดงผล CPR"],
     discontinued: true,
     href: "/aed/primedic#primedic-specs",
