@@ -223,6 +223,9 @@ export default function PrimedicPage() {
         />
         <div className="mt-8">
           <ModelLadder />
+          <p className="mt-4 text-center text-sm">
+            <Link href="/aed/compare" className="text-yellow-400 hover:text-yellow-300 font-semibold">ดูหน้าเปรียบเทียบเต็ม — ควรซื้อรุ่นไหน →</Link>
+          </p>
         </div>
       </section>
 

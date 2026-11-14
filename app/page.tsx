@@ -95,7 +95,7 @@ export default function Home() {
         <div className="market-card-photo"><Image src={m.image} alt={`เครื่อง AED ${m.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{m.id === "primedic-y2" && <span className="market-card-tag">รุ่นแนะนำ</span>}</div>
         <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {kicker[m.id]}</span><h3>{m.name}</h3><p>{fits[m.id]}</p><div className="market-price"><small>เริ่มต้น</small><strong>{m.price === null ? PRICE_ON_REQUEST : `฿${m.price.toLocaleString()}`}</strong><span>ก่อน VAT</span></div><ul>{features[m.id].map((f) => <li key={f}>{f}</li>)}</ul><Link href={m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link" data-cta={`home_model_${m.id}`}>ดูรายละเอียดและขอราคา <span aria-hidden="true">↗</span></Link></div>
       </article>)}</div>
-      <p className="market-note">{Y8_ON_REQUEST_NOTE}</p>
+      <p className="market-note">{Y8_ON_REQUEST_NOTE} · <Link href="/aed/compare" className="market-text-link">เทียบทุกรุ่น ↗</Link></p>
       <p className="market-note">ราคาเริ่มต้นก่อน VAT ขึ้นอยู่กับชุดอุปกรณ์และเงื่อนไขจัดซื้อ <Link href="/aed" className="market-text-link">ดูตารางเทียบรุ่นและสเปก ↗</Link></p>
     </div></section>
     <div className="market-help"><div className="market-container market-help-inner"><strong>ยังไม่แน่ใจว่าเช่าหรือซื้อดี?</strong><p>บอกประเภทสถานที่และงบประมาณ ทีมงานช่วยเทียบเช่า เช่าซื้อ และซื้อขาดให้</p><a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="home_model_help">ปรึกษาผ่าน LINE ↗</a></div></div>

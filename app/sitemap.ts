@@ -101,6 +101,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...(PRIMEDIC_REGULATORY.published
       ? [
           {
+            url: `${SITE}/aed/compare`,
+            lastModified: now,
+            changeFrequency: "weekly" as const,
+            priority: 0.9,
+          },
+          {
             url: `${SITE}/aed/primedic`,
             lastModified: now,
             changeFrequency: "weekly" as const,
