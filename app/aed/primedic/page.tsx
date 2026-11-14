@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { SpecComparisonTable } from "@/app/components/SpecComparisonTable";
 import { PrimedicLineup } from "@/app/components/PrimedicLineup";
+import { ModelLadder } from "@/app/components/ModelLadder";
 import { PromoBanner } from "@/app/components/PromoBanner";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
@@ -212,6 +213,17 @@ export default function PrimedicPage() {
       {/* ฿10,000 survivor-reward promotion */}
       <section className="max-w-6xl mx-auto px-4 py-4">
         <PromoBanner promo={survivorReward} />
+      </section>
+
+      {/* What each model adds — Y0 → Y8 (งดจำหน่าย) → Y2, with photos */}
+      <section className="max-w-6xl mx-auto px-4 py-6">
+        <SectionHeading
+          title="แต่ละรุ่นต่างกันตรงไหน?"
+          subtitle="ทุกรุ่นช็อกหัวใจได้และมีเสียงนำทางภาษาไทย — ต่างกันที่ช่วยให้ปั๊มหัวใจถูกได้แค่ไหน"
+        />
+        <div className="mt-8">
+          <ModelLadder />
+        </div>
       </section>
 
       {/* 3-way lineup — Y0 vs Y8 vs GPS, each with its key difference called out */}
