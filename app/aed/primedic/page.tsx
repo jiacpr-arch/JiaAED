@@ -153,6 +153,7 @@ export default function PrimedicPage() {
             flyers (ฆพ.2475/2569 Y0/Y2, ฆพ.287/2567 Y8) supplied by the owner ก.ค. 2026 */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
+            { src: "/images/aed-compare-y0-y8-y2.webp", alt: "เปรียบเทียบ AED — Y0 รุ่นประหยัด · Y8 งดจำหน่าย · Yuwell Y2 แนะนำ", w: 1122, h: 1402 },
             { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)", w: 1254, h: 1254 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
