@@ -20,10 +20,10 @@ const gpsPrice = yuwellGpsAed.price === null ? PRICE_ON_REQUEST : `฿${yuwellGp
 const price = (id: string) => `฿${primedicModels.find((m) => m.id === id)!.price.toLocaleString("en-US")}`;
 
 export const metadata: Metadata = {
-  title: "เปรียบเทียบเครื่อง AED Y0 / Y8 / Y2 / GPS — ควรซื้อรุ่นไหน",
+  title: "เปรียบเทียบเครื่อง AED Y0 / Y8 / Y8 GPS / Y2 — ควรซื้อรุ่นไหน",
   description: `ทุกรุ่นช็อกหัวใจได้และมีเสียงนำทางภาษาไทย ต่างกันที่ช่วยให้ปั๊มหัวใจถูกได้แค่ไหน — Yuwell Y2 ${price("primedic-y2")} (แผ่น feedback + จอแสดงผลสด) · HeartSave Y0 ${price("primedic-y0")} · Y8 ${Y8_STATUS}`,
   alternates: { canonical: "/aed/compare" },
-  openGraph: { images: [{ url: "/images/aed-compare-y0-y8-y2.webp", width: 1122, height: 1402, alt: "เลือก AED รุ่นไหนดี — Y0 / Y8 / Y2" }] },
+  openGraph: { images: [{ url: "/images/aed-compare-4-models.webp", width: 1122, height: 1402, alt: "เลือก AED รุ่นไหนดี — Y0 / Y8 / Y8 GPS / Y2" }] },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
 
@@ -49,16 +49,16 @@ function show(v: Cell) {
 
 const faqs = [
   {
-    q: "Y0 กับ Y8 ต่างกันยังไง?",
-    a: "เป็นเครื่องเดียวกัน ต่างกันที่แผ่นที่แถมมา — Y0 แถมแผ่นธรรมดา Y8 แถมแผ่น CPR feedback ที่มีเสียงบอกแรงและจังหวะกด ตอนนี้ Y8 งดจำหน่ายแล้ว ถ้าต้องการ feedback แนะนำ Y2",
+    q: "Y0, Y8 และ Y8 GPS ต่างกันยังไง?",
+    a: "เป็นเครื่องรุ่นเดียวกัน ต่างกันที่แผ่นที่ใช้ — Y0 ใช้แผ่นมาตรฐาน Y8 ใช้แผ่น CPR feedback ที่มีเสียงบอกแรงและจังหวะกด และ Y8 GPS คือ Y8 ที่เพิ่มระบบติดตามตำแหน่ง ตอนนี้ Y8 แบบธรรมดางดจำหน่ายแล้ว ถ้าต้องการ feedback แนะนำ Y2 หรือ Y8 GPS ถ้าต้องการระบบติดตาม",
   },
   {
     q: "ซื้อแผ่น feedback มาใส่ Y0 ได้ไหม?",
     a: "แผ่น CPR feedback ไม่ขายแยก — มีเป็นแผ่นเปลี่ยนให้ลูกค้าที่ใช้ Y8 อยู่แล้วเท่านั้น ถ้าอยากได้ feedback เลือก Y2 ที่มีทั้งแผ่น feedback และจอในตัว",
   },
   {
-    q: "รุ่น GPS ต่างจากรุ่นอื่นยังไง?",
-    a: "รุ่น GPS คือเครื่อง Y8 (แถมแผ่น CPR feedback) ที่เพิ่มโมดูล GPS — ทีมงานเห็นตำแหน่งและสถานะแบต/แผ่นออนไลน์ เหมาะกับองค์กรหลายสาขา ไม่มีจอแสดงผล CPR แบบ Y2 · มีแบบซื้อขาดและเช่าซื้อ",
+    q: "รุ่น Y8 GPS ต่างจากรุ่นอื่นยังไง?",
+    a: "Y8 GPS คือเครื่อง Y8 (แถมแผ่น CPR feedback) ที่เพิ่มโมดูล GPS — ทีมงานเห็นตำแหน่งและสถานะแบต/แผ่นออนไลน์ เหมาะกับองค์กรหลายสาขา ไม่มีจอแสดงผล CPR แบบ Y2 · มีแบบซื้อขาดและเช่าซื้อ",
   },
   {
     q: "มี Y8 อยู่แล้ว ยังได้รับการดูแลไหม?",
@@ -93,8 +93,8 @@ export default function ComparePage() {
       <section className="market-section">
         <div className="market-container" style={{ maxWidth: 760 }}>
           <Image
-            src="/images/aed-compare-y0-y8-y2.webp"
-            alt="เลือก AED รุ่นไหนดี — HeartSave Y0 ฿39,999 รุ่นประหยัด · Y8 งดจำหน่าย (เครื่องเดียวกับ Y0 ต่างกันที่แผ่น feedback) · Yuwell Y2 ฿49,900 แนะนำ มีแผ่น feedback และจอแสดงผลสด"
+            src="/images/aed-compare-4-models.webp"
+            alt="เลือก AED รุ่นไหนดี — HeartSave Y0 ฿39,999 · Y8 = Y0 + feedback (งดจำหน่าย) · Y8 GPS = Y8 + ระบบติดตาม · Yuwell Y2 ฿49,900 แนะนำ จอแสดงผล CPR และ EKG"
             width={1122}
             height={1402}
             sizes="(max-width: 800px) 100vw, 760px"
@@ -110,9 +110,9 @@ export default function ComparePage() {
           <div className="market-section-head">
             <div>
               <p className="market-eyebrow">STEP BY STEP</p>
-              <h2>แต่ละขั้นได้อะไรเพิ่ม.</h2>
+              <h2>4 รุ่น ต่างกันตรงไหน.</h2>
             </div>
-            <p>Y0 → เปลี่ยนเป็นแผ่น feedback = Y8 → เพิ่มจอแสดงผลสด = Y2</p>
+            <p>Y0 + แผ่น feedback = Y8 · Y8 + ระบบติดตาม = Y8 GPS · Y2 = รุ่นมีจอแสดงผล CPR และ EKG</p>
           </div>
           <ModelLadder />
           <p className="market-note">{Y8_ON_REQUEST_NOTE}</p>
@@ -135,7 +135,7 @@ export default function ComparePage() {
                   <th>HeartSave Y0</th>
                   <th style={{ opacity: 0.5 }}>HeartSave Y8 ({Y8_STATUS})</th>
                   <th>Yuwell Y2 ⭐ แนะนำ</th>
-                  <th>Yuwell GPS (หลายสาขา)</th>
+                  <th>HeartSave Y8 GPS</th>
                 </tr>
               </thead>
               <tbody>

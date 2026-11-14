@@ -135,6 +135,13 @@ export default function RentalPage() {
       <p className="market-note">ราคายังไม่รวม VAT · มัดจำ {plan("rent-annual").deposit} · <Link href="/aed/subscription" className="market-text-link">ดูตารางเทียบระดับบริการ ↗</Link></p>
     </div></section>
 
+    {/* Which machine you get when renting (owner, 15 พ.ย. 2026): rentals ship the
+        Y8 GPS — same unit as Y0/Y8, with feedback pads and remote tracking. */}
+    <section id="machine" className="market-section"><div className="market-container">
+      <div className="market-section-head"><div><p className="market-eyebrow">THE MACHINE YOU RENT</p><h2>เช่าแล้วได้เครื่องรุ่นไหน.</h2></div><p>เครื่องเช่าเป็นรุ่น <b>HeartSave Y8 GPS</b> — เครื่องเดียวกับ Y0 / Y8 ใช้แผ่น CPR feedback และมีระบบติดตาม ทีมงานเห็นตำแหน่งและสถานะแบต/แผ่นออนไลน์ ไม่ต้องเดินเช็คเอง · ถ้าอยากได้รุ่นมีจอแสดงผล CPR (Yuwell Y2) สอบถามทีมงาน</p></div>
+      <div style={{ maxWidth: 720, margin: "0 auto" }}><Image src="/images/aed-compare-4-models.webp" alt="เปรียบเทียบ AED 4 รุ่น — Y0 · Y8 · Y8 GPS (รุ่นที่ใช้ในแพ็กเกจเช่า) · Yuwell Y2" width={1122} height={1402} sizes="(max-width: 800px) 100vw, 720px" style={{ width: "100%", height: "auto", borderRadius: 16 }} /></div>
+      <p className="market-note" style={{ textAlign: "center" }}><Link href="/aed/compare" className="market-text-link">ดูเปรียบเทียบทุกรุ่นแบบละเอียด ↗</Link></p>
+    </div></section>
     <section id="why" className="market-section market-section-cream"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">MORE THAN A DEVICE</p><h2>เช่ากับเรา<br /><em>ได้มากกว่าเครื่อง.</em></h2></div><p>เครื่องจะช่วยชีวิตได้ ต้องมีคนกล้าใช้ เราเป็นทั้งศูนย์อบรม คอร์สออนไลน์ และร้านอุปกรณ์ในเครือเดียวกัน ทีมของคุณจึงพร้อมตั้งแต่วันแรก</p></div>
       <div className="market-table-wrap"><table className="market-table"><thead><tr><th scope="col">สิ่งที่ได้</th><th scope="col">เช่ากับ JiaAED</th><th scope="col">เช่าเครื่องทั่วไป</th></tr></thead><tbody>{rentalAdvantages.map((r) => <tr key={r.item}><th scope="row">{r.item}</th><td>{r.jiaaed}</td><td>{r.plain}</td></tr>)}</tbody></table></div>

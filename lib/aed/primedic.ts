@@ -122,7 +122,7 @@ export function y8BotRule(): string {
 // networking module) — sold as its own product.
 export const yuwellGpsAed = {
   id: "yuwell-gps",
-  name: "Yuwell AED — GPS ในตัว",
+  name: "HeartSave Y8 GPS",
   // Price on request (owner, Oct 2026): the ฿60,000 shown before had no source
   // and sat above what the team actually quotes. Pages print "สอบถามราคา" while
   // this is null; the LINE bot still quotes from AED_PRODUCTS in ./pricing.ts.
@@ -263,7 +263,7 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | 
     title: "เลือก Yuwell Y2 ⭐ ถ้า…",
     pick: [
       "คนที่จะใช้เครื่องไม่ได้ทำ CPR บ่อย — อยากให้เครื่องบอกว่ากดถูกไหม",
-      "โรงเรียน ฟิตเนส โรงงาน หน่วยกู้ชีพ หรือที่ที่คนพลุกพล่าน",
+      "โรงพยาบาล ศูนย์ฝึกอบรม หน่วยกู้ชีพ โรงเรียน ฟิตเนส — ต้องการข้อมูล CPR และ EKG บนจอ",
       "ต้องใช้เอกสารสเปก (TOR) สำหรับจัดซื้อ",
     ],
     skip: ["ไม่จำเป็นถ้างบจำกัดมาก และทีมผ่านการฝึก CPR สม่ำเสมออยู่แล้ว"],
@@ -279,7 +279,7 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | 
   },
   {
     id: "yuwell-gps",
-    title: "เลือกรุ่น GPS ถ้า…",
+    title: "เลือก Y8 GPS ถ้า…",
     pick: [
       "มีหลายสาขา/หลายจุด ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ไหม",
       "ไม่มีคนเดินเช็คเครื่องเป็นประจำ — ให้ทีมเราเช็คออนไลน์แทน",
