@@ -104,15 +104,18 @@ export const listedPrimedicModels: PrimedicModel[] = LISTED_MODEL_IDS.map(
   (id) => primedicModels.find((m) => m.id === id)!,
 );
 
+// Owner, 15 พ.ย. 2026 (later): Y8 is no longer sold — shown greyed in the
+// comparison so buyers see the ladder. Worded "งดจำหน่าย", not "สินค้าหมด":
+// it's a decision, not a stock-out.
+export const Y8_STATUS = "งดจำหน่าย";
 export const Y8_ON_REQUEST_NOTE =
-  "ต้องการรุ่น Y8 (ตัวเครื่อง Y0 + แผ่น CPR feedback)? สอบถามทาง LINE — ทีมแนะนำ Y2 ที่มีแผ่น feedback และจอแสดงคุณภาพ CPR ในตัว";
+  "Y8 (ตัวเครื่อง Y0 + แผ่น CPR feedback) งดจำหน่ายแล้ว — ถ้าต้องการแผ่น feedback แนะนำ Y2 ที่มีทั้งแผ่น feedback และจอในตัว · ลูกค้าที่มี Y8 อยู่แล้ว ยังได้รับประกันและบริการเหมือนเดิม";
 
 /** How both bots answer a customer who asks for Y8 (owner's script, 15 พ.ย. 2026). */
 export function y8BotRule(): string {
-  const y8 = primedicModels.find((m) => m.id === "primedic-y8")!;
   const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
   const fmt = (n: number) => `฿${n.toLocaleString("en-US")}`;
-  return `ถ้าลูกค้าถามรุ่น Y8: ตอบราคา Y8 ${fmt(y8.price)} (ก่อน VAT) ตามจริง และบอกตรง ๆ ว่าตัวเครื่องเดียวกับ Y0 เพิ่มแผ่นวัดการกดหน้าอก (เสียงบอก) — แล้วเสนอต่อทันทีว่าเพิ่มอีก ${fmt(y2.price - y8.price)} เป็น Yuwell Y2 (${fmt(y2.price)}) ได้แผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ ทีมแนะนำ Y2 · ถ้าลูกค้ายืนยัน Y8 (เช่น ระบุใน TOR) ขาย Y8 ได้ แต่ห้ามลดต่ำกว่าราคายกล็อต ถ้าลูกค้าต่อราคา ให้เสนอ Y2 แทน · ห้ามเสนอ Y8 เองถ้าลูกค้าไม่ได้ถาม`;
+  return `ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
 }
 
 // Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
@@ -205,29 +208,82 @@ export type PrimedicSpecRow = {
   values: Record<PrimedicModelId, string | boolean | "optional">;
 };
 
+// Plain-language rows so a buyer sees what each step adds:
+// Y0 → (+ แผ่น feedback) = Y8 → (+ จอ) = Y2. Y8 is shown greyed as งดจำหน่าย
+// (owner, 15 พ.ย. 2026) so the ladder still makes sense.
+const warrantyOf = (id: PrimedicModelId) => `${primedicModels.find((m) => m.id === id)!.warrantyYears} ปี`;
 export const primedicDiffSpecs: PrimedicSpecRow[] = [
   {
-    // จุดต่างหลักของ Y2 (รุ่นเรือธง) — เห็นคุณภาพการปั๊มบนจอ ไม่ใช่แค่ฟังเสียง
-    label: "จอสี EKG + ดูคุณภาพ CPR สด (ความเร็ว/ความลึก/full recoil)",
-    values: {
-      "primedic-y0": false,
-      "primedic-y8": false,
-      "primedic-y2": true,
-    },
+    label: "ช็อกหัวใจ + เสียงนำทางภาษาไทยทีละขั้น",
+    values: { "primedic-y0": true, "primedic-y8": true, "primedic-y2": true },
   },
   {
-    label: "เซ็นเซอร์ CPR feedback",
+    label: "ใช้กับเด็กได้ (ปุ่มโหมดเด็ก)",
+    values: { "primedic-y0": true, "primedic-y8": true, "primedic-y2": true },
+  },
+  {
+    label: "บอกว่ากดหน้าอกแรง/เร็วพอไหม (แผ่น CPR feedback)",
+    values: { "primedic-y0": false, "primedic-y8": "เสียงบอก", "primedic-y2": "เสียงบอก + บนจอ" },
+  },
+  {
+    label: "จอแสดงความเร็ว / ความลึก / การปล่อยหน้าอก สด ๆ",
+    values: { "primedic-y0": false, "primedic-y8": false, "primedic-y2": true },
+  },
+  {
+    label: "จอสีแสดงคลื่นหัวใจ (EKG)",
+    values: { "primedic-y0": false, "primedic-y8": false, "primedic-y2": true },
+  },
+  {
+    label: "รับประกันตัวเครื่อง",
     values: {
-      "primedic-y0": "optional",
-      "primedic-y8": true,
-      "primedic-y2": true,
+      "primedic-y0": warrantyOf("primedic-y0"),
+      "primedic-y8": warrantyOf("primedic-y8"),
+      "primedic-y2": warrantyOf("primedic-y2"),
     },
   },
   {
     label: "ราคา (ก่อน VAT)",
     // Derived from primedicModels so the table can't drift from the cards.
     values: Object.fromEntries(
-      primedicModels.map((m) => [m.id, `฿${m.price.toLocaleString("en-US")}`]),
+      primedicModels.map((m) => [m.id, m.id === "primedic-y8" ? Y8_STATUS : `฿${m.price.toLocaleString("en-US")}`]),
     ) as Record<PrimedicModelId, string>,
   },
 ];
+
+/** Comparison columns in "what each step adds" order: Y0 → Y8 → Y2. */
+export const comparisonModels: PrimedicModel[] = (["primedic-y0", "primedic-y8", "primedic-y2"] as const).map(
+  (id) => primedicModels.find((m) => m.id === id)!,
+);
+
+/** Who should buy which — shown next to the comparison so buyers can decide. */
+export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "rent"; title: string; pick: string[]; skip: string[] }[] = [
+  {
+    id: "primedic-y2",
+    title: "เลือก Yuwell Y2 ⭐ ถ้า…",
+    pick: [
+      "คนที่จะใช้เครื่องไม่ได้ทำ CPR บ่อย — อยากให้เครื่องบอกว่ากดถูกไหม",
+      "โรงเรียน ฟิตเนส โรงงาน หน่วยกู้ชีพ หรือที่ที่คนพลุกพล่าน",
+      "ต้องใช้เอกสารสเปก (TOR) สำหรับจัดซื้อ",
+    ],
+    skip: ["ไม่จำเป็นถ้างบจำกัดมาก และทีมผ่านการฝึก CPR สม่ำเสมออยู่แล้ว"],
+  },
+  {
+    id: "primedic-y0",
+    title: "เลือก HeartSave Y0 ถ้า…",
+    pick: [
+      "อยากมี AED พร้อมใช้ในราคาประหยัดที่สุด",
+      "สำนักงาน ร้านค้า คอนโด ที่มีคนผ่านการอบรม CPR",
+    ],
+    skip: ["Y0 ไม่บอกว่ากดหน้าอกถูกไหม — ถ้าอยากได้ส่วนนี้ เลือก Y2"],
+  },
+  {
+    id: "rent",
+    title: "ยังไม่ต้องซื้อ — เช่าดีกว่า ถ้า…",
+    pick: [
+      "ใช้ชั่วคราว (งานอีเวนต์ โครงการ) หรือยังไม่แน่ใจ",
+      "ไม่อยากดูแลแบต/แผ่นเอง หรือไม่อยากจ่ายก้อนใหญ่",
+    ],
+    skip: [],
+  },
+];
+

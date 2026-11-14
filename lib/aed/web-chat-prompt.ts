@@ -19,7 +19,7 @@ const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 // the three Y2 SKUs and told customers AED started at ฿59,999).
 function productBlock(): string {
   const machines = [
-    ...primedicModels.map(
+    ...primedicModels.filter((m) => m.id !== "primedic-y8").map( // Y8 งดจำหน่าย
       (m) =>
         `• ${m.name} — ${thb(m.price)} (ยังไม่รวม VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
     ),

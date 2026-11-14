@@ -1,6 +1,9 @@
+import Link from "next/link";
 import {
-  listedPrimedicModels as primedicModels,
+  comparisonModels as primedicModels,
+  modelChooser,
   Y8_ON_REQUEST_NOTE,
+  Y8_STATUS,
   primedicDiffSpecs,
   primedicSharedSpecs,
   type PrimedicSpecRow,
@@ -19,16 +22,20 @@ export function SpecComparisonTable() {
     <div>
       {/* Per-model comparison of the specs that differ */}
       <div className="overflow-x-auto rounded-2xl border border-gray-800">
-        <table className="w-full min-w-[640px] text-sm">
+        <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr className="bg-gray-900">
               <th className="sticky left-0 z-10 bg-gray-900 text-left p-4 text-gray-400 font-semibold">
                 คุณสมบัติ
               </th>
               {primedicModels.map((m) => (
-                <th key={m.id} className="p-4 text-center">
+                <th key={m.id} className={`p-4 text-center ${m.id === "primedic-y8" ? "opacity-50" : ""}`}>
                   <div className="font-bold text-white">{m.name}</div>
-                  {m.badge && (
+                  {m.id === "primedic-y8" ? (
+                    <div className="mt-1 inline-block bg-gray-800 text-gray-400 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                      {Y8_STATUS}
+                    </div>
+                  ) : m.badge && (
                     <div className="mt-1 inline-block bg-yellow-400/10 text-yellow-400 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-yellow-400/20">
                       {m.badge}
                     </div>
@@ -44,7 +51,7 @@ export function SpecComparisonTable() {
                   {row.label}
                 </td>
                 {primedicModels.map((m) => (
-                  <td key={m.id} className="p-4 text-center">
+                  <td key={m.id} className={`p-4 text-center ${m.id === "primedic-y8" ? "opacity-50" : ""}`}>
                     <Cell value={row.values[m.id]} />
                   </td>
                 ))}
@@ -56,8 +63,27 @@ export function SpecComparisonTable() {
 
       <p className="mt-3 text-sm text-gray-400">{Y8_ON_REQUEST_NOTE}</p>
 
+      {/* Who should buy which — so the buyer can decide, including "don't buy, rent" */}
+      <div className="mt-6 grid gap-3 md:grid-cols-3">
+        {modelChooser.map((c) => (
+          <div
+            key={c.id}
+            className={`rounded-xl border p-4 ${c.id === "primedic-y2" ? "border-yellow-400/50 bg-yellow-400/5" : "border-gray-800 bg-gray-900"}`}
+          >
+            <div className="font-bold text-white">{c.title}</div>
+            <ul className="mt-2 space-y-1 text-sm text-gray-300">
+              {c.pick.map((t) => <li key={t}>✓ {t}</li>)}
+              {c.skip.map((t) => <li key={t} className="text-gray-500">– {t}</li>)}
+            </ul>
+            {c.id === "rent" && (
+              <Link href="/aed/rental" className="mt-2 inline-block text-sm font-semibold text-yellow-400 hover:text-yellow-300">ดูแพ็กเกจเช่า →</Link>
+            )}
+          </div>
+        ))}
+      </div>
+
       {/* Specs shared by both models */}
-      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วม (Y2 / Y0)</h3>
+      <h3 className="text-lg font-bold text-white mt-8 mb-3">สเปกร่วมทุกรุ่น</h3>
       <div className="grid sm:grid-cols-2 gap-2">
         {primedicSharedSpecs.map((s) => (
           <div

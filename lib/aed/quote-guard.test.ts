@@ -30,9 +30,11 @@ describe("checkQuoteRequest", () => {
     expect(checkQuoteRequest("primedic-y2", 1, 59_999).ok).toBe(false);
   });
 
-  it("lets the bot quote every non-duplicate catalog SKU, not just Y2", () => {
-    expect(QUOTABLE_PRODUCT_IDS).toEqual(expect.arrayContaining(["i7", "primedic-y0", "primedic-y8", "yuwell-gps"]));
+  it("lets the bot quote every sold, non-duplicate catalog SKU", () => {
+    expect(QUOTABLE_PRODUCT_IDS).toEqual(expect.arrayContaining(["i7", "primedic-y0", "yuwell-gps"]));
     expect(QUOTABLE_PRODUCT_IDS).not.toContain("primedic-y2");
+    // Y8 งดจำหน่าย (owner, 15 พ.ย. 2026)
+    expect(QUOTABLE_PRODUCT_IDS).not.toContain("primedic-y8");
   });
 });
 
