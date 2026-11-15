@@ -31,7 +31,9 @@ describe("checkQuoteRequest", () => {
   });
 
   it("lets the bot quote every sold, non-duplicate catalog SKU", () => {
-    expect(QUOTABLE_PRODUCT_IDS).toEqual(expect.arrayContaining(["i7", "primedic-y0", "yuwell-gps"]));
+    expect(QUOTABLE_PRODUCT_IDS).toEqual(expect.arrayContaining(["i7", "primedic-y0"]));
+    // Y8 GPS: สอบถามราคา (owner, 15 พ.ย. 2026)
+    expect(QUOTABLE_PRODUCT_IDS).not.toContain("yuwell-gps");
     expect(QUOTABLE_PRODUCT_IDS).not.toContain("primedic-y2");
     // Y8 งดจำหน่าย (owner, 15 พ.ย. 2026)
     expect(QUOTABLE_PRODUCT_IDS).not.toContain("primedic-y8");

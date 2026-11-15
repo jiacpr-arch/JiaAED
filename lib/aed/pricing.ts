@@ -139,7 +139,8 @@ export function listProducts(): AedProduct[] {
 // "primedic-y2" is the same physical Yuwell Y2 as the "i7" SKU slot (kept for
 // accounting continuity) — offering both to the LINE bot made it list Y2 twice.
 // primedic-y8: งดจำหน่าย (owner, 15 พ.ย. 2026) — bot must not quote it.
-const BOT_HIDDEN_IDS = new Set(["primedic-y2", "primedic-y8"]);
+// yuwell-gps: สอบถามราคา (owner, 15 พ.ย. 2026) — the bot hands GPS price questions to the team.
+const BOT_HIDDEN_IDS = new Set(["primedic-y2", "primedic-y8", "yuwell-gps"]);
 
 /** SKUs the LINE bot may show, price and quote — one entry per physical product. */
 export const QUOTABLE_PRODUCT_IDS: string[] = Object.keys(AED_PRODUCTS).filter(
