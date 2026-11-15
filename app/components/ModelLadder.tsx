@@ -162,32 +162,41 @@ export function ModelLadder() {
         ))}
       </div>
 
-      {/* รู้หรือไม่ — Y0, Y8 and Y8 GPS are one machine; the pads (and GPS) differ */}
-      <div className="mt-6 grid items-center gap-4 rounded-2xl border border-yellow-300 bg-yellow-50 p-5 md:grid-cols-[1.2fr_1fr]">
-        <div>
-          <div className="text-lg font-extrabold">💡 รู้หรือไม่?</div>
-          <p className="mt-1 text-sm leading-relaxed">
-            เครื่อง <b>Y0, Y8 และ Y8 GPS</b> เป็น <b className="text-red-600">เครื่องรุ่นเดียวกัน</b> — ต่างกันที่ <b>แผ่นที่ใช้</b>{" "}
-            (แผ่นมาตรฐาน หรือแผ่น CPR feedback ที่วัดการกดหน้าอก) และรุ่น GPS เพิ่มระบบติดตามตำแหน่ง ส่วน <b>Yuwell Y2</b> เป็นรุ่นมีจอแสดงผล CPR และคลื่นหัวใจ
-          </p>
-          <p className="mt-2 text-xs text-gray-600">แผ่น CPR feedback ไม่ขายแยก — มีเป็นแผ่นเปลี่ยนให้ลูกค้าที่ใช้ Y8 / Y8 GPS อยู่แล้ว</p>
+      {/* รู้หรือไม่ — owner found the first version confusing (15 พ.ย. 2026):
+          spell it out as one machine + what's added, one row per model. */}
+      <div className="mt-6 rounded-2xl border border-yellow-300 bg-yellow-50 p-5">
+        <div className="text-lg font-extrabold">💡 รู้หรือไม่? Y0 · Y8 · Y8 GPS คือเครื่องเดียวกัน</div>
+        <p className="mt-1 text-sm text-gray-700">ต่างกันแค่ “ของที่ใส่มาด้วย” · ส่วน Y2 เป็นเครื่องคนละรุ่นที่มีจอแสดงผล</p>
+        <div className="mt-4 space-y-2">
+          {[
+            { model: "Y0", base: "เครื่อง HeartSave", parts: ["แผ่นมาตรฐาน"], note: "", best: false },
+            { model: "Y8", base: "เครื่อง HeartSave", parts: ["แผ่น CPR feedback"], note: Y8_STATUS, best: false },
+            { model: "Y8 GPS", base: "เครื่อง HeartSave", parts: ["แผ่น CPR feedback", "GPS ติดตาม"], note: "", best: false },
+            { model: "Y2 ⭐", base: "เครื่อง Yuwell Y2 (มีจอ)", parts: ["แผ่น CPR feedback"], note: "", best: true },
+          ].map((r) => (
+            <div
+              key={r.model}
+              className={`grid grid-cols-[4.5rem_1fr] items-center gap-3 rounded-xl bg-white p-3 text-sm font-semibold ${
+                r.best ? "border-2 border-yellow-400" : ""
+              } ${r.note ? "opacity-60" : ""}`}
+            >
+              <div className="text-lg font-black leading-tight">
+                {r.model}
+                {r.note && <div className="text-[10px] font-semibold text-gray-500">{r.note}</div>}
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className={`rounded-lg px-2 py-1 text-white ${r.best ? "bg-gray-900" : "bg-red-600"}`}>{r.base}</span>
+                {r.parts.map((part) => (
+                  <span key={part} className="flex items-center gap-1.5">
+                    <span className="text-gray-400">+</span>
+                    <span className="rounded-lg bg-yellow-200 px-2 py-1">{part}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center justify-center gap-2 text-center text-xs font-semibold">
-          <div>
-            <div className="relative mx-auto h-16 w-16"><Image src="/images/primedic-pads-y8.png" alt="แผ่นอิเล็กโทรดมาตรฐาน" fill className="object-contain" sizes="64px" /></div>
-            แผ่นมาตรฐาน
-          </div>
-          <span className="text-xl text-yellow-500">→</span>
-          <div>
-            <div className="relative mx-auto h-16 w-16"><Image src="/images/primedic-pads-y8.png" alt="แผ่น CPR feedback" fill className="object-contain" sizes="64px" /></div>
-            + Feedback
-          </div>
-          <span className="text-xl font-black text-red-600">=</span>
-          <div>
-            <div className="relative mx-auto h-16 w-16"><Image src="/images/primedic-y-series.png" alt="เครื่อง HeartSave" fill className="object-contain" sizes="64px" /></div>
-            เครื่องเดียวกัน
-          </div>
-        </div>
+        <p className="mt-3 text-xs text-gray-600">แผ่น CPR feedback ไม่ขายแยก — มีเป็นแผ่นเปลี่ยนให้ลูกค้าที่ใช้ Y8 / Y8 GPS อยู่แล้ว</p>
       </div>
 
       {/* รุ่นไหนเหมาะกับใคร */}
