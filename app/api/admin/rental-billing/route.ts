@@ -26,6 +26,8 @@ import {
   createRentalSession,
   type CustomerInfo,
 } from "@/lib/aed/checkout-sessions";
+import { checkCredit, type CustomerType, type ExposureRow } from "@/lib/aed/credit-limits";
+import { pushToOwner } from "@/lib/aed/notify-owner";
 import { endFlexRental, refundHold, refundOrder } from "@/lib/aed/refund-actions";
 import { MAX_RENTAL_UNITS, findRentalPlan, quoteRental, quoteSummary } from "@/lib/aed/rental-billing";
 import { conversionQuote, conversionSummary, depositOf, findConversionTarget } from "@/lib/aed/rental-conversion";
@@ -90,6 +92,40 @@ function readUnits(body: Body, max: number): number | null {
   return Number.isInteger(units) && units >= 1 && units <= max ? units : null;
 }
 
+/**
+ * Per-customer machine ceiling for card billing (lib/aed/credit-limits.ts).
+ * Returns a 409 response when blocked, or null to go ahead. An admin may
+ * override with a written reason; the override is pushed to LINE.
+ */
+async function creditGate(
+  db: ReturnType<typeof createAdminClient>,
+  body: Body,
+  info: CustomerInfo,
+  units: number,
+  planLabel: string,
+  excludeSubscriptionId?: string,
+): Promise<NextResponse | null> {
+  const type: CustomerType = body.customerType === "company" ? "company" : "individual";
+  const { data } = await db
+    .from("aed_rental_billing")
+    .select("stripe_subscription_id,plan_id,units,status,installments_paid,company_name,customer_email,customer_phone")
+    .in("status", ["active", "past_due", "completed"]);
+  const decision = checkCredit((data ?? []) as ExposureRow[], { companyName: info.companyName, email: info.email, phone: info.phone }, type, units, excludeSubscriptionId);
+  if (decision.ok) return null;
+
+  const reason = text(body.overrideReason, 200);
+  if (body.override === true && reason) {
+    await pushToOwner(
+      `⚠️ อนุมัติเกินเพดานเช่า/เช่าซื้อ\n${info.companyName || info.customerName}${info.contractRef ? ` · สัญญา ${info.contractRef}` : ""}\n${planLabel} × ${units} — ${decision.message}\nเหตุผล: ${reason}`,
+    );
+    return null;
+  }
+  return NextResponse.json(
+    { ok: false, error: "credit_limit", reason: decision.reason, message: decision.message, openUnits: decision.openUnits, ceiling: decision.ceiling },
+    { status: 409 },
+  );
+}
+
 export async function POST(req: Request) {
   if (!isAuthorized(req)) return unauthorized();
   const stripe = getStripe();
@@ -113,6 +149,8 @@ export async function POST(req: Request) {
       if (!units) return bad("bad_units");
       const info = readInfo(body);
       if (typeof info === "string") return bad(info);
+      const blocked = await creditGate(db, body, info, units, plan.label);
+      if (blocked) return blocked;
       const session = await createRentalSession(stripe, { plan, units, info });
       return NextResponse.json({
         ok: true,
@@ -145,6 +183,11 @@ export async function POST(req: Request) {
       if (!Number.isFinite(depositCredit) || depositCredit < 0 || depositCredit > maxDeposit) return bad("bad_deposit_credit");
       if (!Number.isFinite(rentCredit) || rentCredit < 0) return bad("bad_rent_credit");
 
+      // Buying outright is paid in full; only rent-to-own adds exposure.
+      if (target.kind === "rto") {
+        const blocked = await creditGate(db, body, info, units, target.label, sourceId || undefined);
+        if (blocked) return blocked;
+      }
       const q = conversionQuote(target, units, depositCredit + rentCredit);
       const metadata: Record<string, string> = {
         converts_from: sourceId,
