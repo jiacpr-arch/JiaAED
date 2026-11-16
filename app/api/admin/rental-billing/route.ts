@@ -8,6 +8,8 @@
  *     "hold"     → event rental: hold rent + deposit on the card
  *     "capture"  → machine returned: take the rent (+ damage), release the rest
  *     "release"  → cancel a hold without charging (rental cancelled)
+ *     "refund_order" → refund all or part of a paid online order
+ *     "end_flex" → FLEX machine returned: stop rent, refund deposit − damage
  *
  * Links expire after 23 h (Stripe's maximum is 24 h) — create a new one if it lapses.
  */
@@ -23,6 +25,7 @@ import {
   createRentalSession,
   type CustomerInfo,
 } from "@/lib/aed/checkout-sessions";
+import { endFlexRental, refundOrder } from "@/lib/aed/refund-actions";
 import { MAX_RENTAL_UNITS, findRentalPlan, quoteRental, quoteSummary } from "@/lib/aed/rental-billing";
 import { conversionQuote, conversionSummary, depositOf, findConversionTarget } from "@/lib/aed/rental-conversion";
 import {
@@ -47,9 +50,10 @@ const num = (v: unknown) => (typeof v === "number" ? v : typeof v === "string" &
 export async function GET(req: Request) {
   if (!isAuthorized(req)) return unauthorized();
   const db = createAdminClient();
-  const [billing, holds] = await Promise.all([
+  const [billing, holds, orders] = await Promise.all([
     db.from("aed_rental_billing").select("*").order("created_at", { ascending: false }).limit(200),
     db.from("aed_rental_holds").select("*").order("created_at", { ascending: false }).limit(100),
+    db.from("aed_orders").select("*").eq("status", "paid").order("created_at", { ascending: false }).limit(100),
   ]);
   if (billing.error) {
     console.error("[admin/rental-billing][GET]", billing.error.message);
@@ -59,6 +63,7 @@ export async function GET(req: Request) {
     ok: true,
     rows: billing.data ?? [],
     holds: holds.error ? [] : (holds.data ?? []),
+    orders: orders.error ? [] : (orders.data ?? []),
     holdsTableMissing: !!holds.error,
     stripeReady: !!getStripe(),
   });
@@ -229,6 +234,16 @@ export async function POST(req: Request) {
         .update({ status: "captured", captured_thb: amount, damage_thb: damage, updated_at: now })
         .eq("id", id);
       return NextResponse.json({ ok: true, captured: amount, released: Math.round((Number(h.authorized_thb) - amount) * 100) / 100 });
+    }
+
+    if (action === "refund_order") {
+      const r = await refundOrder(stripe, db, num(body.orderId), num(body.amount));
+      return r.ok ? NextResponse.json(r) : bad(r.error, r.status);
+    }
+
+    if (action === "end_flex") {
+      const r = await endFlexRental(stripe, db, text(body.subscriptionId, 80), num(body.damage ?? 0));
+      return r.ok ? NextResponse.json(r) : bad(r.error, r.status);
     }
 
     return bad("unknown_action");

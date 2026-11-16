@@ -38,3 +38,7 @@ ALTER TABLE aed_orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "service_role_aed_orders" ON aed_orders;
 CREATE POLICY "service_role_aed_orders" ON aed_orders
   FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- Refunds made from /admin/billing (2026-11-16)
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS refunded_thb NUMERIC(12, 2) NOT NULL DEFAULT 0;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS refunded_at  TIMESTAMPTZ;
