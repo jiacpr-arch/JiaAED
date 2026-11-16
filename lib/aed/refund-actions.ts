@@ -3,7 +3,7 @@ import "server-only";
 import type Stripe from "stripe";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { pushToOwner } from "./notify-owner";
-import { flexEndQuote, flexEndText, orderRefundAmount, orderRefundText, refundableLeft, type FlexEnd } from "./refunds";
+import { flexEndQuote, flexEndText, holdRefundQuote, orderRefundAmount, orderRefundText, refundableLeft, type FlexEnd } from "./refunds";
 
 type Fail = { ok: false; error: string; status?: number };
 
@@ -91,4 +91,51 @@ export async function endFlexRental(
   }
   await pushToOwner(flexEndText(row, quote, refunded));
   return { ok: true, quote, refunded };
+}
+
+/**
+ * Late return, hold captured in full before it expired: keep rent + late fee +
+ * damage (`keep`) and refund the rest — minus the card fee Stripe charged on
+ * that excess, which it doesn't give back on refund (rental terms: the renter
+ * bears it). The fee is read from the charge's balance transaction, so it is
+ * the real amount, not an estimate. `preview` only returns the numbers.
+ */
+export type HoldRefundQuote = { captured: number; keep: number; excess: number; feeOnExcess: number; refund: number };
+
+export async function refundHold(
+  stripe: Stripe,
+  db: SupabaseClient,
+  holdId: number,
+  keep: number,
+  preview: boolean,
+): Promise<{ ok: true; quote: HoldRefundQuote; refunded: boolean } | Fail> {
+  const { data: h } = await db.from("aed_rental_holds").select("*").eq("id", holdId).maybeSingle();
+  if (!h) return { ok: false, error: "hold_not_found", status: 404 };
+  if (h.status !== "captured") return { ok: false, error: "hold_not_captured", status: 409 };
+  if (Number(h.refunded_thb ?? 0) > 0) return { ok: false, error: "already_refunded", status: 409 };
+  const captured = Number(h.captured_thb ?? 0);
+  if (!Number.isFinite(keep) || keep < 0 || keep >= captured) return { ok: false, error: "bad_amount" };
+
+  const pi = await stripe.paymentIntents.retrieve(h.payment_intent_id, { expand: ["latest_charge.balance_transaction"] });
+  const charge = typeof pi.latest_charge === "object" ? pi.latest_charge : null;
+  const bt = charge && typeof charge.balance_transaction === "object" ? charge.balance_transaction : null;
+  const fee = bt ? bt.fee / 100 : 0;
+  const quote = holdRefundQuote(captured, keep, fee);
+  if (preview) return { ok: true, quote, refunded: false };
+  if (quote.refund <= 0) return { ok: false, error: "nothing_to_refund" };
+
+  await stripe.refunds.create(
+    { payment_intent: h.payment_intent_id, amount: Math.round(quote.refund * 100), reason: "requested_by_customer", metadata: { source: "jiaaed_admin", kind: "hold_excess" } },
+    { idempotencyKey: `hold-excess-${h.id}` },
+  );
+  await db.from("aed_rental_holds").update({ refunded_thb: quote.refund, updated_at: new Date().toISOString() }).eq("id", h.id);
+  await pushToOwner(
+    [
+      `↩️ คืนเงินส่วนเกินเช่าอีเวนต์ ${quote.refund.toLocaleString("en-US")} บาท`,
+      `${h.company_name || h.customer_name || "ลูกค้า"}${h.event_name ? ` · ${h.event_name}` : ""}`,
+      `เก็บเต็มวงเงิน ${captured.toLocaleString("en-US")} − เก็บไว้ ${keep.toLocaleString("en-US")} − ค่าธรรมเนียมบัตรส่วนเกิน ${quote.feeOnExcess.toLocaleString("en-US")}`,
+      "👉 ออกใบกำกับภาษีค่าเช่า/ค่าคืนช้า/ค่าเสียหาย + ค่าธรรมเนียมบัตรใน FlowAccount",
+    ].join("\n"),
+  );
+  return { ok: true, quote, refunded: true };
 }

@@ -14,7 +14,11 @@ describe("event-rental card holds", () => {
 
   it("no 7-day or longer packages: a card hold only lasts ~7 days", () => {
     expect(findHoldPackage("event-weekly")).toBeNull();
-    expect(Math.max(...pkg("event-day").days)).toBeLessThanOrEqual(5);
+    expect(Math.max(...pkg("event-day").days)).toBeLessThanOrEqual(6);
+  });
+
+  it("6 days costs the same as the weekly package (6,000 ex VAT)", () => {
+    expect(holdQuote(pkg("event-day"), 6, 1)).toMatchObject({ rentNet: 6_000, rentGross: 6_420, authorizeTotal: 36_420 });
   });
 
   it("return must be today … +6 days (Bangkok)", () => {
@@ -39,5 +43,17 @@ describe("event-rental card holds", () => {
     const t = holdExpiringText([h, { ...h, company_name: "ทีม B" }]);
     expect(t).toContain("2 รายการ");
     expect(t).toContain("บริษัท วิ่ง · มาราธอน");
+  });
+});
+
+describe("late return", () => {
+  it("counts whole Bangkok days past the return date and prices them like an extra day + VAT", async () => {
+    const { lateDays, lateFee } = await import("./rental-holds");
+    const now = new Date("2026-11-20T09:00:00+07:00");
+    expect(lateDays("2026-11-20", now)).toBe(0);
+    expect(lateDays("2026-11-17", now)).toBe(3);
+    expect(lateDays(null, now)).toBe(0);
+    expect(lateFee(3, 1)).toBe(2_889); // 3 × 900 + 7%
+    expect(lateFee(2, 2)).toBe(3_852);
   });
 });

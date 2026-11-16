@@ -33,3 +33,16 @@ describe("FLEX end of rental", () => {
     expect(flexEndQuote({ plan_id: "rto-y2", units: 1 }, 0)).toBeNull();
   });
 });
+
+describe("late return: hold captured in full, excess refunded", () => {
+  it("renter bears the card fee on the refunded part (Stripe keeps it)", async () => {
+    const { holdRefundQuote } = await import("./refunds");
+    // 2-day rental: hold 32,568 captured in full, fee 1,198.33; 3 days late (900 + VAT each)
+    const keep = 2_568 + 3 * 963;
+    const q = holdRefundQuote(32_568, keep, 1_198.33);
+    expect(q.excess).toBe(27_111);
+    expect(q.feeOnExcess).toBeCloseTo((1_198.33 * 27_111) / 32_568, 1);
+    expect(q.refund).toBe(Math.round((27_111 - q.feeOnExcess) * 100) / 100);
+    expect(holdRefundQuote(32_568, 99_999, 1_000).refund).toBe(0);
+  });
+});

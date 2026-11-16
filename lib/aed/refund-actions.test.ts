@@ -101,3 +101,26 @@ describe("admin refunds", () => {
     expect(calls).toHaveLength(0);
   });
 });
+
+describe("hold excess refund after a late return", () => {
+  it("previews then refunds captured − kept − fee share, once", async () => {
+    const { refundHold } = await import("./refund-actions");
+    const hold = { id: 3, status: "captured", payment_intent_id: "pi_h", captured_thb: 32_568, authorized_thb: 32_568, refunded_thb: 0, company_name: "ง", customer_name: null, event_name: "งานวิ่ง" };
+    const db = fakeDb({ aed_rental_holds: [hold] });
+    const { stripe, calls } = fakeStripe();
+    (stripe as unknown as Rec).paymentIntents = {
+      retrieve: async () => ({ latest_charge: { balance_transaction: { fee: 119_833 } } }),
+    };
+    const preview = await refundHold(stripe, db, 3, 5_457, true);
+    expect(preview).toMatchObject({ ok: true, refunded: false, quote: { excess: 27_111 } });
+    expect(calls).toHaveLength(0);
+
+    const done = await refundHold(stripe, db, 3, 5_457, false);
+    expect(done).toMatchObject({ ok: true, refunded: true });
+    const q = (done as { quote: { refund: number; feeOnExcess: number } }).quote;
+    expect(q.feeOnExcess).toBeGreaterThan(990);
+    expect(calls[0]).toMatchObject({ refund: { payment_intent: "pi_h", amount: Math.round(q.refund * 100) }, idempotencyKey: "hold-excess-3" });
+    expect(hold.refunded_thb).toBe(q.refund);
+    expect(await refundHold(stripe, db, 3, 5_457, false)).toMatchObject({ ok: false, error: "already_refunded" });
+  });
+});

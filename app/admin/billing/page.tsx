@@ -18,6 +18,8 @@ import {
   findHoldPackage,
   holdPackages,
   holdSummary,
+  lateDays,
+  lateFee,
   type HoldRow,
 } from "@/lib/aed/rental-holds";
 import { flexEndQuote, refundableLeft } from "@/lib/aed/refunds";
@@ -266,16 +268,52 @@ export default function AdminBillingPage() {
     }
   };
 
+  const refundHold = async (h: HoldRow) => {
+    const late = lateDays(h.return_date);
+    const suggested = Math.round((Number(h.rent_thb) + lateFee(late, h.units)) * 100) / 100;
+    const raw = prompt(
+      `เครื่องคืนแล้ว — คืนเงินส่วนเกินจากที่เก็บเต็มวงเงิน ${thbExact(Number(h.captured_thb ?? 0))}\n` +
+        `ยอดที่ร้านเก็บไว้ = ค่าเช่า ${thbExact(Number(h.rent_thb))}${late > 0 ? ` + คืนช้า ${late} วัน ${thbExact(lateFee(late, h.units))}` : ""} + ค่าเสียหาย (ถ้ามี)\n` +
+        "แก้ตัวเลขได้ถ้ามีค่าเสียหาย (บาท)",
+      String(suggested),
+    );
+    if (raw === null) return;
+    const keep = Number(raw);
+    if (!Number.isFinite(keep) || keep < 0) return setError("ยอดไม่ถูกต้อง");
+    setBusy(true);
+    setError(null);
+    try {
+      const { quote } = await post({ action: "refund_hold", holdId: h.id, keep, preview: true });
+      if (
+        !confirm(
+          `เก็บไว้ ${thbExact(quote.keep)}\nส่วนเกิน ${thbExact(quote.excess)} − ค่าธรรมเนียมบัตรที่ Stripe ไม่คืน ${thbExact(quote.feeOnExcess)}\n= คืนลูกค้า ${thbExact(quote.refund)}\n\nยืนยันคืนเงิน? (ยกเลิกไม่ได้)`,
+        )
+      )
+        return;
+      await post({ action: "refund_hold", holdId: h.id, keep });
+      setNotice(`คืนเงิน ${thbExact(quote.refund)} แล้ว (หักค่าธรรมเนียมบัตร ${thbExact(quote.feeOnExcess)}) · เงินเข้าบัตรลูกค้าใน 5–10 วันทำการ`);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "คืนเงินไม่สำเร็จ");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const settleHold = async (h: HoldRow, action: "capture" | "release") => {
     let damage = 0;
     if (action === "capture") {
+      const late = lateDays(h.return_date);
+      const fee = lateFee(late, h.units);
       const raw = prompt(
-        `เก็บค่าเช่า ${thbExact(Number(h.rent_thb))}\nมีค่าเสียหายเพิ่มไหม? ใส่จำนวนเงิน (บาท) หรือ 0 ถ้าคืนครบสภาพ\nเก็บได้สูงสุด ${thbExact(Number(h.authorized_thb))}`,
-        "0",
+        `เก็บค่าเช่า ${thbExact(Number(h.rent_thb))} + ค่าใช้จ่ายเพิ่ม\n` +
+          (late > 0 ? `⚠️ คืนช้า ${late} วัน = ${thbExact(fee)} (ใส่ไว้ให้แล้ว — บวกค่าเสียหายเพิ่มได้)\n` : "ใส่ค่าเสียหาย/ค่าคืนช้า (บาท) หรือ 0 ถ้าคืนครบสภาพตรงเวลา\n") +
+          `ยังไม่ได้เครื่องคืนแต่วงเงินใกล้หมด → พิมพ์ "all" เพื่อเก็บเต็มวงเงิน ${thbExact(Number(h.authorized_thb))} แล้วคืนส่วนเกินทีหลัง`,
+        String(fee),
       );
       if (raw === null) return;
-      damage = Number(raw);
-      if (!Number.isFinite(damage) || damage < 0) return setError("ค่าเสียหายไม่ถูกต้อง");
+      damage = raw.trim().toLowerCase() === "all" ? Number(h.authorized_thb) : Number(raw);
+      if (!Number.isFinite(damage) || damage < 0) return setError("ยอดไม่ถูกต้อง");
       const total = captureAmount({ rentGross: Number(h.rent_thb), authorizeTotal: Number(h.authorized_thb) }, damage);
       if (!confirm(`ตัดเงินจากบัตร ${thbExact(total)} แล้วปล่อยวงเงินที่เหลือ ${thbExact(Number(h.authorized_thb) - total)} คืนลูกค้า?`)) return;
     } else if (!confirm("ยกเลิกการเช่าและปล่อยวงเงินทั้งหมด โดยไม่เก็บค่าเช่า?")) {
@@ -505,10 +543,25 @@ export default function AdminBillingPage() {
                         {h.company_name || h.customer_name || "—"}
                         {h.event_name && <div className="text-xs text-gray-500">{h.event_name}</div>}
                       </td>
-                      <td className="py-2 pr-3">{h.return_date ?? "—"}</td>
+                      <td className="py-2 pr-3">
+                        {h.return_date ?? "—"}
+                        {h.status === "authorized" && lateDays(h.return_date) > 0 && (
+                          <div className="text-xs text-red-400">เลยกำหนด {lateDays(h.return_date)} วัน</div>
+                        )}
+                      </td>
                       <td className="py-2 pr-3">
                         {thbExact(Number(h.rent_thb))} / {thbExact(Number(h.authorized_thb))}
-                        {h.captured_thb != null && h.status === "captured" && <div className="text-xs text-gray-500">เก็บ {thbExact(Number(h.captured_thb))}</div>}
+                        {h.captured_thb != null && h.status === "captured" && (
+                          <div className="text-xs text-gray-500">
+                            เก็บ {thbExact(Number(h.captured_thb))}
+                            {Number((h as { refunded_thb?: number }).refunded_thb ?? 0) > 0 && ` · คืน ${thbExact(Number((h as { refunded_thb?: number }).refunded_thb))}`}
+                          </div>
+                        )}
+                        {h.status === "captured" && Number((h as { refunded_thb?: number }).refunded_thb ?? 0) === 0 && Number(h.captured_thb ?? 0) >= Number(h.authorized_thb) && (
+                          <button onClick={() => refundHold(h)} disabled={busy} className="text-xs text-red-300 underline mt-1 disabled:opacity-50">
+                            คืนเงินส่วนเกิน
+                          </button>
+                        )}
                       </td>
                       <td className="py-2 pr-3">{h.status === "authorized" ? bkk(h.capture_before) : "—"}</td>
                       <td className="py-2">
