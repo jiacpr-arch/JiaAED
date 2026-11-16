@@ -25,7 +25,9 @@ import { getStripe } from "@/lib/aed/stripe";
 import { pushToOwner } from "@/lib/aed/notify-owner";
 import { RENTAL_EVENTS, finalizeConversion, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
 import { handleHoldCanceled, handleHoldCheckout } from "@/lib/aed/rental-holds-webhook";
-import { isJiaAedOrderSession, orderAlertText, orderFromSession, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
+import { isJiaAedOrderSession, orderAlertText, orderFromSession, type OrderRow, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
+import { sendOrderConfirmation, sendOwnerTextEmail } from "@/lib/aed/email";
+import { findCheckoutItem, thbExact } from "@/lib/aed/checkout";
 
 export const runtime = "nodejs";
 
@@ -133,8 +135,38 @@ export async function POST(req: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: false, error: "db_error" }, { status: 500 });
   }
 
-  if (status !== "pending") await pushToOwner(orderAlertText(order));
+  if (status !== "pending") {
+    const alert = orderAlertText(order);
+    await pushToOwner(alert);
+    if (status === "paid") await sendOrderEmails(db, order, alert);
+  }
   return NextResponse.json({ received: true, status });
+}
+
+/**
+ * Buyer confirmation + owner backup of the LINE alert. Never fails the webhook:
+ * the order is stored and the team already has the LINE message.
+ */
+async function sendOrderEmails(db: ReturnType<typeof createAdminClient>, order: OrderRow, alert: string): Promise<void> {
+  try {
+    const item = findCheckoutItem(order.product_id);
+    const itemText = `${item?.name ?? order.product_id}${order.units > 1 ? ` × ${order.units}` : ""}`;
+    await sendOwnerTextEmail(`💰 ออเดอร์ออนไลน์ — ${order.company_name || order.customer_name || "ลูกค้า"} · ${itemText}`, alert);
+    if (order.customer_email) {
+      const r = await sendOrderConfirmation({
+        to: order.customer_email,
+        name: order.customer_name,
+        item: itemText,
+        total: thbExact(order.total_thb),
+        orderRef: order.stripe_session_id.slice(-10).toUpperCase(),
+      });
+      if (r.ok) {
+        await db.from("aed_orders").update({ confirmation_emailed_at: new Date().toISOString() }).eq("stripe_session_id", order.stripe_session_id);
+      }
+    }
+  } catch (e) {
+    console.error("[AED] order emails failed:", e);
+  }
 }
 
 export async function GET(): Promise<NextResponse> {

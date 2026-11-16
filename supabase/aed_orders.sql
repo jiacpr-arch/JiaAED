@@ -42,3 +42,23 @@ CREATE POLICY "service_role_aed_orders" ON aed_orders
 -- Refunds made from /admin/billing (2026-11-16)
 ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS refunded_thb NUMERIC(12, 2) NOT NULL DEFAULT 0;
 ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS refunded_at  TIMESTAMPTZ;
+
+-- ─── Fulfilment tracking (16 พ.ย. 2026) ───────────────────────────────────────
+-- After payment: ใหม่ → โทรยืนยันแล้ว → ส่ง/ติดตั้งแล้ว → ออกใบกำกับแล้ว.
+-- A daily cron (/api/cron/order-followups) nudges the team on LINE when an
+-- order sits in a stage > 24 h, and 7 days / 11 months after delivery to
+-- follow the customer up (lib/aed/order-fulfillment.ts).
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS fulfillment_status TEXT NOT NULL DEFAULT 'new';
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS stage_changed_at   TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS confirmed_at       TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS delivered_at       TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS invoiced_at        TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS unit_serials       TEXT;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS fulfillment_note   TEXT;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS followup_d7_at     TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS followup_m11_at    TIMESTAMPTZ;
+ALTER TABLE aed_orders ADD COLUMN IF NOT EXISTS confirmation_emailed_at TIMESTAMPTZ;
+DO $$ BEGIN
+  ALTER TABLE aed_orders ADD CONSTRAINT aed_orders_fulfillment_status_check
+    CHECK (fulfillment_status IN ('new', 'confirmed', 'delivered', 'invoiced'));
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

@@ -25,6 +25,7 @@ import {
   type HoldRow,
 } from "@/lib/aed/rental-holds";
 import { flexEndQuote, refundableLeft } from "@/lib/aed/refunds";
+import { STAGES, dueFollowups, isStale, nextStage, stageInfo, stageOf, type FollowupId, type FulfillmentStage } from "@/lib/aed/order-fulfillment";
 import { CUSTOMER_TYPES, LIMITS, type CustomerType } from "@/lib/aed/credit-limits";
 import {
   AdminShell,
@@ -74,7 +75,16 @@ type Order = {
   customer_name: string | null;
   company_name: string | null;
   customer_email: string | null;
+  customer_phone: string | null;
   created_at: string;
+  paid_at: string | null;
+  fulfillment_status: string | null;
+  stage_changed_at: string | null;
+  delivered_at: string | null;
+  unit_serials: string | null;
+  fulfillment_note: string | null;
+  followup_d7_at: string | null;
+  followup_m11_at: string | null;
 };
 
 type Hold = HoldRow & { payment_intent_id: string; refunded_thb?: number | null };
@@ -151,6 +161,8 @@ type Dlg =
   | { type: "release"; hold: Hold }
   | { type: "refundHold"; hold: Hold }
   | { type: "refundOrder"; order: Order }
+  | { type: "orderStage"; order: Order; to: FulfillmentStage }
+  | { type: "followup"; order: Order; which: FollowupId }
   | { type: "endFlex"; row: Row };
 
 function Billing() {
@@ -221,6 +233,7 @@ function Billing() {
     );
   }
 
+  const openOrders = orders.filter((o) => stageOf(o) !== "invoiced" && refundableLeft(o) > 0).length;
   const openHolds = holds.filter((h) => h.status === "authorized" || h.status === "expired");
   const closedHolds = holds.filter((h) => !(h.status === "authorized" || h.status === "expired"));
 
@@ -260,7 +273,7 @@ function Billing() {
         items={[
           { id: "holds", label: `🎪 เช่าอีเวนต์${openHolds.length ? ` (${openHolds.length})` : ""}` },
           { id: "monthly", label: `💳 รายเดือน (${rows.length})` },
-          { id: "orders", label: `🛒 ออเดอร์ออนไลน์ (${orders.length})` },
+          { id: "orders", label: `🛒 ออเดอร์ออนไลน์${openOrders ? ` (รอทำ ${openOrders})` : ` (${orders.length})`}` },
         ]}
       />
 
@@ -355,7 +368,8 @@ function Billing() {
                     {refunded > 0 && <div className="text-xs text-gray-400">คืนแล้ว {thbExact(refunded)}</div>}
                   </div>
                 </div>
-                <div className="mt-3">
+                <OrderProgress o={o} onAction={setDialog} />
+                <div className="mt-3 flex flex-wrap gap-2">
                   {left > 0 ? (
                     <button className={btnSmall} onClick={() => setDialog({ type: "refundOrder", order: o })}>
                       ↩️ คืนเงิน
@@ -374,6 +388,8 @@ function Billing() {
       {dialog?.type === "release" && <ReleaseDialog h={dialog.hold} onClose={() => setDialog(null)} onDone={done} />}
       {dialog?.type === "refundHold" && <RefundHoldDialog h={dialog.hold} onClose={() => setDialog(null)} onDone={done} />}
       {dialog?.type === "refundOrder" && <RefundOrderDialog o={dialog.order} onClose={() => setDialog(null)} onDone={done} />}
+      {dialog?.type === "orderStage" && <OrderStageDialog o={dialog.order} to={dialog.to} onClose={() => setDialog(null)} onDone={done} />}
+      {dialog?.type === "followup" && <FollowupDialog o={dialog.order} which={dialog.which} onClose={() => setDialog(null)} onDone={done} />}
       {dialog?.type === "endFlex" && <EndFlexDialog r={dialog.row} onClose={() => setDialog(null)} onDone={done} />}
     </>
   );
@@ -1232,6 +1248,146 @@ function EndFlexDialog({ r, onClose, onDone }: { r: Row } & DlgProps) {
           />
         </>
       )}
+    </Dialog>
+  );
+}
+
+// ─── Order fulfilment (lib/aed/order-fulfillment.ts) ──────────────────────────
+
+async function postOrder(body: Record<string, unknown>) {
+  const res = await fetch("/api/admin/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.ok) {
+    const msg: Record<string, string> = { stage_changed: "มีคนอัปเดตออเดอร์นี้ไปแล้ว — รีเฟรชหน้า", order_not_paid: "ออเดอร์นี้ยังไม่ได้ชำระเงิน" };
+    throw new Error(msg[data.error] ?? `ไม่สำเร็จ: ${data.error ?? res.status}`);
+  }
+  return data;
+}
+
+function OrderProgress({ o, onAction }: { o: Order; onAction: (d: Dlg) => void }) {
+  const stage = stageOf(o);
+  const idx = STAGES.findIndex((s) => s.id === stage);
+  const next = nextStage(stage);
+  const now = new Date();
+  const stale = isStale(o, now);
+  const calls = dueFollowups(o, now);
+  const live = refundableLeft(o) > 0;
+  return (
+    <div className="mt-3 border-t border-gray-800 pt-3">
+      <div className="flex flex-wrap gap-1.5 mb-2">
+        {STAGES.map((s, i) => (
+          <Pill key={s.id} tone={i < idx ? "green" : i === idx ? (s.id === "invoiced" ? "green" : stale ? "red" : "yellow") : "gray"}>
+            {i < idx ? "✓ " : ""}
+            {s.label.split(" — ")[0]}
+          </Pill>
+        ))}
+      </div>
+      {live && next && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`text-sm ${stale ? "text-red-300" : "text-gray-400"}`}>
+            ต่อไป: {stageInfo(stage).todo}
+            {stale && " — ค้างเกิน 24 ชม."}
+            {stage === "new" && o.customer_phone && ` · โทร ${o.customer_phone}`}
+          </span>
+          <button className={btnSmall} onClick={() => onAction({ type: "orderStage", order: o, to: next })}>
+            {stageInfo(stage).action}
+          </button>
+        </div>
+      )}
+      {o.unit_serials && <div className="text-xs text-gray-500 mt-2">เลขเครื่อง: {o.unit_serials}</div>}
+      {calls.map((f) => (
+        <div key={f.id} className="flex flex-wrap items-center gap-2 mt-2">
+          <span className="text-sm text-yellow-300">
+            📞 {f.label}: {f.todo}
+            {o.customer_phone && ` · โทร ${o.customer_phone}`}
+          </span>
+          <button className={btnSmall} onClick={() => onAction({ type: "followup", order: o, which: f.id })}>
+            ✓ โทรแล้ว
+          </button>
+        </div>
+      ))}
+      {o.fulfillment_note && <div className="text-xs text-gray-500 mt-2 whitespace-pre-line">📝 {o.fulfillment_note}</div>}
+    </div>
+  );
+}
+
+function OrderStageDialog({ o, to, onClose, onDone }: { o: Order; to: FulfillmentStage } & DlgProps) {
+  const [serials, setSerials] = useState("");
+  const [pad, setPad] = useState("");
+  const [battery, setBattery] = useState("");
+  const [note, setNote] = useState("");
+  const { busy, error, run } = useRun();
+  const from = stageInfo(stageOf(o));
+  return (
+    <Dialog title={`${from.action} — ${whoOf(o)}`} onClose={onClose}>
+      <p className="text-sm text-gray-400 mb-4">
+        เปลี่ยนสถานะเป็น <b className="text-gray-200">{stageInfo(to).label}</b>
+      </p>
+      {to === "delivered" && (
+        <>
+          <Field label="เลขเครื่อง (Serial)" hint={`${o.units} เครื่อง · คั่นด้วยจุลภาคหรือขึ้นบรรทัดใหม่ · ใส่แล้วระบบเตือนแผ่น/แบตหมดอายุให้อัตโนมัติ`}>
+            <textarea value={serials} onChange={(e) => setSerials(e.target.value)} rows={2} className={inputCls} autoFocus />
+          </Field>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <Field label="แผ่นหมดอายุ" hint="ดูบนซอง">
+              <input type="date" value={pad} onChange={(e) => setPad(e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="แบตหมดอายุ" hint="ดูบนตัวแบต">
+              <input type="date" value={battery} onChange={(e) => setBattery(e.target.value)} className={inputCls} />
+            </Field>
+          </div>
+        </>
+      )}
+      <Field label="บันทึก (ไม่บังคับ)" className="mt-3" hint={to === "confirmed" ? "เช่น นัดส่ง 20 พ.ย. 10 โมง" : undefined}>
+        <input value={note} onChange={(e) => setNote(e.target.value)} className={inputCls} maxLength={500} />
+      </Field>
+      {error && (
+        <div className="mt-4">
+          <Notice kind="error">{error}</Notice>
+        </div>
+      )}
+      <StepNav
+        onBack={onClose}
+        backLabel="ยกเลิก"
+        nextDisabled={busy}
+        nextLabel={busy ? "กำลังบันทึก…" : "✓ บันทึก"}
+        onNext={() =>
+          run(async () => {
+            const data = await postOrder({ action: "stage", orderId: o.id, to, serials, padExpiry: pad, batteryExpiry: battery, note });
+            const extra = data.units ? ` · บันทึก ${data.units} เครื่องเข้าระบบเตือนแผ่น/แบตแล้ว` : data.warning ? " · ⚠️ บันทึกเลขเครื่องไม่สำเร็จ — เพิ่มเองที่หน้าเครื่อง" : "";
+            onDone(`อัปเดตเป็น "${stageInfo(to).label}" แล้ว${extra}`);
+          })
+        }
+      />
+    </Dialog>
+  );
+}
+
+function FollowupDialog({ o, which, onClose, onDone }: { o: Order; which: FollowupId } & DlgProps) {
+  const [note, setNote] = useState("");
+  const { busy, error, run } = useRun();
+  return (
+    <Dialog title={`โทรติดตามแล้ว — ${whoOf(o)}`} onClose={onClose}>
+      <Field label="ลูกค้าว่าอย่างไร (ไม่บังคับ)" hint="เช่น ใช้งานได้ดี สนใจอบรม 5 คน">
+        <input value={note} onChange={(e) => setNote(e.target.value)} className={inputCls} maxLength={500} autoFocus />
+      </Field>
+      {error && (
+        <div className="mt-4">
+          <Notice kind="error">{error}</Notice>
+        </div>
+      )}
+      <StepNav
+        onBack={onClose}
+        backLabel="ยกเลิก"
+        nextDisabled={busy}
+        nextLabel={busy ? "กำลังบันทึก…" : "✓ บันทึก"}
+        onNext={() =>
+          run(async () => {
+            await postOrder({ action: "followup_done", orderId: o.id, which, note });
+            onDone("บันทึกการติดตามแล้ว");
+          })
+        }
+      />
     </Dialog>
   );
 }

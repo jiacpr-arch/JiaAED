@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { orderTodos, type FulfillmentRow } from "@/lib/aed/order-fulfillment";
 import { checkUnitExpiries } from "@/lib/aed/unit-expiry";
 import { lateDays, type HoldRow } from "@/lib/aed/rental-holds";
 import type { AedUnit } from "@/lib/aed/units";
@@ -85,6 +86,14 @@ function TodoList() {
         const pastDue = (billing.rows as { status: string; company_name: string | null; customer_name: string | null }[]).filter((r) => r.status === "past_due");
         for (const r of pastDue) {
           list.push({ tone: "yellow", text: `${r.company_name || r.customer_name || "ลูกค้า"}: ค้างชำระค่าเช่ารายเดือน`, href: "/admin/billing?view=monthly", cta: "ดู" });
+        }
+        for (const t of orderTodos((billing.orders ?? []) as FulfillmentRow[], new Date())) {
+          list.push({
+            tone: t.kind === "stale" ? "red" : "yellow",
+            text: t.kind === "stale" ? `ออเดอร์ ${t.text}` : `📞 ${t.text}`,
+            href: "/admin/billing?view=orders",
+            cta: t.kind === "stale" ? "อัปเดต" : "ดู",
+          });
         }
       }
 
