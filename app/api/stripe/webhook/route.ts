@@ -25,7 +25,7 @@ import { getStripe } from "@/lib/aed/stripe";
 import { pushToOwner } from "@/lib/aed/notify-owner";
 import { RENTAL_EVENTS, finalizeConversion, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
 import { handleHoldCanceled, handleHoldCheckout } from "@/lib/aed/rental-holds-webhook";
-import { orderAlertText, orderFromSession, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
+import { isJiaAedOrderSession, orderAlertText, orderFromSession, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
 
 export const runtime = "nodejs";
 
@@ -80,6 +80,10 @@ export async function POST(req: Request): Promise<NextResponse> {
   if (!toStatus) return NextResponse.json({ received: true, ignored: event.type });
 
   const evSession = event.data.object as Stripe.Checkout.Session;
+  // Shared Stripe account: ignore other businesses' checkouts.
+  if (!isJiaAedOrderSession(evSession.metadata)) {
+    return NextResponse.json({ received: true, ignored: "not a JiaAED order" });
+  }
   const status = toStatus(evSession);
 
   // Re-read the session so we get the payment method + full customer details.

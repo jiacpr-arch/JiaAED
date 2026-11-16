@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { orderAlertText, orderFromSession, type SessionLike } from "./orders";
+import { isJiaAedOrderSession, orderAlertText, orderFromSession, type SessionLike } from "./orders";
 
 const session: SessionLike = {
   id: "cs_test_abc123",
@@ -64,5 +64,16 @@ describe("orderAlertText", () => {
     expect(t).toContain("0105555555555");
     expect(t).toContain("99 ถนนพระราม 9");
     expect(t).toContain("cs_test_abc123");
+  });
+});
+
+describe("shared Stripe account", () => {
+  it("only sessions from this site's checkout count as AED orders", () => {
+    expect(isJiaAedOrderSession({ product_id: "primedic-y2" })).toBe(true);
+    expect(isJiaAedOrderSession({ product_id: "set-y2-ready" })).toBe(true);
+    // Morroo / Roodee / PharmRoo checkouts on the same account
+    expect(isJiaAedOrderSession({ plan: "premium", app: "morroo" })).toBe(false);
+    expect(isJiaAedOrderSession({})).toBe(false);
+    expect(isJiaAedOrderSession(null)).toBe(false);
   });
 });
