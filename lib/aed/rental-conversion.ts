@@ -10,7 +10,7 @@
 import { findCheckoutItem, thbExact, vatOf } from "./checkout";
 import { findRentalPlan, quoteRental, type RentalBillingPlanId } from "./rental-billing";
 
-export type ConversionTargetId = "buy-y2" | "buy-y0" | "rto-y2" | "rto-gps";
+export type ConversionTargetId = "buy-y2" | "buy-y0" | "rto-y2" | "rto-gps" | "rto-y0";
 
 export type ConversionTarget =
   | { id: ConversionTargetId; label: string; kind: "buy"; productId: "primedic-y2" | "primedic-y0" }
@@ -21,6 +21,7 @@ export const conversionTargets: ConversionTarget[] = [
   { id: "buy-y0", label: "ซื้อขาด HeartSave Y0", kind: "buy", productId: "primedic-y0" },
   { id: "rto-y2", label: "เช่าแล้วได้ซื้อ — Yuwell Y2", kind: "rto", planId: "rto-y2" },
   { id: "rto-gps", label: "เช่าแล้วได้ซื้อ — Yuwell GPS", kind: "rto", planId: "rto-gps" },
+  { id: "rto-y0", label: "เช่าแล้วได้ซื้อ — HeartSave Y0 (12 เดือน)", kind: "rto", planId: "rto-y0" },
 ];
 
 export function findConversionTarget(id: unknown): ConversionTarget | null {

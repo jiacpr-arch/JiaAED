@@ -6,11 +6,11 @@
 //
 // Amounts come from the catalog (packages.ts / rental-prices.ts) — never typed
 // here. Pure module (no Stripe import) so pages, routes and tests share it.
-import { RENT_TO_OWN_TERMS } from "./packages";
+import { RENT_TO_OWN_TERMS, RENT_TO_OWN_Y0_TERMS } from "./packages";
 import { RENTAL_DEPOSITS, RENTAL_PRICES } from "./rental";
 import { VAT_RATE, thbExact } from "./checkout";
 
-export type RentalBillingPlanId = "rto-y2" | "rto-gps" | "flex" | "flex-corp";
+export type RentalBillingPlanId = "rto-y2" | "rto-gps" | "rto-y0" | "flex" | "flex-corp";
 
 export type RentalBillingPlan = {
   id: RentalBillingPlanId;
@@ -33,6 +33,7 @@ export type RentalBillingPlan = {
 
 const y2 = RENT_TO_OWN_TERMS["pkg-start-y2"];
 const gps = RENT_TO_OWN_TERMS["pkg-start-y8"];
+const y0 = RENT_TO_OWN_Y0_TERMS;
 
 export const rentalBillingPlans: RentalBillingPlan[] = [
   {
@@ -51,6 +52,15 @@ export const rentalBillingPlans: RentalBillingPlan[] = [
     upfront: { label: "เงินดาวน์ (ค่าเช่าซื้องวดแรก)", amount: gps.deposit, vat: true },
     monthly: gps.monthly,
     months: gps.months,
+    firstMonthUpfront: false,
+  },
+  {
+    id: "rto-y0",
+    label: "เช่าแล้วได้ซื้อ — HeartSave Y0 (12 เดือน)",
+    kind: "rent-to-own",
+    upfront: { label: "เงินดาวน์ (ค่าเช่าซื้องวดแรก)", amount: y0.deposit, vat: true },
+    monthly: y0.monthly,
+    months: y0.months,
     firstMonthUpfront: false,
   },
   {
