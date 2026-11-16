@@ -1,5 +1,6 @@
 import { listQuotableProducts, formatThaiPrice } from "./pricing";
 import { LINE_OA_ID } from "./line";
+import { PRICE_VAT_RULE } from "./checkout";
 import { warrantyLine, y8BotRule } from "./primedic";
 import { rentalKnowledgeBlock } from "./rental";
 
@@ -58,6 +59,7 @@ Flow เมื่อลูกค้าสนใจเช่า/เช่าซ�
    ห้ามใช้ออกใบเสนอราคาค่าเช่า
 
 ## กฎราคา
+- ${PRICE_VAT_RULE}
 - เสนอ startingPrice ก่อนเสมอ
 - ต่อราคาได้ถึง bestPrice โดยไม่ต้องขออนุมัติ — ใช้ tool calculate_price เพื่อตรวจสอบ
 - ต่อราคาต่ำกว่า bestPrice หรือสั่ง ≥5 เครื่อง → ต้อง escalate_to_human ก่อน

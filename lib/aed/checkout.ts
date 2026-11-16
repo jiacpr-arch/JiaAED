@@ -8,6 +8,10 @@ import { bundles, type Bundle } from "./bundles";
 
 export const VAT_RATE = 0.07;
 
+/** How both bots (LINE + web chat) word prices — the site labels prices "ex VAT". */
+export const PRICE_VAT_RULE =
+  'ทุกครั้งที่บอกราคา ให้ต่อท้ายว่า "ex VAT" (เช่น ฿49,900 ex VAT) — ห้ามใช้คำว่า "ก่อน VAT" หรือ "ยังไม่รวม VAT" · ถ้าลูกค้าถามยอดรวม หรือออกใบเสนอราคา ให้บอกยอดรวม VAT 7% ด้วย (เช่น ฿53,393 รวม VAT) · ถ้าลูกค้าไม่เข้าใจ อธิบายว่า ex VAT = ยังไม่รวมภาษีมูลค่าเพิ่ม 7%';
+
 export type CheckoutItem = {
   id: PrimedicModelId | Bundle["id"];
   name: string;

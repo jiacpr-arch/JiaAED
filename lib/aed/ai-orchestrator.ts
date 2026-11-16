@@ -59,7 +59,7 @@ const AED_TOOLS: Anthropic.Tool[] = [
       properties: {
         product_id: { type: "string", enum: QUOTABLE_PRODUCT_IDS },
         quantity: { type: "integer", minimum: 1, maximum: MAX_QUOTE_QUANTITY },
-        unit_price: { type: "number", description: "ราคาต่อเครื่อง (ไม่รวม VAT)" },
+        unit_price: { type: "number", description: "ราคาต่อเครื่อง (ex VAT)" },
         customer_name: { type: "string", description: "ชื่อ-นามสกุลหรือชื่อบริษัท" },
         customer_phone: { type: "string" },
         customer_email: { type: "string" },
