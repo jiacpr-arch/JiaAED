@@ -25,6 +25,7 @@ import {
   type HoldRow,
 } from "@/lib/aed/rental-holds";
 import { flexEndQuote, refundableLeft } from "@/lib/aed/refunds";
+import { CUSTOMER_TYPES, LIMITS, type CustomerType } from "@/lib/aed/credit-limits";
 import {
   AdminShell,
   Card,
@@ -125,7 +126,11 @@ async function post(body: Record<string, unknown>) {
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.ok) throw new Error(ERRORS[data.error] ?? `ไม่สำเร็จ: ${data.message ?? data.error ?? res.status}`);
+  if (!res.ok || !data.ok) {
+    const err = new Error(ERRORS[data.error] ?? data.message ?? `ไม่สำเร็จ: ${data.error ?? res.status}`) as Error & { code?: string };
+    err.code = data.error;
+    throw err;
+  }
   return data;
 }
 
@@ -479,6 +484,12 @@ function Wizard({
   const [depositCredit, setDepositCredit] = useState(preset ? depositOf(preset) : 0);
   const [rentCredit, setRentCredit] = useState(0);
 
+  const [customerType, setCustomerType] = useState<CustomerType>("company");
+  // Over the per-customer machine ceiling: the API's message, shown with an
+  // "อนุมัติเกินเพดาน" form that resends with override + a written reason.
+  const [overLimit, setOverLimit] = useState<string | null>(null);
+  const [overrideReason, setOverrideReason] = useState("");
+
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [link, setLink] = useState<{ url: string; summary: string; expiresAt: number } | null>(null);
@@ -504,22 +515,25 @@ function Wizard({
     else setStep((s) => s - 1);
   };
 
-  const create = async () => {
+  const create = async (override = false) => {
     setCreating(true);
     setError(null);
     try {
-      const base = { ...info, units };
-      const body =
+      const base = { ...info, units, customerType };
+      const body: Record<string, unknown> =
         task === "subscribe"
           ? { action: "subscribe", planId, ...base }
           : task === "convert"
             ? { action: "convert", targetId, sourceSubscriptionId: sourceId, depositCredit, rentCredit, ...base }
             : { action: "hold", packageId, days, returnDate, eventName, ...base };
+      if (override) Object.assign(body, { override: true, overrideReason: overrideReason.trim() });
       const data = await post(body);
+      setOverLimit(null);
       setLink({ url: data.url, summary: data.summary, expiresAt: data.expiresAt });
       next();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "สร้างลิงก์ไม่สำเร็จ");
+      if ((err as { code?: string }).code === "credit_limit") setOverLimit(err instanceof Error ? err.message : "เกินเพดานจำนวนเครื่องของลูกค้ารายนี้");
+      else setError(err instanceof Error ? err.message : "สร้างลิงก์ไม่สำเร็จ");
     } finally {
       setCreating(false);
     }
@@ -730,6 +744,26 @@ function Wizard({
               <input value={info.contractRef} onChange={(e) => setInfo({ ...info, contractRef: e.target.value })} className={inputCls} />
             </Field>
           </div>
+          {task !== "hold" && (
+            <div className="mt-6">
+              <p className="text-sm font-semibold mb-2">ลูกค้าเป็นแบบไหน? (กำหนดจำนวนเครื่องสูงสุด)</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {CUSTOMER_TYPES.map((t) => (
+                  <Choice
+                    key={t.id}
+                    selected={customerType === t.id}
+                    onClick={() => setCustomerType(t.id)}
+                    title={t.label}
+                    desc={
+                      t.id === "company"
+                        ? `สูงสุด ${LIMITS.company} เครื่อง · จ่ายตรง ${LIMITS.trustedAfterInstalments} งวดขึ้นไป เพิ่มได้ทีละ ${LIMITS.trustedStep}`
+                        : `สูงสุด ${LIMITS.individual} เครื่อง`
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          )}
           <StepNav
             onBack={back}
             onNext={next}
@@ -755,7 +789,33 @@ function Wizard({
               <Notice kind="warn">ยังไม่ได้ตั้ง STRIPE_SECRET_KEY — สร้างลิงก์ไม่ได้</Notice>
             </div>
           )}
-          <StepNav onBack={back} onNext={create} nextDisabled={creating || !stripeReady} nextLabel={creating ? "กำลังสร้าง…" : task === "hold" ? "✓ สร้างลิงก์กันวงเงิน" : "✓ สร้างลิงก์ชำระเงิน"} />
+          {overLimit ? (
+            <div className="mt-5 rounded-2xl border-2 border-red-500/50 bg-red-500/5 p-5">
+              <p className="font-bold text-red-200">⚠️ เกินเพดานจำนวนเครื่องของลูกค้ารายนี้</p>
+              <p className="text-sm text-red-200/90 mt-1">{overLimit}</p>
+              <Field label="ถ้าจะอนุมัติเกินเพดาน ใส่เหตุผล (ระบบแจ้ง LINE แอดมิน)" className="mt-4">
+                <input
+                  value={overrideReason}
+                  onChange={(e) => setOverrideReason(e.target.value)}
+                  placeholder="เช่น มี PO / ลูกค้าเก่าจ่ายตรง / ดาวน์เพิ่ม"
+                  className={inputCls}
+                />
+              </Field>
+              <StepNav
+                onBack={() => {
+                  setOverLimit(null);
+                  back();
+                }}
+                backLabel="← แก้ข้อมูล"
+                danger
+                onNext={() => create(true)}
+                nextDisabled={creating || !overrideReason.trim()}
+                nextLabel={creating ? "กำลังสร้าง…" : "อนุมัติเกินเพดาน"}
+              />
+            </div>
+          ) : (
+            <StepNav onBack={back} onNext={() => create()} nextDisabled={creating || !stripeReady} nextLabel={creating ? "กำลังสร้าง…" : task === "hold" ? "✓ สร้างลิงก์กันวงเงิน" : "✓ สร้างลิงก์ชำระเงิน"} />
+          )}
         </>
       )}
 

@@ -31,6 +31,13 @@ export const RENT_TO_OWN_TERMS = {
   "pkg-start-y2": { deposit: 16_000, monthly: 2_900, months: 18 },
 } as const satisfies Record<"pkg-start-y8" | "pkg-start-y2", RentToOwnTerms>;
 
+/**
+ * Rent-to-own HeartSave Y0, 12 months (owner, 16 พ.ย. 2026): 13,000 + 3,090 × 12
+ * = ฿50,080 (≈1.25× ราคาสด 39,999) — same ~32% down and ~2%/month as Y2.
+ * Card billing only for now (/admin/billing); not a public package card.
+ */
+export const RENT_TO_OWN_Y0_TERMS: RentToOwnTerms = { deposit: 13_000, monthly: 3_090, months: 12 };
+
 /** Optional wall cabinet added to a rent-to-own contract (before VAT). */
 export const RENT_TO_OWN_CABINET_ADDON = 6_000;
 
