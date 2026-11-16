@@ -1,14 +1,15 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { checkoutEnabled, checkoutItems, findCheckoutItem, paymentMethods, satang, thbExact, vatOf } from "./checkout";
 import { activePreviousPrice, listedPrimedicModels, primedicModels } from "./primedic";
+import { bundles } from "./bundles";
 
 describe("checkout catalog", () => {
-  it("sells exactly the listed models at the site price + 7% VAT", () => {
-    expect(checkoutItems.map((i) => i.id)).toEqual(listedPrimedicModels.map((m) => m.id));
+  it("sells the listed models and the sets at the site price + 7% VAT", () => {
+    expect(checkoutItems.map((i) => i.id)).toEqual([...listedPrimedicModels.map((m) => m.id), ...bundles.map((b) => b.id)]);
     for (const i of checkoutItems) {
-      const m = primedicModels.find((x) => x.id === i.id)!;
-      expect(i.net).toBe(m.price);
-      expect(satang(i.vat)).toBe(Math.round(m.price * 7));
+      const price = primedicModels.find((x) => x.id === i.id)?.price ?? bundles.find((b) => b.id === i.id)!.price;
+      expect(i.net).toBe(price);
+      expect(satang(i.vat)).toBe(Math.round(price * 7));
       expect(satang(i.gross)).toBe(satang(i.net) + satang(i.vat));
     }
   });

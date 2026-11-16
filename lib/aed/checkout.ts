@@ -1,13 +1,15 @@
 // ─── Online checkout (Stripe) — what can be bought on the site and for how much ──
 // Pure data + maths (no Stripe import) so pages, the API route and tests share
 // one source. Only the single-unit price of the listed models is sold online;
-// multi-unit, government, rent-to-own and GPS stay on LINE quotes.
+// multi-unit, government, rent-to-own and GPS stay on LINE quotes. The
+// ready-to-use sets (./bundles.ts) are sold the same way.
 import { listedPrimedicModels, type PrimedicModelId } from "./primedic";
+import { bundles, type Bundle } from "./bundles";
 
 export const VAT_RATE = 0.07;
 
 export type CheckoutItem = {
-  id: PrimedicModelId;
+  id: PrimedicModelId | Bundle["id"];
   name: string;
   /** Path the buyer returns to if they cancel on the Stripe page. */
   returnPath: string;
@@ -28,17 +30,15 @@ export function vatOf(net: number): number {
   return toSatang(net * VAT_RATE) / 100;
 }
 
-export const checkoutItems: CheckoutItem[] = listedPrimedicModels.map((m) => {
-  const vat = vatOf(m.price);
-  return {
-    id: m.id,
-    name: m.name,
-    returnPath: RETURN_PATH[m.id] ?? "/aed/primedic",
-    net: m.price,
-    vat,
-    gross: (toSatang(m.price) + toSatang(vat)) / 100,
-  };
-});
+const item = (id: CheckoutItem["id"], name: string, net: number, returnPath: string): CheckoutItem => {
+  const vat = vatOf(net);
+  return { id, name, returnPath, net, vat, gross: (toSatang(net) + toSatang(vat)) / 100 };
+};
+
+export const checkoutItems: CheckoutItem[] = [
+  ...listedPrimedicModels.map((m) => item(m.id, m.name, m.price, RETURN_PATH[m.id] ?? "/aed/primedic")),
+  ...bundles.map((b) => item(b.id, b.name, b.price, "/aed/sets")),
+];
 
 export function findCheckoutItem(id: unknown): CheckoutItem | null {
   return checkoutItems.find((i) => i.id === id) ?? null;

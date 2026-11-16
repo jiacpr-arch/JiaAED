@@ -6,6 +6,7 @@ import { findCheckoutItem, paymentMethods, satang, type CheckoutItem } from "./c
 import { getVatTaxRateId } from "./stripe";
 import { firstInstalmentAnchor, quoteSummary, type RentalBillingPlan } from "./rental-billing";
 import { holdQuote, holdSummary, type HoldPackage } from "./rental-holds";
+import { findBundle } from "./bundles";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.jiaaed.com").replace(/\/$/, "");
 const SUCCESS_URL = `${SITE}/aed/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
@@ -58,6 +59,9 @@ export async function createOrderSession(
 ): Promise<Stripe.Checkout.Session> {
   const { item } = opts;
   const units = opts.units ?? 1;
+  const bundle = findBundle(item.id);
+  const lineName = bundle ? `ชุด AED — ${bundle.name}` : `AED ${item.name}`;
+  const lineDesc = bundle ? `ราคาก่อน VAT · ในชุด: ${bundle.parts.map((p) => p.label).join(" · ")}`.slice(0, 500) : "ราคาก่อน VAT ต่อเครื่อง";
   return stripe.checkout.sessions.create({
     mode: "payment",
     locale: "th",
@@ -70,7 +74,7 @@ export async function createOrderSession(
         price_data: {
           currency: "thb",
           unit_amount: satang(item.net),
-          product_data: { name: `AED ${item.name}`, description: "ราคาก่อน VAT ต่อเครื่อง" },
+          product_data: { name: lineName, description: lineDesc },
         },
       },
       {

@@ -97,3 +97,9 @@
 .market-buy{border:0;cursor:pointer;margin-top:18px;font:inherit;font-weight:800}
 .market-buy-note{font-size:12px;color:#dce5dd;margin:8px 0 0}
 .market-price .market-was{color:#68776d;font-size:12px;margin-left:0}
+/* /aed/sets — set cards */
+.market-price-set{flex-wrap:wrap}.market-price-set .market-exvat{font-size:10px;letter-spacing:.06em;text-transform:none;color:#8a968d;margin-left:4px}
+.market-save{color:#c6503c!important;font-weight:800;font-size:12px!important;margin:8px 0 0!important}
+.market-free{color:#2f7d4c;font-size:11px}
+.market-buy-block{width:100%;justify-content:center;margin-top:6px}
+.market-buy-note-dark{font-size:11px;color:#68776d;margin:6px 0 12px;text-align:center}
