@@ -35,6 +35,16 @@ export type SessionLike = {
 
 export type OrderStatus = "pending" | "paid" | "failed";
 
+/**
+ * The Stripe account is shared with other businesses (Morroo, Roodee, …) and
+ * the webhook endpoint receives every checkout on it. Only sessions created by
+ * this site's checkout carry a product_id from our catalog — everything else
+ * must be ignored, not stored as an AED order.
+ */
+export function isJiaAedOrderSession(metadata: Record<string, string> | null | undefined): boolean {
+  return findCheckoutItem(metadata?.product_id) != null;
+}
+
 export type OrderRow = {
   stripe_session_id: string;
   payment_intent_id: string | null;

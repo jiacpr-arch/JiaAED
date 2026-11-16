@@ -23,6 +23,11 @@
 - ปุ่ม "ซื้อออนไลน์" → `/api/checkout` → หน้า Stripe (บัตร + PromptPay, เก็บที่อยู่จัดส่ง, เบอร์, เลขผู้เสียภาษี/ชื่อบริษัท/สาขา)
 - จ่ายแล้ว → `/api/stripe/webhook` บันทึก `aed_orders` + แจ้ง LINE แอดมิน → ลูกค้าเห็นหน้า `/aed/checkout/success`
 
+## หมายเหตุ: บัญชี Stripe ใช้ร่วมกับเว็บอื่น (Jia1669)
+- endpoint `jiaaed-payments` ได้รับ event ของทุกเว็บในบัญชี (Morroo, Roodee, PharmRoo …)
+- webhook รับเฉพาะ checkout ที่มี product_id ในแคตตาล็อกของเว็บนี้ · ตัดบัตรรายเดือน/กันวงเงินกรองด้วย metadata.kind — event ของเว็บอื่นถูกข้าม (ตอบ 200)
+- ปลายทางเก่า "JiaAED production webhook" (jiaaed.vercel.app) ให้ลบ — ใช้ secret คนละตัว จะ fail ทุกครั้ง
+
 ## ขั้นตอนเปิดใช้ (เจ้าของ)
 1. Supabase SQL Editor: รัน `supabase/aed_orders.sql` และ `supabase/aed_rental_billing.sql`
 2. Stripe Dashboard → Settings → Payment methods: เปิด **PromptPay** (และ Cards)
