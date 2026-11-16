@@ -8,6 +8,9 @@ import {
   RENTAL_CREDIT_NOTE,
   RENTAL_EXPENSE_NOTE,
   RENTAL_PRICES,
+  RENT_BOOKING_URL,
+  RENTAL_DEPOSITS,
+  SHORT_RENTAL_MAX_DAYS,
   THREE_YEAR_DISCOUNT,
   multiUnitPricing,
   rentalPlans,
@@ -31,7 +34,6 @@ export const metadata: Metadata = {
 
 const thb = (n: number) => `฿${n.toLocaleString()}`;
 const plan = (id: string) => rentalPlans.find((p) => p.id === id)!;
-const eventPlan = plan("rent-event");
 const monthPlan = plan("rent-month");
 const threeYearPct = Math.round(THREE_YEAR_DISCOUNT * 100);
 const cheapestBuy = Math.min(...primedicModels.map((m) => m.price));
@@ -46,8 +48,9 @@ const shortItems = [
     title: "อีเวนต์ 1 วัน",
     price: RENTAL_PRICES.eventFirstDay,
     unit: "/ วันแรก",
-    lines: [`วันถัดไป ${thb(RENTAL_PRICES.eventNextDay)}/วัน`, "งานวิ่ง คอนเสิร์ต งานกีฬา กองถ่าย", "ส่ง-รับถึงงาน (คิดตามระยะทาง)"],
-    deposit: eventPlan.deposit,
+    lines: [`วันถัดไป ${thb(RENTAL_PRICES.eventNextDay)}/วัน (เช่าได้ 1–${SHORT_RENTAL_MAX_DAYS} วัน)`, "งานวิ่ง คอนเสิร์ต งานกีฬา กองถ่าย", "ส่ง-รับถึงงาน (คิดตามระยะทาง)"],
+    deposit: `กันวงเงินบัตร ${thb(RENTAL_DEPOSITS.eventCardHold)} (ไม่ต้องโอน) หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)}`,
+    bookUrl: RENT_BOOKING_URL,
   },
   {
     id: "rent-week",
@@ -56,7 +59,7 @@ const shortItems = [
     price: RENTAL_PRICES.eventWeekly,
     unit: "/ 7 วัน",
     lines: ["งานหลายวัน ค่าย อบรมนอกสถานที่", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่", "แนะนำการใช้งานก่อนเริ่มงาน"],
-    deposit: eventPlan.deposit,
+    deposit: `เงินสด ${thb(RENTAL_DEPOSITS.eventCash)} (กันวงเงินบัตรไม่ได้ เพราะเกิน ${SHORT_RENTAL_MAX_DAYS} วัน)`,
   },
   {
     id: "rent-month",
@@ -82,10 +85,10 @@ const tierBullets = (id: (typeof subscriptionTiers)[number]["id"]) =>
 const rentalFaqs = [
   {
     question: "เช่าสั้นที่สุดได้กี่วัน และนานสุดเท่าไร?",
-    answer: `เช่าได้ตั้งแต่ 1 วัน (${thb(RENTAL_PRICES.eventFirstDay)}) ไปจนถึงสัญญารายปี มีแพ็ก 3 วัน ${thb(RENTAL_PRICES.eventWeekend)} · 14 วัน ${thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน ${thb(RENTAL_PRICES.flexMonthly)}/เดือน และสัญญา 3 ปีลด ${threeYearPct}%`,
+    answer: `เช่าได้ตั้งแต่ 1 วัน (${thb(RENTAL_PRICES.eventFirstDay)}) ไปจนถึงสัญญารายปี (เช่ารายวัน 1–${SHORT_RENTAL_MAX_DAYS} วัน เช็กคิวและจองออนไลน์ได้ที่ rent.jiacpr.com) มีแพ็ก 3 วัน ${thb(RENTAL_PRICES.eventWeekend)} · 14 วัน ${thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน ${thb(RENTAL_PRICES.flexMonthly)}/เดือน และสัญญา 3 ปีลด ${threeYearPct}%`,
   },
   { question: "เช่าสั้นแล้วอยากทำสัญญารายปีต่อ ได้ส่วนลดไหม?", answer: RENTAL_CREDIT_NOTE },
-  { question: "ต้องวางมัดจำเท่าไร?", answer: `รายวัน/รายสัปดาห์: ${eventPlan.deposit} · รายเดือน: ${monthPlan.deposit} · รายปี: ${plan("rent-annual").deposit} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ` },
+  { question: "ต้องวางมัดจำเท่าไร?", answer: `รายวัน (1–${SHORT_RENTAL_MAX_DAYS} วัน): กันวงเงินบัตร ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · รายสัปดาห์/14 วัน: เงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · รายเดือน: ${monthPlan.deposit} · รายปี: ${plan("rent-annual").deposit} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ` },
   { question: "เช่าเหมาจ่ายเป็นค่าใช้จ่ายบริษัทได้ไหม?", answer: RENTAL_EXPENSE_NOTE },
   { question: "เช่ากับเช่าซื้อต่างกันอย่างไร?", answer: `แผนเช่าจบสัญญาแล้วคืนเครื่อง ส่วนเช่าซื้อผ่อนครบ ${rentToOwnBreakdowns[0].months} เดือนแล้วเครื่องเป็นของคุณ` },
 ];
@@ -116,7 +119,7 @@ export default function RentalPage() {
     <section id="short" className="market-section market-section-cream"><div className="market-container">
       <div className="market-section-head"><div><p className="market-eyebrow">① ใช้ชั่วคราว</p><h2>งานอีเวนต์ ไซต์งาน<br /><em>หรือทดลองใช้.</em></h2></div><p>เช่าเท่าที่ใช้ ส่ง-รับถึงที่ พร้อมแนะนำการใช้งาน {RENTAL_CREDIT_NOTE}</p></div>
       <div className="market-grid-3">{shortItems.map((it) => <article className="market-card" key={it.id}>
-        <div className="market-card-body"><span className="market-card-kicker">{it.kicker}</span><h3>{it.title}</h3><div className="market-price"><strong>{thb(it.price)}</strong><span>{it.unit}</span></div><ul>{it.lines.map((l) => <li key={l}>{l}</li>)}</ul><p>มัดจำ: {it.deposit}</p><LineLink cta={`rent_short_${it.id}`} product={it.id}>จองผ่าน LINE</LineLink></div>
+        <div className="market-card-body"><span className="market-card-kicker">{it.kicker}</span><h3>{it.title}</h3><div className="market-price"><strong>{thb(it.price)}</strong><span>{it.unit}</span></div><ul>{it.lines.map((l) => <li key={l}>{l}</li>)}</ul><p>มัดจำ: {it.deposit}</p><div style={{ marginTop: "auto" }}>{"bookUrl" in it && it.bookUrl && <a href={it.bookUrl} target="_blank" rel="noopener noreferrer" data-cta={`rent_book_${it.id}`} className="market-card-link">เช็กคิว & จองออนไลน์ <span aria-hidden="true">↗</span></a>}<LineLink cta={`rent_short_${it.id}`} product={it.id}>จองผ่าน LINE</LineLink></div></div>
       </article>)}</div>
       <p className="market-note">มีแพ็กอื่นด้วย: 3 วัน (ศุกร์–อาทิตย์) {thb(RENTAL_PRICES.eventWeekend)} · 14 วัน {thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง {RENTAL_PRICES.flexMinMonths}–11 เดือน {thb(RENTAL_PRICES.flexMonthly)}/เดือน — <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="rent_short_other" className="market-text-link">ทักถามได้</a> · ราคา ex VAT</p>
     </div></section>
