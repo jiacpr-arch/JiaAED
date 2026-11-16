@@ -5,7 +5,7 @@ import { MarketButton, MarketHero, MarketLead, MarketPage } from "./components/M
 import { FaqStructuredData, ProductStructuredData } from "./components/StructuredData";
 import { PriceViewTracker } from "./components/PriceViewTracker";
 import { MiniLeadForm } from "./components/MiniLeadForm";
-import { listedPrimedicModels, PRICE_ON_REQUEST, primedicModels, Y8_ON_REQUEST_NOTE, yuwellGpsAed } from "@/lib/aed/primedic";
+import { activePreviousPrice, listedPrimedicModels, PRICE_ON_REQUEST, primedicModels, Y8_ON_REQUEST_NOTE, yuwellGpsAed } from "@/lib/aed/primedic";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { subscriptionMatrix, subscriptionTiers } from "@/lib/aed/subscription";
@@ -31,8 +31,8 @@ const fits: Record<string, string> = {
 // Buy-outright cards (owner, 15 พ.ย. 2026): Y2 recommended, Y0 budget, GPS for
 // multi-site — Y8 is quote-only (see LISTED_MODEL_IDS).
 const buyCards = [
-  ...listedPrimedicModels.map((m) => ({ id: m.id, name: m.name, image: m.image, price: m.price as number | null })),
-  { id: yuwellGpsAed.id, name: yuwellGpsAed.name, image: yuwellGpsAed.image, price: yuwellGpsAed.price },
+  ...listedPrimedicModels.map((m) => ({ id: m.id, name: m.name, image: m.image, price: m.price as number | null, wasPrice: activePreviousPrice(m) })),
+  { id: yuwellGpsAed.id, name: yuwellGpsAed.name, image: yuwellGpsAed.image, price: yuwellGpsAed.price, wasPrice: null as number | null },
 ];
 const kicker: Record<string, string> = { "primedic-y2": "RECOMMENDED", "primedic-y0": "ESSENTIAL", "yuwell-gps": "MULTI-SITE" };
 const features: Record<string, string[]> = {
@@ -93,7 +93,7 @@ export default function Home() {
       <div className="market-section-head"><div><p className="market-eyebrow">PREFER TO OWN?</p><h2>อยากเป็นเจ้าของเครื่อง?<br /><em>ซื้อขาดก็ได้.</em></h2></div><p>สำหรับองค์กรที่มีงบลงทุนและดูแลเครื่องเองได้ ราคาทุกรุ่นแสดงชัด พร้อมจัดส่ง ติดตั้ง และอบรมการใช้งาน</p></div>
       <div className="market-grid-3">{buyCards.map((m, i) => <article className={`market-card ${m.id === "primedic-y2" ? "market-card-featured" : ""}`} key={m.id}>
         <div className="market-card-photo"><Image src={m.image} alt={`เครื่อง AED ${m.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{m.id === "primedic-y2" && <span className="market-card-tag">รุ่นแนะนำ</span>}</div>
-        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {kicker[m.id]}</span><h3>{m.name}</h3><p>{fits[m.id]}</p><div className="market-price"><small>เริ่มต้น</small><strong>{m.price === null ? PRICE_ON_REQUEST : `฿${m.price.toLocaleString()}`}</strong><span>ก่อน VAT</span></div><ul>{features[m.id].map((f) => <li key={f}>{f}</li>)}</ul><Link href={m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link" data-cta={`home_model_${m.id}`}>ดูรายละเอียดและขอราคา <span aria-hidden="true">↗</span></Link></div>
+        <div className="market-card-body"><span className="market-card-kicker">0{i + 1} / {kicker[m.id]}</span><h3>{m.name}</h3><p>{fits[m.id]}</p><div className="market-price">{m.wasPrice != null ? <small className="market-was">ราคาเดิม <del>฿{m.wasPrice.toLocaleString()}</del></small> : <small>เริ่มต้น</small>}<strong>{m.price === null ? PRICE_ON_REQUEST : `฿${m.price.toLocaleString()}`}</strong><span>ก่อน VAT</span></div><ul>{features[m.id].map((f) => <li key={f}>{f}</li>)}</ul><Link href={m.id === "primedic-y2" ? "/aed/yuwell-y2" : "/aed/primedic"} className="market-card-link" data-cta={`home_model_${m.id}`}>ดูรายละเอียดและขอราคา <span aria-hidden="true">↗</span></Link></div>
       </article>)}</div>
       <p className="market-note">{Y8_ON_REQUEST_NOTE} · <Link href="/aed/compare" className="market-text-link">เทียบทุกรุ่น ↗</Link></p>
       <p className="market-note">ราคาเริ่มต้นก่อน VAT ขึ้นอยู่กับชุดอุปกรณ์และเงื่อนไขจัดซื้อ <Link href="/aed" className="market-text-link">ดูตารางเทียบรุ่นและสเปก ↗</Link></p>

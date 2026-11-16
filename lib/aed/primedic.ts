@@ -47,6 +47,12 @@ export type PrimedicModel = {
   image: string; // real photos from the Yuwell/PRIMEDIC HeartSave Y/YA catalog
   badge: string | null;
   warrantyYears: number; // body warranty Jia commits to — see warrantyLine below
+  // A price this site really charged before the current one, shown struck
+  // through ("ราคาเดิม"). Thai price-display rules only allow a struck price
+  // that was actually sold — never a market "full price" or a competitor's
+  // list price. soldFrom/soldUntil document when we sold at it (git history);
+  // the strike stops showing after showUntil so it can't go stale.
+  previousPrice?: { amount: number; soldFrom: string; soldUntil: string; showUntil: string };
 };
 
 export const primedicModels: PrimedicModel[] = [
@@ -83,6 +89,8 @@ export const primedicModels: PrimedicModel[] = [
     id: "primedic-y2",
     name: "Yuwell Y2",
     price: 49_900,
+    // Sold at ฿59,999 on this site 26 ก.ย.–13 พ.ย. 2026 (commits b077914 → 2dc4783).
+    previousPrice: { amount: 59_999, soldFrom: "2026-09-26", soldUntil: "2026-11-13", showUntil: "2027-02-13" },
     shockMode: "semi-auto",
     cprFeedback: "standard",
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นแนะนำ (You Too)",
@@ -93,6 +101,15 @@ export const primedicModels: PrimedicModel[] = [
     warrantyYears: 4,
   },
 ];
+
+/** The struck-through "ราคาเดิม" to show today, or null (none, expired, or not higher). */
+export function activePreviousPrice(m: PrimedicModel, now: Date = new Date()): number | null {
+  const p = m.previousPrice;
+  if (!p || p.amount <= m.price) return null;
+  // showUntil is inclusive, Bangkok time.
+  if (now.getTime() > new Date(`${p.showUntil}T23:59:59+07:00`).getTime()) return null;
+  return p.amount;
+}
 
 // ─── Models listed for outright sale on the site (owner, 15 พ.ย. 2026) ─────────
 // Y2 (recommended) then Y0. Y8 = Y0 + feedback pads and costs the same as Y2

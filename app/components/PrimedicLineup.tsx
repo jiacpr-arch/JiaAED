@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { PRICE_ON_REQUEST, listedPrimedicModels, Y8_ON_REQUEST_NOTE, yuwellGpsAed } from "@/lib/aed/primedic";
+import { BuyOnlineButton, WasPrice } from "@/app/components/BuyOnlineButton";
+import { PRICE_ON_REQUEST, activePreviousPrice, listedPrimedicModels, Y8_ON_REQUEST_NOTE, yuwellGpsAed } from "@/lib/aed/primedic";
 
 import { LINE_OA } from "@/lib/aed/line";
 
@@ -16,6 +17,7 @@ type Card = {
   id: string;
   name: string;
   price: number | null; // null = price on request
+  wasPrice: number | null; // real former price, struck through
   warrantyYears: number;
   keyDiff: string;
   bestFor: string;
@@ -36,6 +38,7 @@ const cards: Card[] = [
     id: m.id,
     name: m.name,
     price: m.price,
+    wasPrice: activePreviousPrice(m),
     warrantyYears: m.warrantyYears,
     keyDiff: m.keyDiff,
     bestFor: m.bestFor,
@@ -45,6 +48,7 @@ const cards: Card[] = [
     id: yuwellGpsAed.id,
     name: yuwellGpsAed.name,
     price: yuwellGpsAed.price,
+    wasPrice: null,
     warrantyYears: yuwellGpsAed.warrantyYears,
     keyDiff: yuwellGpsAed.keyDiff,
     bestFor: yuwellGpsAed.bestFor,
@@ -86,6 +90,11 @@ export function PrimedicLineup() {
               {c.tag}
             </div>
             <div className="mt-2 font-bold text-lg text-white">{c.name}</div>
+            {c.wasPrice != null && (
+              <div className="text-xs text-gray-400 mt-1">
+                ราคาเดิม <WasPrice amount={c.wasPrice} />
+              </div>
+            )}
             <div className="text-3xl font-black text-yellow-400 mt-1">
               {c.price === null ? <span className="text-2xl">{PRICE_ON_REQUEST}</span> : `฿${c.price.toLocaleString()}`}
             </div>
@@ -103,6 +112,11 @@ export function PrimedicLineup() {
               <span className="text-gray-500">เหมาะกับ:</span> {c.bestFor}
             </div>
 
+            <BuyOnlineButton
+              productId={c.id}
+              className="mt-4 w-full text-center bg-yellow-400 text-gray-950 font-bold py-2.5 rounded-full hover:bg-yellow-300"
+              noteClassName="text-center text-[11px] text-gray-500 mt-1"
+            />
             <a
               href={LINE_OA}
               target="_blank"
