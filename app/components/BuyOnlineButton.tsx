@@ -17,7 +17,9 @@ export function BuyOnlineButton({
   const item = findCheckoutItem(productId);
   if (!item || !checkoutEnabled()) return null;
   return (
-    <form action="/api/checkout" method="post" className="contents">
+    // target="_top": /aed/yuwell-y2 is embedded in an iframe on jia1669.com and
+    // Stripe Checkout refuses to load inside a frame — open it in the full window.
+    <form action="/api/checkout" method="post" target="_top" className="contents">
       <input type="hidden" name="productId" value={item.id} />
       <button type="submit" className={className} data-cta={`buy_online_${item.id}`} data-product={item.id}>
         {label}
