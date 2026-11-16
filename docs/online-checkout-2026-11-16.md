@@ -29,6 +29,7 @@
 3. Stripe → Developers → Webhooks: แก้ endpoint เดิม `https://www.jiaaed.com/api/stripe/webhook`
    ให้ฟัง `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`,
    `invoice.paid`, `invoice.payment_failed`, `customer.subscription.deleted`, `payment_intent.canceled` → คัดลอก Signing secret
+   (เวอร์ชัน API ของ endpoint จะเป็น 2022-11-15 หรือใหม่กว่าก็ได้ — โค้ดอ่านได้ทั้งสองแบบ)
 4. Vercel env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (ทดสอบด้วย `sk_test_…` ก่อน แล้วค่อยเปลี่ยนเป็น live) → redeploy
 5. (ไม่บังคับ) `STRIPE_PAYMENT_METHODS=promptpay` ถ้าไม่รับบัตร · `CHECKOUT_DISABLED=1` เพื่อซ่อนปุ่มชั่วคราว
 6. Stripe → Settings → Customer emails: เปิด "Successful payments" ให้ลูกค้าได้ใบเสร็จอัตโนมัติ
