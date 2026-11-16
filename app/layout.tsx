@@ -10,6 +10,7 @@ import { StructuredData } from "./components/StructuredData";
 import { WebChat } from "./components/WebChat";
 import { FloatingLineButton } from "./components/FloatingLineButton";
 import { MobileContactBar } from "./components/MobileContactBar";
+import { PublicOnly } from "./components/PublicOnly";
 import { ScrollDepthTracker } from "./components/ScrollDepthTracker";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
 
@@ -95,9 +96,11 @@ export default function RootLayout({
         <LineClickTracker />
         <ScrollDepthTracker />
         {children}
-        <MobileContactBar />
-        <WebChat />
-        <FloatingLineButton />
+        <PublicOnly>
+          <MobileContactBar />
+          <WebChat />
+          <FloatingLineButton />
+        </PublicOnly>
         <Analytics />
         <SpeedInsights />
       </body>
