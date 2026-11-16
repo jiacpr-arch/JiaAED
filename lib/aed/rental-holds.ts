@@ -29,7 +29,10 @@ export const holdPackages: HoldPackage[] = [
   {
     id: "event-day",
     label: "เช่าอีเวนต์รายวัน",
-    days: [1, 2, 3, 4, 5],
+    // Up to 6 days (owner, 16 พ.ย. 2026). 6 days = 1,500 + 5 × 900 = 6,000,
+    // the same as the 7-day WEEKLY package. The return-date check below is
+    // what keeps it inside the card-hold window, whatever the length.
+    days: [1, 2, 3, 4, 5, 6],
     rentNet: (d) => RENTAL_PRICES.eventFirstDay + RENTAL_PRICES.eventNextDay * (d - 1),
   },
   {

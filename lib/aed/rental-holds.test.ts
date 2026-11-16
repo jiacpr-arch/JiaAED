@@ -14,7 +14,11 @@ describe("event-rental card holds", () => {
 
   it("no 7-day or longer packages: a card hold only lasts ~7 days", () => {
     expect(findHoldPackage("event-weekly")).toBeNull();
-    expect(Math.max(...pkg("event-day").days)).toBeLessThanOrEqual(5);
+    expect(Math.max(...pkg("event-day").days)).toBeLessThanOrEqual(6);
+  });
+
+  it("6 days costs the same as the weekly package (6,000 ex VAT)", () => {
+    expect(holdQuote(pkg("event-day"), 6, 1)).toMatchObject({ rentNet: 6_000, rentGross: 6_420, authorizeTotal: 36_420 });
   });
 
   it("return must be today … +6 days (Bangkok)", () => {
