@@ -1,9 +1,10 @@
 "use client";
 
+// /admin/documents — files shown on the website (manuals, specs, certificates).
+// Uploading is 3 steps: เลือกไฟล์ → ตั้งชื่อ & หมวด → ตรวจสอบ & อัปโหลด.
+
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { JiaAedLogo } from "@/app/components/JiaAedLogo";
-import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
+import { AdminShell, Card, Empty, Field, Notice, Pill, StepNav, Steps, Summary, btnPrimary, btnSmall, inputCls, useAdmin } from "../ui";
 
 type DocRow = {
   id: string;
@@ -20,13 +21,19 @@ type DocRow = {
 };
 
 const CATEGORIES = [
-  { value: "manual", label: "คู่มือ" },
-  { value: "specification", label: "สเปค/TOR" },
-  { value: "certificate", label: "ใบรับรอง" },
-  { value: "brochure", label: "โบรชัวร์" },
-  { value: "other", label: "อื่นๆ" },
+  { value: "manual", label: "📘 คู่มือ" },
+  { value: "specification", label: "📐 สเปค/TOR" },
+  { value: "certificate", label: "🏅 ใบรับรอง" },
+  { value: "brochure", label: "📰 โบรชัวร์" },
+  { value: "other", label: "📄 อื่นๆ" },
 ];
-
+const LANGUAGES = [
+  { value: "th", label: "ไทย" },
+  { value: "en", label: "English" },
+  { value: "th-en", label: "ไทย-English" },
+];
+const MAX_BYTES = 4 * 1024 * 1024; // Vercel caps request bodies at 4.5 MB.
+const labelOf = (list: { value: string; label: string }[], v: string) => list.find((x) => x.value === v)?.label ?? v;
 
 function fmtSize(b: number): string {
   if (b < 1024) return `${b} B`;
@@ -35,69 +42,149 @@ function fmtSize(b: number): string {
 }
 
 export default function AdminDocsPage() {
-  const [token, setToken] = useState("");
-  const [authed, setAuthed] = useState(false);
+  return (
+    <AdminShell title="เอกสารบนเว็บไซต์" subtitle="คู่มือ สเปค ใบรับรอง ที่ลูกค้าดาวน์โหลดได้">
+      <Docs />
+    </AdminShell>
+  );
+}
+
+function Docs() {
+  const { expire } = useAdmin();
   const [docs, setDocs] = useState<DocRow[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Upload form state
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("manual");
-  const [language, setLanguage] = useState("th");
-  const [file, setFile] = useState<File | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // The session is an HttpOnly cookie sent with every /api/admin request.
   const load = useCallback(async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch("/api/admin/documents");
+      if (res.status === 401) return expire();
       const data = await res.json();
-      if (!res.ok || !data.ok) {
-        if (res.status !== 401) setError("เกิดข้อผิดพลาด");
-        setAuthed(false);
-        return;
-      }
-      setAuthed(true);
+      if (!res.ok || !data.ok) return setError("โหลดรายการไม่สำเร็จ");
       setDocs(data.documents);
     } catch {
       setError("เชื่อมต่อไม่ได้");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [expire]);
 
   useEffect(() => {
-    forgetLegacyToken();
     load();
   }, [load]);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token.trim()) return;
-    setLoading(true);
-    const result = await adminLogin(token.trim());
-    setLoading(false);
-    if (result !== "ok") {
-      setError(LOGIN_ERRORS[result]);
-      return;
-    }
-    setToken("");
-    await load();
+  const handleDelete = async (d: DocRow) => {
+    if (!confirm(`ลบเอกสาร "${d.title}"? ลิงก์เดิมจะใช้ไม่ได้`)) return;
+    const res = await fetch(`/api/admin/documents?id=${encodeURIComponent(d.id)}`, { method: "DELETE" });
+    if (res.ok) {
+      setNotice("ลบแล้ว");
+      await load();
+    } else setError("ลบไม่สำเร็จ");
   };
 
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
+  if (uploading) {
+    return (
+      <UploadWizard
+        onCancel={() => setUploading(false)}
+        onDone={async () => {
+          setUploading(false);
+          setNotice("อัปโหลดแล้ว — เอกสารขึ้นบนเว็บเรียบร้อย");
+          await load();
+        }}
+      />
+    );
+  }
+
+  return (
+    <>
+      <button onClick={() => setUploading(true)} className={`${btnPrimary} w-full sm:w-auto mb-6 text-lg`}>
+        ⬆️ อัปโหลดเอกสารใหม่
+      </button>
+      {error && (
+        <div className="mb-4">
+          <Notice kind="error" onClose={() => setError(null)}>
+            {error}
+          </Notice>
+        </div>
+      )}
+      {notice && (
+        <div className="mb-4">
+          <Notice kind="ok" onClose={() => setNotice(null)}>
+            {notice}
+          </Notice>
+        </div>
+      )}
+
+      <h2 className="font-bold mb-3">เอกสารทั้งหมด ({docs.length})</h2>
+      {loading && <p className="text-gray-500 text-sm">กำลังโหลด…</p>}
+      {!loading && docs.length === 0 && <Empty>ยังไม่มีเอกสาร — กด “อัปโหลดเอกสารใหม่” เพื่อเริ่ม</Empty>}
+      <div className="space-y-3">
+        {docs.map((d) => (
+          <Card key={d.id} className="!p-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <Pill tone="yellow">{labelOf(CATEGORIES, d.category)}</Pill>
+                  <span className="text-xs text-gray-500">
+                    {fmtSize(d.size_bytes)} · {labelOf(LANGUAGES, d.language)}
+                  </span>
+                </div>
+                <div className="font-bold truncate">{d.title}</div>
+                {d.description && <div className="text-sm text-gray-400 truncate">{d.description}</div>}
+                <div className="flex flex-wrap gap-2 mt-3">
+                  <a href={d.public_url} target="_blank" rel="noopener noreferrer" className={btnSmall}>
+                    👁️ เปิดดู
+                  </a>
+                  <button
+                    className={btnSmall}
+                    onClick={() =>
+                      navigator.clipboard.writeText(d.public_url).then(() => {
+                        setCopiedId(d.id);
+                        setTimeout(() => setCopiedId((c) => (c === d.id ? null : c)), 2000);
+                      })
+                    }
+                  >
+                    {copiedId === d.id ? "คัดลอกแล้ว ✓" : "🔗 คัดลอกลิงก์"}
+                  </button>
+                </div>
+              </div>
+              <button onClick={() => handleDelete(d)} className="shrink-0 text-xs text-red-400 hover:text-red-300 px-2 py-1">
+                ลบ
+              </button>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function UploadWizard({ onCancel, onDone }: { onCancel: () => void; onDone: () => void }) {
+  const [step, setStep] = useState(0);
+  const [file, setFile] = useState<File | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("manual");
+  const [language, setLanguage] = useState("th");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const tooBig = file ? file.size > MAX_BYTES : false;
+
+  const pickFile = (f: File | null) => {
+    setFile(f);
+    setError(null);
+    // Pre-fill the title from the file name so the next step is mostly done.
+    if (f && !title) setTitle(f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " "));
+  };
+
+  const upload = async () => {
     if (!file || !title.trim()) return;
-    // Vercel caps request bodies at 4.5 MB; fail here with a clear message.
-    if (file.size > 4 * 1024 * 1024) {
-      setError("ไฟล์ใหญ่เกิน 4MB — บีบอัด PDF ก่อนอัปโหลด");
-      return;
-    }
-    setUploading(true);
+    setBusy(true);
     setError(null);
     try {
       const fd = new FormData();
@@ -106,207 +193,111 @@ export default function AdminDocsPage() {
       fd.append("description", description.trim());
       fd.append("category", category);
       fd.append("language", language);
-      const res = await fetch("/api/admin/documents", {
-        method: "POST",
-        body: fd,
-      });
+      const res = await fetch("/api/admin/documents", { method: "POST", body: fd });
       const data = await res.json();
-      if (!res.ok || !data.ok) {
-        setError(`อัปโหลดล้มเหลว: ${data.error ?? "unknown"}${data.detail ? ` (${data.detail})` : ""}`);
-        return;
-      }
-      setTitle("");
-      setDescription("");
-      setFile(null);
-      const inp = document.getElementById("file-input") as HTMLInputElement | null;
-      if (inp) inp.value = "";
-      await load();
+      if (!res.ok || !data.ok) return setError(`อัปโหลดไม่สำเร็จ: ${data.error ?? "unknown"}${data.detail ? ` (${data.detail})` : ""}`);
+      onDone();
     } catch {
-      setError("อัปโหลดล้มเหลว");
+      setError("อัปโหลดไม่สำเร็จ");
     } finally {
-      setUploading(false);
+      setBusy(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("ลบเอกสารนี้?")) return;
-    const res = await fetch(`/api/admin/documents?id=${encodeURIComponent(id)}`, {
-      method: "DELETE",
-    });
-    if (res.ok) await load();
-    else setError("ลบไม่สำเร็จ");
-  };
-
-  const handleLogout = async () => {
-    await adminLogout();
-    setAuthed(false);
-    setToken("");
-    setDocs([]);
-  };
+  const chip = (active: boolean) =>
+    `px-4 py-2.5 rounded-xl text-sm font-semibold border-2 ${active ? "border-yellow-400 bg-yellow-400 text-gray-950" : "border-gray-700 hover:border-gray-500"}`;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white font-sans">
-      <nav className="sticky top-0 z-50 bg-gray-950/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <JiaAedLogo className="h-8 w-auto" />
-            <span className="font-bold text-xl text-yellow-400">Admin</span>
-          </Link>
-          {authed && (
-            <button onClick={handleLogout} className="text-sm text-gray-400 hover:text-yellow-400">
-              ออกจากระบบ
-            </button>
-          )}
-        </div>
-      </nav>
-
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold mb-6">จัดการเอกสารบนเว็บไซต์</h1>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-lg mb-6 text-sm">
-            {error}
-          </div>
-        )}
-
-        {!authed ? (
-          <form onSubmit={handleLogin} className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md">
-            <label className="block text-sm font-semibold mb-2">Admin Token</label>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="กรอก ADMIN_TOKEN"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white mb-4"
-              autoFocus
-            />
-            <button
-              type="submit"
-              disabled={loading || !token.trim()}
-              className="bg-yellow-400 text-gray-950 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 disabled:opacity-50 transition-colors"
-            >
-              {loading ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
-            </button>
-            <p className="text-xs text-gray-500 mt-3">
-              ตั้งค่า <code className="bg-gray-800 px-1 rounded">ADMIN_TOKEN</code> ใน environment variables ก่อนใช้งาน
-            </p>
-          </form>
-        ) : (
-          <>
-            <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
-              <h2 className="font-bold mb-4">อัปโหลดเอกสารใหม่</h2>
-              <form onSubmit={handleUpload} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-1">ชื่อเอกสาร *</label>
-                  <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    required
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold mb-1">คำอธิบาย</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={2}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
-                  />
-                </div>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">หมวดหมู่</label>
-                    <select
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
-                    >
-                      {CATEGORIES.map((c) => (
-                        <option key={c.value} value={c.value}>{c.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">ภาษา</label>
-                    <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value)}
-                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2"
-                    >
-                      <option value="th">ไทย</option>
-                      <option value="en">English</option>
-                      <option value="th-en">ไทย-English</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold mb-1">ไฟล์ * (PDF/DOCX/รูป, ≤4MB)</label>
-                    <input
-                      id="file-input"
-                      type="file"
-                      accept=".pdf,.docx,.doc,image/png,image/jpeg"
-                      onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                      required
-                      className="w-full text-sm text-gray-300 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-yellow-400/20 file:text-yellow-400"
-                    />
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  disabled={uploading || !file || !title.trim()}
-                  className="bg-yellow-400 text-gray-950 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 disabled:opacity-50"
-                >
-                  {uploading ? "กำลังอัปโหลด..." : "อัปโหลด"}
-                </button>
-              </form>
-            </section>
-
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold">เอกสารที่อัปโหลด ({docs.length})</h2>
-                <button onClick={() => load()} className="text-sm text-yellow-400 hover:text-yellow-300">
-                  รีเฟรช
-                </button>
-              </div>
-              {loading && <p className="text-gray-500 text-sm">กำลังโหลด...</p>}
-              {!loading && docs.length === 0 && (
-                <p className="text-gray-500 text-sm">ยังไม่มีเอกสารที่อัปโหลด — อัปโหลดด้านบนเพื่อเริ่มต้น</p>
-              )}
-              <div className="space-y-3">
-                {docs.map((d) => (
-                  <div key={d.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-start justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-bold bg-yellow-400/10 text-yellow-400 px-2 py-0.5 rounded">
-                          {d.category}
-                        </span>
-                        <span className="text-[10px] text-gray-500">{fmtSize(d.size_bytes)}</span>
-                        <span className="text-[10px] text-gray-500">{d.language}</span>
-                      </div>
-                      <div className="font-semibold truncate">{d.title}</div>
-                      {d.description && <div className="text-sm text-gray-400 truncate">{d.description}</div>}
-                      <a
-                        href={d.public_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-yellow-400 hover:text-yellow-300 mt-1 inline-block break-all"
-                      >
-                        {d.public_url}
-                      </a>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(d.id)}
-                      className="shrink-0 text-sm text-red-400 hover:text-red-300"
-                    >
-                      ลบ
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </>
-        )}
+    <Card>
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <h2 className="text-xl font-bold">⬆️ อัปโหลดเอกสาร</h2>
+        <button onClick={onCancel} className="text-sm text-gray-400 hover:text-white">
+          ยกเลิก ✕
+        </button>
       </div>
-    </div>
+      <Steps steps={["เลือกไฟล์", "ตั้งชื่อ & หมวด", "ตรวจสอบ"]} current={step} />
+      {error && (
+        <div className="mb-4">
+          <Notice kind="error">{error}</Notice>
+        </div>
+      )}
+
+      {step === 0 && (
+        <>
+          <label className="block border-2 border-dashed border-gray-700 hover:border-yellow-400 rounded-2xl p-8 text-center cursor-pointer transition-colors">
+            <input type="file" accept=".pdf,.docx,.doc,image/png,image/jpeg" onChange={(e) => pickFile(e.target.files?.[0] ?? null)} className="sr-only" />
+            <div className="text-4xl mb-2" aria-hidden>
+              📄
+            </div>
+            {file ? (
+              <>
+                <div className="font-bold break-all">{file.name}</div>
+                <div className={`text-sm mt-1 ${tooBig ? "text-red-300" : "text-gray-400"}`}>{fmtSize(file.size)}</div>
+                <div className="text-sm text-yellow-400 mt-3 underline">เปลี่ยนไฟล์</div>
+              </>
+            ) : (
+              <>
+                <div className="font-bold">กดเพื่อเลือกไฟล์</div>
+                <div className="text-sm text-gray-400 mt-1">PDF / DOCX / รูป · ไม่เกิน 4MB</div>
+              </>
+            )}
+          </label>
+          <StepNav
+            onBack={onCancel}
+            backLabel="ยกเลิก"
+            onNext={() => setStep(1)}
+            nextDisabled={!file || tooBig}
+            hint={tooBig ? <span className="text-red-300">ไฟล์ใหญ่เกิน 4MB — บีบอัด PDF ก่อนอัปโหลด</span> : undefined}
+          />
+        </>
+      )}
+
+      {step === 1 && (
+        <div className="grid gap-5">
+          <Field label="ชื่อเอกสาร (ลูกค้าเห็นชื่อนี้)">
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} autoFocus />
+          </Field>
+          <Field label="คำอธิบายสั้นๆ (ไม่บังคับ)">
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} className={inputCls} />
+          </Field>
+          <div>
+            <p className="text-sm font-semibold mb-2">หมวดหมู่</p>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((c) => (
+                <button key={c.value} type="button" onClick={() => setCategory(c.value)} className={chip(category === c.value)}>
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-semibold mb-2">ภาษา</p>
+            <div className="flex flex-wrap gap-2">
+              {LANGUAGES.map((l) => (
+                <button key={l.value} type="button" onClick={() => setLanguage(l.value)} className={chip(language === l.value)}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <StepNav onBack={() => setStep(0)} onNext={() => setStep(2)} nextDisabled={!title.trim()} hint={!title.trim() ? "ใส่ชื่อเอกสารก่อน" : undefined} />
+        </div>
+      )}
+
+      {step === 2 && file && (
+        <>
+          <Summary
+            rows={[
+              ["ไฟล์", `${file.name} (${fmtSize(file.size)})`],
+              ["ชื่อเอกสาร", title.trim()],
+              ...(description.trim() ? [["คำอธิบาย", description.trim()] as [string, string]] : []),
+              ["หมวดหมู่", labelOf(CATEGORIES, category)],
+              ["ภาษา", labelOf(LANGUAGES, language)],
+            ]}
+          />
+          <StepNav onBack={() => setStep(1)} onNext={upload} nextDisabled={busy} nextLabel={busy ? "กำลังอัปโหลด…" : "✓ อัปโหลดขึ้นเว็บ"} />
+        </>
+      )}
+    </Card>
   );
 }

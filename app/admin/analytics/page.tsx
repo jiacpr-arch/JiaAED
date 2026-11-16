@@ -1,8 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { LOGIN_ERRORS, adminLogin, forgetLegacyToken } from "../admin-session";
+import { AdminShell, Notice, useAdmin } from "../ui";
 
 type DashboardData = {
   range: { days: number; from: string; to: string };
@@ -51,124 +50,73 @@ const RANGES = [
 ];
 
 export default function AdminAnalyticsPage() {
-  const [token, setToken] = useState("");
-  const [authed, setAuthed] = useState(false);
+  return (
+    <AdminShell title="สถิติเว็บ" subtitle="คนเข้าเว็บ กด LINE และส่งฟอร์มกี่คน" wide>
+      <Analytics />
+    </AdminShell>
+  );
+}
+
+function Analytics() {
+  const { expire } = useAdmin();
   const [days, setDays] = useState(7);
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // The session is an HttpOnly cookie sent with every /api/admin request.
-  const load = useCallback(async (currentDays: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/admin/analytics?days=${currentDays}`);
-      if (res.status === 401) {
-        setAuthed(false);
-        return;
+  const load = useCallback(
+    async (currentDays: number) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/admin/analytics?days=${currentDays}`);
+        if (res.status === 401) return expire();
+        setData((await res.json()) as DashboardData);
+      } catch (e) {
+        setError(String(e));
+      } finally {
+        setLoading(false);
       }
-      const json = (await res.json()) as DashboardData;
-      setData(json);
-      setAuthed(true);
-    } catch (e) {
-      setError(String(e));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [expire],
+  );
 
   useEffect(() => {
-    forgetLegacyToken();
-    void load(days);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function onLogin(e: React.FormEvent) {
-    e.preventDefault();
-    if (!token.trim()) return;
-    const result = await adminLogin(token.trim());
-    if (result !== "ok") {
-      setError(LOGIN_ERRORS[result]);
-      return;
-    }
-    setToken("");
-    void load(days);
-  }
+    void load(7);
+  }, [load]);
 
   function changeRange(d: number) {
     setDays(d);
-    if (authed) void load(d);
-  }
-
-  if (!authed) {
-    return (
-      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center p-4">
-        <form onSubmit={onLogin} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-sm space-y-4">
-          <h1 className="text-xl font-bold">🔐 Admin Analytics</h1>
-          <input
-            type="password"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            placeholder="Admin token"
-            className="w-full rounded-xl bg-gray-950 border border-gray-700 px-4 py-3 text-white focus:border-yellow-400 focus:outline-none"
-            autoFocus
-          />
-          {error && <p className="text-sm text-red-400">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-yellow-400 text-gray-950 font-bold py-3 rounded-full hover:bg-yellow-300"
-          >
-            เข้าสู่ระบบ
-          </button>
-        </form>
-      </div>
-    );
+    void load(d);
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <nav className="sticky top-0 z-30 bg-gray-950/90 backdrop-blur border-b border-gray-800">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="font-bold text-xl text-yellow-400">JiaAED</Link>
-            <span className="text-gray-500">/</span>
-            <span className="text-gray-300">Analytics</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {RANGES.map((r) => (
-              <button
-                key={r.d}
-                onClick={() => changeRange(r.d)}
-                className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
-                  days === r.d
-                    ? "bg-yellow-400 text-gray-950 font-bold"
-                    : "bg-gray-900 border border-gray-800 text-gray-400 hover:text-white"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-            <Link
-              href="/admin/documents"
-              className="ml-2 text-sm text-gray-400 hover:text-yellow-400"
-            >
-              📁 Docs
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm text-gray-400 mr-1">ช่วงเวลา:</span>
+        {RANGES.map((r) => (
+          <button
+            key={r.d}
+            onClick={() => changeRange(r.d)}
+            className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+              days === r.d ? "bg-yellow-400 text-gray-950 font-bold" : "bg-gray-900 border border-gray-800 text-gray-300 hover:text-white"
+            }`}
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
 
-      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         {loading && <p className="text-gray-500">กำลังโหลด…</p>}
+        {error && <Notice kind="error">{error}</Notice>}
 
         {data && (
           <>
             <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Kpi label="Visitors" value={data.kpis.visitors.toLocaleString()} change={data.kpis.visitors_change_pct} />
-              <Kpi label="LINE clicks" value={data.kpis.line_clicks.toLocaleString()} suffix={` (${data.kpis.line_ctr}%)`} />
-              <Kpi label="Leads" value={data.kpis.leads.toLocaleString()} suffix={` (${data.kpis.conversion_rate}%)`} />
-              <Kpi label="Doc downloads" value={data.kpis.docs_downloaded.toLocaleString()} />
+              <Kpi label="👥 คนเข้าเว็บ" value={data.kpis.visitors.toLocaleString()} change={data.kpis.visitors_change_pct} />
+              <Kpi label="💬 กดปุ่ม LINE" value={data.kpis.line_clicks.toLocaleString()} suffix={` (${data.kpis.line_ctr}%)`} />
+              <Kpi label="🎯 ส่งข้อมูลติดต่อ (Lead)" value={data.kpis.leads.toLocaleString()} suffix={` (${data.kpis.conversion_rate}%)`} />
+              <Kpi label="📄 ดาวน์โหลดเอกสาร" value={data.kpis.docs_downloaded.toLocaleString()} />
             </section>
 
             <section>
@@ -239,7 +187,6 @@ export default function AdminAnalyticsPage() {
             </section>
           </>
         )}
-      </main>
     </div>
   );
 }
