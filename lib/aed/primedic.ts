@@ -261,7 +261,7 @@ export const primedicDiffSpecs: PrimedicSpecRow[] = [
     },
   },
   {
-    label: "ราคา (ก่อน VAT)",
+    label: "ราคา (ex VAT)",
     // Derived from primedicModels so the table can't drift from the cards.
     values: Object.fromEntries(
       primedicModels.map((m) => [m.id, m.id === "primedic-y8" ? Y8_STATUS : `฿${m.price.toLocaleString("en-US")}`]),

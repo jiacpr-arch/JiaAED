@@ -146,7 +146,7 @@ export function ModelLadder() {
             </ul>
             <div className={`mt-4 text-center text-2xl font-black ${c.discontinued ? "text-gray-500" : "text-red-600"}`}>
               {c.price}
-              {!c.discontinued && c.price.startsWith("฿") && <span className="ml-1 text-xs font-normal text-gray-500">ก่อน VAT</span>}
+              {!c.discontinued && c.price.startsWith("฿") && <span className="ml-1 text-xs font-normal text-gray-500">ex VAT</span>}
             </div>
             {!c.discontinued && (
               <Link

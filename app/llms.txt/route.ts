@@ -135,7 +135,7 @@ ${
 
 ${pagesList}
 
-## Products & pricing (THB, ยังไม่รวม VAT)
+## Products & pricing (THB, ex VAT — excluding 7% VAT)
 
 ### เครื่อง AED
 

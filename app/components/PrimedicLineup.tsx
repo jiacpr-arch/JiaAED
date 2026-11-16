@@ -130,7 +130,7 @@ export function PrimedicLineup() {
           </div>
         ))}
       </div>
-      <p className="text-center text-gray-600 text-xs mt-3">ราคายังไม่รวม VAT</p>
+      <p className="text-center text-gray-600 text-xs mt-3">ราคา ex VAT</p>
       <p className="text-center text-gray-400 text-xs mt-1">{Y8_ON_REQUEST_NOTE}</p>
     </div>
   );

@@ -21,15 +21,15 @@ function productBlock(): string {
   const machines = [
     ...primedicModels.filter((m) => m.id !== "primedic-y8").map( // Y8 งดจำหน่าย
       (m) =>
-        `• ${m.name} — ${thb(m.price)} (ยังไม่รวม VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
+        `• ${m.name} — ${thb(m.price)} (ex VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
     ),
-    `• ${yuwellGpsAed.name} — ${yuwellGpsAed.price === null ? `${PRICE_ON_REQUEST}กับทีมขาย (ห้ามบอกตัวเลข)` : `${thb(yuwellGpsAed.price)} (ยังไม่รวม VAT)`}\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
+    `• ${yuwellGpsAed.name} — ${yuwellGpsAed.price === null ? `${PRICE_ON_REQUEST}กับทีมขาย (ห้ามบอกตัวเลข)` : `${thb(yuwellGpsAed.price)} (ex VAT)`}\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
   ].join("\n");
 
   // Base Y2 is already listed above; these are its cabinet/stand bundles.
   const bundles = products
     .filter((p) => p.id !== "i7")
-    .map((p) => `• ${p.name} — ${thb(p.price)} (ยังไม่รวม VAT) · ${p.description}`)
+    .map((p) => `• ${p.name} — ${thb(p.price)} (ex VAT) · ${p.description}`)
     .join("\n");
 
   const packages = acquisitionPackages

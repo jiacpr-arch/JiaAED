@@ -91,7 +91,7 @@ export default function SubscriptionPage() {
           <FeatureMatrix />
         </div>
         <p className="text-center text-gray-600 text-xs mt-4">
-          * ราคา/เดือน ยังไม่รวม VAT · STANDARD ชำระรายปี ฿{RENTAL_PRICES.annual.toLocaleString()} (เฉลี่ย ~฿{subscriptionTiers[0].pricePerMonth.toLocaleString()}/เดือน) · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
+          * ราคา/เดือน ex VAT · STANDARD ชำระรายปี ฿{RENTAL_PRICES.annual.toLocaleString()} (เฉลี่ย ~฿{subscriptionTiers[0].pricePerMonth.toLocaleString()}/เดือน) · สัญญา 1 ปี · มัดจำ ฿{SAFETY_CARE_DEPOSIT.toLocaleString()} (คืนเมื่อจบสัญญา)
         </p>
       </section>
 

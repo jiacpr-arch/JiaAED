@@ -61,7 +61,7 @@ export async function createOrderSession(
   const units = opts.units ?? 1;
   const bundle = findBundle(item.id);
   const lineName = bundle ? `ชุด AED — ${bundle.name}` : `AED ${item.name}`;
-  const lineDesc = bundle ? `ราคาก่อน VAT · ในชุด: ${bundle.parts.map((p) => p.label).join(" · ")}`.slice(0, 500) : "ราคาก่อน VAT ต่อเครื่อง";
+  const lineDesc = bundle ? `ราคา ex VAT · ในชุด: ${bundle.parts.map((p) => p.label).join(" · ")}`.slice(0, 500) : "ราคา ex VAT ต่อเครื่อง";
   return stripe.checkout.sessions.create({
     mode: "payment",
     locale: "th",
