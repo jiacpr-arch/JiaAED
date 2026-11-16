@@ -76,7 +76,9 @@ export function orderFromSession(s: SessionLike, status: OrderStatus, now = new 
     customer_name: cd.name ?? ship?.name ?? null,
     customer_email: cd.email ?? null,
     customer_phone: cd.phone ?? null,
-    company_name: cd.business_name ?? null,
+    // API 2025-08-27.basil has no business_name: with tax ID collection the
+    // business name the buyer types is stored as customer_details.name.
+    company_name: cd.business_name ?? (cd.tax_ids?.some((t) => t.value) ? (cd.name ?? null) : null),
     tax_id: cd.tax_ids?.find((t) => t.value)?.value ?? null,
     tax_branch: s.custom_fields?.find((f) => f.key === "tax_branch")?.text?.value ?? null,
     shipping_address: ship ? { name: ship.name ?? null, address: ship.address ?? null } : null,

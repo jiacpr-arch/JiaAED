@@ -24,12 +24,28 @@
 - จ่ายแล้ว → `/api/stripe/webhook` บันทึก `aed_orders` + แจ้ง LINE แอดมิน → ลูกค้าเห็นหน้า `/aed/checkout/success`
 
 ## ขั้นตอนเปิดใช้ (เจ้าของ)
-1. Supabase SQL Editor: รัน `supabase/aed_orders.sql`
+1. Supabase SQL Editor: รัน `supabase/aed_orders.sql` และ `supabase/aed_rental_billing.sql`
 2. Stripe Dashboard → Settings → Payment methods: เปิด **PromptPay** (และ Cards)
 3. Stripe → Developers → Webhooks: แก้ endpoint เดิม `https://www.jiaaed.com/api/stripe/webhook`
-   ให้ฟัง `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` → คัดลอก Signing secret
+   ให้ฟัง `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed`,
+   `invoice.paid`, `invoice.payment_failed`, `customer.subscription.deleted` → คัดลอก Signing secret
 4. Vercel env: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (ทดสอบด้วย `sk_test_…` ก่อน แล้วค่อยเปลี่ยนเป็น live) → redeploy
 5. (ไม่บังคับ) `STRIPE_PAYMENT_METHODS=promptpay` ถ้าไม่รับบัตร · `CHECKOUT_DISABLED=1` เพื่อซ่อนปุ่มชั่วคราว
 6. Stripe → Settings → Customer emails: เปิด "Successful payments" ให้ลูกค้าได้ใบเสร็จอัตโนมัติ
 
 ยังไม่ตั้ง `STRIPE_SECRET_KEY` = ปุ่มซื้อออนไลน์ไม่แสดง เว็บทำงานเหมือนเดิม (แต่ราคาเดิมขีดฆ่าของ Y2 แสดงทันที)
+
+## ตัดบัตรรายเดือน — ลูกค้าเช่า / เช่าซื้อ (`/admin/billing`)
+ใช้หลังเซ็นสัญญาแล้ว ทีมสร้างลิงก์ → ส่ง LINE → ลูกค้าจ่ายด้วยบัตร (PromptPay ตัดอัตโนมัติไม่ได้) → ระบบตัดทุกเดือนเอง
+
+| แผน | วันนี้ (รวม VAT) | ตัดทุกเดือน (รวม VAT) | จบเมื่อ |
+|---|---|---|---|
+| เช่าซื้อ Y2 | ดาวน์ ฿17,120 | ฿3,103 × 18 งวด เริ่มเดือนถัดไป | หยุดเองหลังงวดที่ 18 (รวม ฿72,974) |
+| เช่าซื้อ Yuwell GPS | ดาวน์ ฿18,190 | ฿2,675 × 18 งวด | หยุดเองหลังงวดที่ 18 |
+| FLEX (บุคคล / นิติบุคคล) | เงินประกัน ฿10,000 / ฿7,000 (ไม่มี VAT) + เดือนแรก ฿3,199.30 | ฿3,199.30 | ทีมยกเลิกใน Stripe เมื่อคืนเครื่อง |
+
+- เลือกจำนวนเครื่องได้ 1–20 · ลิงก์ใช้ได้ 23 ชม. (ข้อจำกัด Stripe) — หมดอายุก็สร้างใหม่
+- แจ้ง LINE แอดมินทุกงวด: ตัดผ่าน (ออกใบกำกับภาษี) / ตัดไม่ผ่าน (พร้อมลิงก์ให้ลูกค้าจ่าย/เปลี่ยนบัตร) / ผ่อนครบ (โอนกรรมสิทธิ์) / ถูกยกเลิก
+- ตั้งใน Stripe → Settings → Billing → Revenue recovery: Smart Retries + ส่งอีเมลลูกค้าเมื่อตัดไม่ผ่าน / บัตรใกล้หมดอายุ
+- คืนเงินประกัน FLEX: Stripe → ใบแจ้งหนี้แรกของลูกค้า → Refund เฉพาะยอดเงินประกัน
+- ใบกำกับภาษียังออกจาก FlowAccount ตามเดิม (Stripe ส่งใบเสร็จทางอีเมลอย่างเดียว)

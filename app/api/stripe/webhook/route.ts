@@ -2,12 +2,16 @@
  * Stripe Webhook — POST /api/stripe/webhook
  *
  * Records online orders from Stripe Checkout (/api/checkout) in aed_orders
- * and pushes a LINE alert to the owner/admins when an order is paid.
+ * and pushes a LINE alert to the owner/admins when an order is paid. Also runs
+ * monthly card billing for rental customers (lib/aed/rental-billing-webhook.ts).
  *
  * Events to enable on the Stripe Dashboard endpoint:
  *   checkout.session.completed
  *   checkout.session.async_payment_succeeded   (PromptPay paid later)
  *   checkout.session.async_payment_failed
+ *   invoice.paid                               (rental monthly charge)
+ *   invoice.payment_failed
+ *   customer.subscription.deleted
  *
  * Until STRIPE_WEBHOOK_SECRET is set this keeps the old "tombstone" behaviour
  * (answer 200, do nothing) so the endpoint still registered in the Dashboard
@@ -18,6 +22,7 @@ import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/aed/stripe";
 import { pushToOwner } from "@/lib/aed/notify-owner";
+import { RENTAL_EVENTS, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
 import { orderAlertText, orderFromSession, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
 
 export const runtime = "nodejs";
@@ -42,6 +47,22 @@ export async function POST(req: Request): Promise<NextResponse> {
   } catch (e) {
     console.warn("[AED] stripe webhook bad signature:", e instanceof Error ? e.message : e);
     return NextResponse.json({ ok: false, error: "bad_signature" }, { status: 400 });
+  }
+
+  // Rental card billing (subscriptions created from /admin/billing).
+  try {
+    if (RENTAL_EVENTS.has(event.type)) {
+      const r = await handleRentalEvent(createAdminClient(), event);
+      return NextResponse.json({ received: true, rental: r.handled, note: r.note });
+    }
+    const obj = event.data.object as Stripe.Checkout.Session;
+    if (event.type === "checkout.session.completed" && obj.mode === "subscription") {
+      const r = await handleRentalCheckout(stripe, createAdminClient(), obj);
+      return NextResponse.json({ received: true, rental: r.handled, note: r.note });
+    }
+  } catch (e) {
+    console.error("[AED] rental billing webhook failed:", e);
+    return NextResponse.json({ ok: false, error: "rental_billing_error" }, { status: 500 }); // Stripe retries
   }
 
   const toStatus = HANDLED[event.type];

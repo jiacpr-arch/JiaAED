@@ -17,6 +17,7 @@ To build a fresh database, run them in this order:
 8. `aed_units.sql`, then `aed_units_product_model.sql`
 9. `aed_indexes_2026_10.sql`
 10. `aed_orders.sql` — online orders from Stripe Checkout (written by `/api/stripe/webhook`)
+11. `aed_rental_billing.sql` — monthly card billing for rental / rent-to-own (created from `/admin/billing`)
 
 Rules:
 
