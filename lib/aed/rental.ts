@@ -60,6 +60,9 @@ export const RENTAL_DEPOSITS = {
 // card hold can cover (HOLD_MAX_RETURN_DAYS in rental-holds.ts, test keeps them equal).
 export const RENT_BOOKING_URL = "https://rent.jiacpr.com/rentals#group-aed-device";
 export const SHORT_RENTAL_MAX_DAYS = 6;
+// A card hold lapses after ~7 days, so 7-day and longer rentals take cash only.
+export const EVENT_CASH_ONLY_NOTE = `เช่า ${SHORT_RENTAL_MAX_DAYS + 1} วันขึ้นไป มัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} เท่านั้น`;
+export const EVENT_DEPOSIT_TEXT = `บัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} (คืนเครื่องภายใน ${SHORT_RENTAL_MAX_DAYS} วัน) หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · ${EVENT_CASH_ONLY_NOTE}`;
 export const RENT_BOOKING_BOT_RULE = `เช่าระยะสั้น 1–${SHORT_RENTAL_MAX_DAYS} วัน (อีเวนต์): ส่งลิงก์ ${RENT_BOOKING_URL} ให้ลูกค้าเช็กคิวว่างและคำนวณค่าเช่า+มัดจำเองแล้วส่งคำขอเช่า · มัดจำแบบกันวงเงินบัตร (ไม่ต้องโอน) ใช้ได้เฉพาะงานที่คืนเครื่องภายใน ${SHORT_RENTAL_MAX_DAYS} วัน`;
 
 export type RentalPlan = {
@@ -84,7 +87,7 @@ export const rentalPlans: RentalPlan[] = [
     name: "แผนอีเวนต์ (EVENT)",
     price: RENTAL_PRICES.eventFirstDay,
     unit: "/ วันแรก",
-    deposit: `บัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)}`,
+    deposit: EVENT_DEPOSIT_TEXT,
     depositRange: [RENTAL_DEPOSITS.eventCash, RENTAL_DEPOSITS.eventCardHold],
     features: [
       `วันถัดไป ${thb(RENTAL_PRICES.eventNextDay)}/วัน`,
@@ -187,7 +190,7 @@ export const eventPackages: EventPackage[] = [
     nameTh: "รายสัปดาห์",
     duration: "7 วัน",
     price: RENTAL_PRICES.eventWeekly,
-    priceNote: `flat ${thb(RENTAL_PRICES.eventWeekly)}`,
+    priceNote: `flat ${thb(RENTAL_PRICES.eventWeekly)} · มัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} เท่านั้น`,
   },
   {
     id: "event-extended",
@@ -195,7 +198,7 @@ export const eventPackages: EventPackage[] = [
     nameTh: "ยาวพิเศษ",
     duration: "14 วัน",
     price: RENTAL_PRICES.eventFortnight,
-    priceNote: `flat ${thb(RENTAL_PRICES.eventFortnight)}`,
+    priceNote: `flat ${thb(RENTAL_PRICES.eventFortnight)} · มัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} เท่านั้น`,
   },
 ];
 
@@ -327,7 +330,7 @@ export const acquisitionComparison: AcquisitionCompareRow[] = [
 export const rentalFaqs = [
   {
     question: "เช่า AED ต้องวางมัดจำเท่าไหร่?",
-    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือมัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
+    answer: `แผนรายปี (STANDARD) มัดจำ ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้หากเป็นองค์กรที่มีใบสั่งซื้อ/PO) · แผนยืดหยุ่น (FLEX) มัดจำ ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)}) · แผนอีเวนต์ (EVENT) วางบัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} (คืนเครื่องภายใน ${SHORT_RENTAL_MAX_DAYS} วัน) หรือมัดจำเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · ${EVENT_CASH_ONLY_NOTE} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ`,
   },
   {
     question: "เช่ารายเดือนมีขั้นต่ำไหม?",

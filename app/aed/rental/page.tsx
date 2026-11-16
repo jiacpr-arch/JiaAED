@@ -9,6 +9,7 @@ import {
   RENTAL_EXPENSE_NOTE,
   RENTAL_PRICES,
   RENT_BOOKING_URL,
+  RENTAL_DEPOSITS,
   SHORT_RENTAL_MAX_DAYS,
   THREE_YEAR_DISCOUNT,
   multiUnitPricing,
@@ -33,7 +34,6 @@ export const metadata: Metadata = {
 
 const thb = (n: number) => `฿${n.toLocaleString()}`;
 const plan = (id: string) => rentalPlans.find((p) => p.id === id)!;
-const eventPlan = plan("rent-event");
 const monthPlan = plan("rent-month");
 const threeYearPct = Math.round(THREE_YEAR_DISCOUNT * 100);
 const cheapestBuy = Math.min(...primedicModels.map((m) => m.price));
@@ -49,7 +49,7 @@ const shortItems = [
     price: RENTAL_PRICES.eventFirstDay,
     unit: "/ วันแรก",
     lines: [`วันถัดไป ${thb(RENTAL_PRICES.eventNextDay)}/วัน (เช่าได้ 1–${SHORT_RENTAL_MAX_DAYS} วัน)`, "งานวิ่ง คอนเสิร์ต งานกีฬา กองถ่าย", "ส่ง-รับถึงงาน (คิดตามระยะทาง)"],
-    deposit: `${eventPlan.deposit} (กันวงเงินบัตร ไม่ต้องโอน)`,
+    deposit: `กันวงเงินบัตร ${thb(RENTAL_DEPOSITS.eventCardHold)} (ไม่ต้องโอน) หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)}`,
     bookUrl: RENT_BOOKING_URL,
   },
   {
@@ -59,7 +59,7 @@ const shortItems = [
     price: RENTAL_PRICES.eventWeekly,
     unit: "/ 7 วัน",
     lines: ["งานหลายวัน ค่าย อบรมนอกสถานที่", "พร้อมแผ่นอิเล็กโทรด + แบตเตอรี่", "แนะนำการใช้งานก่อนเริ่มงาน"],
-    deposit: eventPlan.deposit,
+    deposit: `เงินสด ${thb(RENTAL_DEPOSITS.eventCash)} (กันวงเงินบัตรไม่ได้ เพราะเกิน ${SHORT_RENTAL_MAX_DAYS} วัน)`,
   },
   {
     id: "rent-month",
@@ -88,7 +88,7 @@ const rentalFaqs = [
     answer: `เช่าได้ตั้งแต่ 1 วัน (${thb(RENTAL_PRICES.eventFirstDay)}) ไปจนถึงสัญญารายปี (เช่ารายวัน 1–${SHORT_RENTAL_MAX_DAYS} วัน เช็กคิวและจองออนไลน์ได้ที่ rent.jiacpr.com) มีแพ็ก 3 วัน ${thb(RENTAL_PRICES.eventWeekend)} · 14 วัน ${thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน ${thb(RENTAL_PRICES.flexMonthly)}/เดือน และสัญญา 3 ปีลด ${threeYearPct}%`,
   },
   { question: "เช่าสั้นแล้วอยากทำสัญญารายปีต่อ ได้ส่วนลดไหม?", answer: RENTAL_CREDIT_NOTE },
-  { question: "ต้องวางมัดจำเท่าไร?", answer: `รายวัน/รายสัปดาห์: ${eventPlan.deposit} · รายเดือน: ${monthPlan.deposit} · รายปี: ${plan("rent-annual").deposit} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ` },
+  { question: "ต้องวางมัดจำเท่าไร?", answer: `รายวัน (1–${SHORT_RENTAL_MAX_DAYS} วัน): กันวงเงินบัตร ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · รายสัปดาห์/14 วัน: เงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · รายเดือน: ${monthPlan.deposit} · รายปี: ${plan("rent-annual").deposit} มัดจำคืนเต็มจำนวนเมื่อคืนเครื่องครบสภาพ` },
   { question: "เช่าเหมาจ่ายเป็นค่าใช้จ่ายบริษัทได้ไหม?", answer: RENTAL_EXPENSE_NOTE },
   { question: "เช่ากับเช่าซื้อต่างกันอย่างไร?", answer: `แผนเช่าจบสัญญาแล้วคืนเครื่อง ส่วนเช่าซื้อผ่อนครบ ${rentToOwnBreakdowns[0].months} เดือนแล้วเครื่องเป็นของคุณ` },
 ];

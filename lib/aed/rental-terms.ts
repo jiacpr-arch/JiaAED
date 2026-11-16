@@ -31,7 +31,7 @@ export const rentalTermsTable: RentalTermsRow[] = [
   },
   {
     topic: "มัดจำ (คืนได้)",
-    short: `อีเวนต์: บัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} · 1 เดือน: ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)})`,
+    short: `อีเวนต์: บัตรเครดิต hold ${thb(RENTAL_DEPOSITS.eventCardHold)} (คืนภายใน 6 วัน) หรือเงินสด ${thb(RENTAL_DEPOSITS.eventCash)} — 7 วันขึ้นไปเงินสดเท่านั้น · 1 เดือน: ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)})`,
     flex: `${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)})`,
     annual: `${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้ถ้ามี PO)`,
   },
