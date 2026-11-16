@@ -29,7 +29,8 @@ export type AedUnit = {
 
 // Matches the status values used by docs/rental-ops-kit.md's Google Sheet
 // registry — keep these in sync if that convention ever changes.
-export const UNIT_STATUSES = ["ว่าง", "ปล่อยเช่า", "ซ่อม", "สำรองอีเวนต์"] as const;
+// "ขายแล้ว" = installed at a customer who bought it (added by the order flow, 16 พ.ย. 2026).
+export const UNIT_STATUSES = ["ว่าง", "ปล่อยเช่า", "ซ่อม", "สำรองอีเวนต์", "ขายแล้ว"] as const;
 
 export const UNIT_PLAN_TYPES = ["รายปี", "รายเดือน", "รายวัน", "ซื้อขาด", "เช่าซื้อ", "Safety Care"] as const;
 

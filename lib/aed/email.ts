@@ -163,3 +163,90 @@ export async function sendLeadOwnerNotification(p: {
   }
   return { ok: true };
 }
+
+// ─── Online orders (16 พ.ย. 2026) ─────────────────────────────────────────────
+
+/** Plain-text backup of a LINE alert to the owner's inbox (LINE can fail). */
+export async function sendOwnerTextEmail(subject: string, body: string): Promise<{ ok: boolean; reason?: string }> {
+  const client = getClient();
+  if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
+  const to = getOwnerEmails();
+  if (to.length === 0) return { ok: false, reason: "no owner email" };
+  const res = await client.emails.send({
+    from: FROM,
+    to,
+    replyTo: REPLY_TO,
+    subject,
+    text: body,
+    html: `<pre style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;white-space:pre-wrap;font-size:14px;">${escapeHtml(body)}</pre>`,
+  });
+  if (res.error) {
+    console.error("[AED] owner email failed:", res.error);
+    return { ok: false, reason: String(res.error.message || res.error) };
+  }
+  return { ok: true };
+}
+
+/**
+ * "ได้รับคำสั่งซื้อแล้ว" to the buyer. The name comes from the Stripe page, so it
+ * is escaped and dropped if it looks like a link (same rule as sendLeadAutoReply).
+ */
+export async function sendOrderConfirmation(p: {
+  to: string;
+  name: string | null;
+  item: string;
+  total: string;
+  orderRef: string;
+}): Promise<{ ok: boolean; reason?: string }> {
+  const client = getClient();
+  if (!client) return { ok: false, reason: "RESEND_API_KEY not set" };
+  const safeName = p.name && !looksLikeLink(p.name) ? p.name : null;
+  const greeting = safeName ? `คุณ${safeName}` : "ลูกค้า";
+  const steps = [
+    "ทีมงานโทรยืนยันคำสั่งซื้อและนัดวันส่ง/ติดตั้งภายใน 1 วันทำการ",
+    "ส่งเครื่องพร้อมแนะนำการใช้งาน",
+    "ออกใบกำกับภาษีตามข้อมูลที่กรอกไว้",
+  ];
+  const subject = "JiaAED — ได้รับคำสั่งซื้อและการชำระเงินแล้ว";
+  const html = `<!DOCTYPE html>
+<html lang="th">
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width:560px; margin:0 auto; padding:24px; color:#1a1a1a;">
+  <h2 style="color:#b8860b;">ขอบคุณ${escapeHtml(greeting)} 🙏</h2>
+  <p>เราได้รับคำสั่งซื้อและการชำระเงินเรียบร้อยแล้ว</p>
+  <table style="border-collapse:collapse; width:100%; font-size:14px; margin:16px 0;">
+    <tr><td style="padding:6px 0; color:#666;">สินค้า</td><td style="padding:6px 0;"><strong>${escapeHtml(p.item)}</strong></td></tr>
+    <tr><td style="padding:6px 0; color:#666;">ยอดชำระ (รวม VAT)</td><td style="padding:6px 0;"><strong>${escapeHtml(p.total)}</strong></td></tr>
+    <tr><td style="padding:6px 0; color:#666;">เลขอ้างอิง</td><td style="padding:6px 0;">${escapeHtml(p.orderRef)}</td></tr>
+  </table>
+  <p><strong>ขั้นตอนถัดไป</strong></p>
+  <ol style="font-size:14px; line-height:1.8;">${steps.map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ol>
+  <p>มีคำถามหรืออยากนัดวันเอง ทัก LINE ได้เลย:</p>
+  <p style="text-align:center; margin: 24px 0;">
+    <a href="${LINE_OA}" style="display:inline-block; background:#06C755; color:#fff; font-weight:bold; text-decoration:none; padding:12px 28px; border-radius:24px;">💬 LINE @jiaaed</a>
+  </p>
+  <hr style="border:none; border-top:1px solid #eee; margin:24px 0;">
+  <p style="font-size:13px; color:#666;">JiaAED by เจี่ยรักษา · ${regLine(PRIMEDIC_REGULATORY)}</p>
+</body>
+</html>`;
+  const text = [
+    `ขอบคุณ${greeting}`,
+    "",
+    "เราได้รับคำสั่งซื้อและการชำระเงินเรียบร้อยแล้ว",
+    `สินค้า: ${p.item}`,
+    `ยอดชำระ (รวม VAT): ${p.total}`,
+    `เลขอ้างอิง: ${p.orderRef}`,
+    "",
+    "ขั้นตอนถัดไป",
+    ...steps.map((s, i) => `${i + 1}. ${s}`),
+    "",
+    `ทัก LINE: ${LINE_OA}`,
+    "",
+    "JiaAED by เจี่ยรักษา",
+  ].join("\n");
+  const res = await client.emails.send({ from: FROM, to: [p.to], replyTo: REPLY_TO, subject, html, text });
+  if (res.error) {
+    console.error("[AED] order confirmation failed:", res.error);
+    return { ok: false, reason: String(res.error.message || res.error) };
+  }
+  return { ok: true };
+}
