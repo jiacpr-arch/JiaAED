@@ -16,18 +16,20 @@ export const RENTAL_PRICES = {
   flexMonthly: 2_990, // ต่อเนื่อง 3–11 เดือน
   flexMinMonths: 3,
   // ── ติดตั้งประจำ (STANDARD tier, billed yearly) ──
-  annual: 22_000,
-  annual2to4Units: 20_000, // ต่อเครื่อง/ปี
-  annual5PlusUnits: 18_000, // ต่อเครื่อง/ปี
+  annual: 18_900,
+  annualTwoYear: 16_900,
+  annualThreeYear: 14_900,
+  annual2to4Units: 18_900, // ต่อเครื่อง/ปี
+  annual5PlusUnits: 18_900, // ต่อเครื่อง/ปี
 } as const;
 
 // Three-year contracts on the yearly tiers (STANDARD / PRO / ELITE).
-export const THREE_YEAR_DISCOUNT = 0.1;
+export const THREE_YEAR_DISCOUNT = 1 - RENTAL_PRICES.annualThreeYear / RENTAL_PRICES.annual;
 
 // Rounded to ฿10, the way every monthly-equivalent price on the site is shown.
 export const round10 = (n: number) => Math.round(n / 10) * 10;
 
-/** STANDARD's monthly equivalent — ฿22,000 / 12 ≈ ฿1,830. */
+/** STANDARD 1-year monthly equivalent; 3-year advertised equivalent is ฿14,900 / 12 ≈ ฿1,242. */
 export const STANDARD_MONTHLY = round10(RENTAL_PRICES.annual / 12);
 
 // Short rentals credited toward a yearly contract signed soon after.
