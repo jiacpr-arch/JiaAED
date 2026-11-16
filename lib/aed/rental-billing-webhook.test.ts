@@ -202,4 +202,17 @@ describe("rental billing webhook", () => {
     expect(tables.aed_rental_billing.find((r) => r.stripe_subscription_id === "sub_old")!.status).toBe("converted");
     expect(updates).toContainEqual({ cancel: "sub_old", prorate: false, invoice_now: false });
   });
+
+  it("reads invoices sent in an older webhook API version (2022-11-15 shape)", async () => {
+    const { db, tables } = fakeDb();
+    const { stripe } = fakeStripe();
+    await handleRentalCheckout(stripe, db, session);
+    const legacy = invoiceEvent("invoice.paid", "in_old", {
+      parent: null,
+      subscription: "sub_1",
+      subscription_details: { metadata: md },
+    });
+    expect((await handleRentalEvent(db, legacy)).handled).toBe(true);
+    expect(tables.aed_rental_billing[0].installments_paid).toBe(1);
+  });
 });

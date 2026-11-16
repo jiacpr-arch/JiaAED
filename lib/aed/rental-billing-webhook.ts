@@ -113,9 +113,24 @@ export async function handleRentalCheckout(stripe: Stripe, db: SupabaseClient, s
   return { handled: true };
 }
 
-function subscriptionOfInvoice(inv: Stripe.Invoice): { id: string | null; metadata: Stripe.Metadata | null } {
+/**
+ * The subscription an invoice belongs to. Webhook payloads use the endpoint's
+ * API version, which can be older than the SDK's: 2025 "basil" nests it under
+ * parent.subscription_details, older versions (e.g. 2022-11-15) put
+ * `subscription` and `subscription_details.metadata` on the invoice itself.
+ */
+export function subscriptionOfInvoice(inv: Stripe.Invoice): { id: string | null; metadata: Stripe.Metadata | null } {
   const d = inv.parent?.subscription_details;
-  return { id: idOf(d?.subscription ?? null), metadata: d?.metadata ?? null };
+  if (d) return { id: idOf(d.subscription ?? null), metadata: d.metadata ?? null };
+  const legacy = inv as unknown as {
+    subscription?: string | { id: string; metadata?: Stripe.Metadata } | null;
+    subscription_details?: { metadata?: Stripe.Metadata | null } | null;
+  };
+  const sub = legacy.subscription ?? null;
+  return {
+    id: idOf(sub),
+    metadata: legacy.subscription_details?.metadata ?? (typeof sub === "object" && sub ? (sub.metadata ?? null) : null),
+  };
 }
 
 /** invoice.paid / invoice.payment_failed / customer.subscription.deleted */
