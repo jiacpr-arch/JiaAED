@@ -23,6 +23,7 @@ import {
   type HoldRow,
 } from "@/lib/aed/rental-holds";
 import { flexEndQuote, refundableLeft } from "@/lib/aed/refunds";
+import { CUSTOMER_TYPES, LIMITS, type CustomerType } from "@/lib/aed/credit-limits";
 import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
 
 type Row = {
@@ -114,6 +115,7 @@ export default function AdminBillingPage() {
   const [eventName, setEventName] = useState("");
 
   const [creating, setCreating] = useState(false);
+  const [customerType, setCustomerType] = useState<CustomerType>("company");
   const [link, setLink] = useState<{ url: string; summary: string; expiresAt: number } | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -173,7 +175,11 @@ export default function AdminBillingPage() {
       body: JSON.stringify(body),
     });
     const data = await res.json();
-    if (!res.ok || !data.ok) throw new Error(ERRORS[data.error] ?? `ไม่สำเร็จ: ${data.message ?? data.error}`);
+    if (!res.ok || !data.ok) {
+      const err = new Error(ERRORS[data.error] ?? data.message ?? `ไม่สำเร็จ: ${data.error}`) as Error & { code?: string };
+      err.code = data.error;
+      throw err;
+    }
     return data;
   };
 
@@ -185,14 +191,31 @@ export default function AdminBillingPage() {
     setLink(null);
     setCopied(false);
     try {
-      const base = { ...info, units: n };
-      const body =
+      const base = { ...info, units: n, customerType };
+      const body: Record<string, unknown> =
         tab === "subscribe"
           ? { action: "subscribe", planId, ...base }
           : tab === "convert"
             ? { action: "convert", targetId, sourceSubscriptionId: sourceId, depositCredit: Number(depositCredit) || 0, rentCredit: Number(rentCredit) || 0, ...base }
             : { action: "hold", packageId, days: Number(days), returnDate, eventName, ...base };
-      const data = await post(body);
+      let data;
+      try {
+        data = await post(body);
+      } catch (err) {
+        // Over the per-customer machine ceiling: offer an admin override with a reason.
+        if ((err as { code?: string }).code !== "credit_limit") throw err;
+        const msg = err instanceof Error ? err.message : "";
+        if (!confirm(`⚠️ ${msg}\n\nอนุมัติเกินเพดานสำหรับลูกค้ารายนี้? (ระบบจะแจ้ง LINE แอดมินพร้อมเหตุผล)`)) {
+          setError(msg);
+          return;
+        }
+        const reason = prompt("เหตุผลที่อนุมัติ (เช่น มี PO / ลูกค้าเก่าจ่ายตรง / ดาวน์เพิ่ม)", "");
+        if (!reason?.trim()) {
+          setError("ต้องใส่เหตุผลเพื่ออนุมัติเกินเพดาน");
+          return;
+        }
+        data = await post({ ...body, override: true, overrideReason: reason.trim() });
+      }
       setLink({ url: data.url, summary: data.summary, expiresAt: data.expiresAt });
     } catch (err) {
       setError(err instanceof Error ? err.message : "สร้างลิงก์ไม่สำเร็จ");
@@ -498,6 +521,18 @@ export default function AdminBillingPage() {
                 <input type="number" min={1} max={tab === "hold" ? MAX_HOLD_UNITS : MAX_RENTAL_UNITS} value={units} onChange={(e) => setUnits(e.target.value)} className={input} />
               </label>
               {field("contractRef", "เลขที่สัญญา / ใบเสนอราคา")}
+              {tab !== "hold" && (
+                <label className="text-sm sm:col-span-2">
+                  ประเภทลูกค้า (กำหนดเพดานจำนวนเครื่อง)
+                  <select value={customerType} onChange={(e) => setCustomerType(e.target.value as CustomerType)} className={input}>
+                    {CUSTOMER_TYPES.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.label} — {t.id === "company" ? `สูงสุด ${LIMITS.company} เครื่อง (จ่ายตรง ${LIMITS.trustedAfterInstalments} งวดขึ้นไป เพิ่มได้ทีละ ${LIMITS.trustedStep})` : `สูงสุด ${LIMITS.individual} เครื่อง`}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
               {field("companyName", "ชื่อบริษัท")}
               {field("customerName", "ชื่อผู้ติดต่อ")}
               {field("email", "อีเมลลูกค้า (รับใบเสร็จ Stripe)", "email")}

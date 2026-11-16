@@ -108,3 +108,12 @@ describe("LINE alerts", () => {
     expect(rentalFailedText({ ...row, plan_id: "flex" }, 3_199.3, null, null)).not.toContain("ผิดนัด");
   });
 });
+
+describe("rent-to-own HeartSave Y0, 12 months", () => {
+  it("13,000 + 3,090 × 12 = 50,080 ex VAT → 53,585.60 incl. VAT, stops after 12", async () => {
+    const { RENT_TO_OWN_Y0_TERMS } = await import("./packages");
+    const p = findRentalPlan("rto-y0")!;
+    expect(p).toMatchObject({ kind: "rent-to-own", months: 12, firstMonthUpfront: false, monthly: RENT_TO_OWN_Y0_TERMS.monthly });
+    expect(quoteRental(p, 1)).toEqual({ todayTotal: 13_910, monthlyTotal: 3_306.3, monthlyCharges: 12, contractTotal: 53_585.6 });
+  });
+});
