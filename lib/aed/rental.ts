@@ -55,6 +55,13 @@ export const RENTAL_DEPOSITS = {
   flexCorporate: 7_000,
 } as const;
 
+// Owner, 16 พ.ย. 2026: short rentals (1–6 days) are booked on JIA Rental, which
+// checks the queue and works out rent + deposit. 6 days = the longest return a
+// card hold can cover (HOLD_MAX_RETURN_DAYS in rental-holds.ts, test keeps them equal).
+export const RENT_BOOKING_URL = "https://rent.jiacpr.com/rentals#group-aed-device";
+export const SHORT_RENTAL_MAX_DAYS = 6;
+export const RENT_BOOKING_BOT_RULE = `เช่าระยะสั้น 1–${SHORT_RENTAL_MAX_DAYS} วัน (อีเวนต์): ส่งลิงก์ ${RENT_BOOKING_URL} ให้ลูกค้าเช็กคิวว่างและคำนวณค่าเช่า+มัดจำเองแล้วส่งคำขอเช่า · มัดจำแบบกันวงเงินบัตร (ไม่ต้องโอน) ใช้ได้เฉพาะงานที่คืนเครื่องภายใน ${SHORT_RENTAL_MAX_DAYS} วัน`;
+
 export type RentalPlan = {
   id: string;
   subtitle: string;
@@ -395,6 +402,8 @@ ${plans}
 
 แพ็กอีเวนต์แบบเหมา:
 ${events}
+
+${RENT_BOOKING_BOT_RULE}
 
 ราคารายปีต่อเครื่องเมื่อเช่าหลายเครื่อง (แผน STANDARD):
 ${multi}
