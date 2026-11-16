@@ -20,6 +20,7 @@ import {
   holdSummary,
   type HoldRow,
 } from "@/lib/aed/rental-holds";
+import { flexEndQuote, refundableLeft } from "@/lib/aed/refunds";
 import { LOGIN_ERRORS, adminLogin, adminLogout, forgetLegacyToken } from "../admin-session";
 
 type Row = {
@@ -44,6 +45,19 @@ const STATUS_TH: Record<Row["status"], { label: string; cls: string }> = {
   completed: { label: "ครบแล้ว", cls: "text-gray-400" },
   canceled: { label: "ยกเลิก", cls: "text-gray-500" },
   converted: { label: "เปลี่ยนเป็นซื้อแล้ว", cls: "text-blue-300" },
+};
+
+type Order = {
+  id: number;
+  status: string;
+  product_id: string;
+  units: number;
+  total_thb: number;
+  refunded_thb: number | null;
+  customer_name: string | null;
+  company_name: string | null;
+  customer_email: string | null;
+  created_at: string;
 };
 
 const HOLD_STATUS_TH: Record<HoldRow["status"], { label: string; cls: string }> = {
@@ -77,6 +91,8 @@ export default function AdminBillingPage() {
   const [authed, setAuthed] = useState(false);
   const [rows, setRows] = useState<Row[]>([]);
   const [holds, setHolds] = useState<(HoldRow & { payment_intent_id: string })[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [busy, setBusy] = useState(false);
   const [stripeReady, setStripeReady] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -112,6 +128,7 @@ export default function AdminBillingPage() {
       setAuthed(true);
       setRows(data.rows);
       setHolds(data.holds);
+      setOrders(data.orders ?? []);
       setStripeReady(data.stripeReady);
     } catch {
       setError("เชื่อมต่อไม่ได้");
@@ -197,6 +214,56 @@ export default function AdminBillingPage() {
     });
     setLink(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const refundOrderClick = async (o: Order) => {
+    const left = refundableLeft(o);
+    const raw = prompt(
+      `คืนเงินออเดอร์ ${o.company_name || o.customer_name || ""}\nคืนได้สูงสุด ${thbExact(left)} — ใส่ยอดที่จะคืน (บาท)\n* Stripe ไม่คืนค่าธรรมเนียมของยอดที่คืน`,
+      String(left),
+    );
+    if (raw === null) return;
+    const amount = Number(raw);
+    if (!Number.isFinite(amount) || amount <= 0 || amount > left) return setError("ยอดคืนเงินไม่ถูกต้อง");
+    if (!confirm(`คืนเงิน ${thbExact(amount)} เข้าบัตร/บัญชีลูกค้า? (ยกเลิกไม่ได้)`)) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const data = await post({ action: "refund_order", orderId: o.id, amount });
+      setNotice(`คืนเงิน ${thbExact(data.refunded)} แล้ว · เงินเข้าบัตรลูกค้าใน 5–10 วันทำการ · ออกใบลดหนี้ใน FlowAccount`);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "คืนเงินไม่สำเร็จ");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const endFlexClick = async (r: Row) => {
+    const deposit = flexEndQuote(r, 0)?.deposit ?? 0;
+    const raw = prompt(
+      `จบเช่า FLEX — ${r.company_name || r.customer_name || ""}\nเงินประกัน ${thbExact(deposit)}\nมีค่าเสียหายไหม? ใส่จำนวนเงิน (บาท) หรือ 0 ถ้าคืนเครื่องครบสภาพ`,
+      "0",
+    );
+    if (raw === null) return;
+    const q = flexEndQuote(r, Number(raw));
+    if (!q || !Number.isFinite(Number(raw)) || Number(raw) < 0) return setError("ค่าเสียหายไม่ถูกต้อง");
+    if (!confirm(`หยุดตัดค่าเช่ารายเดือน และคืนเงินประกัน ${thbExact(q.refund)}${q.damage > 0 ? ` (หักค่าเสียหาย ${thbExact(q.damage)})` : ""}? (ยกเลิกไม่ได้)`)) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const data = await post({ action: "end_flex", subscriptionId: r.stripe_subscription_id, damage: q.damage });
+      setNotice(
+        data.refunded || q.refund === 0
+          ? `จบเช่าแล้ว · คืนเงินประกัน ${thbExact(q.refund)} · เงินเข้าบัตรลูกค้าใน 5–10 วันทำการ`
+          : "จบเช่าแล้ว แต่คืนเงินประกันอัตโนมัติไม่สำเร็จ — คืนเองใน Stripe Dashboard",
+      );
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ไม่สำเร็จ");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const settleHold = async (h: HoldRow, action: "capture" | "release") => {
@@ -470,6 +537,57 @@ export default function AdminBillingPage() {
               </table>
             </div>
 
+            <h2 className="text-lg font-bold mb-3">ออเดอร์ซื้อออนไลน์ ({orders.length})</h2>
+            <div className="overflow-x-auto mb-10">
+              <table className="w-full text-sm">
+                <thead className="text-left text-gray-500">
+                  <tr>
+                    <th className="py-2 pr-3">วันที่</th>
+                    <th className="py-2 pr-3">ลูกค้า</th>
+                    <th className="py-2 pr-3">สินค้า</th>
+                    <th className="py-2 pr-3">ยอดจ่าย</th>
+                    <th className="py-2">คืนเงิน</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((o) => {
+                    const left = refundableLeft(o);
+                    return (
+                      <tr key={o.id} className="border-t border-gray-800 align-top">
+                        <td className="py-2 pr-3">{bkk(o.created_at)}</td>
+                        <td className="py-2 pr-3">
+                          {o.company_name || o.customer_name || "—"}
+                          {o.customer_email && <div className="text-xs text-gray-500">{o.customer_email}</div>}
+                        </td>
+                        <td className="py-2 pr-3">
+                          {o.product_id}
+                          {o.units > 1 && ` × ${o.units}`}
+                        </td>
+                        <td className="py-2 pr-3">{thbExact(Number(o.total_thb))}</td>
+                        <td className="py-2">
+                          {Number(o.refunded_thb ?? 0) > 0 && <div className="text-xs text-gray-400">คืนแล้ว {thbExact(Number(o.refunded_thb))}</div>}
+                          {left > 0 ? (
+                            <button onClick={() => refundOrderClick(o)} disabled={busy} className="text-xs border border-red-400 text-red-300 px-2 py-1 rounded disabled:opacity-50">
+                              คืนเงิน
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-500">คืนครบแล้ว</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {orders.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-6 text-center text-gray-500">
+                        ยังไม่มีออเดอร์ที่ชำระแล้ว
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
             <h2 className="text-lg font-bold mb-3">ลูกค้าที่ตัดบัตรรายเดือน ({rows.length})</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -505,6 +623,10 @@ export default function AdminBillingPage() {
                             <button onClick={() => startConvert(r)} className="text-xs text-yellow-300 underline mt-1">
                               เปลี่ยนเป็นซื้อ (หักมัดจำ)
                             </button>
+                            <br />
+                            <button onClick={() => endFlexClick(r)} disabled={busy} className="text-xs text-red-300 underline mt-1 disabled:opacity-50">
+                              จบเช่า + คืนเงินประกัน
+                            </button>
                           </div>
                         )}
                       </td>
@@ -521,7 +643,7 @@ export default function AdminBillingPage() {
               </table>
             </div>
             <p className="text-xs text-gray-500 mt-4">
-              ยกเลิกการเช่า / เปลี่ยนบัตร / คืนเงินประกัน FLEX (Refund เฉพาะยอดเงินประกันในใบแจ้งหนี้แรก) ทำใน Stripe Dashboard · ใบกำกับภาษีออกจาก FlowAccount
+              ยกเลิกเช่าซื้อ / เปลี่ยนบัตร ทำใน Stripe Dashboard · คืนเงินทุกครั้ง Stripe ไม่คืนค่าธรรมเนียม · ใบกำกับ/ใบลดหนี้ออกจาก FlowAccount
             </p>
           </>
         )}

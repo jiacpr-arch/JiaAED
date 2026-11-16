@@ -85,3 +85,8 @@ CREATE POLICY "service_role_aed_rental_billing" ON aed_rental_billing
 DROP POLICY IF EXISTS "service_role_aed_rental_billing_invoices" ON aed_rental_billing_invoices;
 CREATE POLICY "service_role_aed_rental_billing_invoices" ON aed_rental_billing_invoices
   FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- FLEX end of rental from /admin/billing: deposit refund minus damage (2026-11-16)
+ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS deposit_refunded_thb NUMERIC(12, 2);
+ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS damage_thb           NUMERIC(12, 2);
+ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS ended_at             TIMESTAMPTZ;
