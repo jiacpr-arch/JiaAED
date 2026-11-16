@@ -110,10 +110,10 @@ export async function handleCalculatePrice(input: CalculatePriceInput): Promise<
   const lines = [
     `สินค้า: ${product.nameTh}`,
     `จำนวน: ${input.quantity} เครื่อง`,
-    `ราคาต่อเครื่อง: ${formatThaiPrice(result.unitPrice)} (ยังไม่รวม VAT)`,
-    `รวม: ${formatThaiPrice(result.subtotal)}`,
+    `ราคาต่อเครื่อง: ${formatThaiPrice(result.unitPrice)} ex VAT`,
+    `รวม: ${formatThaiPrice(result.subtotal)} ex VAT`,
     `VAT 7%: ${formatThaiPrice(result.vatAmount)}`,
-    `รวมทั้งสิ้น: ${formatThaiPrice(result.grandTotal)}`,
+    `รวมทั้งสิ้น: ${formatThaiPrice(result.grandTotal)} (รวม VAT)`,
     `ระดับราคา: ${result.priceLevel}`,
     `ลดราคาเพิ่มได้: ${result.canDiscount ? "ได้ (ถึง bestPrice)" : "ไม่ได้ — ต้อง escalate"}`,
   ];

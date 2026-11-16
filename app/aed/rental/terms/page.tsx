@@ -28,7 +28,7 @@ export default function RentalTermsPage() {
     </MarketHero>
 
     <section className="market-section"><div className="market-container">
-      <div className="market-section-head"><div><p className="market-eyebrow">AT A GLANCE</p><h2>เทียบเงื่อนไข<br /><em>ทุกแผน.</em></h2></div><p>ค่าเช่าและมัดจำของแต่ละแผนดูได้ในหน้าเช่า ทุกราคายังไม่รวม VAT</p></div>
+      <div className="market-section-head"><div><p className="market-eyebrow">AT A GLANCE</p><h2>เทียบเงื่อนไข<br /><em>ทุกแผน.</em></h2></div><p>ค่าเช่าและมัดจำของแต่ละแผนดูได้ในหน้าเช่า ทุกราคา ex VAT</p></div>
       <div className="overflow-x-auto"><table className="w-full min-w-[640px] border-collapse text-sm bg-white border border-[#dfe5df]">
         <thead><tr className="bg-[#f4f1ea] text-left"><th className="p-3 w-1/5">หัวข้อ</th>{cols.map((c) => <th key={c.key} className="p-3">{c.label}</th>)}</tr></thead>
         <tbody>{rentalTermsTable.map((r) => <tr key={r.topic} className="border-t border-[#dfe5df] align-top"><th scope="row" className="p-3 text-left font-bold text-[#26352b]">{r.topic}</th>{cols.map((c) => <td key={c.key} className="p-3 text-[#48584e]">{r[c.key]}</td>)}</tr>)}</tbody>

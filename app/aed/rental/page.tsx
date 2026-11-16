@@ -118,7 +118,7 @@ export default function RentalPage() {
       <div className="market-grid-3">{shortItems.map((it) => <article className="market-card" key={it.id}>
         <div className="market-card-body"><span className="market-card-kicker">{it.kicker}</span><h3>{it.title}</h3><div className="market-price"><strong>{thb(it.price)}</strong><span>{it.unit}</span></div><ul>{it.lines.map((l) => <li key={l}>{l}</li>)}</ul><p>มัดจำ: {it.deposit}</p><LineLink cta={`rent_short_${it.id}`} product={it.id}>จองผ่าน LINE</LineLink></div>
       </article>)}</div>
-      <p className="market-note">มีแพ็กอื่นด้วย: 3 วัน (ศุกร์–อาทิตย์) {thb(RENTAL_PRICES.eventWeekend)} · 14 วัน {thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง {RENTAL_PRICES.flexMinMonths}–11 เดือน {thb(RENTAL_PRICES.flexMonthly)}/เดือน — <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="rent_short_other" className="market-text-link">ทักถามได้</a> · ราคายังไม่รวม VAT</p>
+      <p className="market-note">มีแพ็กอื่นด้วย: 3 วัน (ศุกร์–อาทิตย์) {thb(RENTAL_PRICES.eventWeekend)} · 14 วัน {thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง {RENTAL_PRICES.flexMinMonths}–11 เดือน {thb(RENTAL_PRICES.flexMonthly)}/เดือน — <a href={LINE_OA} target="_blank" rel="noopener noreferrer" data-line-cta="rent_short_other" className="market-text-link">ทักถามได้</a> · ราคา ex VAT</p>
     </div></section>
 
     <section id="yearly" className="market-section"><div className="market-container">
@@ -132,7 +132,7 @@ export default function RentalPage() {
         <div className="market-feature"><b>สัญญา 3 ปี ลด {threeYearPct}%</b><p>ล็อกราคาไว้ 3 ปี ไม่ต้องต่อสัญญาทุกปี</p></div>
         <div className="market-feature"><b>เป็นค่าใช้จ่าย ไม่ใช่สินทรัพย์</b><p>{RENTAL_EXPENSE_NOTE}</p></div>
       </div>
-      <p className="market-note">ราคายังไม่รวม VAT · มัดจำ {plan("rent-annual").deposit} · <Link href="/aed/subscription" className="market-text-link">ดูตารางเทียบระดับบริการ ↗</Link></p>
+      <p className="market-note">ราคา ex VAT · มัดจำ {plan("rent-annual").deposit} · <Link href="/aed/subscription" className="market-text-link">ดูตารางเทียบระดับบริการ ↗</Link></p>
     </div></section>
 
     {/* Which machine you get when renting (owner, 15 พ.ย. 2026): rentals ship the
@@ -156,7 +156,7 @@ export default function RentalPage() {
       <div className="market-section-head"><div><p className="market-eyebrow">③ อยากเป็นเจ้าของ</p><h2>ผ่อนครบ<br /><em>แล้วเป็นเจ้าของ.</em></h2></div><p>สำหรับองค์กรที่อยากได้เครื่องเป็นทรัพย์สินของตัวเอง รู้ยอดรวมตลอดสัญญาก่อนตัดสินใจ</p></div>
       <div className="market-grid-3">
         {rentToOwnBreakdowns.map((p) => <article className="market-card" key={p.packageId}><div className="market-card-body"><span className="market-card-kicker">เช่าซื้อ</span><h3>{p.model}</h3><div className="market-price"><small>เดือนละ</small><strong>{thb(p.monthly)}</strong><span>× {p.months} เดือน</span></div><ul><li>เงินดาวน์ {thb(p.deposit)} (นิติบุคคล)</li><li>รวมทั้งสัญญา {thb(rentToOwnTotal(p))} · {p.cashPriceLabel}</li><li>เพิ่มตู้ติดผนัง +{thb(RENT_TO_OWN_CABINET_ADDON)} รวมในสัญญาผ่อนได้</li><li>รวม{PACKAGE_TRAINING_PERK}</li><li>ผ่อนครบ เครื่องเป็นของท่าน</li></ul><LineLink cta={`rent_own_${p.packageId}`} product={p.packageId}>ขอเงื่อนไขเช่าซื้อ</LineLink></div></article>)}
-        <article className="market-card"><div className="market-card-body"><span className="market-card-kicker">ซื้อขาด</span><h3>จ่ายครั้งเดียว</h3><div className="market-price"><small>เริ่ม</small><strong>{thb(cheapestBuy)}</strong><span>ก่อน VAT</span></div><ul><li>เทียบรุ่น Y0 / Y8 / Y2</li><li>จัดส่ง ติดตั้ง และอบรมการใช้งาน</li><li>ออกใบกำกับภาษีได้</li></ul><Link href="/aed" className="market-card-link" data-cta="rent_own_buy">ดูรุ่นและราคาซื้อ <span aria-hidden="true">↗</span></Link></div></article>
+        <article className="market-card"><div className="market-card-body"><span className="market-card-kicker">ซื้อขาด</span><h3>จ่ายครั้งเดียว</h3><div className="market-price"><small>เริ่ม</small><strong>{thb(cheapestBuy)}</strong><span>ex VAT</span></div><ul><li>เทียบรุ่น Y0 / Y8 / Y2</li><li>จัดส่ง ติดตั้ง และอบรมการใช้งาน</li><li>ออกใบกำกับภาษีได้</li></ul><Link href="/aed" className="market-card-link" data-cta="rent_own_buy">ดูรุ่นและราคาซื้อ <span aria-hidden="true">↗</span></Link></div></article>
       </div>
       <p className="market-note">{RENT_TO_OWN_ELIGIBILITY} · {RENT_TO_OWN_OWNERSHIP_NOTE} · เมื่อชำระครบสัญญา เครื่องเป็นของผู้เช่าซื้อ เงื่อนไขบริการและภาษีให้ยืนยันในใบเสนอราคา · <Link href="/aed/rental/contract" className="market-text-link" data-cta="rent_own_contract">อ่านตัวอย่างสัญญาเช่าซื้อ</Link></p>
     </div></section>

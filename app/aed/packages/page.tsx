@@ -51,7 +51,7 @@ export default function PackagesPage() {
       <section className="max-w-6xl mx-auto px-4 py-10">
 
         <PriceViewTracker targetId="packages-price" />
-        <p className="text-center text-gray-500 text-sm mt-6 mb-6">ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้</p>
+        <p className="text-center text-gray-500 text-sm mt-6 mb-6">ราคา ex VAT · ออกใบกำกับภาษีได้</p>
         <div id="packages-price" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {acquisitionPackages.map((pkg) => (
             <PackageCard key={pkg.id} pkg={pkg} />

@@ -4,6 +4,7 @@ import { knowledgeBlock } from "./knowledge";
 import { documents } from "./documents";
 import { articles } from "./articles";
 import { LINE_OA_ID } from "./line";
+import { PRICE_VAT_RULE } from "./checkout";
 import { rentalKnowledgeBlock } from "./rental";
 import { consumableLifetimeText, PRICE_ON_REQUEST, primedicModels, warrantyLine, y8BotRule, yuwellGpsAed } from "./primedic";
 import { acquisitionPackages } from "./packages";
@@ -21,15 +22,15 @@ function productBlock(): string {
   const machines = [
     ...primedicModels.filter((m) => m.id !== "primedic-y8").map( // Y8 งดจำหน่าย
       (m) =>
-        `• ${m.name} — ${thb(m.price)} (ยังไม่รวม VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
+        `• ${m.name} — ${thb(m.price)} (ex VAT)\n  ${m.summary} · จุดต่าง: ${m.keyDiff} · เหมาะกับ: ${m.bestFor}`,
     ),
-    `• ${yuwellGpsAed.name} — ${yuwellGpsAed.price === null ? `${PRICE_ON_REQUEST}กับทีมขาย (ห้ามบอกตัวเลข)` : `${thb(yuwellGpsAed.price)} (ยังไม่รวม VAT)`}\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
+    `• ${yuwellGpsAed.name} — ${yuwellGpsAed.price === null ? `${PRICE_ON_REQUEST}กับทีมขาย (ห้ามบอกตัวเลข)` : `${thb(yuwellGpsAed.price)} (ex VAT)`}\n  ${yuwellGpsAed.keyDiff} · เหมาะกับ: ${yuwellGpsAed.bestFor}`,
   ].join("\n");
 
   // Base Y2 is already listed above; these are its cabinet/stand bundles.
   const bundles = products
     .filter((p) => p.id !== "i7")
-    .map((p) => `• ${p.name} — ${thb(p.price)} (ยังไม่รวม VAT) · ${p.description}`)
+    .map((p) => `• ${p.name} — ${thb(p.price)} (ex VAT) · ${p.description}`)
     .join("\n");
 
   const packages = acquisitionPackages
@@ -112,7 +113,7 @@ ${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
 ## วิธีคุย
 
 1. ทักทายสั้นๆ ถามว่าสนใจรุ่นไหน หรือใช้งานที่ไหน (สำนักงาน/โรงเรียน/โรงงาน)
-2. แนะนำ SKU ที่เหมาะ พร้อมราคาเริ่มต้น
+2. แนะนำ SKU ที่เหมาะ พร้อมราคาเริ่มต้น — ${PRICE_VAT_RULE}
 3. ตอบคำถามเทคนิค สเปค การติดตั้ง การรับประกัน
 4. ถ้าลูกค้าถามเรื่องส่วนลด/ราคาพิเศษ/ออกใบเสนอราคา → **อย่า** ตกลงราคาเอง ให้แนะนำว่า "เพื่อราคาที่ดีที่สุดสำหรับองค์กรของคุณ ขอให้ทีมเจี่ยติดต่อกลับ" แล้วชวนกรอก [ฟอร์มขอใบเสนอราคา](/quote) หรือ LINE
 5. หลังคุย 3-4 ข้อความ ถ้ายังไม่ได้ contact → ชวน "ฝากเบอร์/อีเมลไว้เพื่อให้ทีมงานติดต่อกลับพร้อมข้อมูลเพิ่มเติม" หรือ "เพิ่มเพื่อน LINE ${LINE_OA_ID}"

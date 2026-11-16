@@ -4,7 +4,9 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { jsonLd } from "@/lib/aed/json-ld";
 import { MarketPage, MarketButton } from "@/app/components/MarketShell";
+import { BuyOnlineButton, WasPrice } from "@/app/components/BuyOnlineButton";
 import {
+  activePreviousPrice,
   primedicModels,
   primedicSharedSpecs,
   primedicCertifications,
@@ -38,7 +40,7 @@ const LINE_Y2_INSTALLMENT = lineOaUrl("สนใจ AED Yuwell Y2 แบบผ�
 export const metadata: Metadata = {
   title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
   description:
-    `AED Yuwell Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ยังไม่รวม VAT) ` +
+    `AED Yuwell Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ex VAT) ` +
     `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · ` +
     `โทร 090-979-1212 หรือ LINE ${LINE_DISPLAY_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
@@ -159,6 +161,8 @@ function Y2StructuredData() {
 }
 
 export default function YuwellY2Landing() {
+  // Evaluated per (ISR) render so the strike disappears after its showUntil date.
+  const wasPrice = activePreviousPrice(y2);
   return (
     <MarketPage>
       {PRIMEDIC_REGULATORY.published && <Y2StructuredData />}
@@ -174,8 +178,9 @@ export default function YuwellY2Landing() {
           <div><p className="market-eyebrow">รุ่นแนะนำ · จอสี EKG · You Too</p>
             <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
             <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
-            <div className="market-product-price"><strong>{Y2_PRICE}</strong><span>ยังไม่รวม VAT</span></div>
+            <div className="market-product-price">{wasPrice != null && <span className="market-was">ราคาเดิม <WasPrice amount={wasPrice} /></span>}<strong>{Y2_PRICE}</strong><span>ex VAT</span></div>
             <p>หรือผ่อน {y2Installment.priceLabel} × {y2InstallmentTerms.months} เดือน (ดาวน์ ฿{y2InstallmentTerms.deposit.toLocaleString()}) แล้วเป็นเจ้าของ</p>
+            <BuyOnlineButton productId="primedic-y2" className="market-button market-button-primary market-buy" noteClassName="market-buy-note" />
             <div className="market-actions"><MarketButton href={LINE_Y2} lineCta="y2_hero" product="primedic-y2">สอบถาม / ขอใบเสนอราคา</MarketButton><MarketButton href={PHONE_HREF} secondary>โทร {PHONE_DISPLAY}</MarketButton></div>
           </div>
           <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
@@ -314,7 +319,7 @@ export default function YuwellY2Landing() {
           <PriceViewTracker targetId="y2-price" />
           <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-2">เลือกวิธีชำระที่สะดวก</h2>
           <p className="text-center text-gray-500 text-sm mb-8">
-            ราคายังไม่รวม VAT · ออกใบกำกับภาษีได้ · รองรับจัดซื้อภาครัฐ
+            ราคา ex VAT · ออกใบกำกับภาษีได้ · รองรับจัดซื้อภาครัฐ
           </p>
 
           <div id="y2-price" className="grid md:grid-cols-2 gap-5">
@@ -324,9 +329,14 @@ export default function YuwellY2Landing() {
                 คุ้มที่สุด
               </div>
               <h3 className="font-bold text-lg mt-2 mb-1">ซื้อสด</h3>
+              {wasPrice != null && (
+                <div className="text-sm text-gray-500">
+                  ราคาเดิม <WasPrice amount={wasPrice} /> · ลด ฿{(wasPrice - y2.price).toLocaleString()}
+                </div>
+              )}
               <div className="flex items-end gap-2 mb-1">
                 <span className="text-4xl font-black text-gray-900">{Y2_PRICE}</span>
-                <span className="text-sm text-gray-500 mb-1.5">ยังไม่รวม VAT</span>
+                <span className="text-sm text-gray-500 mb-1.5">ex VAT</span>
               </div>
               <ul className="space-y-1.5 my-4 flex-1 text-sm text-gray-700">
                 <li className="flex gap-2"><span className="text-green-600">✓</span> เป็นเจ้าของทันที จบในครั้งเดียว</li>
@@ -335,6 +345,11 @@ export default function YuwellY2Landing() {
                 <li className="flex gap-2"><span className="text-green-600">✓</span> เพิ่มคอร์สอบรม CPR &amp; AED ถึงที่ได้ (สอบถามทีมขาย)</li>
                 <li className="flex gap-2"><span className="text-green-600">✓</span> ราคาพิเศษสำหรับหน่วยงาน / ซื้อหลายเครื่อง</li>
               </ul>
+              <BuyOnlineButton
+                productId="primedic-y2"
+                className="block w-full bg-red-600 text-white font-bold text-center py-3 rounded-full hover:bg-red-700 transition-colors mb-1"
+                noteClassName="text-center text-xs text-gray-500 mb-3"
+              />
               <a
                 href={LINE_Y2}
                 target="_blank"

@@ -56,6 +56,10 @@
     {
       "path": "/api/cron/data-retention",
       "schedule": "25 20 * * *"
+    },
+    {
+      "path": "/api/cron/rental-holds",
+      "schedule": "0 2,9 * * *"
     }
   ]
 }

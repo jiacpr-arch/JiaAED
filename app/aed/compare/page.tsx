@@ -38,7 +38,7 @@ const rows: { label: string; y0: Cell; y8: Cell; y2: Cell; gps: Cell }[] = [
   { label: "จอสีแสดงคลื่นหัวใจ (EKG)", y0: false, y8: false, y2: true, gps: false },
   { label: "GPS ติดตามตำแหน่ง + เช็คสถานะเครื่องออนไลน์", y0: false, y8: false, y2: false, gps: true },
   { label: "เอกสารสเปกสำหรับจัดซื้อ (TOR)", y0: "สอบถาม", y8: "—", y2: true, gps: "สอบถาม" },
-  { label: "ราคา (ก่อน VAT)", y0: price("primedic-y0"), y8: Y8_STATUS, y2: price("primedic-y2"), gps: gpsPrice },
+  { label: "ราคา (ex VAT)", y0: price("primedic-y0"), y8: Y8_STATUS, y2: price("primedic-y2"), gps: gpsPrice },
 ];
 
 function show(v: Cell) {
