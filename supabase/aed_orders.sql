@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS aed_orders (
   payment_intent_id  TEXT,
   status             TEXT NOT NULL CHECK (status IN ('pending', 'paid', 'failed')),
   product_id         TEXT NOT NULL,
+  units              INT NOT NULL DEFAULT 1,
+  credit_thb         NUMERIC(12, 2) NOT NULL DEFAULT 0,  -- deposit/rent credited
+  converts_from      TEXT,           -- FLEX subscription this purchase replaces
   net_thb            NUMERIC(12, 2) NOT NULL,
   vat_thb            NUMERIC(12, 2) NOT NULL,
   total_thb          NUMERIC(12, 2) NOT NULL,

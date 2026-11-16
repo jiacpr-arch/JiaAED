@@ -12,6 +12,7 @@
  *   invoice.paid                               (rental monthly charge)
  *   invoice.payment_failed
  *   customer.subscription.deleted
+ *   payment_intent.canceled                    (event-rental card hold expired)
  *
  * Until STRIPE_WEBHOOK_SECRET is set this keeps the old "tombstone" behaviour
  * (answer 200, do nothing) so the endpoint still registered in the Dashboard
@@ -22,7 +23,8 @@ import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/aed/stripe";
 import { pushToOwner } from "@/lib/aed/notify-owner";
-import { RENTAL_EVENTS, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
+import { RENTAL_EVENTS, finalizeConversion, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
+import { handleHoldCanceled, handleHoldCheckout } from "@/lib/aed/rental-holds-webhook";
 import { orderAlertText, orderFromSession, type OrderStatus, type SessionLike } from "@/lib/aed/orders";
 
 export const runtime = "nodejs";
@@ -55,10 +57,19 @@ export async function POST(req: Request): Promise<NextResponse> {
       const r = await handleRentalEvent(createAdminClient(), event);
       return NextResponse.json({ received: true, rental: r.handled, note: r.note });
     }
+    if (event.type === "payment_intent.canceled") {
+      const r = await handleHoldCanceled(createAdminClient(), event.data.object as Stripe.PaymentIntent);
+      return NextResponse.json({ received: true, hold: r.handled });
+    }
     const obj = event.data.object as Stripe.Checkout.Session;
     if (event.type === "checkout.session.completed" && obj.mode === "subscription") {
       const r = await handleRentalCheckout(stripe, createAdminClient(), obj);
       return NextResponse.json({ received: true, rental: r.handled, note: r.note });
+    }
+    // Event-rental card hold (manual capture → the session completes "unpaid").
+    if (event.type === "checkout.session.completed" && obj.metadata?.kind === "rental_hold") {
+      const r = await handleHoldCheckout(stripe, createAdminClient(), obj);
+      return NextResponse.json({ received: true, hold: r.handled, note: r.note });
     }
   } catch (e) {
     console.error("[AED] rental billing webhook failed:", e);
@@ -82,6 +93,18 @@ export async function POST(req: Request): Promise<NextResponse> {
 
   const order = orderFromSession(session as unknown as SessionLike, status);
   const db = createAdminClient();
+
+  // A FLEX renter bought the machine (admin "convert" link): stop the old rent.
+  // Idempotent, so it also runs on retries before the duplicate check.
+  const convertsFrom = session.metadata?.converts_from;
+  if (status === "paid" && convertsFrom) {
+    try {
+      await finalizeConversion(stripe, db, convertsFrom, Number(session.metadata?.credit_thb) || 0);
+    } catch (e) {
+      console.error("[AED] conversion finalize failed:", e);
+      return NextResponse.json({ ok: false, error: "conversion_error" }, { status: 500 }); // Stripe retries
+    }
+  }
 
   const { data: existing } = await db
     .from("aed_orders")

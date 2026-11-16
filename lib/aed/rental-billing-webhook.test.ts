@@ -5,7 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 const pushed: string[] = [];
 vi.mock("./notify-owner", () => ({ pushToOwner: async (t: string) => (pushed.push(t), true) }));
 
-const { handleRentalCheckout, handleRentalEvent } = await import("./rental-billing-webhook");
+const { finalizeConversion, handleRentalCheckout, handleRentalEvent } = await import("./rental-billing-webhook");
 
 // ── Minimal in-memory stand-in for the supabase-js calls the handler makes ──
 type Rec = Record<string, unknown>;
@@ -72,6 +72,7 @@ function fakeStripe() {
     subscriptions: {
       retrieve: async () => ({ id: "sub_1", billing_cycle_anchor: ANCHOR, start_date: ANCHOR - 30 * 86400, cancel_at: null }),
       update: async (_id: string, p: Rec) => (updates.push(p), { id: "sub_1", billing_cycle_anchor: ANCHOR, cancel_at: p.cancel_at }),
+      cancel: async (id: string, p: Rec) => (updates.push({ cancel: id, ...p }), { id }),
     },
   } as unknown as Stripe;
   return { stripe, updates };
@@ -170,5 +171,35 @@ describe("rental billing webhook", () => {
     await handleRentalEvent(db, deleted);
     expect(tables.aed_rental_billing[0].status).toBe("completed");
     expect(pushed).toHaveLength(0);
+  });
+
+  it("conversion: stops the FLEX rent once, no refund, no cancellation alert", async () => {
+    const { db, tables } = fakeDb();
+    const { stripe, updates } = fakeStripe();
+    const flexMd = { ...md, plan_id: "flex", months_total: "" };
+    await handleRentalCheckout(stripe, db, { ...session, metadata: flexMd } as Stripe.Checkout.Session);
+    pushed.length = 0;
+    updates.length = 0;
+
+    await finalizeConversion(stripe, db, "sub_1", 10_000);
+    await finalizeConversion(stripe, db, "sub_1", 10_000); // webhook retry
+    expect(updates).toEqual([{ cancel: "sub_1", prorate: false, invoice_now: false }]);
+    expect(tables.aed_rental_billing[0].status).toBe("converted");
+    expect(pushed).toHaveLength(1);
+    expect(pushed[0]).toContain("ไม่ต้องคืนเงินประกัน");
+
+    const deleted = { type: "customer.subscription.deleted", data: { object: { id: "sub_1", metadata: flexMd, cancellation_details: { reason: "cancellation_requested" } } } } as unknown as Stripe.Event;
+    await handleRentalEvent(db, deleted);
+    expect(tables.aed_rental_billing[0].status).toBe("converted");
+    expect(pushed).toHaveLength(1);
+  });
+
+  it("rent-to-own link made from a conversion finalizes on checkout", async () => {
+    const { db, tables } = fakeDb();
+    const { stripe, updates } = fakeStripe();
+    tables.aed_rental_billing.push({ stripe_subscription_id: "sub_old", plan_id: "flex", units: 1, status: "active", installments_paid: 2, months_total: null });
+    await handleRentalCheckout(stripe, db, { ...session, metadata: { ...md, converts_from: "sub_old", credit_thb: "10000" } } as Stripe.Checkout.Session);
+    expect(tables.aed_rental_billing.find((r) => r.stripe_subscription_id === "sub_old")!.status).toBe("converted");
+    expect(updates).toContainEqual({ cancel: "sub_old", prorate: false, invoice_now: false });
   });
 });

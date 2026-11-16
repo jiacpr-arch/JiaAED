@@ -30,6 +30,36 @@ async function loadRow(db: SupabaseClient, subId: string): Promise<(RentalBillin
   return (data as (RentalBillingRow & { status: string }) | null) ?? null;
 }
 
+/**
+ * A FLEX renter paid for the machine they keep (buy or rent-to-own link made
+ * with action "convert"): stop the old monthly rent. The deposit was credited
+ * on the new payment, so nothing is refunded. Marked first so the
+ * customer.subscription.deleted that follows doesn't alert as a cancellation.
+ * Idempotent.
+ */
+export async function finalizeConversion(stripe: Stripe, db: SupabaseClient, sourceSubId: string, creditThb: number): Promise<void> {
+  const row = await loadRow(db, sourceSubId);
+  if (!row || row.status === "converted") return;
+  await db
+    .from("aed_rental_billing")
+    .update({ status: "converted", updated_at: new Date().toISOString() })
+    .eq("stripe_subscription_id", sourceSubId);
+  try {
+    await stripe.subscriptions.cancel(sourceSubId, { prorate: false, invoice_now: false });
+  } catch (e) {
+    const code = (e as { code?: string }).code;
+    if (code !== "resource_missing") {
+      await pushToOwner(`⚠️ ยกเลิกการตัดค่าเช่าเดิมไม่สำเร็จ (${sourceSubId}) — ยกเลิกเองใน Stripe Dashboard`);
+      throw e;
+    }
+  }
+  await pushToOwner(
+    `🔁 ลูกค้าเปลี่ยนจากเช่าเป็นซื้อ/เช่าซื้อแล้ว — หยุดตัดค่าเช่าเดิม\n` +
+      `${row.company_name || row.customer_name || "ลูกค้า"}${row.contract_ref ? ` · สัญญา ${row.contract_ref}` : ""}\n` +
+      `หักเงินประกัน/ค่าเช่าไป ${creditThb.toLocaleString("en-US")} บาท (ไม่ต้องคืนเงินประกัน) · รับเครื่องเช่าเดิมเป็นของลูกค้า/ออกเอกสารโอน`,
+  );
+}
+
 /** checkout.session.completed for a rental link: set the end date, record, alert. */
 export async function handleRentalCheckout(stripe: Stripe, db: SupabaseClient, session: Stripe.Checkout.Session): Promise<Result> {
   if (session.mode !== "subscription" || !isRental(session.metadata)) return { handled: false };
@@ -79,6 +109,7 @@ export async function handleRentalCheckout(stripe: Stripe, db: SupabaseClient, s
     const firstInstalment = plan.firstMonthUpfront ? null : sub.billing_cycle_anchor;
     await pushToOwner(rentalStartedText(row, (session.amount_total ?? 0) / 100, firstInstalment));
   }
+  if (md.converts_from) await finalizeConversion(stripe, db, md.converts_from, Number(md.credit_thb) || 0);
   return { handled: true };
 }
 
@@ -93,7 +124,7 @@ export async function handleRentalEvent(db: SupabaseClient, event: Stripe.Event)
     const sub = event.data.object as Stripe.Subscription;
     if (!isRental(sub.metadata)) return { handled: false };
     const row = await loadRow(db, sub.id);
-    if (!row || row.status === "completed" || row.status === "canceled") return { handled: true };
+    if (!row || ["completed", "canceled", "converted"].includes(row.status)) return { handled: true };
     const done = row.months_total != null && row.installments_paid >= row.months_total;
     await db
       .from("aed_rental_billing")

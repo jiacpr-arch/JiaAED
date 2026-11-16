@@ -40,6 +40,9 @@ export type OrderRow = {
   payment_intent_id: string | null;
   status: OrderStatus;
   product_id: string;
+  units: number;
+  credit_thb: number; // deposit / rent credited (admin "convert" links)
+  converts_from: string | null; // FLEX subscription this purchase replaces
   net_thb: number;
   vat_thb: number;
   total_thb: number;
@@ -69,6 +72,9 @@ export function orderFromSession(s: SessionLike, status: OrderStatus, now = new 
     payment_intent_id: pi ? (typeof pi === "string" ? pi : pi.id) : null,
     status,
     product_id: s.metadata?.product_id ?? "unknown",
+    units: Number(s.metadata?.units) || 1,
+    credit_thb: Number(s.metadata?.credit_thb) || 0,
+    converts_from: s.metadata?.converts_from || null,
     net_thb: Number.isFinite(net) ? net : total,
     vat_thb: Number.isFinite(vat) ? vat : 0,
     total_thb: total,
@@ -106,8 +112,9 @@ export function orderAlertText(o: OrderRow): string {
         : "⏳ ออเดอร์ออนไลน์ — รอชำระเงิน";
   const lines: (string | null)[] = [
     head,
-    `รุ่น: ${item?.name ?? o.product_id} × 1`,
-    `ยอด: ${thbExact(o.total_thb)} (ก่อน VAT ${thbExact(o.net_thb)} + VAT ${thbExact(o.vat_thb)})`,
+    `รุ่น: ${item?.name ?? o.product_id} × ${o.units}`,
+    `ยอด: ${thbExact(o.total_thb)} (ก่อน VAT ${thbExact(o.net_thb)} + VAT ${thbExact(o.vat_thb)}${o.credit_thb > 0 ? ` − หักเงินประกัน/ค่าเช่า ${thbExact(o.credit_thb)}` : ""})`,
+    o.converts_from ? "เปลี่ยนจากเช่า FLEX → ซื้อ (ใบกำกับภาษีออกเต็มราคา บันทึกเงินประกันเป็นรับชำระ)" : null,
     o.payment_method ? `ช่องทาง: ${METHOD_TH[o.payment_method] ?? o.payment_method}` : null,
     o.customer_name ? `ชื่อ: ${o.customer_name}` : null,
     o.customer_phone ? `โทร: ${o.customer_phone}` : null,
