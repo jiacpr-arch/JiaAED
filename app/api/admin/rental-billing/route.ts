@@ -10,6 +10,7 @@
  *     "release"  → cancel a hold without charging (rental cancelled)
  *     "refund_order" → refund all or part of a paid online order
  *     "end_flex" → FLEX machine returned: stop rent, refund deposit − damage
+ *     "refund_hold" → refund part of a captured hold (full hold taken before expiry)
  *
  * Links expire after 23 h (Stripe's maximum is 24 h) — create a new one if it lapses.
  */
@@ -25,7 +26,7 @@ import {
   createRentalSession,
   type CustomerInfo,
 } from "@/lib/aed/checkout-sessions";
-import { endFlexRental, refundOrder } from "@/lib/aed/refund-actions";
+import { endFlexRental, refundHold, refundOrder } from "@/lib/aed/refund-actions";
 import { MAX_RENTAL_UNITS, findRentalPlan, quoteRental, quoteSummary } from "@/lib/aed/rental-billing";
 import { conversionQuote, conversionSummary, depositOf, findConversionTarget } from "@/lib/aed/rental-conversion";
 import {
@@ -238,6 +239,11 @@ export async function POST(req: Request) {
 
     if (action === "refund_order") {
       const r = await refundOrder(stripe, db, num(body.orderId), num(body.amount));
+      return r.ok ? NextResponse.json(r) : bad(r.error, r.status);
+    }
+
+    if (action === "refund_hold") {
+      const r = await refundHold(stripe, db, num(body.holdId), num(body.keep), body.preview === true);
       return r.ok ? NextResponse.json(r) : bad(r.error, r.status);
     }
 

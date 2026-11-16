@@ -90,3 +90,6 @@ CREATE POLICY "service_role_aed_rental_billing_invoices" ON aed_rental_billing_i
 ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS deposit_refunded_thb NUMERIC(12, 2);
 ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS damage_thb           NUMERIC(12, 2);
 ALTER TABLE aed_rental_billing ADD COLUMN IF NOT EXISTS ended_at             TIMESTAMPTZ;
+
+-- Late return: a hold captured in full before expiry, excess refunded later (2026-11-16)
+ALTER TABLE aed_rental_holds ADD COLUMN IF NOT EXISTS refunded_thb NUMERIC(12, 2) NOT NULL DEFAULT 0;

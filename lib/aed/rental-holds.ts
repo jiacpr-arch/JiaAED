@@ -9,6 +9,7 @@
 // within HOLD_MAX_RETURN_DAYS of today, and a cron reminds the team before the
 // hold expires. Longer rentals keep the cash deposit.
 import { RENTAL_DEPOSITS, RENTAL_PRICES } from "./rental";
+import { RENTAL_LATE_RETURN_PER_DAY } from "./rental-prices";
 import { thbExact, vatOf } from "./checkout";
 
 export type HoldPackageId = "event-day" | "event-weekend";
@@ -76,6 +77,26 @@ export function captureAmount(q: { rentGross: number; authorizeTotal: number }, 
   return Math.min(r2(q.rentGross + Math.max(0, damage)), q.authorizeTotal);
 }
 
+// ─── Late return ──────────────────────────────────────────────────────────────
+// Contract (rental terms): late return is charged per day at the next-day event
+// rate. It is captured from the same hold as rent, so it only works while the
+// hold is alive — if the machine still isn't back near the expiry, the team
+// captures the whole hold (rent + deposit) and refunds the excess on return.
+
+/** Whole days past the return date (Bangkok), 0 if not late. */
+export function lateDays(returnDate: string | null, now: Date = new Date()): number {
+  if (!returnDate || !/^\d{4}-\d{2}-\d{2}$/.test(returnDate)) return 0;
+  const todayBkk = new Date(now.getTime() + 7 * 3_600_000).toISOString().slice(0, 10);
+  const diff = (Date.parse(`${todayBkk}T00:00:00Z`) - Date.parse(`${returnDate}T00:00:00Z`)) / 86_400_000;
+  return Math.max(0, Math.round(diff));
+}
+
+/** Late-return charge incl. VAT for `units` machines. */
+export function lateFee(days: number, units: number): number {
+  const net = RENTAL_LATE_RETURN_PER_DAY * days * units;
+  return r2(net + vatOf(net));
+}
+
 export function holdSummary(pkg: HoldPackage, days: number, units: number): string {
   const q = holdQuote(pkg, days, units);
   return `กันวงเงินบัตร ${thbExact(q.authorizeTotal)} (ค่าเช่า ${thbExact(q.rentGross)} รวม VAT + มัดจำ ${thbExact(q.hold)}) — ยังไม่ตัดเงิน · คืนเครื่องแล้วตัดเฉพาะค่าเช่า ส่วนที่เหลือปล่อยคืนบัตรอัตโนมัติ`;
@@ -118,7 +139,11 @@ export function holdAuthorizedText(h: HoldRow): string {
 export function holdExpiringText(holds: HoldRow[]): string {
   return [
     `⏰ วงเงินบัตรเช่าอีเวนต์ใกล้หมดอายุ ${holds.length} รายการ — กด "เก็บค่าเช่า" ใน /admin/billing`,
-    ...holds.map((h) => `• ${who(h)} — ค่าเช่า ${thbExact(Number(h.rent_thb))} · หมดอายุ ${bkkTime(h.capture_before)}`),
+    ...holds.map((h) => {
+      const late = lateDays(h.return_date);
+      return `• ${who(h)} — ค่าเช่า ${thbExact(Number(h.rent_thb))} · หมดอายุ ${bkkTime(h.capture_before)}${late > 0 ? ` · ⚠️ เลยกำหนดคืน ${late} วัน` : ""}`;
+    }),
+    "ยังไม่ได้เครื่องคืน? กด \"เก็บค่าเช่า\" แล้วเลือกเก็บเต็มวงเงินก่อนหมดอายุ แล้วคืนส่วนเกินทีหลัง",
   ].join("\n");
 }
 

@@ -56,3 +56,15 @@ export function flexEndText(r: { company_name: string | null; customer_name: str
     .filter(Boolean)
     .join("\n");
 }
+
+/**
+ * Hold captured in full (late return), machine back: keep rent + late fee +
+ * damage, refund the rest minus the share of Stripe's fee that falls on the
+ * refunded part (Stripe keeps its fee on refunds; the renter bears it).
+ */
+export function holdRefundQuote(captured: number, keep: number, stripeFee: number) {
+  const k = Math.min(Math.max(0, r2(keep)), captured);
+  const excess = r2(captured - k);
+  const feeOnExcess = captured > 0 ? Math.ceil((stripeFee * excess) / captured * 100) / 100 : 0;
+  return { captured, keep: k, excess, feeOnExcess, refund: Math.max(0, r2(excess - feeOnExcess)) };
+}
