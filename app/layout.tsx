@@ -78,6 +78,9 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// fab:false — the footer's "ตั้งค่าคุกกี้" reopens settings; no extra floating button.
+const JIA_CONSENT_CONFIG = `window.JIA_CONSENT={color:'#eb624b',onColor:'#ffffff',simple:true,compact:true,fab:false,bannerBottom:84,policyUrl:'/privacy',compactText:'ใช้คุกกี้เพื่อพัฒนาบริการ JIA AED'};`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -86,6 +89,12 @@ export default function RootLayout({
   return (
     <html lang="th">
       <head>
+        {/* Shared JIA cookie consent (PDPA) — one compact bar on every JIA site.
+            Loaded synchronously so Consent Mode defaults land before any tag;
+            CookieConsent mirrors the choice and gates the trackers. */}
+        <script dangerouslySetInnerHTML={{ __html: JIA_CONSENT_CONFIG }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts -- consent defaults must land before tags */}
+        <script src="/jia-consent.js" />
         <StructuredData />
       </head>
       <body
