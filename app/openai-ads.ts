@@ -49,15 +49,14 @@ export function setPixelConsent(accepted: boolean) {
   } catch { /* Business UI remains usable if storage, CSP or the SDK fails. */ }
 }
 
-function measure(name: string, type: string, customName?: string) {
+function measure(name: string, type: string, options: { custom_event_name?: string; event_id?: string } = {}) {
   try {
     if (!OPENAI_ADS_ENABLED || typeof window === "undefined") return;
     if (!allowedHost()) return;
     const w = window as PixelWindow;
     if (!w.jiaOpenAiAds?.enabled || !w.jiaOpenAiAds.initialized) return;
     // No identity, form data, URL, product name or medical detail enters event data.
-    const options = customName ? { opt_out: true, custom_event_name: customName } : { opt_out: true };
-    w.oaiq?.("measure", name, { type }, options);
+    w.oaiq?.("measure", name, { type }, { opt_out: true, ...options });
   } catch { /* Reporting errors never affect forms, navigation or calls. */ }
 }
 
@@ -72,11 +71,14 @@ export function pixelPageView(path: string | null) {
 }
 
 export function pixelIntent(name: "contact_line" | "contact_phone" | "quote_email_intent" | "support_email_intent") {
-  measure("custom", "custom", name);
+  measure("custom", "custom", { custom_event_name: name });
 }
 
 // Only call after the server confirms a persisted, non-skipped lead.
-export function pixelLeadCreated() { measure("lead_created", "customer_action"); }
+export function pixelLeadCreated(leadId: unknown) {
+  if (typeof leadId !== "string" || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(leadId)) return;
+  measure("lead_created", "customer_action", { event_id: "lead:" + leadId.toLowerCase() });
+}
 
 export function trackPixelContact(event: MouseEvent) {
   try {

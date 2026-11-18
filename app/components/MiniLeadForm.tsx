@@ -199,6 +199,7 @@ export function MiniLeadForm({
         error?: string;
         message?: string;
         skipped?: string;
+        leadId?: string;
       };
       if (!res.ok || !json.ok) {
         const errCode = json.error ?? "unknown";
@@ -221,7 +222,7 @@ export function MiniLeadForm({
       }
 
       if (!json.skipped) {
-        pixelLeadCreated();
+        pixelLeadCreated(json.leadId);
         trackEvent("lead_form_submit", { variant, product_id: "none" });
 
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;

@@ -40,6 +40,7 @@ export function CookieConsent() {
   useEffect(() => {
     const sync = (c: JiaConsent) => {
       if (!c) {
+        setPixelConsent(false);
         // No answer in the new bar yet: forget answers from the old banner.
         if (readConsent() !== null) {
           try { window.localStorage.removeItem(CONSENT_STORAGE_KEY); } catch { /* optional */ }

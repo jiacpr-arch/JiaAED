@@ -8,6 +8,7 @@ export function OpenAIAds() {
     setPixelConsent(true);
     document.addEventListener("click", trackPixelContact, true);
     return () => {
+      setPixelConsent(false);
       document.removeEventListener("click", trackPixelContact, true);
     };
   }, []);
