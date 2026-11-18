@@ -38,6 +38,10 @@ export async function POST(req: Request) {
     const liveHost = ["jiaaed.com","www.jiaaed.com"].includes(new URL(req.url).hostname);
     const managed = liveHost && process.env.OPENAI_ADS_WEBHOOK_ENABLED === "true";
     const receipt = managed ? receiptFromCookies(req.headers.get("cookie")) : null;
+    if (receipt) {
+      try { await purchaseOperation("register", {receipt: receipt.receipt}); }
+      catch { console.warn("[AED] measurement consent unavailable"); }
+    }
     const session = await createOrderSession(stripe, {item, metadata: {
       openai_storefront: "1", ...(managed ? {openai_delivery: "webhook_v1"} : {})
     }});

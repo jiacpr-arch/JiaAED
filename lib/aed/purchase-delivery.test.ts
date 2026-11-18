@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {receiptFromCookies,deliverPurchase} from './purchase-delivery.mjs';
 const receipt='67e55044-10b1-426f-9247-bb680e5fe0c8';
 const grant='jia_consent='+encodeURIComponent(JSON.stringify({v:1,marketing:true}));
-const consentCookie='__Host-jia_ads_receipt='+receipt;
+const consentCookie='__Secure-jia_aed_ads_receipt='+receipt;
 test('checkout attribution requires an unambiguous cookie and an explicit current choice',()=>{
   assert.equal(receiptFromCookies(consentCookie),null);
   assert.equal(receiptFromCookies(grant+'; '+consentCookie+'; '+consentCookie),null);

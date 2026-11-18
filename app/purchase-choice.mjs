@@ -4,17 +4,18 @@ export function syncPurchaseChoice(granted) {
   if (typeof window === 'undefined' || !['jiaaed.com','www.jiaaed.com'].includes(location.hostname)) return;
   const attributes = '; Path=/; Secure; SameSite=Lax';
   const read = key => document.cookie.split('; ').find(c => c.startsWith(key + '='))?.slice(key.length + 1);
-  const key = '__Host-jia_ads_receipt';
+  const key = '__Secure-jia_aed_ads_receipt';
+  const receiptAttributes = attributes + '; Domain=jiaaed.com';
   const campaignKey = '__Host-jia_ads_campaign';
   const pending = 'jia-ads-pending-revoke:';
   try {
     const token = read(key);
     if (!granted) {
       if (token) localStorage.setItem(pending + token, '1');
-      document.cookie = key + '=; Max-Age=0' + attributes;
+      document.cookie = key + '=; Max-Age=0' + receiptAttributes;
       document.cookie = campaignKey + '=; Max-Age=0' + attributes;
     } else {
-      if (!token) document.cookie = key + '=' + crypto.randomUUID() + '; Max-Age=2592000' + attributes;
+      if (!token) document.cookie = key + '=' + crypto.randomUUID() + '; Max-Age=2592000' + receiptAttributes;
       const params = new URLSearchParams(location.search);
       if (params.get('utm_source') === 'chatgpt' && params.get('utm_campaign') === 'jiaaed_quote')
         document.cookie = campaignKey + '=jiaaed_quote; Max-Age=2592000' + attributes;

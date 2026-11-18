@@ -29,15 +29,20 @@ declare
   row_data public.aed_ads_delivery;
   denied boolean;
 begin
-  if op in ('bind','revoke') then
-    insert into public.aed_ads_receipts(receipt,revoked) values(token,op='revoke')
-    on conflict(receipt) do update set revoked=public.aed_ads_receipts.revoked or excluded.revoked
-    returning revoked into denied;
-    if denied then
-      update public.aed_ads_delivery set oppref=null,campaign=null where receipt=token;
-    elsif op='bind' then
+  if op='register' then
+    insert into public.aed_ads_receipts(receipt) values(token) on conflict do nothing;
+    return '{}';
+  end if;
+  if op='revoke' then
+    update public.aed_ads_receipts set revoked=true where receipt=token;
+    update public.aed_ads_delivery set oppref=null,campaign=null where receipt=token;
+    return '{}';
+  end if;
+  if op='bind' then
+    select revoked into denied from public.aed_ads_receipts where receipt=token for update;
+    if found and not denied then
       insert into public.aed_ads_delivery(session_id,receipt,campaign,oppref)
-      values(sid, token, payload->>'campaign',payload->>'oppref') on conflict do nothing;
+      values(sid,token,payload->>'campaign',payload->>'oppref') on conflict do nothing;
     end if;
     return '{}';
   end if;
