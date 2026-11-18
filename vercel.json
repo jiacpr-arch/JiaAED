@@ -27,7 +27,7 @@
     },
     {
       "path": "/api/cron/flush-notify-queue",
-      "schedule": "*/3 1-12 * * *"
+      "schedule": "*/3 * * * *"
     },
     {
       "path": "/api/cron/ai-seo-health",
