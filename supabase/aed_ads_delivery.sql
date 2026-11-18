@@ -1,6 +1,7 @@
 begin;
 create table public.aed_ads_receipts (
   receipt uuid primary key,
+  created_at timestamptz not null default now(),
   revoked boolean not null default false
 );
 create table public.aed_ads_delivery (
@@ -15,6 +16,8 @@ create table public.aed_ads_delivery (
   lease_until timestamptz
 );
 create index on public.aed_ads_delivery(receipt);
+create index on public.aed_ads_receipts(created_at);
+create index on public.aed_ads_delivery(created_at) where oppref is not null;
 alter table public.aed_ads_receipts enable row level security;
 alter table public.aed_ads_delivery enable row level security;
 revoke all on public.aed_ads_receipts, public.aed_ads_delivery from public, anon, authenticated;
@@ -29,12 +32,21 @@ declare
   row_data public.aed_ads_delivery;
   denied boolean;
 begin
+  if op='cleanup' then
+    update public.aed_ads_delivery set oppref=null where oppref is not null and created_at < now()-interval '2 days';
+    delete from public.aed_ads_receipts r where r.created_at < now()-interval '31 days'
+      and not exists(select 1 from public.aed_ads_delivery d where d.receipt=r.receipt);
+    return '{}';
+  end if;
   if op='register' then
     insert into public.aed_ads_receipts(receipt) values(token) on conflict do nothing;
     return '{}';
   end if;
   if op='revoke' then
-    update public.aed_ads_receipts set revoked=true where receipt=token;
+    -- Withdrawal from another tab may arrive before the checkout registers.
+    -- Keep a short-lived tombstone even in this order; register never re-grants it.
+    insert into public.aed_ads_receipts(receipt,revoked) values(token,true)
+    on conflict(receipt) do update set revoked=true;
     update public.aed_ads_delivery set oppref=null,campaign=null where receipt=token;
     return '{}';
   end if;
