@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   if (!item) return NextResponse.json({ ok: false, error: "unknown_product" }, { status: 400 });
 
   try {
-    const session = await createOrderSession(stripe, { item });
+    const session = await createOrderSession(stripe, { item, metadata: { openai_storefront: "1" } });
     if (!session.url) throw new Error("Stripe returned no checkout URL");
     return NextResponse.redirect(session.url, 303);
   } catch (e) {

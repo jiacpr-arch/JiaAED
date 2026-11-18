@@ -165,6 +165,7 @@ export function QuoteForm({
         ok?: boolean;
         message?: string;
         skipped?: string;
+        leadId?: string;
       };
 
       if (!res.ok || !json.ok) {
@@ -175,7 +176,7 @@ export function QuoteForm({
 
       submittedRef.current = true;
       if (!json.skipped) {
-        pixelLeadCreated();
+        pixelLeadCreated(json.leadId);
         trackEvent("lead_form_submit", { variant, product_id: productId || "none" });
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
         if (hasMarketingConsent() && typeof gtag === "function") {
