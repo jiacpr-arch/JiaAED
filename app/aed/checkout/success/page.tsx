@@ -1,3 +1,4 @@
+import { OpenAIPurchase } from "./OpenAIPurchase";
 import type { Metadata } from "next";
 import { MarketPage, MarketButton } from "@/app/components/MarketShell";
 import { getStripe } from "@/lib/aed/stripe";
@@ -21,6 +22,7 @@ type View = {
   rental?: string;
   /** Event-rental card hold: nothing charged yet. */
   hold?: boolean;
+  measurable?: boolean;
 };
 
 async function loadSession(id: string | undefined): Promise<View> {
@@ -44,6 +46,7 @@ async function loadSession(id: string | undefined): Promise<View> {
       rental: plan ? quoteSummary(plan, Number(s.metadata?.units) || 1) : undefined,
       total: s.amount_total != null ? s.amount_total / 100 : undefined,
       email: s.customer_details?.email,
+      measurable: s.livemode && s.payment_status === "paid" && s.metadata?.openai_storefront === "1",
     };
   } catch {
     return { state: "unknown" };
@@ -58,6 +61,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
 
   return (
     <MarketPage>
+      {v.measurable && session_id && <OpenAIPurchase sessionId={session_id} />}
       <section className="market-section">
         <div className="market-container" style={{ maxWidth: 640 }}>
           <p className="market-eyebrow">{v.state === "paid" ? "PAYMENT RECEIVED" : "ORDER RECEIVED"}</p>
