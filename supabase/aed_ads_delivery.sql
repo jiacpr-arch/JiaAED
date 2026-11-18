@@ -23,6 +23,8 @@ alter table public.aed_ads_delivery enable row level security;
 revoke all on public.aed_ads_receipts, public.aed_ads_delivery from public, anon, authenticated;
 grant select, insert, update on public.aed_ads_receipts, public.aed_ads_delivery to service_role;
 
+grant delete on public.aed_ads_receipts to service_role;
+
 -- All clients use the service role. A revocation always wins over a late bind.
 create function public.aed_ads_delivery_op(op text, payload jsonb)
 returns jsonb language plpgsql security invoker set search_path = '' as $$
