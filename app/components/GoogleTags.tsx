@@ -62,8 +62,14 @@ export function GoogleTags() {
                   content: localStorage.getItem('jiaaed_utm_content'),
                 },
                 fingerprint: fp,
-                pageUrl: window.location.href,
-                referrer: document.referrer || null,
+                // Click identifiers are carried separately above. Never send
+                // query strings or fragments (which may contain contact data,
+                // tokens, or private campaign parameters) in visit metadata.
+                pageUrl: window.location.origin + window.location.pathname,
+                referrer: (function () {
+                  try { return document.referrer ? new URL(document.referrer).origin : null; }
+                  catch (_) { return null; }
+                })(),
               };
               fetch('/api/aed/track-visit', {
                 method: 'POST',
