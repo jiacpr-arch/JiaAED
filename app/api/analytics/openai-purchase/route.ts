@@ -17,6 +17,7 @@ export async function POST(req: Request) {
     const stripe = getStripe();
     if (!stripe) return new Response(null, { status: 503 });
     const session = await stripe.checkout.sessions.retrieve(body.sessionId, { expand: ["payment_intent.latest_charge"] }, { timeout: 3000, maxNetworkRetries: 0 });
+    if (session.metadata?.openai_delivery === "webhook_v1") return new Response(null, {status:204});
     const event = openAiPurchase(session, body.sessionId, req.headers.get("cookie"));
     if (!event) return new Response(null, { status: 204 });
     const response = await fetch("https://bzr.openai.com/v1/events?pid=8Qwm1bqunw9i9Ad4LXxZeX", {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { syncPurchaseChoice } from "../purchase-choice.mjs";
 import { setPixelConsent } from "../openai-ads";
 import { OpenAIAds } from "./OpenAIAds";
 import { GoogleTags } from "./GoogleTags";
@@ -39,6 +40,7 @@ export function CookieConsent() {
 
   useEffect(() => {
     const sync = (c: JiaConsent) => {
+      syncPurchaseChoice(c?.marketing === true);
       if (!c) {
         setPixelConsent(false);
         // No answer in the new bar yet: forget answers from the old banner.
