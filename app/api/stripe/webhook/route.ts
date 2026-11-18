@@ -21,6 +21,7 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { reportVerifiedPurchase } from "@/lib/aed/purchase-receipt";
 import { getStripe } from "@/lib/aed/stripe";
 import { pushToOwner } from "@/lib/aed/notify-owner";
 import { RENTAL_EVENTS, finalizeConversion, handleRentalCheckout, handleRentalEvent } from "@/lib/aed/rental-billing-webhook";
@@ -91,12 +92,21 @@ export async function POST(req: Request): Promise<NextResponse> {
   // Re-read the session so we get the payment method + full customer details.
   let session: Stripe.Checkout.Session;
   try {
-    session = await stripe.checkout.sessions.retrieve(evSession.id, { expand: ["payment_intent.payment_method"] });
+    session = await stripe.checkout.sessions.retrieve(evSession.id, { expand: ["payment_intent.payment_method", "payment_intent.latest_charge"] });
   } catch (e) {
     console.error("[AED] stripe session retrieve failed:", e);
     return NextResponse.json({ ok: false, error: "retrieve_failed" }, { status: 500 }); // Stripe retries
   }
 
+  const result = await recordOrder(stripe, session, status);
+  if (result.ok && status === "paid" && session.metadata?.openai_delivery === "webhook_v1") {
+    try { await reportVerifiedPurchase(session); }
+    catch { return NextResponse.json({received:false,error:"measurement_retry"},{status:503}); }
+  }
+  return result;
+}
+
+async function recordOrder(stripe: Stripe, session: Stripe.Checkout.Session, status: OrderStatus): Promise<NextResponse> {
   const order = orderFromSession(session as unknown as SessionLike, status);
   const db = createAdminClient();
 
