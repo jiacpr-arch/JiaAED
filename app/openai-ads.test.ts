@@ -1,11 +1,11 @@
 import { afterEach, expect, it, vi } from "vitest";
-import { pixelLeadCreated, setPixelConsent } from "./openai-ads";
+import { pixelLeadCreated, pixelPageView, setPixelConsent } from "./openai-ads";
 
 afterEach(() => vi.unstubAllGlobals());
 
 it("requires consent and queues a stable ID only for a verified lead ID", () => {
-  const browser: { location: { hostname: string }; oaiq?: { q: IArguments[] } } = {
-    location: { hostname: "jiaaed.com" },
+  const browser: { location: { hostname: string; pathname: string }; oaiq?: { q: IArguments[] } } = {
+    location: { hostname: "jiaaed.com", pathname: "/" },
   };
   vi.stubGlobal("window", browser);
   vi.stubGlobal("document", {
@@ -16,6 +16,12 @@ it("requires consent and queues a stable ID only for a verified lead ID", () => 
   pixelLeadCreated(id);
   expect(browser.oaiq).toBeUndefined();
 
+  browser.location.pathname = "/aed/checkout/success";
+  setPixelConsent(true);
+  pixelPageView(browser.location.pathname);
+  expect(browser.oaiq).toBeUndefined();
+
+  browser.location.pathname = "/";
   setPixelConsent(true);
   pixelLeadCreated(undefined);
   pixelLeadCreated("invalid");

@@ -9,6 +9,10 @@ function allowedHost() {
     ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
 }
 
+function allowedPath(path: string) {
+  return !/^\/(admin|api|embed|aed\/checkout)(\/|$)/.test(path);
+}
+
 type Queue = ((...args: unknown[]) => void) & { q?: IArguments[] };
 type PixelWindow = Window & {
   oaiq?: Queue;
@@ -22,6 +26,7 @@ export function setPixelConsent(accepted: boolean) {
     if (!allowedHost()) return;
     const w = window as PixelWindow;
     const state = w.jiaOpenAiAds ??= { initialized: false, enabled: false, lastPath: null };
+    accepted = accepted && allowedPath(window.location.pathname);
     state.enabled = accepted;
     if (!accepted) {
       state.lastPath = null;
@@ -52,7 +57,7 @@ export function setPixelConsent(accepted: boolean) {
 function measure(name: string, type: string, options: { custom_event_name?: string; event_id?: string } = {}) {
   try {
     if (!OPENAI_ADS_ENABLED || typeof window === "undefined") return;
-    if (!allowedHost()) return;
+    if (!allowedHost() || !allowedPath(window.location.pathname)) return;
     const w = window as PixelWindow;
     if (!w.jiaOpenAiAds?.enabled || !w.jiaOpenAiAds.initialized) return;
     // No identity, form data, URL, product name or medical detail enters event data.
@@ -62,7 +67,7 @@ function measure(name: string, type: string, options: { custom_event_name?: stri
 
 export function pixelPageView(path: string | null) {
   try {
-    if (typeof window === "undefined" || !path || /^\/(admin|api|embed)(\/|$)/.test(path)) return;
+    if (typeof window === "undefined" || !path || !allowedPath(path)) return;
     const state = (window as PixelWindow).jiaOpenAiAds;
     if (!state?.enabled || !state.initialized || state.lastPath === path) return;
     measure("page_viewed", "contents");

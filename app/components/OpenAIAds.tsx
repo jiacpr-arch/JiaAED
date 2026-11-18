@@ -5,13 +5,15 @@ import { setPixelConsent, pixelPageView, trackPixelContact } from "../openai-ads
 export function OpenAIAds() {
   const path = usePathname();
   useEffect(() => {
-    setPixelConsent(true);
     document.addEventListener("click", trackPixelContact, true);
     return () => {
-      setPixelConsent(false);
       document.removeEventListener("click", trackPixelContact, true);
     };
   }, []);
-  useEffect(() => { pixelPageView(path); }, [path]);
+  useEffect(() => {
+    setPixelConsent(true);
+    pixelPageView(path);
+    return () => setPixelConsent(false);
+  }, [path]);
   return null;
 }
