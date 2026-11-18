@@ -20,7 +20,7 @@ export function syncPurchaseChoice(granted) {
       if (params.get('utm_source') === 'chatgpt' && params.get('utm_campaign') === 'jiaaed_quote')
         document.cookie = campaignKey + '=jiaaed_quote; Max-Age=2592000' + attributes;
     }
-    for (const entry of document.cookie.split('; ').map(k => k.split('=')[0]).filter(k => k.startsWith(pending)) {
+    for (const entry of document.cookie.split('; ').map(k => k.split('=')[0]).filter(k => k.startsWith(pending))) {
       const receipt = entry.slice(pending.length);
       fetch('/api/analytics/purchase-consent', {method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
         body:JSON.stringify({receipt})}).then(r => {if(r.ok) document.cookie = entry + '=; Max-Age=0' + receiptAttributes}).catch(() => {});
