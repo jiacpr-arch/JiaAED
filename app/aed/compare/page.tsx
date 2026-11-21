@@ -23,7 +23,6 @@ export const metadata: Metadata = {
   title: "เปรียบเทียบเครื่อง AED Y0 / Y8 / Y8 GPS / Y2 — ควรซื้อรุ่นไหน",
   description: `ทุกรุ่นช็อกหัวใจได้และมีเสียงนำทางภาษาไทย ต่างกันที่ช่วยให้ปั๊มหัวใจถูกได้แค่ไหน — Yuwell Y2 ${price("primedic-y2")} (แผ่น feedback + จอแสดงผลสด) · HeartSave Y0 ${price("primedic-y0")} · Y8 ${Y8_STATUS}`,
   alternates: { canonical: "/aed/compare" },
-  openGraph: { images: [{ url: "/images/aed-compare-4-models.webp", width: 1122, height: 1402, alt: "เลือก AED รุ่นไหนดี — Y0 / Y8 / Y8 GPS / Y2" }] },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
 
@@ -88,21 +87,6 @@ export default function ComparePage() {
         <MarketButton href="/quote" lineCta="compare_hero_quote">ขอใบเสนอราคา</MarketButton>
         <MarketButton href={LINE_OA} lineCta="compare_hero_line" secondary>ถามทาง LINE</MarketButton>
       </MarketHero>
-
-      {/* Owner-approved one-page comparison sheet (15 พ.ย. 2026) — also shareable on LINE/FB */}
-      <section className="market-section">
-        <div className="market-container" style={{ maxWidth: 760 }}>
-          <Image
-            src="/images/aed-compare-4-models.webp"
-            alt="เลือก AED รุ่นไหนดี — HeartSave Y0 ฿39,999 · Y8 = Y0 + feedback (งดจำหน่าย) · Y8 GPS = Y8 + ระบบติดตาม · Yuwell Y2 ฿49,900 แนะนำ จอแสดงผล CPR และ EKG"
-            width={1122}
-            height={1402}
-            sizes="(max-width: 800px) 100vw, 760px"
-            priority
-            style={{ width: "100%", height: "auto", borderRadius: 16 }}
-          />
-        </div>
-      </section>
 
       <section id="ladder" className="market-section market-section-cream">
         <div className="market-container">
