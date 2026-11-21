@@ -149,11 +149,22 @@ export default function PrimedicPage() {
           <p className="text-center text-xs text-gray-400 mt-2">ใบปลิวทางการที่ได้รับอนุมัติ — ฆพ.2475/2569</p>
         </div>
 
-        {/* Flyer gallery — Y0 / Y8 / Y2 marketing materials, khop = official ฆพ.-stamped
-            flyers (ฆพ.2475/2569 Y0/Y2, ฆพ.287/2567 Y8) supplied by the owner ก.ค. 2026 */}
+        {PRIMEDIC_REGULATORY.published && (
+          <a
+            href="#ad-permits"
+            className="mt-4 flex items-center justify-between gap-4 rounded-xl border border-gray-800 bg-gray-900 px-4 py-4 text-white transition-colors hover:border-yellow-400/50"
+          >
+            <span>
+              <span className="block font-semibold">เอกสารใบอนุญาตโฆษณา</span>
+              <span className="mt-1 block text-sm text-gray-300">ดูเลขใบอนุญาตและเอกสารแยกตามรุ่น</span>
+            </span>
+            <span aria-hidden="true" className="text-lg text-yellow-400">↓</span>
+          </a>
+        )}
+
+        {/* Product gallery. Keep individual assets separate from the permit links below. */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
-            { src: "/images/aed-compare-4-models.webp", alt: "เปรียบเทียบ AED — Y0 · Y8 (งดจำหน่าย) · Y8 GPS · Yuwell Y2 แนะนำ", w: 1122, h: 1402 },
             { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)", w: 1254, h: 1254 },
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
@@ -189,7 +200,7 @@ export default function PrimedicPage() {
         {/* ใบอนุญาตโฆษณา ฆพ. ตัวจริงจาก อย. — สำหรับผู้ซื้อภาครัฐ/องค์กรที่ต้องตรวจสอบ.
             Numbers + scans come from regulatory.ts and follow its `published` gate. */}
         {PRIMEDIC_REGULATORY.published && (
-          <div className="mt-4">
+          <div id="ad-permits" className="mt-4 scroll-mt-24">
             <h2 className="text-sm font-bold text-gray-300 mb-2">ใบอนุญาตโฆษณาเครื่องมือแพทย์ (ฆพ.) ฉบับจริง</h2>
             <div className="grid grid-cols-2 gap-3">
               {PRIMEDIC_REGULATORY.adLicenses
