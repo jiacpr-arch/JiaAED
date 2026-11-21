@@ -1,6 +1,5 @@
 import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { PackageCard } from "@/app/components/PackageCard";
@@ -96,10 +95,9 @@ export default function PackagesPage() {
         />
       </section>
 
-      {/* 4-model comparison sheet (owner, 15 พ.ย. 2026) — rent / rent-to-own ship the Y8 GPS */}
+      {/* Equipment details */}
       <section className="max-w-3xl mx-auto px-4 py-6">
         <SectionHeading title="แพ็กเกจเหล่านี้ใช้เครื่องรุ่นไหน?" subtitle="เช่าและเช่าซื้อใช้ HeartSave Y8 GPS (เครื่องเดียวกับ Y0 + แผ่น CPR feedback + ระบบติดตาม) · เช่าซื้อรุ่นมีจอเลือก Yuwell Y2" />
-        <Image src="/images/aed-compare-4-models.webp" alt="เปรียบเทียบ AED 4 รุ่น — Y0 · Y8 · Y8 GPS · Yuwell Y2" width={1122} height={1402} sizes="(max-width: 800px) 100vw, 720px" className="mt-6 w-full h-auto rounded-2xl" />
         <p className="text-center mt-3 text-sm"><Link href="/aed/compare" className="text-yellow-400 hover:text-yellow-300 font-semibold">ดูเปรียบเทียบทุกรุ่นแบบละเอียด →</Link></p>
       </section>
 
