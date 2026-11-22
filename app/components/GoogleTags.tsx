@@ -1,8 +1,9 @@
 import Script from "next/script";
 import { GADS_ID } from "@/lib/aed/google-ads-tag";
+import { GA4_MEASUREMENT_ID } from "@/lib/aed/ga4";
 
 export function GoogleTags() {
-  const ga4Id = process.env.NEXT_PUBLIC_GA4_ID || "G-4PZZC620E2";
+  const ga4Id = GA4_MEASUREMENT_ID;
   const gAdsId = GADS_ID;
 
   const tagId = ga4Id || gAdsId;

@@ -68,12 +68,24 @@ const ERRORS: Record<string, string> = {
   invalid_status: "สถานะไม่ถูกต้อง",
   not_found: "ไม่พบ lead นี้",
 };
-const CONVERSION_NOTE: Record<string, string> = {
-  queued: "ส่งยอดเข้า Google Ads แล้ว",
-  skipped_no_gclid: "ไม่ได้ส่งเข้า Google Ads (lead นี้ไม่ได้มาจากโฆษณา Google หรือไม่ได้ยินยอมคุกกี้)",
-  skipped_no_action_id: "ยังไม่ได้ตั้ง conversion action ใน Google Ads — บันทึกไว้ในระบบแล้ว",
-  skipped_already_reported: "ขั้นนี้เคยส่ง Google Ads แล้ว ไม่ส่งซ้ำ",
+// What happened to each follow-up signal for this save (see /api/admin/leads).
+const SIGNAL_NAMES = { ads: "Google Ads", ga4: "GA4", meta: "Meta" } as const;
+const SIGNAL_NOTE: Record<string, string> = {
+  queued: "ส่งแล้ว",
+  skipped_already_reported: "เคยส่งขั้นนี้แล้ว ไม่ส่งซ้ำ",
+  skipped_no_gclid: "ไม่ส่ง — lead ไม่ได้มาจากโฆษณา Google",
+  skipped_no_action_id: "ไม่ส่ง — ยังไม่ได้ตั้ง conversion action",
+  skipped_no_consent: "ไม่ส่ง — ลูกค้าไม่ได้ยอมรับคุกกี้การตลาด (หรือเป็น lead ก่อนเปิดระบบนี้)",
+  skipped_no_client_id: "ไม่ส่ง — ไม่มีรหัส GA ของลูกค้า",
+  skipped_no_api_secret: "ไม่ส่ง — ยังไม่ได้ตั้ง GA4_API_SECRET",
 };
+type Signals = Partial<Record<keyof typeof SIGNAL_NAMES, string | null>>;
+const describeSignals = (s: Signals | undefined) =>
+  s
+    ? (Object.keys(SIGNAL_NAMES) as (keyof typeof SIGNAL_NAMES)[])
+        .filter((k) => s[k])
+        .map((k) => `${SIGNAL_NAMES[k]}: ${SIGNAL_NOTE[s[k] as string] ?? s[k]}`)
+    : [];
 
 export default function AdminLeadsPage() {
   return (
@@ -226,9 +238,10 @@ function LeadDialog({ lead, onClose, onSaved }: { lead: Lead; onClose: () => voi
       if (res.status === 401) return expire();
       const data = await res.json();
       if (!data.ok) return setError(ERRORS[data.error] ?? "บันทึกไม่สำเร็จ");
-      if (data.conversion) {
-        setResult(CONVERSION_NOTE[data.conversion] ?? data.conversion);
-        setTimeout(onSaved, 1800);
+      const lines = describeSignals(data.signals);
+      if (lines.length) {
+        setResult(lines.join(" · "));
+        setTimeout(onSaved, 2500);
       } else onSaved();
     } catch {
       setError("เชื่อมต่อไม่ได้");
@@ -269,7 +282,7 @@ function LeadDialog({ lead, onClose, onSaved }: { lead: Lead; onClose: () => voi
             <Field
               className="mt-4"
               label={status === "quotation_sent" ? "ยอดใบเสนอราคา (บาท ไม่รวม VAT)" : status === "contract_signed" ? "มูลค่าสัญญา (บาท ไม่รวม VAT) *" : "ยอดที่รับชำระแล้ว (บาท ไม่รวม VAT) *"}
-              hint={status === "quotation_sent" ? undefined : "ใช้คำนวณ ROAS — ส่งเข้า Google Ads เมื่อ lead มาจากโฆษณา"}
+              hint={status === "quotation_sent" ? undefined : "ใช้คำนวณ ROAS — ส่งเข้า Google Ads / GA4 / Meta เมื่อ lead มาจากโฆษณาและยินยอมคุกกี้"}
             >
               <input type="number" inputMode="decimal" min={0} value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
             </Field>
@@ -303,7 +316,7 @@ function LeadDialog({ lead, onClose, onSaved }: { lead: Lead; onClose: () => voi
                   {STATUS_META[e.from_status as LeadStatus]?.label ?? e.from_status ?? "–"} → <b>{STATUS_META[e.to_status as LeadStatus]?.label ?? e.to_status}</b>
                   {e.value_thb ? ` · ${thb(e.value_thb)}` : ""}
                   {e.note ? ` · ${e.note}` : ""}
-                  {e.conversion_status ? <span className="text-gray-500"> · Ads: {e.conversion_status}</span> : null}
+                  {e.conversion_status ? <span className="text-gray-500"> · ส่งข้อมูล: {e.conversion_status}</span> : null}
                 </li>
               ))}
             </ul>

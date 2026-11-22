@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isGaClientId } from "@/lib/aed/ga4";
 import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notifyNewLead } from "@/lib/aed/notify-owner";
@@ -62,6 +63,7 @@ type LeadBody = {
   hp?: string;
   /** True only when the visitor accepted the cookie banner (lib/aed/consent.ts). */
   marketingConsent?: boolean;
+  gaClientId?: string;
 };
 
 export async function POST(req: Request) {
@@ -100,6 +102,9 @@ export async function POST(req: Request) {
   // PDPA: without consent the lead is stored and the team is notified as
   // usual, but nothing about this visitor is handed to Google or Meta.
   const marketingConsent = body.marketingConsent === true;
+  // GA client id + Meta cookies are kept only with marketing consent; they let
+  // /admin/leads report later stages (qualified → paid) to GA4 and Meta.
+  const gaClientId = marketingConsent && isGaClientId(body.gaClientId) ? body.gaClientId : null;
 
   if (!phone && !email) {
     return NextResponse.json(
@@ -175,6 +180,10 @@ export async function POST(req: Request) {
       page_url: pageUrl,
       user_agent: userAgent,
       ip_hash: ipHash,
+      marketing_consent: marketingConsent,
+      ga_client_id: gaClientId,
+      fbc: marketingConsent ? fbc : null,
+      fbp: marketingConsent ? fbp : null,
     })
     .select("id")
     .single();

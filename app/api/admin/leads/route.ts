@@ -3,12 +3,18 @@ import { waitUntil } from "@vercel/functions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAuthorized } from "@/lib/aed/admin-auth";
 import { recordConversion } from "@/lib/aed/conversion";
+import { sendGa4Events } from "@/lib/aed/ga4";
+import { sendMetaStageEvent } from "@/lib/aed/meta-capi";
 import {
+  STAGE_SIGNALS,
   VALUE_COLUMN,
   conversionActionFor,
   conversionOrderId,
+  formatOutcome,
   isConversionStage,
   parseStatusChange,
+  stageEventId,
+  type SignalOutcome,
 } from "@/lib/aed/lead-pipeline";
 
 export const runtime = "nodejs";
@@ -72,7 +78,7 @@ export async function PATCH(req: Request) {
   const supabase = createAdminClient();
   const { data: lead, error: readErr } = await supabase
     .from("aed_leads")
-    .select("id,status,gclid")
+    .select("id,status,gclid,ga_client_id,fbc,fbp,marketing_consent,phone,email,source,utm_campaign")
     .eq("id", id)
     .maybeSingle();
   if (readErr) return NextResponse.json({ ok: false, error: "database_error" }, { status: 500 });
@@ -91,34 +97,77 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ ok: false, error: "database_error" }, { status: 500 });
   }
 
-  // Report a money stage to Google Ads once per lead (an earlier event for the
-  // same stage means it was already handled — moving back and forth must not
-  // re-upload). gclid only: the form stores one only after cookie consent, so
-  // no hashed phone/email is sent on behalf of someone who didn't consent.
-  let conversionStatus: string | null = null;
-  if (isConversionStage(change.status)) {
+  // Report the stage once per lead: an earlier event for the same stage means
+  // it was already handled, so moving back and forth never re-sends.
+  //  - Google Ads (money stages only): gclid only — the form stores one only
+  //    after cookie consent, so no hashed contact is sent for anyone else.
+  //  - GA4 + Meta (qualified → payment): only for leads that gave marketing
+  //    consent on the form; GA4 by their GA client id, Meta by fbc/fbp and
+  //    hashed phone/email.
+  const outcome: SignalOutcome = { ads: null, ga4: null, meta: null };
+  const signal = STAGE_SIGNALS[change.status];
+  if (signal || isConversionStage(change.status)) {
     const { count } = await supabase
       .from("aed_lead_events")
       .select("id", { count: "exact", head: true })
       .eq("lead_id", id)
       .eq("to_status", change.status);
-    const actionId = conversionActionFor(change.status, process.env);
-    if ((count ?? 0) > 0) conversionStatus = "skipped_already_reported";
-    else if (!lead.gclid) conversionStatus = "skipped_no_gclid";
-    else if (!actionId) conversionStatus = "skipped_no_action_id";
-    else {
-      conversionStatus = "queued";
-      const stage = change.status;
-      waitUntil(
-        recordConversion({
-          conversionActionId: actionId,
-          orderId: conversionOrderId(id, stage),
-          valueThb: change.valueThb ?? undefined,
-          gclid: lead.gclid,
-        })
-          .then((r) => console.log(`[admin/leads] ${stage} conversion`, r))
-          .catch((e) => console.error("[admin/leads] conversion failed", e)),
-      );
+    const already = (count ?? 0) > 0;
+    const value = change.valueThb ?? undefined;
+    const stage = change.status;
+
+    if (isConversionStage(stage)) {
+      const actionId = conversionActionFor(stage, process.env);
+      if (already) outcome.ads = "skipped_already_reported";
+      else if (!lead.gclid) outcome.ads = "skipped_no_gclid";
+      else if (!actionId) outcome.ads = "skipped_no_action_id";
+      else {
+        outcome.ads = "queued";
+        waitUntil(
+          recordConversion({ conversionActionId: actionId, orderId: conversionOrderId(id, stage), valueThb: value, gclid: lead.gclid })
+            .then((r) => console.log(`[admin/leads] ads ${stage}`, r))
+            .catch((e) => console.error("[admin/leads] ads failed", e)),
+        );
+      }
+    }
+
+    if (signal) {
+      if (already) {
+        outcome.ga4 = outcome.meta = "skipped_already_reported";
+      } else if (!lead.marketing_consent) {
+        outcome.ga4 = outcome.meta = "skipped_no_consent";
+      } else {
+        const params: Record<string, string | number> = { lead_source: lead.source ?? "unknown", currency: "THB" };
+        if (lead.utm_campaign) params.campaign = lead.utm_campaign;
+        if (value !== undefined) params.value = value;
+
+        if (!lead.ga_client_id) outcome.ga4 = "skipped_no_client_id";
+        else if (!process.env.GA4_API_SECRET) outcome.ga4 = "skipped_no_api_secret";
+        else {
+          outcome.ga4 = "queued";
+          waitUntil(
+            sendGa4Events(lead.ga_client_id, [{ name: signal.ga4, params }])
+              .then((r) => console.log(`[admin/leads] ga4 ${signal.ga4}`, r))
+              .catch((e) => console.error("[admin/leads] ga4 failed", e)),
+          );
+        }
+
+        outcome.meta = "queued";
+        waitUntil(
+          sendMetaStageEvent({
+            eventName: signal.meta,
+            eventId: stageEventId(id, stage),
+            email: lead.email,
+            phone: lead.phone,
+            fbc: lead.fbc,
+            fbp: lead.fbp,
+            valueThb: value,
+            leadSource: lead.source,
+          })
+            .then((r) => console.log(`[admin/leads] meta ${signal.meta}`, r))
+            .catch((e) => console.error("[admin/leads] meta failed", e)),
+        );
+      }
     }
   }
 
@@ -128,9 +177,9 @@ export async function PATCH(req: Request) {
     to_status: change.status,
     value_thb: change.valueThb,
     note: change.status === "lost" ? change.lostReason : change.note,
-    conversion_status: conversionStatus,
+    conversion_status: formatOutcome(outcome),
   });
   if (evErr) console.error("[admin/leads][PATCH] event insert", evErr.message);
 
-  return NextResponse.json({ ok: true, conversion: conversionStatus });
+  return NextResponse.json({ ok: true, signals: outcome });
 }

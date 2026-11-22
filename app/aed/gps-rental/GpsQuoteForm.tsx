@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { hasMarketingConsent } from "@/lib/aed/consent";
+import { readGaClientId } from "@/lib/aed/ga4";
 import { newEventId, readFbTracking } from "@/lib/aed/fb-tracking";
 import { fireLeadConversions } from "@/lib/aed/lead-conversions-client";
 import { LINE_DISPLAY_ID, LINE_OA } from "@/lib/aed/line";
@@ -98,6 +99,7 @@ export function GpsQuoteForm() {
           pageUrl: window.location.href,
           hp: get("hp_field"),
           marketingConsent: hasMarketingConsent(),
+          gaClientId: readGaClientId(hasMarketingConsent()),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; skipped?: string; leadId?: string };

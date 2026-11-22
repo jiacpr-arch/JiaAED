@@ -54,6 +54,9 @@ const SCAN_BUDGET_MS = 40_000;
 const LEAD_ATTRIBUTION_COLUMNS = [
   "gclid",
   "fbclid",
+  "fbc",
+  "fbp",
+  "ga_client_id",
   "utm_source",
   "utm_medium",
   "utm_campaign",

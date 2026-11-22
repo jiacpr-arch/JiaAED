@@ -143,3 +143,28 @@ export function funnelBy(rows: LeadRow[], keyOf: (r: LeadRow) => string): Funnel
 
 export const campaignKey = (r: LeadRow) =>
   r.utm_campaign ? `${r.utm_source ?? "?"} / ${r.utm_campaign}` : r.utm_source ? r.utm_source : "ไม่มี UTM (organic/direct)";
+
+// ─── Follow-up signals to GA4 and Meta ───────────────────────────────────────
+// Names follow the landing-page brief (§14). Meta: "Subscribe" (standard, with
+// value) for a signed rental contract; custom names elsewhere — never
+// "Purchase", because this Meta dataset also carries the jia1669.com shop's
+// purchases and rental money must not be mixed into them.
+export const STAGE_SIGNALS: Partial<Record<LeadStatus, { ga4: string; meta: string }>> = {
+  qualified_lead: { ga4: "qualified_lead", meta: "QualifiedLead" },
+  quotation_sent: { ga4: "quotation_sent", meta: "QuotationSent" },
+  contract_signed: { ga4: "rental_contract_signed", meta: "Subscribe" },
+  payment_received: { ga4: "rental_payment_received", meta: "RentalPaymentReceived" },
+};
+
+/** Stable id per lead + stage, so a retry or an accidental double save dedupes. */
+export const stageEventId = (leadId: string, stage: LeadStatus) => `lead:${leadId}:${stage}`;
+
+export type SignalOutcome = { ads: string | null; ga4: string | null; meta: string | null };
+
+/** "ads=queued ga4=skipped_no_consent meta=queued" — stored on aed_lead_events. */
+export function formatOutcome(o: SignalOutcome): string | null {
+  const parts = (Object.entries(o) as [keyof SignalOutcome, string | null][])
+    .filter(([, v]) => v)
+    .map(([k, v]) => `${k}=${v}`);
+  return parts.length ? parts.join(" ") : null;
+}
