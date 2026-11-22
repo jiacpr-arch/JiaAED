@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { articles } from "@/lib/aed/articles";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
-import { Y8_GPS_LANDING_PATH, Y8_GPS_LANDING_PUBLISHED } from "@/lib/aed/y8-gps-landing";
+import { MONITORING_PATH } from "@/lib/aed/monitoring-page";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 
@@ -127,10 +127,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
           },
         ]
       : []),
-    // Ad landing page — listed only once the owner has signed it off.
-    ...(Y8_GPS_LANDING_PUBLISHED
-      ? [{ url: `${SITE}${Y8_GPS_LANDING_PATH}`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.7 }]
-      : []),
+    // How the team checks customers' machines online (PRIMEDIC CLOUD).
+    { url: `${SITE}${MONITORING_PATH}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
   ];
 
   const articleEntries: MetadataRoute.Sitemap = articles.map((a) => ({

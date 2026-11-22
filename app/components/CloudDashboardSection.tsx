@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { dashboardFeatures, dashboardImage } from "@/lib/aed/gps";
 import { SectionHeading } from "./SectionHeading";
 
@@ -12,14 +13,19 @@ export function CloudDashboardSection() {
       />
 
       <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
-        <ul className="space-y-3 order-2 md:order-1">
-          {dashboardFeatures.map((f) => (
-            <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
-              <span className="text-green-400 flex-shrink-0 mt-0.5">✅</span>
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="order-2 md:order-1">
+          <ul className="space-y-3">
+            {dashboardFeatures.map((f) => (
+              <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">✅</span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Link href="/aed/monitoring" data-cta="cloud_section_monitoring" className="mt-5 inline-block text-sm font-bold underline underline-offset-4">
+            ดูหน้าจอระบบจริงที่ทีมงานใช้ตรวจเครื่อง →
+          </Link>
+        </div>
 
         <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 order-1 md:order-2">
           <Image
