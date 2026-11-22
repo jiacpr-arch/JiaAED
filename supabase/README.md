@@ -8,7 +8,7 @@ re-created.
 To build a fresh database, run them in this order:
 
 1. `aed_schema.sql` — LINE bot: customers, conversations, messages, deals, follow-ups
-2. `aed_leads.sql`, then `aed_leads_fbclid.sql` and `aed_leads_unit_count.sql`
+2. `aed_leads.sql`, then `aed_leads_fbclid.sql`, `aed_leads_unit_count.sql` and `aed_leads_pipeline.sql` (statuses + `aed_lead_events` for `/admin/leads`)
 3. `aed_analytics_events.sql` — events + the cron run/dedup log
 4. `aed_ad_visits.sql` — ad visits + Google Ads conversion log
 5. `aed_notify_queue.sql`
