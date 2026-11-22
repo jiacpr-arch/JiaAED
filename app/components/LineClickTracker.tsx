@@ -92,10 +92,33 @@ export function LineClickTracker() {
       // carry data-cta, which the cta_click tracking below still records.
       const telAnchor = target.closest('a[href^="tel:"]') as HTMLAnchorElement | null;
       if (telAnchor) {
-        trackEvent("call_click", { location: telAnchor.dataset.cta || "unknown" });
-        if (hasMarketingConsent() && typeof window.gtag === "function") {
-          const conv = gadsConversionParams(GADS_CALL_CLICK_CONVERSION_LABEL);
-          if (conv) window.gtag("event", "conversion", conv);
+        const location = telAnchor.dataset.cta || "unknown";
+        trackEvent("call_click", { location });
+        if (hasMarketingConsent()) {
+          // A phone tap is Contact (secondary intent), never a completed Lead.
+          // Do not send the dialed phone number to analytics providers.
+          if (typeof window.gtag === "function") {
+            window.gtag("event", "click_call", { cta_location: location });
+            const conv = gadsConversionParams(GADS_CALL_CLICK_CONVERSION_LABEL);
+            if (conv) window.gtag("event", "conversion", conv);
+          }
+          const fb = readFbTracking();
+          const eventId = newEventId();
+          fireMetaContact(eventId);
+          fetch("/api/aed/meta-lead", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              source: "phone_click",
+              location,
+              eventId,
+              fbc: fb.fbc,
+              fbp: fb.fbp,
+              pageUrl: typeof window !== "undefined" ? window.location.href : null,
+              marketingConsent: true,
+            }),
+            keepalive: true,
+          }).catch(() => {});
         }
       }
 
