@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  STAGE_SIGNALS,
+  formatOutcome,
+  stageEventId,
   FUNNEL,
   LEAD_STATUSES,
   campaignKey,
@@ -63,5 +66,21 @@ describe("lead pipeline", () => {
     expect(rent.reached).toEqual([4, 2, 2, 2, 1, 1]);
     expect(rent.paidValue).toBe(22000);
     expect(organic.key).toMatch(/ไม่มี UTM/);
+  });
+});
+
+describe("follow-up signals", () => {
+  it("covers qualified → payment and never names Purchase", () => {
+    expect(Object.keys(STAGE_SIGNALS).sort()).toEqual(["contract_signed", "payment_received", "qualified_lead", "quotation_sent"]);
+    for (const s of Object.values(STAGE_SIGNALS)) expect(s!.meta).not.toBe("Purchase");
+  });
+
+  it("stage event ids are stable per lead + stage", () => {
+    expect(stageEventId("abc", "quotation_sent")).toBe("lead:abc:quotation_sent");
+  });
+
+  it("formats the outcome for the history row", () => {
+    expect(formatOutcome({ ads: null, ga4: "queued", meta: "skipped_no_consent" })).toBe("ga4=queued meta=skipped_no_consent");
+    expect(formatOutcome({ ads: null, ga4: null, meta: null })).toBeNull();
   });
 });

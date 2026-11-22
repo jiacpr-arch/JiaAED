@@ -129,3 +129,61 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaLeadR
     return { ok: false, sent: false, error: e instanceof Error ? e.message : String(e) };
   }
 }
+
+// ─── Lead-stage follow-up events (CRM) ───────────────────────────────────────
+// When the team moves a web lead along /admin/leads, report the stage as a
+// CRM event (action_source "system_generated"), matched by the visitor's
+// fbc/fbp and hashed phone/email. Only for leads that gave marketing consent.
+export type MetaStageInput = {
+  eventName: string; // e.g. "QualifiedLead", "Subscribe"
+  eventId: string; // stable per lead + stage, so retries dedupe
+  email?: string | null;
+  phone?: string | null;
+  fbc?: string | null;
+  fbp?: string | null;
+  valueThb?: number;
+  leadSource?: string | null;
+};
+
+export async function sendMetaStageEvent(input: MetaStageInput): Promise<MetaLeadResult> {
+  if (!isMetaConfigured()) return { ok: true, sent: false, reason: "meta_not_configured" };
+  const userData = buildUserData({ eventId: input.eventId, email: input.email, phone: input.phone, fbc: input.fbc, fbp: input.fbp });
+  if (!(userData.em || userData.ph || userData.fbc || userData.fbp)) {
+    return { ok: true, sent: false, reason: "no_identifier" };
+  }
+  const customData: Record<string, unknown> = { currency: "THB", lead_event_source: "jiaaed_admin" };
+  if (typeof input.valueThb === "number") customData.value = input.valueThb;
+  if (input.leadSource) customData.content_name = input.leadSource;
+
+  const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID as string;
+  const token = process.env.META_CAPI_TOKEN as string;
+  const testCode = process.env.META_TEST_EVENT_CODE || undefined;
+  try {
+    const res = await fetch(
+      `https://graph.facebook.com/${GRAPH_VERSION}/${pixelId}/events?access_token=${encodeURIComponent(token)}`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          data: [
+            {
+              event_name: input.eventName,
+              event_id: input.eventId,
+              event_time: Math.floor(Date.now() / 1000),
+              action_source: "system_generated",
+              user_data: userData,
+              custom_data: customData,
+            },
+          ],
+          ...(testCode ? { test_event_code: testCode } : {}),
+        }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    const json = (await res.json().catch(() => ({}))) as { events_received?: number; error?: { message?: string } };
+    if (!res.ok || json.error) return { ok: false, sent: false, error: json.error?.message || `http_${res.status}` };
+    return { ok: true, sent: true, eventsReceived: json.events_received };
+  } catch (e) {
+    return { ok: false, sent: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}

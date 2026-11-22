@@ -36,4 +36,5 @@
 2. GA4 → Admin → Custom definitions: เพิ่ม event-scoped dimension `lead_source`, `location`, `page` (ถ้าต้องการแยกรายงาน)
 3. Google Ads: conversion "ไลน์" ตั้งเป็น **Secondary** (ไม่ใช้ประมูล) · "Lead Form Submit" เป็น Primary สำหรับแคมเปญเช่า
 4. Google Ads: สร้าง Import conversion "Rental contract signed" → ใส่ ID ใน Vercel `GOOGLE_ADS_CONTRACT_ACTION_ID` (ดู `docs/lead-pipeline-2026-11-23.md`)
-5. ทดสอบจริงด้วย Tag Assistant / GA4 DebugView บน https://jiaaed.com/aed/gps-rental (จากเครื่องนี้ต่อ Google ไม่ได้)
+5. GA4: สร้าง Measurement Protocol API secret → Vercel `GA4_API_SECRET` (ส่งสถานะ lead จาก `/admin/leads` เข้า GA4)
+6. ทดสอบจริงด้วย Tag Assistant / GA4 DebugView บน https://jiaaed.com/aed/gps-rental (จากเครื่องนี้ต่อ Google ไม่ได้)

@@ -5,6 +5,7 @@ import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
 import { hasMarketingConsent } from "@/lib/aed/consent";
+import { readGaClientId } from "@/lib/aed/ga4";
 import { GADS_LEAD_CONVERSION_LABEL, gadsConversionParams } from "@/lib/aed/google-ads-tag";
 
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
@@ -159,6 +160,7 @@ export function QuoteForm({
           hp,
           // Lets the server skip Meta CAPI / Google enhanced matching without consent.
           marketingConsent: hasMarketingConsent(),
+          gaClientId: readGaClientId(hasMarketingConsent()),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {

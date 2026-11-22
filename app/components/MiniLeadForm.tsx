@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/aed/analytics-client";
 import { readFbTracking, newEventId } from "@/lib/aed/fb-tracking";
 import { fireLeadConversions } from "@/lib/aed/lead-conversions-client";
 import { hasMarketingConsent } from "@/lib/aed/consent";
+import { readGaClientId } from "@/lib/aed/ga4";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
 type State = "idle" | "submitting" | "success" | "error";
@@ -214,6 +215,7 @@ export function MiniLeadForm({
           hp,
           // Lets the server skip Meta CAPI / Google enhanced matching without consent.
           marketingConsent: hasMarketingConsent(),
+          gaClientId: readGaClientId(hasMarketingConsent()),
         }),
       });
       const json = (await res.json().catch(() => ({}))) as {
