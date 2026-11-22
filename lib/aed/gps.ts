@@ -28,7 +28,12 @@ export const gpsFeatures: { icon: string; title: string; desc: string }[] = [
 ];
 
 // Cloud Monitoring Dashboard — readiness at a glance across all locations.
-export const dashboardImage = "/images/cloud-dashboard.png"; // real Yuwell Cloud Monitoring Dashboard visual
+// Owner, 22 พ.ย. 2026: the real PRIMEDIC CLOUD fleet map (redacted — see
+// lib/aed/monitoring-page.ts) replaces the old illustrative cloud-dashboard.png,
+// whose 24/20/3/1 figures were not real. One constant for every page.
+export { CLOUD_SCREENSHOT as dashboardShot } from "./monitoring-page";
+import { CLOUD_SCREENSHOT } from "./monitoring-page";
+export const dashboardImage = CLOUD_SCREENSHOT.src;
 
 export const dashboardFeatures: string[] = [
   "ดูสถานะเครื่องหลายจุดในหน้าจอเดียว (Multi-location)",

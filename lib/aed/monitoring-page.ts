@@ -60,7 +60,7 @@ export const CLOUD_SNAPSHOT = {
 } as const;
 
 // ── Redacted screenshots ──────────────────────────────────────────────────────
-// Produced by scripts/redact-image.mjs (boxes burned into the pixels, metadata
+// Produced by scripts/redact-image.mjs (regions downsampled 16× then blurred into the pixels, metadata
 // stripped) and checked by eye. No user name, email, phone, customer, address,
 // serial number, or per-device GPS point/coordinate may be readable.
 //   map       — account phone number and every device pin covered (legend 15/4/0 kept)
@@ -77,14 +77,14 @@ export const CLOUD_SCREENSHOT: Screenshot = {
   src: "/images/primedic-cloud-map-2026-11-23-redacted.png",
   width: 1920,
   height: 1028,
-  alt: "หน้าจอ PRIMEDIC CLOUD แผนที่ภาพรวมเครื่อง Normal 15 · Alert 4 (ปิดทับหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
+  alt: "หน้าจอ PRIMEDIC CLOUD แผนที่ภาพรวมเครื่อง Normal 15 · Alert 4 (เบลอหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
 };
 
 export const CLOUD_DEVICE_SCREENSHOT: Screenshot = {
   src: "/images/primedic-cloud-device-2026-11-23-redacted.png",
   width: 880,
   height: 572,
-  alt: "หน้าจอข้อมูลรายเครื่อง PRIMEDIC CLOUD รุ่น Y8 แสดงวันหมดอายุแผ่นอิเล็กโทรดและแบตเตอรี่ (ปิดหมายเลขเครื่อง หมายเลขแบตเตอรี่ และตำแหน่งแล้ว)",
+  alt: "หน้าจอข้อมูลรายเครื่อง PRIMEDIC CLOUD รุ่น Y8 แสดงวันหมดอายุแผ่นอิเล็กโทรดและแบตเตอรี่ (เบลอหมายเลขเครื่อง หมายเลขแบตเตอรี่ และตำแหน่งแล้ว)",
 };
 
 export const CLOUD_GALLERY: (Screenshot & { caption: string })[] = [
@@ -92,15 +92,15 @@ export const CLOUD_GALLERY: (Screenshot & { caption: string })[] = [
     src: "/images/primedic-cloud-map-satellite-2026-11-23-redacted.png",
     width: 1920,
     height: 1028,
-    alt: "PRIMEDIC CLOUD แผนที่แบบดาวเทียม สรุป Normal 15 · Alert 4 (ปิดทับหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
-    caption: "AED map แบบดาวเทียม — ภาพรวมทุกจุดติดตั้ง (ปิดตำแหน่งรายเครื่อง)",
+    alt: "PRIMEDIC CLOUD แผนที่แบบดาวเทียม สรุป Normal 15 · Alert 4 (เบลอหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
+    caption: "AED map แบบดาวเทียม — ภาพรวมทุกจุดติดตั้ง (เบลอตำแหน่งรายเครื่อง)",
   },
   {
     src: "/images/primedic-cloud-installs-2026-11-23-redacted.png",
     width: 1920,
     height: 1028,
-    alt: "PRIMEDIC CLOUD หน้าบันทึกการติดตั้งเครื่อง พร้อมวันเวลาติดตั้ง (ปิดชื่อลูกค้า ที่อยู่ และหมายเลขเครื่องแล้ว)",
-    caption: "Device installation — บันทึกการติดตั้งทุกเครื่อง (ปิดชื่อลูกค้า ที่อยู่ และ SN)",
+    alt: "PRIMEDIC CLOUD หน้าบันทึกการติดตั้งเครื่อง พร้อมวันเวลาติดตั้ง (เบลอชื่อลูกค้า ที่อยู่ และหมายเลขเครื่องแล้ว)",
+    caption: "Device installation — บันทึกการติดตั้งทุกเครื่อง (เบลอชื่อลูกค้า ที่อยู่ และ SN)",
   },
 ];
 

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { dashboardFeatures, dashboardImage } from "@/lib/aed/gps";
+import { dashboardFeatures, dashboardShot } from "@/lib/aed/gps";
+import { CLOUD_SNAPSHOT } from "@/lib/aed/monitoring-page";
+import { thaiDate } from "@/lib/aed/regulatory";
 import { SectionHeading } from "./SectionHeading";
 
 export function CloudDashboardSection() {
@@ -27,15 +29,19 @@ export function CloudDashboardSection() {
           </Link>
         </div>
 
-        <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 order-1 md:order-2">
+        <figure className="m-0 order-1 md:order-2 overflow-hidden rounded-2xl border border-gray-800 bg-white">
           <Image
-            src={dashboardImage}
-            alt="ระบบ Cloud Dashboard ตรวจสอบสถานะ AED"
-            fill
-            className="object-cover"
+            src={dashboardShot.src}
+            width={dashboardShot.width}
+            height={dashboardShot.height}
+            alt={dashboardShot.alt}
+            className="h-auto w-full"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
-        </div>
+          <figcaption className="bg-gray-900 px-4 py-2 text-[11px] text-gray-400">
+            หน้าจอระบบจริง ณ {thaiDate(CLOUD_SNAPSHOT.date, "long")} (ไม่ใช่ข้อมูลสด) · เบลอข้อมูลลูกค้าและตำแหน่งรายเครื่องแล้ว
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

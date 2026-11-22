@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Burn opaque boxes into a screenshot before it goes anywhere public.
+// Blur (or box out) regions of a screenshot before it goes anywhere public.
 //
 //   node scripts/redact-image.mjs <input> <output.png> <boxes.json>
 //
-// boxes.json: { "boxes": [{ "x": 10, "y": 20, "w": 300, "h": 40, "why": "customer name" }, ...],
+// boxes.json: { "boxes": [{ "x": 10, "y": 20, "w": 300, "h": 40, "why": "customer name", "mode": "blur"|"box" }, ...],
 //               "crop": { "x": 0, "y": 52, "w": 1920, "h": 1028 } }   (crop optional)
 // (a bare array of boxes also works). All coordinates are pixels of the
 // ORIGINAL image; boxes are burned in first, then the crop is taken. Boxes are composited onto the pixels and the
@@ -37,23 +37,42 @@ if (!Array.isArray(boxes) || boxes.length === 0) {
 
 const img = sharp(input).rotate(); // apply EXIF orientation before measuring
 const { width, height } = await img.metadata();
+// Flattened, orientation-applied source pixels to cut blur patches from.
+const base = await img.flatten({ background: "#ffffff" }).png().toBuffer();
 
-const overlays = boxes.map((b, i) => {
-  const x = Math.max(0, Math.floor(b.x));
-  const y = Math.max(0, Math.floor(b.y));
-  const w = Math.min(width - x, Math.ceil(b.w));
-  const h = Math.min(height - y, Math.ceil(b.h));
-  if (!(w > 0 && h > 0)) throw new Error(`box ${i} (${b.why ?? "?"}) is outside the image`);
-  return {
-    input: { create: { width: w, height: h, channels: 4, background: { r: 24, g: 41, b: 35, alpha: 1 } } },
-    left: x,
-    top: y,
-  };
-});
+// mode "blur" (default): the patch is shrunk to 1/16 (min 2 px) — which throws
+// the detail away for good, so the text can't be recovered — then scaled back
+// and blurred so it reads as a soft smudge instead of a black box.
+// mode "box": an opaque fill, for anything that must not even leave a smudge.
+const overlays = await Promise.all(
+  boxes.map(async (b, i) => {
+    const x = Math.max(0, Math.floor(b.x));
+    const y = Math.max(0, Math.floor(b.y));
+    const w = Math.min(width - x, Math.ceil(b.w));
+    const h = Math.min(height - y, Math.ceil(b.h));
+    if (!(w > 0 && h > 0)) throw new Error(`box ${i} (${b.why ?? "?"}) is outside the image`);
+    if (b.mode === "box") {
+      return {
+        input: { create: { width: w, height: h, channels: 4, background: { r: 24, g: 41, b: 35, alpha: 1 } } },
+        left: x,
+        top: y,
+      };
+    }
+    const tiny = await sharp(base)
+      .extract({ left: x, top: y, width: w, height: h })
+      .resize(Math.max(2, Math.round(w / 16)), Math.max(2, Math.round(h / 16)), { fit: "fill" })
+      .toBuffer();
+    const patch = await sharp(tiny)
+      .resize(w, h, { fit: "fill", kernel: "cubic" })
+      .blur(Math.max(4, Math.min(w, h) / 6))
+      .png()
+      .toBuffer();
+    return { input: patch, left: x, top: y };
+  }),
+);
 
 // Burn the boxes into a raw buffer first so the crop below can't reorder them.
-const burned = await img
-  .flatten({ background: "#ffffff" }) // drop alpha so nothing shows through
+const burned = await sharp(base)
   .composite(overlays)
   .png()
   .toBuffer();

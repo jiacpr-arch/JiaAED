@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { dashboardImage } from "@/lib/aed/gps";
 import Link from "next/link";
 import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
@@ -75,7 +76,7 @@ const shortItems = [
 const tierImages: Record<string, string> = {
   "managed-basic": "/images/yuwell-gps-aed.webp",
   "managed-pro": "/images/aed-gps-tracking.png",
-  "managed-elite": "/images/cloud-dashboard.png",
+  "managed-elite": dashboardImage,
 };
 const tierBullets = (id: (typeof subscriptionTiers)[number]["id"]) =>
   subscriptionMatrix
