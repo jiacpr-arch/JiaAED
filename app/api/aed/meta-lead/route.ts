@@ -6,10 +6,9 @@ import { HOUR, countRecent, overLimit, requestIp } from "@/lib/aed/rate-limit";
 
 export const runtime = "nodejs";
 
-// Server-side companion to the browser `Contact` pixel fired on a LINE-button click
-// (sent as Contact, not Lead, since 22 พ.ย. 2026 — the path keeps its old name so
-// cached pages keep working)
-// (see LineClickTracker). A LINE click carries no email/phone, so attribution
+// Server-side companion to the browser `Contact` pixel for LINE/telephone clicks.
+// Both count as Contact, never Lead; the old path stays for cached pages.
+// (see LineClickTracker). A contact click carries no email/phone, so attribution
 // relies on fbc/fbp + client IP/UA. Shares eventId with the browser pixel for
 // dedup. Safe no-op until the Meta env vars are set.
 //
@@ -55,6 +54,7 @@ export async function POST(req: Request) {
   const fbp = clean(body.fbp);
   const pageUrl = clean(body.pageUrl, 500);
   const location = clean(body.location, 100);
+  const source = body.source === "phone_click" ? "phone_click" : "line_click";
 
   if (!eventId) {
     return NextResponse.json({ ok: false, error: "missing_event_id" }, { status: 400 });
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
   if (ipHash) {
     const clicks = await countRecent(
       "aed_analytics_events",
-      [["ip_hash", ipHash], ["event_name", "line_click"]],
+      [["ip_hash", ipHash], ["event_name", source === "phone_click" ? "call_click" : "line_click"]],
       HOUR,
     );
     if (overLimit(clicks, MAX_LEADS_PER_IP_PER_HOUR)) {
@@ -87,8 +87,8 @@ export async function POST(req: Request) {
       clientIp: ip,
       userAgent,
       eventSourceUrl: pageUrl,
-      contentName: location ? `line_click:${location}` : "line_click",
-    }).catch((e) => console.error("[AED] meta line-click contact failed:", e)),
+      contentName: location ? `${source}:${location}` : source,
+    }).catch((e) => console.error("[AED] meta contact event failed:", e)),
   );
 
   return NextResponse.json({ ok: true });

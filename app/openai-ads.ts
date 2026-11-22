@@ -2,7 +2,9 @@
 export const PIXEL_ID = "8Qwm1bqunw9i9Ad4LXxZeX";
 // Owner requested activation for the selected Ads Manager account; cookie consent remains required.
 export const OPENAI_ADS_ENABLED = true;
-const ALLOWED_HOSTS = ["jiaaed.com", "www.jiaaed.com"];
+// All three hostnames serve JiaAED content. Never initialize a second Pixel when
+// another integration already owns window.oaiq (see setPixelConsent below).
+const ALLOWED_HOSTS = ["jiaaed.com", "www.jiaaed.com", "aed.jia1669.com"];
 
 function allowedHost() {
   return ALLOWED_HOSTS.includes(window.location.hostname) ||

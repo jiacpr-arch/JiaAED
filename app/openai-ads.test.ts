@@ -36,3 +36,21 @@ it("requires consent and queues a stable ID only for a verified lead ID", () => 
     { opt_out: true, event_id: "lead:" + id },
   ]));
 });
+
+
+it("allows the AED rental hostname without emitting a lead for a contact click", () => {
+  const browser: { location: { hostname: string; pathname: string }; oaiq?: { q: IArguments[] } } = {
+    location: { hostname: "aed.jia1669.com", pathname: "/rental" },
+  };
+  vi.stubGlobal("window", browser);
+  vi.stubGlobal("document", {
+    createElement: () => ({ dataset: {} }),
+    head: { appendChild: vi.fn() },
+  });
+  setPixelConsent(true);
+  pixelPageView("/rental");
+  expect(browser.oaiq).toBeDefined();
+  const queued = browser.oaiq?.q.map(row => Array.from(row)) ?? [];
+  expect(queued.some(row => row[1] === "page_viewed")).toBe(true);
+  expect(queued.some(row => row[1] === "lead_created")).toBe(false);
+});
