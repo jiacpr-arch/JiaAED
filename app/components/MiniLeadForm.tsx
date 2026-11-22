@@ -65,7 +65,26 @@ export function MiniLeadForm({
   title = "📞 ฝากเบอร์ ทีมงานโทรกลับ",
   subtitle = "ใช้เวลา 5 วินาที · ตอบใน 24 ชั่วโมง",
   theme = "dark",
-}: { variant?: string; title?: string; subtitle?: string; theme?: "dark" | "light" } = {}) {
+  source,
+  productId,
+  askCompany = false,
+  messageTag,
+  submitLabel = "📨 ส่ง",
+}: {
+  variant?: string;
+  title?: string;
+  subtitle?: string;
+  theme?: "dark" | "light";
+  // Overrides aed_leads.source (default mini_form / ads_mini_form) so a landing
+  // page's audiences can be counted separately.
+  source?: string;
+  productId?: string;
+  // Adds an organisation-name field (sent as `company`).
+  askCompany?: boolean;
+  // Prefixed to aed_leads.message so the team sees what was asked for.
+  messageTag?: string;
+  submitLabel?: string;
+} = {}) {
   const t = THEMES[theme];
   const [state, setState] = useState<State>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -160,6 +179,7 @@ export function MiniLeadForm({
     const fullName = String(fd.get("fullName") || "").trim();
     const phone = String(fd.get("phone") || "").trim();
     const hp = String(fd.get("hp_field") || "");
+    const company = String(fd.get("company") || "").trim();
 
     if (!phone) {
       setErrorMsg("กรุณากรอกเบอร์โทร");
@@ -179,9 +199,12 @@ export function MiniLeadForm({
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          source: variant === "ads_mini" ? "ads_mini_form" : "mini_form",
+          source: source ?? (variant === "ads_mini" ? "ads_mini_form" : "mini_form"),
           fullName,
           phone,
+          company: company || undefined,
+          productId,
+          message: messageTag,
           gclid,
           utm,
           fbclid: fb.fbclid,
@@ -223,7 +246,7 @@ export function MiniLeadForm({
 
       if (!json.skipped) {
         pixelLeadCreated(json.leadId);
-        trackEvent("lead_form_submit", { variant, product_id: "none" });
+        trackEvent("lead_form_submit", { variant, product_id: productId ?? "none" });
 
         const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
         if (hasMarketingConsent() && typeof gtag === "function") {
@@ -271,12 +294,22 @@ export function MiniLeadForm({
         <p className={`font-bold text-lg ${t.title}`}>{title}</p>
         <p className={`text-xs ${t.subtitle}`}>{subtitle}</p>
       </div>
+      {askCompany && (
+        <input
+          name="company"
+          placeholder="ชื่อหน่วยงาน / องค์กร"
+          autoComplete="organization"
+          aria-label="ชื่อหน่วยงาน / องค์กร"
+          className={`mb-2 w-full rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
+        />
+      )}
       <div className="flex flex-col sm:flex-row gap-2">
         <input
           name="fullName"
+          aria-label="ชื่อ"
           placeholder="ชื่อ (ไม่บังคับ)"
           autoComplete="name"
-          className={`flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
+          className={`min-w-0 flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
         />
         <input
           name="phone"
@@ -284,15 +317,16 @@ export function MiniLeadForm({
           inputMode="tel"
           required
           placeholder="เบอร์โทร *"
+          aria-label="เบอร์โทร"
           autoComplete="tel"
-          className={`flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
+          className={`min-w-0 flex-1 rounded-xl border px-4 py-3 focus:outline-none ${t.input}`}
         />
         <button
           type="submit"
           disabled={state === "submitting"}
-          className={`font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-60 ${t.submit}`}
+          className={`shrink-0 whitespace-nowrap font-bold px-6 py-3 rounded-xl transition-colors disabled:opacity-60 ${t.submit}`}
         >
-          {state === "submitting" ? "กำลังส่ง…" : "📨 ส่ง"}
+          {state === "submitting" ? "กำลังส่ง…" : submitLabel}
         </button>
       </div>
       {state === "error" && errorMsg && (
