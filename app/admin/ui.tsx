@@ -27,6 +27,7 @@ export const btnSmall =
 
 export const ADMIN_MENU = [
   { href: "/admin", icon: "🏠", label: "หน้าแรก" },
+  { href: "/admin/leads", icon: "📋", label: "Leads" },
   { href: "/admin/billing", icon: "💳", label: "รับชำระเงิน" },
   { href: "/admin/units", icon: "🔋", label: "ทะเบียนเครื่อง" },
   { href: "/admin/documents", icon: "📁", label: "เอกสาร" },
