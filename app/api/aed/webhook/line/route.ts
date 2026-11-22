@@ -272,7 +272,7 @@ async function linkCustomer(code: string, lineUserId: string): Promise<string> {
     return "ขออภัยครับ เชื่อมต่อไม่สำเร็จชั่วคราว กรุณาส่งข้อความเดิมอีกครั้งในอีกสักครู่ 🙏";
   }
   const r = data as { ok: boolean; customer?: string; devices?: number; labels?: string[] } | null;
-  if (!r?.ok) return "ไม่พบรหัสนี้ครับ กรุณากดปุ่ม \"รับแจ้งเตือนทาง LINE\" จากหน้าสถานะเครื่องอีกครั้ง หรือโทร 082-280-9999";
+  if (!r?.ok) return "ไม่พบรหัสนี้ครับ กรุณากดปุ่ม \"รับแจ้งเตือนทาง LINE\" จากหน้าสถานะเครื่องอีกครั้ง หรือโทร แผนกดูแลเครื่อง AED เช่า 090-979-1212";
   return [
     `✅ เชื่อมการแจ้งเตือนเครื่อง AED ของ ${r.customer} แล้วครับ (${r.devices ?? 0} เครื่อง)`,
     ...(r.labels ?? []).slice(0, 10).map((l) => `• ${l}`),
@@ -283,6 +283,7 @@ async function linkCustomer(code: string, lineUserId: string): Promise<string> {
     "• แผ่นแปะ/แบตเตอรี่ใกล้หมดอายุ (ทีม JIA จะนัดเปลี่ยนให้)",
     "• สรุปสถานะทุกต้นเดือน",
     "",
+    "แผนกดูแลเครื่อง AED เช่า โทร 090-979-1212",
     "เหตุฉุกเฉิน โทร 1669 ทันที · ยกเลิกพิมพ์ \"ยกเลิกแจ้งเตือน AED\"",
   ].join("\n");
 }
