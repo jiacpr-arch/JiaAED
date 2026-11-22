@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { VALID_PRODUCT_IDS } from "./lead-validation";
 import {
   CLOUD_DEVICE_SCREENSHOT,
+  CLOUD_GALLERY,
   CLOUD_SCREENSHOT,
   CLOUD_SNAPSHOT,
   DASHBOARD_ACCESS_NOTE,
@@ -22,7 +23,7 @@ describe("HeartSave Y8 GPS landing config", () => {
   });
 
   it("only shows redacted dashboard screenshots, never the illustrative mock-up", () => {
-    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT]) {
+    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT, ...CLOUD_GALLERY]) {
       if (!shot) continue;
       expect(shot.src).not.toBe("/images/cloud-dashboard.png");
       expect(shot.src).toMatch(/-redacted\.png$/);
@@ -32,7 +33,7 @@ describe("HeartSave Y8 GPS landing config", () => {
 
   it("redacted screenshots carry no embedded metadata", async () => {
     const sharp = (await import("sharp")).default;
-    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT]) {
+    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT, ...CLOUD_GALLERY]) {
       if (!shot) continue;
       const m = await sharp(join(process.cwd(), "public", shot.src)).metadata();
       expect([m.width, m.height]).toEqual([shot.width, shot.height]);

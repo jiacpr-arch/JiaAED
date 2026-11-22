@@ -22,10 +22,10 @@ URL: `/aed/heartsave-y8-gps` · สถานะ: **PREVIEW (noindex, ไม่�
 | `primedic-cloud-map-2026-11-23-redacted.png` | AED map (Streets) | เบอร์โทรบัญชี · หมุดเครื่องทุกจุด (เชียงราย ลำปาง กรุงเทพฯ/ปริมณฑล) · ตัดแถบเบราว์เซอร์ | ตัวนับ Normal 15 · Alert 4 · Non-IOT 0 |
 | `primedic-cloud-device-2026-11-23-redacted.png` | Installation information (รายเครื่อง) | Device SN · Battery SN · ป้ายบาร์โค้ด/QR บนตัวเครื่อง · แผนที่ · พิกัด · ที่อยู่ (ตัดส่วน Location ทิ้ง) | รุ่น Y8 · วันผลิต · วันหมดอายุแผ่นอิเล็กโทรด/แบตเตอรี่ |
 
-**ไม่ใช้:**
-- AED map แบบ Satellite (ซ้ำกับแบบ Streets)
-- Rescue History (เกือบทั้งหมดเป็น SN และเป็นเหตุใช้งานจริง ซึ่งเป็นคำกล่าวอ้างที่อ่อนไหวในโฆษณา)
-- Device installation list (ชื่อลูกค้า ที่อยู่ และ SN — ปิดแล้วไม่เหลือข้อมูล)
+| `primedic-cloud-map-satellite-2026-11-23-redacted.png` | AED map (Satellite) — แกลเลอรีส่วนองค์กร | เหมือนแบบ Streets | ตัวนับ 15 / 4 / 0 |
+| `primedic-cloud-installs-2026-11-23-redacted.png` | Device installation list — แกลเลอรีส่วนองค์กร | เบอร์บัญชี · คอลัมน์ Customer, Device location, Device SN ทั้งหมด | วันเวลาติดตั้ง · ปุ่มขั้นตอนติดตั้ง |
+
+**ไม่ใช้:** Rescue History (เกือบทั้งหมดเป็น SN และเป็นเหตุใช้งานช่วยชีวิตจริง — คำกล่าวอ้างที่อ่อนไหวในโฆษณาเครื่องมือแพทย์)
 
 ภาพชุดที่สอง (Device details ตาราง %แบต/อุณหภูมิ/Self-test, Customer list ที่มี 19 เครื่อง) ยังไม่ได้รับเป็นไฟล์
 หากต้องการใช้ ตาราง Device details ต้องปิด Device SN + Battery SN, ส่วน Customer list ต้องปิดอีเมล ชื่อ และเบอร์ทั้งหมด

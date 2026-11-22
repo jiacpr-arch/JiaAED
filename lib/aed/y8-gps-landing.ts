@@ -84,8 +84,11 @@ export const CLOUD_SNAPSHOT = {
 //   map    — account phone number and every device pin covered (legend 15/4/0 kept)
 //   device — device SN, battery SN, barcode label, location map, coordinates and
 //            address covered; location section cropped off (model + expiry dates kept)
-// Not used: rescue history, installation list, customer list (customer names,
-// emails, phones, addresses and SNs are most of what they show).
+//   satellite — same covers as the street map
+//   installs  — Customer, Device location and Device SN columns covered
+//               (installation dates and workflow buttons kept)
+// Not used: rescue history (SNs + real rescue events — a sensitive ad claim),
+// customer list (names, emails, phones of people).
 export type Screenshot = { src: string; width: number; height: number; alt: string };
 export const CLOUD_SCREENSHOT: Screenshot | null = {
   src: "/images/primedic-cloud-map-2026-11-23-redacted.png",
@@ -134,3 +137,22 @@ export const Y8_GPS_SEGMENTS = {
   rent: { variant: "y8gps_rent", source: "y8gps_rent_form", productId: "yuwell-gps" },
   org: { variant: "y8gps_org", source: "y8gps_org_form", productId: "yuwell-gps" },
 } as const;
+
+// Extra real-system screens for the organisations section (procurement buyers
+// want to see the actual software, not a mock-up).
+export const CLOUD_GALLERY: (Screenshot & { caption: string })[] = [
+  {
+    src: "/images/primedic-cloud-map-satellite-2026-11-23-redacted.png",
+    width: 1920,
+    height: 1028,
+    alt: "PRIMEDIC CLOUD แผนที่แบบดาวเทียม สรุป Normal 15 · Alert 4 (ปิดทับหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
+    caption: "AED map — ภาพรวมทุกจุดติดตั้ง (ปิดตำแหน่งรายเครื่อง)",
+  },
+  {
+    src: "/images/primedic-cloud-installs-2026-11-23-redacted.png",
+    width: 1920,
+    height: 1028,
+    alt: "PRIMEDIC CLOUD หน้าบันทึกการติดตั้งเครื่อง พร้อมวันเวลาติดตั้ง (ปิดชื่อลูกค้า ที่อยู่ และหมายเลขเครื่องแล้ว)",
+    caption: "Device installation — บันทึกการติดตั้งทุกเครื่อง (ปิดชื่อลูกค้า ที่อยู่ และ SN)",
+  },
+];

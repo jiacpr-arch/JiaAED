@@ -7,6 +7,7 @@ import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { PRIMEDIC_REGULATORY, fdaLine, thaiDate } from "@/lib/aed/regulatory";
 import {
   CLOUD_DEVICE_SCREENSHOT,
+  CLOUD_GALLERY,
   CLOUD_SCREENSHOT,
   CLOUD_SNAPSHOT,
   DASHBOARD_ACCESS_NOTE,
@@ -239,6 +240,29 @@ export function Y8GpsLandingContent({ embedded = false }: { embedded?: boolean }
               </div>
             ))}
           </div>
+          {CLOUD_GALLERY.length > 0 && (
+            <div className="mt-10" data-testid="cloud-gallery">
+              <h3 className="m-0 text-lg font-extrabold">หน้าจอระบบจริงที่ทีมงานใช้ดูแลเครื่อง</h3>
+              <p className="mt-1 text-xs text-[var(--m-muted)]">
+                ภาพหน้าจอ ณ {SNAPSHOT_DATE} ไม่ใช่ข้อมูลสด · ปิดทับข้อมูลลูกค้า ที่อยู่ หมายเลขเครื่อง และตำแหน่งรายเครื่องแล้ว
+              </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {CLOUD_GALLERY.map((g) => (
+                  <figure key={g.src} className="m-0 border border-[var(--m-line)] bg-white">
+                    <Image
+                      src={g.src}
+                      width={g.width}
+                      height={g.height}
+                      alt={g.alt}
+                      className="h-auto w-full"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <figcaption className="border-t border-[var(--m-line)] px-4 py-2 text-xs text-[var(--m-muted)]">{g.caption}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             <div className="border border-[var(--m-line)] p-5">
               <h3 className="m-0 text-lg font-extrabold">ขอ White Paper</h3>
