@@ -16,18 +16,22 @@ URL: `/aed/heartsave-y8-gps` · สถานะ: **PREVIEW (noindex, ไม่�
 ภาพที่ใช้: `/images/yuwell-gps-aed.webp`, `/images/primedic-y8-open.png` (ภาพเครื่องจริงสีแดงที่อยู่บนเว็บแล้ว)
 **ไม่ใช้** `/images/cloud-dashboard.png` (ภาพประกอบ ตัวเลข 24/20/3/1 ไม่ใช่ของจริง — มี test กันไว้)
 
-## ภาพหน้าจอ PRIMEDIC CLOUD — ยังไม่ได้ใส่
-ภาพที่ส่งในแชทอีกระบบไม่ได้ส่งต่อมาถึง repo/session นี้ และค้นใน Google Drive ไม่พบ ตอนนี้หน้าแสดง
-เฉพาะตัวเลข snapshot เป็นข้อความ (ไม่มีข้อมูลส่วนบุคคล) ขั้นตอนเมื่อได้ไฟล์:
+## ภาพหน้าจอ PRIMEDIC CLOUD (เจ้าของส่ง 22 พ.ย. 2026 — ปิดทับแล้ว)
+| ไฟล์บนเว็บ | ต้นฉบับ | ปิดทับ | เก็บไว้ให้เห็น |
+|---|---|---|---|
+| `primedic-cloud-map-2026-11-23-redacted.png` | AED map (Streets) | เบอร์โทรบัญชี · หมุดเครื่องทุกจุด (เชียงราย ลำปาง กรุงเทพฯ/ปริมณฑล) · ตัดแถบเบราว์เซอร์ | ตัวนับ Normal 15 · Alert 4 · Non-IOT 0 |
+| `primedic-cloud-device-2026-11-23-redacted.png` | Installation information (รายเครื่อง) | Device SN · Battery SN · ป้ายบาร์โค้ด/QR บนตัวเครื่อง · แผนที่ · พิกัด · ที่อยู่ (ตัดส่วน Location ทิ้ง) | รุ่น Y8 · วันผลิต · วันหมดอายุแผ่นอิเล็กโทรด/แบตเตอรี่ |
 
-1. วางไฟล์ต้นฉบับไว้นอก repo (ห้าม commit ต้นฉบับ)
-2. เขียน `boxes.json` ครอบ: ชื่อผู้ใช้ · อีเมล · เบอร์โทร · ชื่อลูกค้า · ที่อยู่ · Serial Number · หมุด GPS/พิกัดรายเครื่อง
-   (รวมแผนที่ทั้งกรอบถ้ามีหมุดรายเครื่อง) · แถบ URL/แท็บเบราว์เซอร์ที่อาจมีชื่อบัญชี
-3. `node scripts/redact-image.mjs ต้นฉบับ.png public/images/primedic-cloud-2026-11-23-redacted.png boxes.json`
-   (ทาสีทึบลงพิกเซลแล้ว encode ใหม่ ไม่มี metadata — กู้ข้อมูลใต้กล่องไม่ได้)
-4. เปิดดูไฟล์ผลลัพธ์ด้วยตาทั้งภาพ ซูมทุกมุม แล้วจึงตั้ง `CLOUD_SCREENSHOT` ใน `lib/aed/y8-gps-landing.ts`
-   (test บังคับชื่อไฟล์ต้องมีคำว่า `redacted`)
-5. ตรวจว่าตัวเลขบนภาพตรง 19/15/4 และวันที่ 23 พ.ย. 2569
+**ไม่ใช้:**
+- AED map แบบ Satellite (ซ้ำกับแบบ Streets)
+- Rescue History (เกือบทั้งหมดเป็น SN และเป็นเหตุใช้งานจริง ซึ่งเป็นคำกล่าวอ้างที่อ่อนไหวในโฆษณา)
+- Device installation list (ชื่อลูกค้า ที่อยู่ และ SN — ปิดแล้วไม่เหลือข้อมูล)
+
+ภาพชุดที่สอง (Device details ตาราง %แบต/อุณหภูมิ/Self-test, Customer list ที่มี 19 เครื่อง) ยังไม่ได้รับเป็นไฟล์
+หากต้องการใช้ ตาราง Device details ต้องปิด Device SN + Battery SN, ส่วน Customer list ต้องปิดอีเมล ชื่อ และเบอร์ทั้งหมด
+
+ทำซ้ำได้ด้วย `node scripts/redact-image.mjs <ต้นฉบับ> public/images/<ชื่อ>-redacted.png <boxes.json>` (รองรับ `crop`)
+ต้นฉบับห้าม commit · test บังคับไฟล์ต้องลงท้าย `-redacted.png` และไม่มี metadata
 
 ## ฝังใน www.jia1669.com (เจ้าของเลือก 22 พ.ย. 2026)
 ยิง Ads ไปที่หน้าบน **www.jia1669.com** (เว็บที่ ฆพ.287/2567 ระบุเป็นสื่อ) ซึ่งฝังหน้านี้เป็น iframe — แบบเดียวกับ Yuwell Y2

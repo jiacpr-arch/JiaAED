@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { VALID_PRODUCT_IDS } from "./lead-validation";
 import {
+  CLOUD_DEVICE_SCREENSHOT,
   CLOUD_SCREENSHOT,
   CLOUD_SNAPSHOT,
   DASHBOARD_ACCESS_NOTE,
@@ -20,11 +21,23 @@ describe("HeartSave Y8 GPS landing config", () => {
     expect(CLOUD_SNAPSHOT.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
-  it("never points the dashboard at the illustrative mock-up", () => {
-    expect(CLOUD_SCREENSHOT?.src).not.toBe("/images/cloud-dashboard.png");
-    if (CLOUD_SCREENSHOT) {
-      expect(CLOUD_SCREENSHOT.src).toMatch(/redacted/);
-      expect(existsSync(join(process.cwd(), "public", CLOUD_SCREENSHOT.src))).toBe(true);
+  it("only shows redacted dashboard screenshots, never the illustrative mock-up", () => {
+    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT]) {
+      if (!shot) continue;
+      expect(shot.src).not.toBe("/images/cloud-dashboard.png");
+      expect(shot.src).toMatch(/-redacted\.png$/);
+      expect(existsSync(join(process.cwd(), "public", shot.src))).toBe(true);
+    }
+  });
+
+  it("redacted screenshots carry no embedded metadata", async () => {
+    const sharp = (await import("sharp")).default;
+    for (const shot of [CLOUD_SCREENSHOT, CLOUD_DEVICE_SCREENSHOT]) {
+      if (!shot) continue;
+      const m = await sharp(join(process.cwd(), "public", shot.src)).metadata();
+      expect([m.width, m.height]).toEqual([shot.width, shot.height]);
+      expect(m.exif).toBeUndefined();
+      expect(m.xmp).toBeUndefined();
     }
   });
 

@@ -78,7 +78,27 @@ export const CLOUD_SNAPSHOT = {
 // page shows the snapshot numbers as text only — never the raw screenshot and
 // never the old illustrative mock-up (/images/cloud-dashboard.png, whose 24/20/3/1
 // figures are not real).
-export const CLOUD_SCREENSHOT: { src: string; width: number; height: number } | null = null;
+//
+// Owner sent the PRIMEDIC CLOUD screenshots on 22 พ.ย. 2026. Redacted with
+// scripts/redact-image.mjs and checked by eye:
+//   map    — account phone number and every device pin covered (legend 15/4/0 kept)
+//   device — device SN, battery SN, barcode label, location map, coordinates and
+//            address covered; location section cropped off (model + expiry dates kept)
+// Not used: rescue history, installation list, customer list (customer names,
+// emails, phones, addresses and SNs are most of what they show).
+export type Screenshot = { src: string; width: number; height: number; alt: string };
+export const CLOUD_SCREENSHOT: Screenshot | null = {
+  src: "/images/primedic-cloud-map-2026-11-23-redacted.png",
+  width: 1920,
+  height: 1028,
+  alt: "หน้าจอ PRIMEDIC CLOUD แผนที่ภาพรวมเครื่อง Normal 15 · Alert 4 (ปิดทับหมุดตำแหน่งรายเครื่องและเบอร์โทรบัญชีแล้ว)",
+};
+export const CLOUD_DEVICE_SCREENSHOT: Screenshot | null = {
+  src: "/images/primedic-cloud-device-2026-11-23-redacted.png",
+  width: 880,
+  height: 572,
+  alt: "หน้าจอข้อมูลรายเครื่อง PRIMEDIC CLOUD รุ่น Y8 แสดงวันหมดอายุแผ่นอิเล็กโทรดและแบตเตอรี่ (ปิดหมายเลขเครื่อง หมายเลขแบตเตอรี่ และตำแหน่งแล้ว)",
+};
 
 // ── Product photos (real red/orange-red HeartSave units, already on the site) ──
 export const Y8_GPS_PHOTOS = {

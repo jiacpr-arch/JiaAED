@@ -3,8 +3,10 @@
 //
 //   node scripts/redact-image.mjs <input> <output.png> <boxes.json>
 //
-// boxes.json: [{ "x": 10, "y": 20, "w": 300, "h": 40, "why": "customer name" }, ...]
-// in pixels of the ORIGINAL image. Boxes are composited onto the pixels and the
+// boxes.json: { "boxes": [{ "x": 10, "y": 20, "w": 300, "h": 40, "why": "customer name" }, ...],
+//               "crop": { "x": 0, "y": 52, "w": 1920, "h": 1028 } }   (crop optional)
+// (a bare array of boxes also works). All coordinates are pixels of the
+// ORIGINAL image; boxes are burned in first, then the crop is taken. Boxes are composited onto the pixels and the
 // result is re-encoded as a fresh PNG (no EXIF/XMP/ICC text, no layers), so the
 // covered content cannot be recovered from the output file. Always open the
 // output and check it by eye — a box in the wrong place hides nothing.
@@ -25,7 +27,9 @@ if (!output.endsWith(".png")) {
   process.exit(1);
 }
 
-const boxes = JSON.parse(readFileSync(boxesPath, "utf8"));
+const spec = JSON.parse(readFileSync(boxesPath, "utf8"));
+const boxes = Array.isArray(spec) ? spec : spec.boxes;
+const crop = Array.isArray(spec) ? null : spec.crop ?? null;
 if (!Array.isArray(boxes) || boxes.length === 0) {
   console.error("boxes.json must be a non-empty array");
   process.exit(1);
@@ -47,10 +51,16 @@ const overlays = boxes.map((b, i) => {
   };
 });
 
-await img
+// Burn the boxes into a raw buffer first so the crop below can't reorder them.
+const burned = await img
   .flatten({ background: "#ffffff" }) // drop alpha so nothing shows through
   .composite(overlays)
-  .png({ compressionLevel: 9 })
-  .toFile(output); // sharp writes no metadata unless .withMetadata() is called
+  .png()
+  .toBuffer();
 
-console.log(`redacted ${boxes.length} region(s) → ${output} (${width}×${height})`);
+let out = sharp(burned);
+if (crop) out = out.extract({ left: crop.x, top: crop.y, width: crop.w, height: crop.h });
+await out.png({ compressionLevel: 9 }).toFile(output); // no .withMetadata() ⇒ no EXIF/XMP
+
+const size = crop ? `${crop.w}×${crop.h} (cropped from ${width}×${height})` : `${width}×${height}`;
+console.log(`redacted ${boxes.length} region(s) → ${output} ${size}`);

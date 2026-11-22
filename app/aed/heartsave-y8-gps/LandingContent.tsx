@@ -6,6 +6,7 @@ import { LINE_DISPLAY_ID, LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
 import { PRIMEDIC_REGULATORY, fdaLine, thaiDate } from "@/lib/aed/regulatory";
 import {
+  CLOUD_DEVICE_SCREENSHOT,
   CLOUD_SCREENSHOT,
   CLOUD_SNAPSHOT,
   DASHBOARD_ACCESS_NOTE,
@@ -44,9 +45,9 @@ function SnapshotPanel() {
             src={CLOUD_SCREENSHOT.src}
             width={CLOUD_SCREENSHOT.width}
             height={CLOUD_SCREENSHOT.height}
-            alt={`ภาพหน้าจอ PRIMEDIC CLOUD ณ ${SNAPSHOT_DATE} (ปิดทับข้อมูลลูกค้า หมายเลขเครื่อง และพิกัดแล้ว)`}
+            alt={CLOUD_SCREENSHOT.alt}
             className="h-auto w-full"
-            sizes="(max-width: 900px) 100vw, 50vw"
+            sizes="(max-width: 1024px) 100vw, 60vw"
           />
         </div>
       )}
@@ -188,8 +189,8 @@ export function Y8GpsLandingContent({ embedded = false }: { embedded?: boolean }
 
       {/* ── Dashboard snapshot (shared proof) ────────────────────────────── */}
       <section className="market-section market-section-cream" aria-labelledby="cloud-title">
-        <div className="market-container grid items-center gap-10 md:grid-cols-2">
-          <div>
+        <div className="market-container">
+          <div className="max-w-3xl">
             <p className="market-eyebrow !text-[#c6503c]">PRIMEDIC CLOUD</p>
             <h2 id="cloud-title" className="m-0 text-[clamp(26px,3.2vw,40px)] font-extrabold leading-tight tracking-[-0.04em]">
               เห็นว่าเครื่องไหนพร้อม เครื่องไหนต้องดูแล
@@ -199,7 +200,27 @@ export function Y8GpsLandingContent({ embedded = false }: { embedded?: boolean }
               เพื่อนัดเปลี่ยนแบตเตอรี่หรือแผ่นอิเล็กโทรดก่อนถึงวันที่ต้องใช้จริง
             </p>
           </div>
-          <SnapshotPanel />
+          <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1.6fr_1fr]">
+            <SnapshotPanel />
+            {CLOUD_DEVICE_SCREENSHOT && (
+              <figure className="m-0 border border-[var(--m-line)] bg-white" data-testid="cloud-device">
+                <div className="border-b border-[var(--m-line)] bg-[#182721] px-4 py-3 text-sm font-bold text-white">
+                  ข้อมูลรายเครื่อง · วันหมดอายุแผ่นอิเล็กโทรดและแบตเตอรี่
+                </div>
+                <Image
+                  src={CLOUD_DEVICE_SCREENSHOT.src}
+                  width={CLOUD_DEVICE_SCREENSHOT.width}
+                  height={CLOUD_DEVICE_SCREENSHOT.height}
+                  alt={CLOUD_DEVICE_SCREENSHOT.alt}
+                  className="h-auto w-full"
+                  sizes="(max-width: 1024px) 100vw, 38vw"
+                />
+                <figcaption className="border-t border-[var(--m-line)] px-4 py-3 text-[11px] leading-relaxed text-[var(--m-muted)]">
+                  ภาพหน้าจอ ณ {SNAPSHOT_DATE} · ปิดทับหมายเลขเครื่อง หมายเลขแบตเตอรี่ และตำแหน่งติดตั้งแล้ว
+                </figcaption>
+              </figure>
+            )}
+          </div>
         </div>
       </section>
 
