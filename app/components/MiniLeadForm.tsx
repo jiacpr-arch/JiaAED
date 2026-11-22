@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { pixelLeadCreated } from "../openai-ads";
 import { trackEvent } from "@/lib/aed/analytics-client";
-import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { readFbTracking, newEventId } from "@/lib/aed/fb-tracking";
+import { fireLeadConversions } from "@/lib/aed/lead-conversions-client";
 import { hasMarketingConsent } from "@/lib/aed/consent";
-import { GADS_LEAD_CONVERSION_LABEL, gadsConversionParams } from "@/lib/aed/google-ads-tag";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 
 type State = "idle" | "submitting" | "success" | "error";
@@ -245,20 +244,7 @@ export function MiniLeadForm({
       }
 
       if (!json.skipped) {
-        pixelLeadCreated(json.leadId);
-        trackEvent("lead_form_submit", { variant, product_id: productId ?? "none" });
-
-        const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
-        if (hasMarketingConsent() && typeof gtag === "function") {
-          gtag("event", "lead_form_submit", { variant });
-          const conv = gadsConversionParams(GADS_LEAD_CONVERSION_LABEL);
-          if (conv) {
-            gtag("event", "conversion", conv);
-          }
-        }
-
-        // Meta Pixel Lead — shares eventId with the server CAPI call for dedup.
-        fireMetaLead(eventId);
+        fireLeadConversions({ variant, productId, leadId: json.leadId, eventId });
       }
 
       setState("success");

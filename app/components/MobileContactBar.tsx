@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { PHONE_HREF } from "@/lib/aed/contact";
 
@@ -13,8 +14,13 @@ import { PHONE_HREF } from "@/lib/aed/contact";
  * already carries its own LINE/phone CTAs, and stacking the bar on top of them
  * put 6–7 competing buttons in the first viewport.
  */
+// Pages whose main goal is a quote request get "ขอใบเสนอราคา" in place of the
+// phone button (the phone stays in the page's own contact section).
+const QUOTE_CTA_PATHS: Record<string, string> = { "/aed/gps-rental": "#quote" };
+
 export function MobileContactBar() {
   const [shown, setShown] = useState(false);
+  const quoteHref = QUOTE_CTA_PATHS[usePathname() ?? ""];
 
   useEffect(() => {
     const update = () => setShown(window.scrollY > window.innerHeight * 0.6);
@@ -44,13 +50,23 @@ export function MobileContactBar() {
           >
             💬 LINE {LINE_DISPLAY_ID}
           </a>
-          <a
-            href={PHONE_HREF}
-            data-cta="tel_mobile_sticky_bar"
-            className="flex items-center justify-center gap-1.5 border border-gray-600 text-white font-bold text-sm px-3 py-3 rounded-full hover:border-yellow-400 transition-colors"
-          >
-            📞 โทรเลย
-          </a>
+          {quoteHref ? (
+            <a
+              href={quoteHref}
+              data-cta="quote_mobile_sticky_bar"
+              className="flex items-center justify-center gap-1.5 bg-[#f59e0b] text-[#0b2545] font-extrabold text-sm px-3 py-3 rounded-full"
+            >
+              ขอใบเสนอราคา
+            </a>
+          ) : (
+            <a
+              href={PHONE_HREF}
+              data-cta="tel_mobile_sticky_bar"
+              className="flex items-center justify-center gap-1.5 border border-gray-600 text-white font-bold text-sm px-3 py-3 rounded-full hover:border-yellow-400 transition-colors"
+            >
+              📞 โทรเลย
+            </a>
+          )}
         </div>
       </div>
     </>
