@@ -14,6 +14,7 @@ import { runAI } from "@/lib/aed/ai-orchestrator";
 import { notifyNewFollow, notifyHotConversation, notifyProcessingError, notifyProcessingErrors } from "@/lib/aed/notify-owner";
 import { scoreConversation, CONVERSATION_HOT_THRESHOLD } from "@/lib/aed/lead-scoring";
 import { replyOrPush } from "@/lib/aed/line-messaging";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { primedicModels } from "@/lib/aed/primedic";
 import type { LineEvent } from "@/lib/aed/types";
 
@@ -122,6 +123,24 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
     if (textEvent.message.type !== "text" || !textEvent.message.text) continue;
 
     const userText = textEvent.message.text.trim();
+
+    // ── Rental customer links LINE to their AED units (code from gps.jiacpr.com/c/…) ──
+    // Handled before the AI so the sales bot never answers these.
+    const link = userText.match(/^(?:เชื่อม|link)\s*(?:เครื่อง\s*)?AED\s*[:#]?\s*([A-Za-z0-9]{6})$/i);
+    if (link) {
+      await replyOrPush(target, await linkCustomer(link[1], lineUserId));
+      continue;
+    }
+    if (/^(?:ยกเลิก|หยุด)\s*แจ้งเตือน\s*AED$/i.test(userText)) {
+      const { data } = await createAdminClient().rpc("aed_line_unlink", { p_user: lineUserId });
+      await replyOrPush(
+        target,
+        (data ?? 0) > 0
+          ? "ยกเลิกการแจ้งเตือนเครื่อง AED แล้วครับ ถ้าต้องการรับอีกครั้ง กดปุ่ม \"รับแจ้งเตือนทาง LINE\" ในหน้าสถานะเครื่องได้เลย"
+          : "บัญชีนี้ไม่ได้รับแจ้งเตือนเครื่อง AED อยู่ครับ",
+      );
+      continue;
+    }
 
     // ── "myid" helper (สำหรับเพิ่มแอดมินรับ notify) ──────────────────────────
     // แอดมินคนใหม่พิมพ์ "myid" เพื่อขอ LINE User ID ของตัวเอง แล้วเอาไปใส่ env
@@ -234,4 +253,36 @@ async function processEvents(events: LineEvent[], deadline: number): Promise<voi
       })),
     ).catch(() => null);
   }
+}
+
+async function linkCustomer(code: string, lineUserId: string): Promise<string> {
+  let name: string | null = null;
+  try {
+    const res = await fetch(`https://api.line.me/v2/bot/profile/${lineUserId}`, {
+      headers: { Authorization: `Bearer ${process.env.AED_LINE_CHANNEL_ACCESS_TOKEN ?? ""}` },
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (res.ok) name = ((await res.json()) as { displayName?: string }).displayName ?? null;
+  } catch {
+    // the display name is only a label in the admin page
+  }
+  const { data, error } = await createAdminClient().rpc("aed_line_link", { p_code: code, p_user: lineUserId, p_name: name });
+  if (error) {
+    console.error("[AED] aed_line_link failed:", error.message);
+    return "ขออภัยครับ เชื่อมต่อไม่สำเร็จชั่วคราว กรุณาส่งข้อความเดิมอีกครั้งในอีกสักครู่ 🙏";
+  }
+  const r = data as { ok: boolean; customer?: string; devices?: number; labels?: string[] } | null;
+  if (!r?.ok) return "ไม่พบรหัสนี้ครับ กรุณากดปุ่ม \"รับแจ้งเตือนทาง LINE\" จากหน้าสถานะเครื่องอีกครั้ง หรือโทร 082-280-9999";
+  return [
+    `✅ เชื่อมการแจ้งเตือนเครื่อง AED ของ ${r.customer} แล้วครับ (${r.devices ?? 0} เครื่อง)`,
+    ...(r.labels ?? []).slice(0, 10).map((l) => `• ${l}`),
+    "",
+    "คุณจะได้รับข้อความเมื่อ:",
+    "• มีการเปิดเครื่อง",
+    "• เครื่องตรวจพบความผิดปกติ",
+    "• แผ่นแปะ/แบตเตอรี่ใกล้หมดอายุ (ทีม JIA จะนัดเปลี่ยนให้)",
+    "• สรุปสถานะทุกต้นเดือน",
+    "",
+    "เหตุฉุกเฉิน โทร 1669 ทันที · ยกเลิกพิมพ์ \"ยกเลิกแจ้งเตือน AED\"",
+  ].join("\n");
 }
