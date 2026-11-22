@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { articles } from "@/lib/aed/articles";
 import { PRIMEDIC_REGULATORY } from "@/lib/aed/regulatory";
+import { MONITORING_PATH } from "@/lib/aed/monitoring-page";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://jiaaed.com";
 
@@ -126,6 +127,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
           },
         ]
       : []),
+    // How the team checks customers' machines online (PRIMEDIC CLOUD).
+    { url: `${SITE}${MONITORING_PATH}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 },
   ];
 
   const articleEntries: MetadataRoute.Sitemap = articles.map((a) => ({

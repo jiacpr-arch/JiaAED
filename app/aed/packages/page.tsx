@@ -1,5 +1,6 @@
 import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
+import { dashboardImage } from "@/lib/aed/gps";
 import Link from "next/link";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { PackageCard } from "@/app/components/PackageCard";
@@ -90,7 +91,7 @@ export default function PackagesPage() {
           photos={[
             { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดยทีม BLS Instructor สอนถึงที่" },
             { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
-            { src: "/images/cloud-dashboard.png", alt: "Cloud Dashboard ดูสถานะเครื่อง AED", caption: "Dashboard เช็กความพร้อม 24 ชม." },
+            { src: dashboardImage, alt: "หน้าจอ PRIMEDIC CLOUD ภาพรวมสถานะเครื่อง AED (เบลอข้อมูลลูกค้าและตำแหน่งแล้ว)", caption: "หน้าจอระบบจริง — ทีมงานเห็นสถานะทุกเครื่อง" },
           ]}
         />
       </section>

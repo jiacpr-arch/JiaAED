@@ -1,6 +1,7 @@
 import { MarketPage, MarketHero, MarketButton } from "@/app/components/MarketShell";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { CLOUD_DEVICE_SCREENSHOT } from "@/lib/aed/monitoring-page";
 import Link from "next/link";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { FeatureMatrix } from "@/app/components/FeatureMatrix";
@@ -54,16 +55,22 @@ export default function SubscriptionPage() {
 
         {/* GPS AED + Cloud Dashboard flyer + the 4 things the service actually does */}
         <div className="mt-8 grid md:grid-cols-2 gap-8 items-center">
-          <div className="rounded-2xl overflow-hidden border border-gray-800">
+          {/* Real PRIMEDIC CLOUD screen (blurred) — replaced the flyer whose
+              dashboard mock-up showed made-up 24/20/3/1 figures. */}
+          <figure className="m-0 rounded-2xl overflow-hidden border border-gray-800 bg-white">
             <Image
-              src="/images/yuwell-gps-flyer.png"
-              alt="Yuwell GPS AED เช่า พร้อมระบบ Cloud Dashboard ติดตามสถานะ Real-time"
-              width={1159}
-              height={1358}
+              src={CLOUD_DEVICE_SCREENSHOT.src}
+              alt={CLOUD_DEVICE_SCREENSHOT.alt}
+              width={CLOUD_DEVICE_SCREENSHOT.width}
+              height={CLOUD_DEVICE_SCREENSHOT.height}
               className="w-full h-auto"
               priority
             />
-          </div>
+            <figcaption className="bg-gray-900 px-4 py-2 text-[11px] text-gray-400">
+              หน้าจอข้อมูลรายเครื่องในระบบจริง — ทีมงานเห็นวันหมดอายุแผ่นอิเล็กโทรดและแบตเตอรี่ของทุกเครื่อง ·{" "}
+              <Link href="/aed/monitoring" className="underline">ดูระบบตรวจเครื่องออนไลน์</Link>
+            </figcaption>
+          </figure>
           <div className="space-y-3">
             {[
               { icon: "📡", title: "GPS + Cloud Dashboard", desc: `เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time (ระดับ ${tiersWith("Yuwell GPS ติดตามตำแหน่ง")})` },

@@ -1,5 +1,8 @@
 import Image from "next/image";
-import { dashboardFeatures, dashboardImage } from "@/lib/aed/gps";
+import Link from "next/link";
+import { dashboardFeatures, dashboardShot } from "@/lib/aed/gps";
+import { CLOUD_SNAPSHOT } from "@/lib/aed/monitoring-page";
+import { thaiDate } from "@/lib/aed/regulatory";
 import { SectionHeading } from "./SectionHeading";
 
 export function CloudDashboardSection() {
@@ -12,24 +15,33 @@ export function CloudDashboardSection() {
       />
 
       <div className="grid md:grid-cols-2 gap-8 items-center mt-8">
-        <ul className="space-y-3 order-2 md:order-1">
-          {dashboardFeatures.map((f) => (
-            <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
-              <span className="text-green-400 flex-shrink-0 mt-0.5">✅</span>
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="order-2 md:order-1">
+          <ul className="space-y-3">
+            {dashboardFeatures.map((f) => (
+              <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
+                <span className="text-green-400 flex-shrink-0 mt-0.5">✅</span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Link href="/aed/monitoring" data-cta="cloud_section_monitoring" className="mt-5 inline-block text-sm font-bold underline underline-offset-4">
+            ดูหน้าจอระบบจริงที่ทีมงานใช้ตรวจเครื่อง →
+          </Link>
+        </div>
 
-        <div className="relative w-full h-64 md:h-80 rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 order-1 md:order-2">
+        <figure className="m-0 order-1 md:order-2 overflow-hidden rounded-2xl border border-gray-800 bg-white">
           <Image
-            src={dashboardImage}
-            alt="ระบบ Cloud Dashboard ตรวจสอบสถานะ AED"
-            fill
-            className="object-cover"
+            src={dashboardShot.src}
+            width={dashboardShot.width}
+            height={dashboardShot.height}
+            alt={dashboardShot.alt}
+            className="h-auto w-full"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
-        </div>
+          <figcaption className="bg-gray-900 px-4 py-2 text-[11px] text-gray-400">
+            หน้าจอระบบจริง ณ {thaiDate(CLOUD_SNAPSHOT.date, "long")} (ไม่ใช่ข้อมูลสด) · เบลอข้อมูลลูกค้าและตำแหน่งรายเครื่องแล้ว
+          </figcaption>
+        </figure>
       </div>
     </section>
   );
