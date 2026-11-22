@@ -15,8 +15,10 @@ export const RENTAL_PRICES = {
   oneMonth: 7_900, // 1 เดือน ไม่มีขั้นต่ำ
   flexMonthly: 2_990, // ต่อเนื่อง 3–11 เดือน
   flexMinMonths: 3,
-  // ── ติดตั้งประจำ (STANDARD tier, billed yearly) ──
-  annual: 22_000,
+  // ── ติดตั้งประจำ: สัญญา 12 เดือน เลือกวิธีชำระ ──
+  annualMonthly: 1_990, // ชำระทุกเดือน ภายใต้สัญญา 12 เดือน (ไม่ใช่ราคาเช่าเดือนเดียว)
+  annualMonthlyMinMonths: 12,
+  annual: 22_000, // ชำระปีละครั้ง
   annual2to4Units: 20_000, // ต่อเครื่อง/ปี
   annual5PlusUnits: 18_000, // ต่อเครื่อง/ปี
 } as const;
