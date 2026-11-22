@@ -6,7 +6,9 @@ import { HOUR, countRecent, overLimit, requestIp } from "@/lib/aed/rate-limit";
 
 export const runtime = "nodejs";
 
-// Server-side companion to the browser `Lead` pixel fired on a LINE-button click
+// Server-side companion to the browser `Contact` pixel fired on a LINE-button click
+// (sent as Contact, not Lead, since 22 พ.ย. 2026 — the path keeps its old name so
+// cached pages keep working)
 // (see LineClickTracker). A LINE click carries no email/phone, so attribution
 // relies on fbc/fbp + client IP/UA. Shares eventId with the browser pixel for
 // dedup. Safe no-op until the Meta env vars are set.
@@ -78,6 +80,7 @@ export async function POST(req: Request) {
   // only to fire that event, so it must not be dropped.
   waitUntil(
     sendMetaLeadEvent({
+      eventName: "Contact",
       eventId,
       fbc,
       fbp,
@@ -85,7 +88,7 @@ export async function POST(req: Request) {
       userAgent,
       eventSourceUrl: pageUrl,
       contentName: location ? `line_click:${location}` : "line_click",
-    }).catch((e) => console.error("[AED] meta line-click lead failed:", e)),
+    }).catch((e) => console.error("[AED] meta line-click contact failed:", e)),
   );
 
   return NextResponse.json({ ok: true });

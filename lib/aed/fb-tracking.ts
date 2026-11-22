@@ -53,3 +53,12 @@ export function fireMetaLead(eventId: string, value?: number): void {
   if (typeof value === "number") data.value = value;
   fbq("track", "Lead", data, { eventID: eventId });
 }
+
+// Fires the browser-side `Contact` event (a LINE click — a way to reach us,
+// not a lead) with the shared eventID for dedup with the server CAPI call.
+export function fireMetaContact(eventId: string): void {
+  if (typeof window === "undefined") return;
+  const fbq = (window as unknown as { fbq?: Fbq }).fbq;
+  if (typeof fbq !== "function") return;
+  fbq("track", "Contact", { currency: "THB" }, { eventID: eventId });
+}
