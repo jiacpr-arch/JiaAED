@@ -1,7 +1,9 @@
 // ─── /aed/gps-rental — ad landing page: เช่า AED GPS 4G (JIA AED SMART NETWORK) ──
 // Built from the owner's MASTER CONTEXT v1.0 (23 พ.ย. 2569). Owner decisions,
-// 22 พ.ย. 2026: price = STANDARD ≈ ฿1,830/เดือน (not the ฿1,990 in the brief —
-// no plan carries it), LINE = the site's existing OA (@JIA1669 isn't wired to the
+// 23 พ.ย. 2026: owner confirms TWO genuine long-term payment options:
+// ฿1,990 per month paid monthly (12-month agreement), OR ฿22,000 per year paid yearly.
+// The ฿1,830 figure is only the monthly equivalent of the annual price, never a billed monthly price.
+// LINE = the site's existing OA (@JIA1669 isn't wired to the
 // bot/follow tracking), publish straight away.
 //
 // Rules from the brief this module enforces: every number comes from the price /
@@ -31,12 +33,12 @@ const spec = (label: string) => primedicSharedSpecs.find((s) => s.label === labe
 const matrix = (feature: string) => subscriptionMatrix.find((r) => r.feature === feature)?.values;
 
 // ── Price ─────────────────────────────────────────────────────────────────────
-export const FROM_MONTHLY = STANDARD_MONTHLY; // ฿1,830
+export const FROM_MONTHLY = RENTAL_PRICES.annualMonthly; // ฿1,990 ชำระเป็นรายเดือน (สัญญา 12 เดือน)
 export const PRICE_FROM = thb(FROM_MONTHLY);
 export const PRICE_NOTE =
-  `ราคาเฉลี่ยต่อเดือนของแผนรายปี STANDARD 1 เครื่อง (ชำระรายปี ${thb(RENTAL_PRICES.annual)}) ไม่รวม VAT 7% · ` +
-  `มีเงื่อนไขระยะสัญญา เงินประกัน ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้เมื่อมี PO) การจัดส่ง และบริการที่เลือก · ` +
-  "ราคาสุดท้ายตามใบเสนอราคาและสัญญาเช่า";
+  `เลือกชำระรายเดือน ${thb(RENTAL_PRICES.annualMonthly)}/เดือน (สัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน) หรือชำระรายปี ${thb(RENTAL_PRICES.annual)}/ปี · ไม่รวม VAT 7% · ` +
+  `เงินประกันรายเดือน ${thb(RENTAL_DEPOSITS.flex)} / รายปี ${thb(RENTAL_DEPOSITS.annual)} (รายปีอาจยกเว้นเมื่อมี PO) · ` +
+  "การจัดส่ง การชำระล่วงหน้าและบริการเพิ่มเติมตามใบเสนอราคาและสัญญาเช่า";
 
 // ── Photos (catalog-labelled shots of this unit only — never a Y2/colour-screen
 //    image, never an AI render) ──────────────────────────────────────────────
@@ -117,19 +119,33 @@ export const EMERGENCY_REMINDER = "พบคนหมดสติไม่หา
 export type Pkg = { id: string; name: string; price: string; priceNote: string; points: string[]; cta: string; need: QuoteNeed; featured?: boolean };
 export const PACKAGES: Pkg[] = [
   {
-    id: "gps-rental",
-    name: "AED GPS Rental",
-    price: `เริ่ม ${PRICE_FROM}/เดือน`,
-    priceNote: `เฉลี่ย · ชำระรายปี ${thb(RENTAL_PRICES.annual)} · ไม่รวม VAT`,
+    id: "gps-monthly",
+    name: "AED GPS — ชำระรายเดือน",
+    price: `${PRICE_FROM}/เดือน`,
+    priceNote: `ชำระรายเดือน · สัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน · ไม่รวม VAT`,
     points: [
       `เครื่อง ${yuwellGpsAed.name} พร้อมแผ่นอิเล็กโทรดและแบตเตอรี่`,
-      "ระบบติดตามสถานะตามบริการที่รองรับ",
-      `สัญญา 3 ปี ลด ${pct(THREE_YEAR_DISCOUNT)}`,
-      `เงินประกัน ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้เมื่อมี PO)`,
+      "ตรวจสอบสถานะผ่านระบบ Monitoring ตามบริการที่รองรับ",
+      `เงินประกัน ${thb(RENTAL_DEPOSITS.flex)} · การชำระล่วงหน้าตามสัญญา`,
+      "เหมาะกับองค์กรที่ต้องการแบ่งจ่ายรายเดือน",
     ],
-    cta: "ขอใบเสนอราคา",
+    cta: "ขอใบเสนอราคารายเดือน",
     need: "rent",
     featured: true,
+  },
+  {
+    id: "gps-annual",
+    name: "AED GPS — ชำระรายปี",
+    price: `${thb(RENTAL_PRICES.annual)}/ปี`,
+    priceNote: `ชำระรายปี · เฉลี่ย ${thb(STANDARD_MONTHLY)}/เดือน · ไม่รวม VAT`,
+    points: [
+      `เครื่อง ${yuwellGpsAed.name} พร้อมระบบ Monitoring`,
+      `ประหยัด ${thb(RENTAL_PRICES.annualMonthly * 12 - RENTAL_PRICES.annual)}/ปี เมื่อเทียบกับการจ่ายรายเดือน 12 ครั้ง`,
+      `เงินประกัน ${thb(RENTAL_DEPOSITS.annual)} (อาจยกเว้นเมื่อมี PO)`,
+      `สัญญา 3 ปี ลด ${pct(THREE_YEAR_DISCOUNT)} ตามเงื่อนไข`,
+    ],
+    cta: "ขอใบเสนอราคารายปี",
+    need: "rent",
   },
   {
     id: "gps-cabinet",
@@ -151,8 +167,9 @@ export const PACKAGES: Pkg[] = [
   },
 ];
 export const PACKAGE_FINE_PRINT =
-  `ราคาไม่รวม VAT · ค่าเช่าไม่ได้รวมทุกบริการ: ค่าตู้ ค่าขนส่งและติดตั้งต่างจังหวัด เป็นไปตามใบเสนอราคา · คืนเครื่องช้าคิดวันละ ${thb(RENTAL_LATE_RETURN_PER_DAY)} · ` +
-  `ต้องการใช้ระยะสั้น มีแผนรายวัน รายสัปดาห์ และรายเดือน (FLEX ${thb(RENTAL_PRICES.flexMonthly)}/เดือน ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน)`;
+  `แผน ${thb(RENTAL_PRICES.annualMonthly)}/เดือนเป็นสัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน ชำระรายเดือน; แผน ${thb(RENTAL_PRICES.annual)}/ปีชำระรายปี · ไม่รวม VAT · ` +
+  `ค่าตู้ ค่าขนส่ง/ติดตั้งต่างจังหวัด และบริการเพิ่มเติมตามใบเสนอราคา · คืนเครื่องช้าคิดวันละ ${thb(RENTAL_LATE_RETURN_PER_DAY)} · ` +
+  `เช่าระยะสั้นมีแผนรายวัน รายสัปดาห์ และ FLEX ${thb(RENTAL_PRICES.flexMonthly)}/เดือน (ขั้นต่ำ ${RENTAL_PRICES.flexMinMonths} เดือน)`;
 
 // ── After-sales service (from the rental terms and the tier matrix) ──────────
 const sla = matrix("เปลี่ยนเครื่องเมื่อเสีย (SLA)");
@@ -214,15 +231,15 @@ const monthMin = RENTAL_PRICES.flexMinMonths;
 export const GPS_RENTAL_FAQS: FAQ[] = [
   {
     question: "เช่า AED ราคาเท่าไร?",
-    answer: `แผนรายปี STANDARD ${thb(RENTAL_PRICES.annual)}/ปี เฉลี่ยประมาณ ${PRICE_FROM}/เดือน ไม่รวม VAT · 2–4 เครื่อง ${thb(RENTAL_PRICES.annual2to4Units)} และ 5 เครื่องขึ้นไป ${thb(RENTAL_PRICES.annual5PlusUnits)} ต่อเครื่อง/ปี · สัญญา 3 ปีลด ${pct(THREE_YEAR_DISCOUNT)} · ราคาสุดท้ายตามใบเสนอราคา`,
+    answer: `เลือกชำระรายเดือน ${thb(RENTAL_PRICES.annualMonthly)}/เดือน (สัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน) หรือชำระรายปี ${thb(RENTAL_PRICES.annual)}/ปี (เฉลี่ยประมาณ ${thb(STANDARD_MONTHLY)}/เดือน) ไม่รวม VAT · 2–4 เครื่อง ${thb(RENTAL_PRICES.annual2to4Units)} และ 5 เครื่องขึ้นไป ${thb(RENTAL_PRICES.annual5PlusUnits)} ต่อเครื่อง/ปี · ราคาสุดท้ายตามใบเสนอราคา`,
   },
   {
     question: "ต้องวางเงินประกันหรือไม่?",
-    answer: `แผนรายปีวางเงินประกัน ${thb(RENTAL_DEPOSITS.annual)} (ยกเว้นได้เมื่อมีใบสั่งซื้อ PO) · แผนยืดหยุ่น/รายเดือน ${thb(RENTAL_DEPOSITS.flex)} (นิติบุคคล ${thb(RENTAL_DEPOSITS.flexCorporate)}) · คืนเต็มจำนวนเมื่อได้รับเครื่องคืนครบและสภาพปกติ`,
+    answer: `แผนชำระรายเดือนแบบสัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน วางเงินประกัน ${thb(RENTAL_DEPOSITS.flex)} · แผนชำระรายปีวางเงินประกัน ${thb(RENTAL_DEPOSITS.annual)} (อาจยกเว้นเมื่อมี PO) · เงื่อนไขชำระล่วงหน้าและการคืนประกันเป็นไปตามสัญญา`,
   },
   {
     question: "เช่าขั้นต่ำกี่เดือน?",
-    answer: `แผนรายปีขั้นต่ำ 1 ปี · แผนยืดหยุ่น (FLEX) ขั้นต่ำ ${monthMin} เดือน · มีแผน 1 เดือนและแผนรายวัน/รายสัปดาห์สำหรับงานอีเวนต์`,
+    answer: `แผนจ่ายรายเดือน ${thb(RENTAL_PRICES.annualMonthly)} มีสัญญา ${RENTAL_PRICES.annualMonthlyMinMonths} เดือน (ไม่ใช่ราคาเช่าเพียง 1 เดือน) · แผนจ่ายรายปีสัญญาขั้นต่ำ 1 ปี · FLEX ขั้นต่ำ ${monthMin} เดือน และมีแผนเช่าระยะสั้นแยกต่างหาก`,
   },
   {
     question: "ระบบ GPS 4G ทำงานอย่างไร?",
@@ -246,7 +263,7 @@ export const GPS_RENTAL_FAQS: FAQ[] = [
   },
   {
     question: "หากนำ AED ไปใช้ช่วยชีวิตจริง มีค่าใช้จ่ายเพิ่มเติมหรือไม่?",
-    answer: `แผนรายปีและแผนยืดหยุ่นเปลี่ยนแผ่นให้ฟรีเมื่อใช้ช่วยชีวิตจริง · แผนอีเวนต์และรายเดือนคิดค่าแผ่นตามจริง · และมีโครงการ ฿10,000 เมื่อผู้ป่วยรอด ตามเงื่อนไขที่บริษัทกำหนด`,
+    answer: `แผนชำระรายปี STANDARD และ FLEX มีเงื่อนไขเปลี่ยนแผ่นเมื่อใช้ช่วยชีวิตจริงตามสัญญา · แผนชำระรายเดือนแบบสัญญา 12 เดือนและแผนอีเวนต์ให้ยืนยันค่าใช้จ่ายกับทีมงานตามแพ็กเกจ · มีโครงการ ฿10,000 เมื่อผู้ป่วยรอดตามเงื่อนไขที่กำหนด`,
   },
   {
     question: "มีบริการติดตั้งและอบรมต่างจังหวัดหรือไม่?",
