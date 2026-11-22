@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { VALID_PRODUCT_IDS } from "./lead-validation";
-import { RENTAL_PRICES, STANDARD_MONTHLY } from "./rental-prices";
+import { RENTAL_PRICES } from "./rental-prices";
 import {
   ENTERPRISE_GROUPS,
   ENTERPRISE_ITEMS,
@@ -22,10 +22,14 @@ import {
 const allCopy = JSON.stringify({ GPS_RENTAL_FAQS, PACKAGES, PRODUCT_FEATURES, SERVICE_ITEMS, TRAINING_NOTE, ENTERPRISE_GROUPS, ENTERPRISE_ITEMS, PRICE_NOTE });
 
 describe("/aed/gps-rental landing content", () => {
-  it("advertises the STANDARD plan price, never the unbacked ฿1,990", () => {
-    expect(FROM_MONTHLY).toBe(STANDARD_MONTHLY);
-    expect(allCopy).not.toMatch(/1,990|1990/);
-    expect(PRICE_NOTE).toContain(`฿${RENTAL_PRICES.annual.toLocaleString("en-US")}`);
+  it("shows monthly billing ฿1,990 separately from annual billing ฿22,000", () => {
+    expect(FROM_MONTHLY).toBe(RENTAL_PRICES.annualMonthly);
+    expect(PRICE_NOTE).toContain("฿1,990");
+    expect(PRICE_NOTE).toContain("฿22,000");
+    expect(PRICE_NOTE).toContain("12 เดือน");
+    expect(PACKAGES.some((p) => p.id === "gps-monthly")).toBe(true);
+    expect(PACKAGES.some((p) => p.id === "gps-annual")).toBe(true);
+    expect(allCopy).toContain("ชำระรายเดือน");
     expect(PRICE_NOTE).toContain("ไม่รวม VAT");
     expect(PRICE_NOTE).toContain("เงินประกัน");
   });
