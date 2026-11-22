@@ -109,6 +109,7 @@ export default function RentalPage() {
     <MarketHero eyebrow="AED RENTAL" title="เช่า AED เลือกตามเวลาที่ใช้." description="ตั้งแต่งานวันเดียวไปจนถึงติดตั้งประจำรายปีพร้อมทีมดูแล เครื่อง Yuwell GPS ทุกเครื่อง พร้อมแผ่นและแบตเตอรี่" image="/images/jiaaed-lobby-hero.jpg">
       <MarketButton href="#choose" lineCta="rental_hero_choose">เลือกระยะเวลา</MarketButton>
       <MarketButton href={LINE_OA} lineCta="rental_hero_line" secondary>ทัก LINE {LINE_DISPLAY_ID}</MarketButton>
+      <MarketButton href="/aed/gps-rental" lineCta="rental_hero_gps" secondary>AED GPS 4G + ระบบดูแลเครื่อง</MarketButton>
     </MarketHero>
 
     <nav id="choose" className="market-tabs" aria-label="เลือกระยะเวลาเช่า"><div className="market-container market-tabs-inner">
