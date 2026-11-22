@@ -12,6 +12,8 @@ import { phoneE164Digits } from "./phone";
 const GRAPH_VERSION = "v21.0";
 
 export type MetaLeadInput = {
+  /** "Lead" (default — sends Lead + CompleteRegistration) or "Contact" for a LINE click. */
+  eventName?: "Lead" | "Contact";
   eventId: string; // shared with the browser pixel for dedup
   eventTime?: number; // unix seconds; defaults to now
   email?: string | null;
@@ -94,15 +96,14 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaLeadR
     custom_data: customData,
   };
 
+  // A form lead goes out as BOTH standard events: ad sets in this account
+  // optimise for CompleteRegistration while our canonical event is Lead, so
+  // whichever an ad set targets, the signal arrives (event_id is per
+  // event_name, so pixel dedup still works). A LINE click is a "Contact", not a
+  // lead (owner, 22 พ.ย. 2026) — it must not feed Lead-optimised ad sets.
+  const names = input.eventName === "Contact" ? ["Contact"] : ["Lead", "CompleteRegistration"];
   const payload: Record<string, unknown> = {
-    // Fire the lead as BOTH standard events. Ad sets in this account optimise
-    // for CompleteRegistration while our canonical event is Lead — sending both
-    // guarantees whichever event an ad set targets, the conversion signal
-    // arrives. event_id is per-event_name, so pixel dedup still works.
-    data: [
-      { event_name: "Lead", event_id: input.eventId, ...baseEvent },
-      { event_name: "CompleteRegistration", event_id: input.eventId, ...baseEvent },
-    ],
+    data: names.map((event_name) => ({ event_name, event_id: input.eventId, ...baseEvent })),
     ...(testCode ? { test_event_code: testCode } : {}),
   };
 

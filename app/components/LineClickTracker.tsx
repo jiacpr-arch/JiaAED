@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/aed/analytics-client";
-import { readFbTracking, newEventId, fireMetaLead } from "@/lib/aed/fb-tracking";
+import { readFbTracking, newEventId, fireMetaContact } from "@/lib/aed/fb-tracking";
 import { hasMarketingConsent } from "@/lib/aed/consent";
 import {
   GADS_CALL_CLICK_CONVERSION_LABEL,
@@ -52,17 +52,16 @@ export function LineClickTracker() {
           }
         }
 
-        // Meta, unlike Google, DOES count the LINE click as a `Lead`. Thai buyers
-        // tap LINE ~15:1 over the web form, so the form alone gives Meta far too
-        // few conversions to optimize on. The LINE click is the real contact
-        // action here, so we report it as a Lead (browser pixel + server CAPI,
-        // shared eventId for dedup) to give Meta a usable optimization signal.
-        // Both only with marketing consent — the server call sends the
-        // visitor's IP/UA to Meta, so it follows the banner choice too.
+        // Meta: a LINE click is reported as `Contact`, not `Lead` (owner,
+        // 22 พ.ย. 2026). Lead is kept for forms the server actually stored, so
+        // Lead-optimised ad sets learn from real enquiries and Meta's lead count
+        // isn't padded with taps. Browser pixel + server CAPI share an eventId
+        // for dedup. Both only with marketing consent — the server call sends
+        // the visitor's IP/UA to Meta, so it follows the banner choice too.
         if (hasMarketingConsent()) {
           const fb = readFbTracking();
           const eventId = newEventId();
-          fireMetaLead(eventId);
+          fireMetaContact(eventId);
           fetch("/api/aed/meta-lead", {
             method: "POST",
             headers: { "content-type": "application/json" },

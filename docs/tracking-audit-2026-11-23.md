@@ -17,7 +17,7 @@
 | ก่อนยอมรับคุกกี้ | ไม่ส่งอะไร ✓ | ไม่ส่ง ✓ | ไม่ส่ง ✓ |
 | ยอมรับ | page_view, `view_rental_page` | – | PageView |
 | เลื่อนถึงราคา | `view_pricing` | – | – |
-| คลิก LINE | `click_to_line`, `click_line` | conversion "ไลน์" (฿494.8) | **`Lead`** ⚠️ |
+| คลิก LINE | `click_to_line`, `click_line` | conversion "ไลน์" (฿494.8) | `Contact` (เปลี่ยนจาก Lead 22 พ.ย.) |
 | ส่งฟอร์มสำเร็จ | `lead_form_submit`, `generate_lead` | conversion "Lead Form Submit" (฿0) | `Lead` (+ CAPI, dedup event_id) |
 
 แก้แล้ว: `view_rental_page` เดิมยิงก่อนมี consent จึงไม่ถึง GA4 → ตอนนี้ส่งหลังยอมรับ
@@ -25,9 +25,11 @@
 ## Meta (ข้อมูลจริงจาก Events Manager, 26 ต.ค.–22 พ.ย.)
 - jiaaed.com ส่งเข้า dataset นี้จริง (2–58 events/วัน) · Lead: Event Match Quality **9.3/10**, CAPI coverage 80.6%, dedup ด้วย event_id 89%
 - ad set "TH กว้าง 20+ — Lead (Pixel) — หน้าเช่า" optimize ด้วย Lead (spend ช่วงนี้ ฿0)
-- ⚠️ **คลิก LINE ยิง Meta `Lead`** (พฤติกรรมเดิมของเว็บ, `LineClickTracker`) → Lead ใน Meta = ฟอร์ม + คลิก LINE ปนกัน
-  ซึ่งขัดกับ brief ("ห้ามนับการคลิก LINE เป็นยอดขาย/lead") — **รอเจ้าของตัดสินใจ** ทางเลือก: เปลี่ยนคลิก LINE เป็น `Contact`
-  แล้วให้ ad set optimize ด้วย Lead (ฟอร์มจริง) — กระทบการเรียนรู้ของ ad set ที่ใช้ Lead อยู่
+- **เปลี่ยนแล้ว (เจ้าของสั่ง 22 พ.ย. 2026):** คลิก LINE ส่ง Meta `Contact` (Pixel + CAPI, dedup event_id) แทน `Lead` ·
+  `Lead` (+ `CompleteRegistration`) เหลือเฉพาะฟอร์มที่ server บันทึกแล้ว
+  - ผลที่คาด: ยอด Lead ใน Meta ลดลงมาก (ตัดคลิก LINE ออก) และ ad set ที่ optimize ด้วย Lead จะเข้า learning ใหม่ เพราะสัญญาณน้อยลง
+  - ถ้า ad set ได้ Lead น้อยเกินไปจน delivery ติด: สร้าง custom conversion จาก `Contact` สำหรับแคมเปญที่ต้องการให้คนทัก LINE
+    แยกเป็นแคมเปญของมันเอง — อย่ารวมกลับเป็น Lead
 
 ## ต้องทำใน GA4 / Google Ads (ทำจากหน้าเว็บของ Google เท่านั้น)
 1. GA4 → Admin → Events → ทำเครื่องหมาย **`generate_lead` เป็น Key event** (อย่าทำ `lead_form_submit` ซ้ำ)
