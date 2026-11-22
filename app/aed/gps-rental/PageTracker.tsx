@@ -16,7 +16,26 @@ function ga(name: string, params: Record<string, string> = {}) {
 export function GpsRentalPageTracker() {
   useEffect(() => {
     trackEvent("view_rental_page", { page: "gps_rental" });
-    ga("view_rental_page", { page: "gps_rental" });
+    // On a first visit there is no consent yet, so gtag doesn't exist when the
+    // page opens. Send the GA4 copy once the visitor accepts and the Google tag
+    // has loaded (CookieConsent mounts it right after "ยอมรับ").
+    let viewSent = false;
+    const sendView = () => {
+      if (viewSent || !hasMarketingConsent()) return;
+      const g = (window as unknown as { gtag?: unknown }).gtag;
+      if (typeof g !== "function") return;
+      viewSent = true;
+      ga("view_rental_page", { page: "gps_rental" });
+    };
+    sendView();
+    let tries = 0;
+    const waitTag = () => {
+      sendView();
+      if (!viewSent && tries++ < 20) timer = window.setTimeout(waitTag, 500);
+    };
+    let timer = 0;
+    const onConsent = () => waitTag();
+    window.addEventListener("jia-consent", onConsent);
 
     let pricingSeen = false;
     const pricing = document.getElementById("pricing");
@@ -41,6 +60,8 @@ export function GpsRentalPageTracker() {
     };
     document.addEventListener("click", onClick);
     return () => {
+      window.removeEventListener("jia-consent", onConsent);
+      window.clearTimeout(timer);
       obs?.disconnect();
       document.removeEventListener("click", onClick);
     };
