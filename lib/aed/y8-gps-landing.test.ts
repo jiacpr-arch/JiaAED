@@ -7,10 +7,12 @@ import {
   CLOUD_SNAPSHOT,
   DASHBOARD_ACCESS_NOTE,
   Y8_GPS_PHOTOS,
+  Y8_GPS_FROM_MONTHLY_THB,
   Y8_GPS_PRICE_CONDITIONS,
   Y8_GPS_SEGMENTS,
 } from "./y8-gps-landing";
 import { PRIMEDIC_REGULATORY } from "./regulatory";
+import { RENTAL_PRICES, STANDARD_MONTHLY } from "./rental-prices";
 
 describe("HeartSave Y8 GPS landing config", () => {
   it("snapshot counts add up and carry a date", () => {
@@ -30,6 +32,12 @@ describe("HeartSave Y8 GPS landing config", () => {
     for (const p of Object.values(Y8_GPS_PHOTOS)) {
       expect(existsSync(join(process.cwd(), "public", p.src))).toBe(true);
     }
+  });
+
+  it("advertised price is the STANDARD plan's monthly equivalent", () => {
+    expect(Y8_GPS_FROM_MONTHLY_THB).toBe(STANDARD_MONTHLY);
+    expect(Y8_GPS_FROM_MONTHLY_THB).toBe(1830);
+    expect(Y8_GPS_PRICE_CONDITIONS).toContain(`฿${RENTAL_PRICES.annual.toLocaleString("en-US")}`);
   });
 
   it("price line states VAT and that the quote/contract decides", () => {

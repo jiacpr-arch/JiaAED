@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   title: `เช่า AED HeartSave Y8 GPS เริ่ม ${PRICE}/เดือน — พร้อมระบบติดตามสถานะเครื่อง`,
   description:
     `เช่าเครื่อง AED Yuwell HeartSave Y8 พร้อมโมดูล GPS ทีมงานเฝ้าสถานะแบตเตอรี่ แผ่นอิเล็กโทรด และผล Self-test ผ่าน PRIMEDIC CLOUD · ` +
-    `เริ่ม ${PRICE}/เดือน (ไม่รวม VAT ตามเงื่อนไข) · หน่วยงาน/ภาครัฐ ขอ White Paper และนัดเดโมได้`,
+    `เริ่ม ${PRICE}/เดือน (เฉลี่ย แผนรายปี ไม่รวม VAT) · หน่วยงาน/ภาครัฐ ขอ White Paper และนัดเดโมได้`,
   alternates: { canonical: Y8_GPS_LANDING_PATH },
   robots: { index: Y8_GPS_LANDING_PUBLISHED, follow: Y8_GPS_LANDING_PUBLISHED },
   openGraph: {
@@ -118,7 +118,7 @@ export default function HeartSaveY8GpsPage() {
               >
                 <span className="block text-[11px] font-bold uppercase tracking-widest text-white/80">ลูกค้าเช่า</span>
                 <span className="mt-1 block text-lg font-extrabold">เริ่ม {PRICE}/เดือน →</span>
-                <span className="block text-[11px] text-white/80">ไม่รวม VAT · ตามเงื่อนไข</span>
+                <span className="block text-[11px] text-white/80">เฉลี่ยต่อเดือน · ชำระรายปี · ไม่รวม VAT</span>
               </a>
               <a
                 href="#org"
@@ -152,6 +152,7 @@ export default function HeartSaveY8GpsPage() {
             <h2 id="rent-title" className="m-0 text-[clamp(28px,3.6vw,44px)] font-extrabold leading-tight tracking-[-0.04em]">
               เริ่ม <em className="not-italic text-[#eb624b]">{PRICE}</em>/เดือน
             </h2>
+            <p className="m-0 mt-1 text-sm font-bold text-[var(--m-ink)]">แผนรายปี STANDARD · เฉลี่ยต่อเดือน</p>
             <p className="mt-2 text-xs leading-relaxed text-[var(--m-muted)]" data-testid="price-conditions">
               {Y8_GPS_PRICE_CONDITIONS} ·{" "}
               <Link href="/aed/rental/terms" className="underline">อ่านเงื่อนไขการเช่า</Link>

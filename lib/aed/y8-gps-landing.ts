@@ -4,6 +4,8 @@
 //   • #org  — organisations / government buyers (White Paper request + demo)
 //
 import { tiersWith } from "./subscription";
+import { RENTAL_PRICES, STANDARD_MONTHLY } from "./rental-prices";
+import { RENTAL_DEPOSITS } from "./rental";
 
 // Every claim on the page comes from this file or an existing catalog module, so
 // the ฆพ. review (see docs/heartsave-y8-gps-landing-2026-11-22.md) has one place
@@ -18,15 +20,15 @@ export const Y8_GPS_LANDING_PUBLISHED = false;
 export const Y8_GPS_LANDING_PATH = "/aed/heartsave-y8-gps";
 
 // ── Price shown to renters ─────────────────────────────────────────────────────
-// Owner brief (22 พ.ย. 2026): "เริ่ม 1,990 บาท/เดือน ไม่รวม VAT ตามเงื่อนไข/เงินประกัน".
-// ⚠️ This number is NOT on the current price ladder in ./rental-prices.ts (FLEX
-// ฿2,990/เดือน, STANDARD ≈ ฿1,830/เดือน billed ฿22,000/ปี). The owner must name
-// the plan it belongs to (term, billing, deposit) before ads run — advertising
-// a price no contract offers is a consumer-protection problem. Until then the
-// conditions line below says exactly that the quote decides.
-export const Y8_GPS_FROM_MONTHLY_THB = 1_990;
+// Owner, 22 พ.ย. 2026: use the STANDARD annual plan (not the ฿1,990 in the first
+// brief, which matched no plan). Derived from ./rental-prices.ts so the landing
+// page can't drift from /aed/rental: ฿22,000/ปี ÷ 12 ≈ ฿1,830/เดือน, 1 unit.
+const thb = (n: number) => `฿${n.toLocaleString("en-US")}`;
+export const Y8_GPS_FROM_MONTHLY_THB = STANDARD_MONTHLY;
 export const Y8_GPS_PRICE_CONDITIONS =
-  "ราคาเริ่มต้นต่อเครื่องต่อเดือน ยังไม่รวม VAT 7% · ขึ้นกับระยะสัญญา จำนวนเครื่อง และเงินประกัน (มัดจำคืนได้) · ราคาและเงื่อนไขสุดท้ายตามใบเสนอราคาและสัญญาเช่า";
+  `ราคาเฉลี่ยต่อเดือนของแผนรายปี STANDARD (1 เครื่อง) ชำระรายปี ${thb(RENTAL_PRICES.annual)} ยังไม่รวม VAT 7% · ` +
+  `เงินประกัน (มัดจำคืนได้) ${thb(RENTAL_DEPOSITS.annual)} ยกเว้นได้เมื่อมี PO · ` +
+  "ราคาและเงื่อนไขสุดท้ายตามใบเสนอราคาและสัญญาเช่า";
 
 // ── PRIMEDIC CLOUD dashboard snapshot ─────────────────────────────────────────
 // Figures the owner read off the fleet dashboard. A snapshot, not live data —
