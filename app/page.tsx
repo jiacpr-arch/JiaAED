@@ -27,7 +27,7 @@ const fits: Record<string, string> = {
   "primedic-y0": "เหมาะกับออฟฟิศ ร้านค้า และพื้นที่ส่วนกลางที่ต้องการเครื่องใช้ง่าย",
   "yuwell-gps": "เหมาะกับองค์กรหลายสาขาที่ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ตลอดเวลา",
   "primedic-y8": "เหมาะกับโรงเรียน ฟิตเนส และโรงงานที่ต้องการตัวช่วยระหว่างทำ CPR",
-  "primedic-y2": "รุ่นแนะนำ — AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม เหมาะกับทุกองค์กร",
+  "primedic-y2": "รุ่นแนะนำ — จอแสดงความเร็ว ความลึก และการคืนตัวของหน้าอกขณะทำ CPR",
 };
 // Buy-outright cards (owner, 15 พ.ย. 2026): Y2 recommended, Y0 budget, GPS for
 // multi-site — Y8 is quote-only (see LISTED_MODEL_IDS).
@@ -38,7 +38,7 @@ const buyCards = [
 const kicker: Record<string, string> = { "primedic-y2": "RECOMMENDED", "primedic-y0": "ESSENTIAL", "yuwell-gps": "MULTI-SITE" };
 const features: Record<string, string[]> = {
   "primedic-y0": ["ปุ่มช็อก + เสียงนำทางภาษาไทยทีละขั้นตอน", "รุ่นประหยัด ไม่มีแผ่น feedback / จอ"],
-  "yuwell-gps": ["GPS ติดตามตำแหน่งในตัวเครื่อง", "ทีมเช็คความพร้อมออนไลน์ 24 ชม."],
+  "yuwell-gps": ["GPS ติดตามตำแหน่งในตัวเครื่อง", "บริการทีมงานเช็คความพร้อมเครื่องออนไลน์"],
   "primedic-y8": ["ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback", "เพิ่มอีก ฿4,000 → Y2 เห็นคุณภาพ CPR บนจอสี"],
   "primedic-y2": ["แผ่นวัดการกดหน้าอก + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ", "เห็นบนจอ ปรับท่าปั๊มได้ทันที"],
 };

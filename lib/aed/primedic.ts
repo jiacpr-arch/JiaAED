@@ -95,7 +95,7 @@ export const primedicModels: PrimedicModel[] = [
     cprFeedback: "standard",
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นแนะนำ (You Too)",
     keyDiff: "จอแสดงคุณภาพ CPR เรียลไทม์ — ความเร็ว/ความลึก/การปล่อยสุด (full recoil) + คลื่น EKG",
-    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการ CPR คุณภาพสูงสุด · เห็นบนจอ ปรับท่าปั๊มได้ทันที",
+    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการติดตามคุณภาพการกดหน้าอก · เห็นบนจอระหว่างทำ CPR",
     image: "/images/primedic-y2-open.jpg",
     badge: "แนะนำ",
     warrantyYears: 4,
@@ -290,7 +290,7 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | 
     id: "primedic-y0",
     title: "เลือก HeartSave Y0 ถ้า…",
     pick: [
-      "อยากมี AED พร้อมใช้ในราคาประหยัดที่สุด",
+      "อยากมี AED พร้อมใช้ในงบประหยัด",
       "สำนักงาน ร้านค้า คอนโด ที่มีคนผ่านการอบรม CPR",
     ],
     skip: ["แผ่นที่แถมไม่มี CPR feedback (ไม่ขายแยก) — ถ้าอยากได้ เลือก Y2"],
