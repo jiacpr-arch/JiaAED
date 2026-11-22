@@ -62,3 +62,23 @@ describe("HeartSave Y8 GPS landing config", () => {
     expect(PRIMEDIC_REGULATORY.adLicenses.some((l) => /Y8/.test(l.covers))).toBe(true);
   });
 });
+
+describe("HeartSave Y8 GPS jia1669.com embed", () => {
+  it("snippet frames the embed route and forwards the query string", async () => {
+    const { Y8_GPS_EMBED_SNIPPET, Y8_GPS_EMBED_PATH } = await import("./y8-gps-landing");
+    expect(Y8_GPS_EMBED_SNIPPET).toContain(`https://jiaaed.com${Y8_GPS_EMBED_PATH}`);
+    expect(Y8_GPS_EMBED_SNIPPET).toContain("window.location.search");
+    expect(Y8_GPS_EMBED_SNIPPET).toContain("e.origin");
+  });
+
+  it("only jia1669.com may frame the embed", async () => {
+    const config = (await import("../../next.config")).default;
+    const rules = await config.headers!();
+    const embed = rules.find((r) => r.source === "/aed/heartsave-y8-gps/embed");
+    expect(embed?.headers[0].value).toBe("frame-ancestors 'self' https://jia1669.com https://www.jia1669.com");
+    const xfo = rules.find((r) => r.headers.some((h) => h.key === "X-Frame-Options"))!;
+    const re = new RegExp(`^${xfo.source}$`);
+    expect(re.test("/aed/heartsave-y8-gps/embed")).toBe(false);
+    expect(re.test("/aed/heartsave-y8-gps")).toBe(true);
+  });
+});

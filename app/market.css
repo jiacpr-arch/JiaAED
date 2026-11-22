@@ -103,3 +103,6 @@
 .market-free{color:#2f7d4c;font-size:11px}
 .market-buy-block{width:100%;justify-content:center;margin-top:6px}
 .market-buy-note-dark{font-size:11px;color:#68776d;margin:6px 0 12px;text-align:center}
+/* jia1669.com iframe embed (/aed/heartsave-y8-gps/embed): the frame is sized to its full content height, so fixed-to-bottom UI from public/jia-consent.js would sit thousands of px below the visitor. Pin the consent bar and its settings sheet to the top of the frame instead. */
+html:has([data-embed]) .jc-banner{position:absolute;top:44px;bottom:auto}
+html:has([data-embed]) .jc-ov{position:absolute;align-items:flex-start;padding-top:44px;min-height:100%}

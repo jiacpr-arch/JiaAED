@@ -19,6 +19,37 @@ export const Y8_GPS_LANDING_PUBLISHED = false;
 
 export const Y8_GPS_LANDING_PATH = "/aed/heartsave-y8-gps";
 
+// ── iframe embed on www.jia1669.com ───────────────────────────────────────────
+// ฆพ.287/2567 names "เว็บไซต์ ชื่อ www.jia1669.com" as the medium, so ads point
+// at a jia1669.com page that frames this embed route (same set-up as Yuwell Y2).
+export const Y8_GPS_EMBED_PATH = `${Y8_GPS_LANDING_PATH}/embed`;
+export const Y8_GPS_EMBED_PARENT_ORIGINS = ["https://www.jia1669.com", "https://jia1669.com"] as const;
+const EMBED_ORIGINS = ["https://jiaaed.com", "https://www.jiaaed.com"];
+
+// Paste into a custom-HTML block on the jia1669.com landing page. It forwards
+// the page's own query string (utm_*, gclid, fbclid) to the iframe so ad clicks
+// keep their attribution, sizes the frame to its content, and scrolls the page
+// when a #rent / #org button inside the frame is clicked.
+export const Y8_GPS_EMBED_SNIPPET = `<div id="jiaaed-y8gps"></div>
+<script>
+(function () {
+  var box = document.getElementById("jiaaed-y8gps");
+  var f = document.createElement("iframe");
+  f.src = "https://jiaaed.com${Y8_GPS_LANDING_PATH}/embed" + window.location.search;
+  f.title = "เช่า AED HeartSave Y8 GPS";
+  f.style.cssText = "display:block;width:100%;border:0;min-height:2600px";
+  f.setAttribute("allow", "clipboard-write");
+  box.appendChild(f);
+  window.addEventListener("message", function (e) {
+    if (${JSON.stringify(EMBED_ORIGINS)}.indexOf(e.origin) < 0) return;
+    var d = e.data || {};
+    if (d.type === "jiaaed:height" && d.height > 0) { f.style.minHeight = "0"; f.style.height = d.height + "px"; }
+    if (d.type === "jiaaed:scroll") window.scrollTo({ top: f.getBoundingClientRect().top + window.scrollY + d.top, behavior: "smooth" });
+  });
+})();
+</script>
+<noscript><a href="https://jiaaed.com${Y8_GPS_LANDING_PATH}">เช่า AED HeartSave Y8 GPS</a></noscript>`;
+
 // ── Price shown to renters ─────────────────────────────────────────────────────
 // Owner, 22 พ.ย. 2026: use the STANDARD annual plan (not the ฿1,990 in the first
 // brief, which matched no plan). Derived from ./rental-prices.ts so the landing
