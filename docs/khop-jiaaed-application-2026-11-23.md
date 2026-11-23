@@ -89,3 +89,13 @@
 - หน้าอื่นบน jiaaed.com (/aed, /aed/yuwell-y2, /aed/primedic, /aed/compare, /aed/sets, /about, บทความ)
   ยังแสดง ฆพ.2475/2569 และ ฆพ.287/2567 ซึ่งระบุสื่อ jia1669.com และหน้าเหล่านี้ไม่อยู่ในคำขอรอบนี้
 - ไฟล์ภาพที่ไม่มีหน้าไหนใช้แต่ยังเปิดได้ทาง URL (เช่น caresens-air-cgms.jpg, ใบปลิว primedic-*-flyer*)
+
+## รอบ 4 — ข้อห้ามใช้และคำเตือนจากคู่มือ
+
+ใช้คู่มือฉบับเดียวกับทุกรุ่น: HeartSave Y|YA Instructions for use 24654 EN Rev A (04/2025) ของผู้ผลิต
+(ตาราง §5.1 ระบุรุ่น Y0 / Y2 / Y8) — แปลจาก §3.2 Medical contraindication และ DANGER ใน §4.1 / §4.3 / §4.4
+ใส่ท้ายทุกหน้า (lib/aed/regulatory.ts → AED_CONTRAINDICATIONS, AED_WARNINGS)
+
+ต้องเช็กกับ Yuwell: ตาราง §5.1 ในคู่มือระบุ HeartSave Y2 = ไม่มี CPR sensor แต่มี LTE ส่วน Y8 = มี CPR sensor + WLAN + LTE
+แต่เว็บเขียนว่า Y2 มีแผ่น CPR feedback + จอแสดงคุณภาพ CPR และไม่ต้องต่ออินเทอร์เน็ต — ถ้ารุ่นที่ขายในไทยต่างจากคู่มือ
+ขอเอกสารยืนยันจาก Yuwell ไว้ เพราะผู้ตรวจอาจเทียบกับคู่มือ
