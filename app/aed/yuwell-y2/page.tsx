@@ -41,14 +41,14 @@ export const metadata: Metadata = {
   title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
   description:
     `AED Yuwell Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ex VAT) ` +
-    `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · ` +
+    `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · ขึ้นทะเบียน อย. · CE / ISO 13485 · ` +
     `โทร 090-979-1212 หรือ LINE ${LINE_DISPLAY_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
   openGraph: {
     title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG · ซื้อสดหรือผ่อนได้`,
     description:
-      `รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
+      `รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ ขึ้นทะเบียน อย. — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
     url: "/aed/yuwell-y2",
     images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254 }],
     type: "website",
@@ -100,7 +100,7 @@ const keyFeatures: { title: string; desc: string }[] = [
   },
   {
     title: "เสียงนำทางภาษาไทย",
-    desc: "แนะนำทีละขั้นตอน คนไม่เคยฝึกก็ใช้ได้ (เลือกได้ 4 ภาษา)",
+    desc: "แนะนำทีละขั้นตอน (เลือกได้ 4 ภาษา)",
   },
   {
     title: "วิเคราะห์เร็ว พร้อมช็อกใน ≤ 5 วินาที",
@@ -240,7 +240,7 @@ export default function YuwellY2Landing() {
               สำหรับหน่วยงานราชการ / อปท. / โรงพยาบาล
             </p>
             <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
-              ตรงสเปกจัดซื้อภาครัฐ <span className="text-green-600">ครบทุกข้อ</span>
+              เทียบสเปกจัดซื้อภาครัฐ <span className="text-green-600">ทีละข้อ</span>
             </h2>
             <p className="text-gray-500 text-sm mt-2">
               เทียบกับรายละเอียดคุณลักษณะทั่วไปในเอกสารจัดซื้ออุปกรณ์ช่วยชีวิตขั้นพื้นฐาน (AED)
@@ -326,7 +326,7 @@ export default function YuwellY2Landing() {
             {/* Cash */}
             <div className="bg-white border-2 border-gray-900 rounded-2xl p-6 flex flex-col relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-4 py-1 rounded-full">
-                คุ้มที่สุด
+                จ่ายครั้งเดียว
               </div>
               <h3 className="font-bold text-lg mt-2 mb-1">ซื้อสด</h3>
               {wasPrice != null && (

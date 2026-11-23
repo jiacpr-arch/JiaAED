@@ -60,7 +60,7 @@ export async function GET() {
   <channel>
     <title>${escape(BRAND)} — AED Yuwell Y2</title>
     <link>${SITE}</link>
-    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Yuwell Y2 — อย. รับรอง</description>
+    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Yuwell Y2 — ขึ้นทะเบียน อย.</description>
 ${items}
 ${accessoryItems}
   </channel>

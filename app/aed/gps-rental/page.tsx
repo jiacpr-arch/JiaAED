@@ -36,6 +36,7 @@ import {
   RENT_AUDIENCES,
   SERVICE_ITEMS,
   SURVIVOR,
+  SURVIVOR_ENABLED,
   TRAINING_COURSES,
   TRAINING_NOTE,
 } from "@/lib/aed/gps-rental-page";
@@ -362,14 +363,16 @@ export default function GpsRentalPage() {
       </section>
 
       {/* ── 9. Survivor programme ──────────────────────────────────────── */}
-      <section className="bg-[#0f9b8e] py-12 text-white" aria-labelledby="survivor-title">
-        <div className="market-container max-w-4xl">
-          <p className="m-0 text-xs font-extrabold tracking-[0.14em] text-white/80">โครงการ 10,000 บาทเมื่อรอด</p>
-          <h2 id="survivor-title" className="m-0 mt-2 text-[clamp(24px,3vw,36px)] font-extrabold">{SURVIVOR.title}</h2>
-          <p className="m-0 mt-3 text-[15px] leading-relaxed text-white/95">{SURVIVOR.body}</p>
-          <p className="m-0 mt-3 text-xs text-white/80">{SURVIVOR.note}</p>
-        </div>
-      </section>
+      {SURVIVOR_ENABLED && (
+        <section className="bg-[#0f9b8e] py-12 text-white" aria-labelledby="survivor-title">
+          <div className="market-container max-w-4xl">
+            <p className="m-0 text-xs font-extrabold tracking-[0.14em] text-white/80">โครงการ 10,000 บาทเมื่อรอด</p>
+            <h2 id="survivor-title" className="m-0 mt-2 text-[clamp(24px,3vw,36px)] font-extrabold">{SURVIVOR.title}</h2>
+            <p className="m-0 mt-3 text-[15px] leading-relaxed text-white/95">{SURVIVOR.body}</p>
+            <p className="m-0 mt-3 text-xs text-white/80">{SURVIVOR.note}</p>
+          </div>
+        </section>
+      )}
 
       {/* ── 10. Government & enterprise ────────────────────────────────── */}
       <section id="enterprise" className="scroll-mt-4 py-16 text-white" style={{ background: NAVY }} aria-labelledby="enterprise-title">

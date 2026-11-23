@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     // ~60 chars — longer titles get truncated in Google results
-    default: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขายและให้เช่า · อย. รับรอง",
+    default: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขายและให้เช่า · ขึ้นทะเบียน อย.",
     template: "%s · JiaAED",
   },
   description:
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     siteName: "JiaAED",
     title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · ขึ้นทะเบียน อย.",
     images: [
       {
         // 1200x630 banner made for link previews — the portrait product shot
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · ขึ้นทะเบียน อย.",
     images: ["/images/og-cover.png"],
   },
   robots: { index: true, follow: true },
