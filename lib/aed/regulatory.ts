@@ -160,3 +160,26 @@ export const PRIMEDIC_LICENSE_EXPIRIES: LicenseExpiry[] = PRIMEDIC_REGULATORY.pu
       })),
     ]
   : [];
+
+// ─── jiaaed.com advertising licence (ฆพ.) ─────────────────────────────────────
+// ฆพ.2475/2569 and ฆพ.287/2567 above name the medium "เว็บไซต์ www.jia1669.com",
+// so they must not be presented as the licence for jiaaed.com. The jiaaed.com
+// application (ระบบ medeva, 23 พ.ย. 2569) is pending — while this is null the
+// ad pages print a blank slot for the number (the approved ad must carry it).
+// After approval: set the number here, then do NOT change the 6 approved pages'
+// copy without a ฆพ.4 amendment.
+export const JIAAED_AD_LICENSE: string | null = null; // e.g. "1234/2569"
+
+/** "ฆพ.1234/2569", or a blank slot "ฆพ. ……/……" while the licence is pending. */
+export function jiaaedAdLicenseLine(): string {
+  return JIAAED_AD_LICENSE ? `ฆพ.${JIAAED_AD_LICENSE}` : "ฆพ. ……/……";
+}
+
+// Mandatory warning text for medical-device ads (ประกาศ อย. พ.ศ. 2567) — keep the
+// wording exact.
+export const DEVICE_AD_WARNING = "อ่านคำเตือนในฉลากและเอกสารกำกับเครื่องมือแพทย์ก่อนใช้";
+
+// Intended use as registered (65-2-2-2-0013415 เอกสารแนบท้าย): unconscious, not
+// breathing, older than 1 year; operated by persons trained in its use.
+export const AED_INTENDED_USE =
+  "ใช้กับผู้ที่หัวใจหยุดเต้น หมดสติ ไม่หายใจ อายุมากกว่า 1 ปี · ผู้ใช้ควรผ่านการอบรมการใช้เครื่อง";

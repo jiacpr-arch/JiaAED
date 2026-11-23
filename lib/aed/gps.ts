@@ -2,28 +2,35 @@
 // GPS (Yuwell GPS) is bundled with the managed-rental tiers (see ./subscription.ts).
 // It is positioned as an asset/team-tracking + readiness system, not just a tag.
 
-export const gpsImage = "/images/aed-gps-tracking.png"; // real Yuwell/PRIMEDIC GPS tracking visual
+// Real photo of the registered unit. The old aed-gps-tracking.png was an
+// illustrative mock-up (wrong device, baked-in "เพิ่มโอกาสรอดชีวิต"/"เรียลไทม์ 24 ชม."
+// copy) — never use it on an ad page.
+export const gpsImage = "/images/yuwell-gps-aed.webp";
 
+// Only what the registered device (HeartSave Y8 with networking function) and
+// PRIMEDIC CLOUD actually do — no vehicle/asset tracking, no "real-time 24h"
+// promises (jiaaed.com ฆพ. application, 23 พ.ย. 2569). Mirrors the limits on
+// /aed/gps-rental.
 export const gpsFeatures: { icon: string; title: string; desc: string }[] = [
   {
     icon: "📍",
-    title: "ระบุตำแหน่ง AED แบบเรียลไทม์",
-    desc: "เห็นพิกัดเครื่องบนแผนที่ทันที — เหมาะกับองค์กรหลายสาขาและทีมงานนอกสถานที่",
+    title: "ตำแหน่งเครื่อง AED บนแผนที่",
+    desc: "แสดงพิกัดเครื่องตามข้อมูลล่าสุดที่ระบบได้รับ — เหมาะกับองค์กรหลายสาขา (ไม่ใช่การติดตามสดต่อเนื่อง)",
   },
   {
-    icon: "🚑",
-    title: "ติดตามยานพาหนะ/ทีมฉุกเฉิน",
-    desc: "ติดตามรถพยาบาลของบริษัทหรือทีมนอกสถานที่ เพื่อส่งความช่วยเหลือได้เร็วขึ้นในวิกฤต",
+    icon: "🔋",
+    title: "สถานะแบตเตอรี่และแผ่นอิเล็กโทรด",
+    desc: "เห็นวันหมดอายุของแบต/แผ่นรายเครื่อง ทีมงานนัดเปลี่ยนให้ก่อนหมดอายุ",
   },
   {
-    icon: "🛡️",
-    title: "บริหารทรัพย์สินขององค์กร",
-    desc: "ลดการสูญหาย ติดตามทรัพย์สินมูลค่าสูง เพิ่มความปลอดภัยรอบด้าน",
+    icon: "🗂️",
+    title: "ดูทุกเครื่องขององค์กรในระบบเดียว",
+    desc: "จุดติดตั้งและบันทึกการติดตั้งของทุกเครื่อง สำหรับองค์กรที่มี AED หลายจุด",
   },
   {
     icon: "🔔",
-    title: "แจ้งเตือนเมื่อมีการเปิดตู้ AED",
-    desc: "รับการแจ้งเตือนเมื่อมีการนำเครื่องออกใช้หรืออุปกรณ์มีปัญหา",
+    title: "บันทึกเหตุการณ์และการแจ้งเตือน",
+    desc: "บันทึกการเปิดเครื่องและแจ้งเตือนความผิดปกติที่ระบบรองรับ (การแจ้งเตือนเปิดตู้ขึ้นกับชนิดตู้)",
   },
 ];
 
@@ -39,7 +46,6 @@ export const dashboardFeatures: string[] = [
   "ดูสถานะเครื่องหลายจุดในหน้าจอเดียว (Multi-location)",
   "ตรวจสอบสถานะแบตเตอรี่และแผ่น Pad แบบออนไลน์",
   "ระบบแจ้งเตือนอัตโนมัติเมื่ออุปกรณ์ใกล้หมดอายุ",
-  "ตรวจสอบผล Self-test ของเครื่องได้ตลอดเวลา",
-  "ลดความเสี่ยงเครื่องไม่พร้อมใช้งานในภาวะฉุกเฉิน",
-  "มั่นใจว่าเครื่องพร้อมใช้งานตลอด 24 ชั่วโมง",
+  "ดูผล Self-test ของเครื่องตามรอบข้อมูลที่ระบบได้รับ",
+  "ทีมงานติดต่อผู้ดูแลเมื่อพบการแจ้งเตือน",
 ];

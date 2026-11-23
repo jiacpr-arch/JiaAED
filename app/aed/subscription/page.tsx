@@ -8,7 +8,6 @@ import { FeatureMatrix } from "@/app/components/FeatureMatrix";
 import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
 import { GpsBundleSection } from "@/app/components/GpsBundleSection";
 import { CloudDashboardSection } from "@/app/components/CloudDashboardSection";
-import { TrustStats } from "@/app/components/TrustStats";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
@@ -16,7 +15,6 @@ import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { subscriptionFaqCategories } from "@/lib/aed/faqs";
 import { SAFETY_CARE_DEPOSIT } from "@/lib/aed/packages";
 import { subscriptionTiers, tiersWith } from "@/lib/aed/subscription";
-import { trustedBy } from "@/lib/aed/trust";
 import { RENTAL_PRICES } from "@/lib/aed/rental-prices";
 
 export const revalidate = 3600;
@@ -26,7 +24,7 @@ import { LINE_OA } from "@/lib/aed/line";
 export const metadata: Metadata = {
   title: `บริการดูแล AED ครบวงจร (Safety Care) — เริ่ม ฿${subscriptionTiers[0].pricePerMonth.toLocaleString("en-US")}/เดือน`,
   description:
-    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — Yuwell GPS ทุกระดับ, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ STANDARD / PRO / ELITE",
+    "บริการดูแล AED ครบวงจรสำหรับองค์กร (Safety Care) — รวมเครื่อง AED — HeartSave Y8 GPS ทุกระดับ, Cloud Dashboard, แจ้งเตือนแบต/แผ่นหมดอายุ, เปลี่ยนเครื่องสำรอง และอบรมพนักงาน เลือกได้ 3 ระดับ STANDARD / PRO / ELITE",
   alternates: { canonical: "/aed/subscription" },
   openGraph: {
     title: "บริการดูแล AED ครบวงจร (Safety Care) | JiaAED",
@@ -40,7 +38,7 @@ export const metadata: Metadata = {
 export default function SubscriptionPage() {
   return (
     <MarketPage>
-      <MarketHero eyebrow="Safety Care — บริการดูแล AED ครบวงจร" title={"ระบบดูแล AED\nพร้อมใช้ตลอดสัญญา."} description='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะแบบ Real-time'><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <MarketHero eyebrow="Safety Care — บริการดูแล AED ครบวงจร" title={"ระบบดูแล AED\nพร้อมใช้ตลอดสัญญา."} description='"เครื่องมีไว้ ไม่เท่ากับเครื่องพร้อมใช้" — เราดูแลความพร้อมให้ตลอดสัญญา พร้อมติดตามสถานะเครื่องผ่านระบบออนไลน์'><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
       <div className="market-content">
       <BreadcrumbStructuredData
         items={[
@@ -73,9 +71,9 @@ export default function SubscriptionPage() {
           </figure>
           <div className="space-y-3">
             {[
-              { icon: "📡", title: "GPS + Cloud Dashboard", desc: `เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว แบบ Real-time (ระดับ ${tiersWith("Yuwell GPS ติดตามตำแหน่ง")})` },
-              { icon: "🔔", title: "แจ้งเตือนอัตโนมัติ", desc: "แบตเตอรี่/แผ่นอิเล็กโทรดใกล้หมดอายุ ระบบเตือนก่อนเสมอ" },
-              { icon: "♻️", title: "เครื่องสำรองถ้าเสีย", desc: "เปลี่ยนเครื่องให้ภายใน 24–48 ชม. ไม่มีช่วงที่จุดติดตั้งไม่มีเครื่อง" },
+              { icon: "📡", title: "GPS + Cloud Dashboard", desc: `เห็นตำแหน่งและสถานะเครื่องทุกจุดในหน้าจอเดียว ตามข้อมูลที่เครื่องรายงาน (ระดับ ${tiersWith("HeartSave Y8 GPS ติดตามตำแหน่ง")})` },
+              { icon: "🔔", title: "แจ้งเตือนอัตโนมัติ", desc: "ระบบแจ้งเตือนเมื่อแบตเตอรี่/แผ่นอิเล็กโทรดใกล้หมดอายุ ทีมงานนัดเปลี่ยนให้" },
+              { icon: "♻️", title: "เครื่องสำรองถ้าเสีย", desc: "ส่งเครื่องสำรองภายใน 24–48 ชม. ตามระดับบริการในสัญญา" },
               {
                 icon: "🎓",
                 title: "อบรมพนักงานถึงที่",
@@ -130,13 +128,6 @@ export default function SubscriptionPage() {
         </div>
       </section>
 
-      {/* Trust */}
-      <section className="max-w-6xl mx-auto px-4 py-6">
-        <SectionHeading title={trustedBy} />
-        <div className="mt-6">
-          <TrustStats />
-        </div>
-      </section>
 
       {/* Lead form */}
       <section className="max-w-2xl mx-auto px-4 py-10">

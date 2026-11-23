@@ -29,7 +29,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "เช่า AED รายวัน รายสัปดาห์ รายเดือน รายปี และเช่าซื้อ — ราคาและเงื่อนไข",
   description:
-    "เช่าเครื่อง AED Yuwell GPS เลือกตามระยะเวลาที่ใช้: รายวันสำหรับอีเวนต์ รายสัปดาห์ รายเดือน หรือติดตั้งประจำรายปีพร้อมทีมดูแล และเช่าซื้อเพื่อเป็นเจ้าของ",
+    "เช่าเครื่อง AED HeartSave Y8 GPS เลือกตามระยะเวลาที่ใช้: รายวันสำหรับอีเวนต์ รายสัปดาห์ รายเดือน หรือติดตั้งประจำรายปีพร้อมทีมดูแล และเช่าซื้อเพื่อเป็นเจ้าของ",
   alternates: { canonical: "/aed/rental" },
 };
 
@@ -75,7 +75,7 @@ const shortItems = [
 
 const tierImages: Record<string, string> = {
   "managed-basic": "/images/yuwell-gps-aed.webp",
-  "managed-pro": "/images/aed-gps-tracking.png",
+  "managed-pro": "/images/primedic-y8-open.png",
   "managed-elite": dashboardImage,
 };
 const tierBullets = (id: (typeof subscriptionTiers)[number]["id"]) =>
@@ -85,7 +85,7 @@ const tierBullets = (id: (typeof subscriptionTiers)[number]["id"]) =>
 
 const rentalFaqs = [
   {
-    question: "เช่าสั้นที่สุดได้กี่วัน และนานสุดเท่าไร?",
+    question: "เช่าขั้นต่ำกี่วัน และเช่ายาวได้แค่ไหน?",
     answer: `เช่าได้ตั้งแต่ 1 วัน (${thb(RENTAL_PRICES.eventFirstDay)}) ไปจนถึงสัญญารายปี (เช่ารายวัน 1–${SHORT_RENTAL_MAX_DAYS} วัน เช็กคิวและจองออนไลน์ได้ที่ rent.jiacpr.com) มีแพ็ก 3 วัน ${thb(RENTAL_PRICES.eventWeekend)} · 14 วัน ${thb(RENTAL_PRICES.eventFortnight)} · ใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน ${thb(RENTAL_PRICES.flexMonthly)}/เดือน และสัญญา 3 ปีลด ${threeYearPct}%`,
   },
   { question: "เช่าสั้นแล้วอยากทำสัญญารายปีต่อ ได้ส่วนลดไหม?", answer: RENTAL_CREDIT_NOTE },
@@ -106,7 +106,7 @@ export default function RentalPage() {
   return <MarketPage>
     <FaqStructuredData items={rentalFaqs} />
     <BreadcrumbStructuredData items={[{ name: "หน้าแรก", path: "/" }, { name: "AED", path: "/aed" }, { name: "เช่า AED", path: "/aed/rental" }]} />
-    <MarketHero eyebrow="AED RENTAL" title="เช่า AED เลือกตามเวลาที่ใช้." description="ตั้งแต่งานวันเดียวไปจนถึงติดตั้งประจำรายปีพร้อมทีมดูแล เครื่อง Yuwell GPS ทุกเครื่อง พร้อมแผ่นและแบตเตอรี่" image="/images/jiaaed-lobby-hero.jpg">
+    <MarketHero eyebrow="AED RENTAL" title="เช่า AED เลือกตามเวลาที่ใช้." description="ตั้งแต่งานวันเดียวไปจนถึงติดตั้งประจำรายปีพร้อมทีมดูแล เครื่อง HeartSave Y8 GPS ทุกเครื่อง พร้อมแผ่นและแบตเตอรี่" image="/images/jiaaed-hero-2026.png">
       <MarketButton href="#choose" lineCta="rental_hero_choose">เลือกระยะเวลา</MarketButton>
       <MarketButton href={LINE_OA} lineCta="rental_hero_line" secondary>ทัก LINE {LINE_DISPLAY_ID}</MarketButton>
       <MarketButton href="/aed/gps-rental" lineCta="rental_hero_gps" secondary>AED GPS 4G + ระบบดูแลเครื่อง</MarketButton>
@@ -127,7 +127,7 @@ export default function RentalPage() {
     </div></section>
 
     <section id="yearly" className="market-section"><div className="market-container">
-      <div className="market-section-head"><div><p className="market-eyebrow">② ติดตั้งประจำ</p><h2>สัญญารายปี<br /><em>มีทีมดูแลตลอด.</em></h2></div><p>ทุกระดับใช้เครื่อง Yuwell GPS รวมติดตั้ง เปลี่ยนแบตและแผ่นตามอายุ เครื่องสำรองถ้าเสีย และแผ่นฟรีเมื่อใช้ช่วยชีวิตจริง</p></div>
+      <div className="market-section-head"><div><p className="market-eyebrow">② ติดตั้งประจำ</p><h2>สัญญารายปี<br /><em>มีทีมดูแลตลอด.</em></h2></div><p>ทุกระดับใช้เครื่อง HeartSave Y8 GPS รวมติดตั้ง เปลี่ยนแบตและแผ่นตามอายุ เครื่องสำรองถ้าเสีย และแผ่นฟรีเมื่อใช้ช่วยชีวิตจริง</p></div>
       <div className="market-grid-3">{subscriptionTiers.map((t, i) => <article className={`market-card ${t.badge ? "market-card-featured" : ""}`} key={t.id}>
         <div className="market-card-photo"><Image src={tierImages[t.id]} alt={`เช่า AED ระดับ ${t.name}`} width={500} height={400} sizes="(max-width: 700px) 100vw, 33vw" />{t.badge && <span className="market-card-tag">{t.badge}</span>}</div>
         <div className="market-card-body"><span className="market-card-kicker">เหมาะกับ {t.bestFor}</span><h3>{t.name}</h3><div className="market-price"><small>{i === 0 ? "เฉลี่ย" : "เดือนละ"}</small><strong>{thb(t.pricePerMonth)}</strong><span>/เดือน</span></div><p className="market-note">{t.specialNote ? `${t.specialNote} · ` : ""}สัญญา 3 ปี {thb(t.threeYearPerMonth)}/เดือน</p><ul>{tierBullets(t.id).map((f) => <li key={f}>{f}</li>)}</ul><LineLink cta={`rent_yearly_${t.id}`} product={t.id}>ขอใบเสนอราคาแผนนี้</LineLink></div>
@@ -143,12 +143,12 @@ export default function RentalPage() {
     {/* Which machine you get when renting (owner, 15 พ.ย. 2026): rentals ship the
         Y8 GPS — same unit as Y0/Y8, with feedback pads and remote tracking. */}
     <section id="machine" className="market-section"><div className="market-container">
-      <div className="market-section-head"><div><p className="market-eyebrow">THE MACHINE YOU RENT</p><h2>เช่าแล้วได้เครื่องรุ่นไหน.</h2></div><p>เครื่องเช่าเป็นรุ่น <b>HeartSave Y8 GPS</b> — เครื่องเดียวกับ Y0 / Y8 ใช้แผ่น CPR feedback และมีระบบติดตาม ทีมงานเห็นตำแหน่งและสถานะแบต/แผ่นออนไลน์ ไม่ต้องเดินเช็คเอง · ถ้าอยากได้รุ่นมีจอแสดงผล CPR (Yuwell Y2) สอบถามทีมงาน</p></div>
+      <div className="market-section-head"><div><p className="market-eyebrow">THE MACHINE YOU RENT</p><h2>เช่าแล้วได้เครื่องรุ่นไหน.</h2></div><p>เครื่องเช่าเป็นรุ่น <b>HeartSave Y8 GPS</b> — HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย ใช้แผ่น CPR feedback ทีมงานเห็นตำแหน่งและสถานะแบต/แผ่นผ่านระบบออนไลน์ตามข้อมูลที่เครื่องรายงาน · ถ้าอยากได้รุ่นมีจอแสดงผล CPR (HeartSave Y2) สอบถามทีมงาน</p></div>
       <p className="market-note" style={{ textAlign: "center" }}><Link href="/aed/compare" className="market-text-link">ดูเปรียบเทียบทุกรุ่นแบบละเอียด ↗</Link></p>
     </div></section>
     <section id="why" className="market-section market-section-cream"><div className="market-container">
-      <div className="market-section-head"><div><p className="market-eyebrow">MORE THAN A DEVICE</p><h2>เช่ากับเรา<br /><em>ได้มากกว่าเครื่อง.</em></h2></div><p>เครื่องจะช่วยชีวิตได้ ต้องมีคนกล้าใช้ เราเป็นทั้งศูนย์อบรม คอร์สออนไลน์ และร้านอุปกรณ์ในเครือเดียวกัน ทีมของคุณจึงพร้อมตั้งแต่วันแรก</p></div>
-      <div className="market-table-wrap"><table className="market-table"><thead><tr><th scope="col">สิ่งที่ได้</th><th scope="col">เช่ากับ JiaAED</th><th scope="col">เช่าเครื่องทั่วไป</th></tr></thead><tbody>{rentalAdvantages.map((r) => <tr key={r.item}><th scope="row">{r.item}</th><td>{r.jiaaed}</td><td>{r.plain}</td></tr>)}</tbody></table></div>
+      <div className="market-section-head"><div><p className="market-eyebrow">MORE THAN A DEVICE</p><h2>เช่ากับเรา<br /><em>ได้มากกว่าเครื่อง.</em></h2></div><p>เครื่อง AED ออกแบบให้ผู้ที่ผ่านการอบรมเป็นผู้ใช้ เราเป็นทั้งศูนย์อบรม คอร์สออนไลน์ และร้านอุปกรณ์ในเครือเดียวกัน ทีมของคุณจึงพร้อมตั้งแต่วันแรก</p></div>
+      <div className="market-table-wrap"><table className="market-table"><thead><tr><th scope="col">สิ่งที่ได้</th><th scope="col">เช่ากับ JiaAED</th></tr></thead><tbody>{rentalAdvantages.map((r) => <tr key={r.item}><th scope="row">{r.item}</th><td>{r.jiaaed}</td></tr>)}</tbody></table></div>
       <div className="market-feature-grid market-rental-extras">
         <a className="market-feature" href={SISTER_SITES.onlineCpr.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_cpr"><b>{SISTER_SITES.onlineCpr.label} ↗</b><p>พนักงานเรียนผ่านมือถือ รับใบประกาศภาคทฤษฎี ทุกแผนรายปีได้สิทธิ์เรียนตามระดับ</p></a>
         <a className="market-feature" href={SISTER_SITES.onlineFirstAid.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_firstaid"><b>{SISTER_SITES.onlineFirstAid.label} ↗</b><p>24 บทเรียนสั้น สถานการณ์จำลอง 40 แบบ ส่งลิงก์ให้ทั้งองค์กรได้เลย</p></a>

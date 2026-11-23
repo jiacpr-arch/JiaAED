@@ -5,7 +5,7 @@
 // Owner, 25 ต.ค. 2026: one price ladder instead of a separate ANNUAL plan and a
 // BASIC tier that cost more but included less. STANDARD *is* the annual rental
 // plan (./rental.ts RENTAL_PRICES.annual, billed yearly). Every rental unit is a
-// Yuwell GPS AED (owner: the rental fleet is GPS units only, Y0 isn't rented),
+// HeartSave Y8 GPS AED (owner: the rental fleet is GPS units only, Y0 isn't rented),
 // so tiers differ by service — PRO adds alerts and on-site check/training,
 // ELITE the dashboard, cabinet and a 24-hour swap. The id stays "managed-basic" because it is a
 // stored lead/product id (lead-validation allowlist, existing lead rows).
@@ -71,7 +71,7 @@ export type FeatureMatrixRow = {
 
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
-    feature: "Yuwell GPS ติดตามตำแหน่ง",
+    feature: "HeartSave Y8 GPS ติดตามตำแหน่ง",
     values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   // Owner, 25 ต.ค. 2026: lean on what plain-device renters can't offer — the
