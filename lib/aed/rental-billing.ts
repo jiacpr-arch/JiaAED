@@ -38,7 +38,7 @@ const y0 = RENT_TO_OWN_Y0_TERMS;
 export const rentalBillingPlans: RentalBillingPlan[] = [
   {
     id: "rto-y2",
-    label: "เช่าแล้วได้ซื้อ — Yuwell Y2",
+    label: "เช่าแล้วได้ซื้อ — Yuwell HeartSave Y2",
     kind: "rent-to-own",
     upfront: { label: "เงินดาวน์ (ค่าเช่าซื้องวดแรก)", amount: y2.deposit, vat: true },
     monthly: y2.monthly,
@@ -47,7 +47,7 @@ export const rentalBillingPlans: RentalBillingPlan[] = [
   },
   {
     id: "rto-gps",
-    label: "เช่าแล้วได้ซื้อ — Yuwell GPS",
+    label: "เช่าแล้วได้ซื้อ — HeartSave Y8 GPS",
     kind: "rent-to-own",
     upfront: { label: "เงินดาวน์ (ค่าเช่าซื้องวดแรก)", amount: gps.deposit, vat: true },
     monthly: gps.monthly,

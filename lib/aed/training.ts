@@ -29,7 +29,7 @@ export const trainingValueProps: { icon: string; title: string; desc: string }[]
   {
     icon: "❤️",
     title: "CPR + AED ควบคู่กัน",
-    desc: "เทคนิคปฐมพยาบาลพื้นฐานที่ช่วยเพิ่มโอกาสรอดชีวิตอย่างมีนัยสำคัญ",
+    desc: "ฝึกทำ CPR ควบคู่กับการใช้เครื่อง AED ตามขั้นตอน",
   },
   {
     icon: "🏅",

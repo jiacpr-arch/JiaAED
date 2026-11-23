@@ -32,7 +32,7 @@ const gpsTiers = subscriptionTiers
 
 const reg = PRIMEDIC_REGULATORY;
 
-// Amoul i7 discontinued (ก.ค. 2026) — these FAQs now describe AED Yuwell Y2 /
+// Amoul i7 discontinued (ก.ค. 2026) — these FAQs now describe AED Yuwell HeartSave Y2 /
 // PRIMEDIC HeartSave. Real specs from lib/aed/primedic.ts (primedicSharedSpecs)
 // — never re-typed independently. Two Amoul-only Wi-Fi/SIM/"AED Management
 // Platform" FAQs were removed rather than repointed — Yuwell/PRIMEDIC hardware
@@ -41,14 +41,14 @@ export const faqs: FAQ[] = [
   {
     // Y2 is the flagship, not the entry point — the answer also names the
     // cheaper Y0/Y8 so "how much is an AED" never reads as "from ฿59,999".
-    question: "AED Yuwell Y2 ราคาเท่าไหร่?",
+    question: "AED Yuwell HeartSave Y2 ราคาเท่าไหร่?",
     answer:
-      `Yuwell Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ex VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
+      `Yuwell HeartSave Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ex VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
   },
   {
     // เจี่ยรักษา is the seller and ฆพ. holder — the importer/registrant is Yuwell
     // Medical (Thailand). Never call เจี่ยรักษา the importer.
-    question: "AED Yuwell Y2 ผ่าน อย. หรือไม่?",
+    question: "AED Yuwell HeartSave Y2 ผ่าน อย. หรือไม่?",
     answer: reg.published
       ? `ผ่านครับ ทะเบียน ${fdaLine(reg)} ครอบคลุมตระกูล HeartSave Y0/Y8/Y2 นำเข้าโดย ${reg.importer} — พร้อมใบอนุญาตโฆษณาเครื่องมือแพทย์ ${adLicensesLine(reg, { short: true })} จัดจำหน่ายโดย ${reg.advertiser}`
       : `เป็นเครื่องมือแพทย์นำเข้าโดย ${reg.importer} — ${reg.pendingNote}`,
@@ -64,12 +64,12 @@ export const faqs: FAQ[] = [
       "ใช้ได้ทั้งผู้ใหญ่และเด็กครับ (อายุ 3 ปีขึ้นไป) — สลับโหมดด้วยปุ่มเลือกโหมดเด็กที่ตัวเครื่อง โหมดผู้ใหญ่ใช้พลังงานช็อกแบบ escalating 200 → 300 → 360 J และโหมดเด็ก 50 → 70 → 100 J เครื่องวิเคราะห์คลื่นหัวใจและเลือกระดับพลังงานให้อัตโนมัติ",
   },
   {
-    question: "AED Yuwell Y2 ตั้งค่าพลังงาน Shock เองได้ไหม?",
+    question: "AED Yuwell HeartSave Y2 ตั้งค่าพลังงาน Shock เองได้ไหม?",
     answer:
       "ผู้ใช้ไม่สามารถตั้งค่าพลังงานเองได้ครับ เครื่องใช้ escalating protocol ที่ตั้งค่าไว้แล้วตาม international guidelines (ILCOR/AHA) เริ่มจากพลังงานระดับต่ำแล้วเพิ่มขึ้นตามลำดับ (ผู้ใหญ่ 200→300→360J) — จุดเด่นของ Y2 คือจอสี EKG ที่แสดงคุณภาพการทำ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) ให้ผู้ช่วยเหลือปรับท่าปั๊มได้ทันที",
   },
   {
-    question: "เครื่อง AED Yuwell Y2 ต้องเชื่อมต่ออินเทอร์เน็ตไหม?",
+    question: "เครื่อง AED Yuwell HeartSave Y2 ต้องเชื่อมต่ออินเทอร์เน็ตไหม?",
     answer:
       "ไม่ต้องครับ เครื่องทำงานได้ครบทุกฟังก์ชันโดยไม่ต้องเชื่อมต่อใดๆ ไม่ต้องสมัครบริการหรือเข้า dashboard เพียงเปิดเครื่อง → แปะแผ่น → กด Shock ตามเสียงนำทาง — ข้อมูลการใช้งานบันทึกในตัวเครื่อง (SD card) ดึงออกผ่าน USB ได้เมื่อตรวจสอบ หากต้องการติดตามตำแหน่ง/สถานะเครื่องแบบเรียลไทม์ผ่าน GPS มีรุ่น Yuwell AED (GPS ในตัว) แยกต่างหาก",
   },
@@ -84,7 +84,7 @@ export const faqs: FAQ[] = [
       `แบตเตอรี่ LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (ชาร์จใหม่ไม่ได้) ช็อกได้ ≥ 200 ครั้งที่ 360J พร้อม Self-test อัตโนมัติ (สูงสุด 3,650 ครั้ง) เพื่อให้แน่ใจว่าเครื่องพร้อมใช้งานตลอดเวลา และบันทึกข้อมูลได้ครบ — ECG 10 ชม. · event 2,000 รายการ · เสียง 2 ชม. · CPR data 10 ชม. · อายุการใช้งาน: ${consumableLifetimeText}`,
   },
   {
-    question: "AED Yuwell Y2 กันน้ำกันฝุ่นไหม?",
+    question: "AED Yuwell HeartSave Y2 กันน้ำกันฝุ่นไหม?",
     answer:
       "กันได้ครับ ผ่านมาตรฐาน IP55 กันละอองน้ำและฝุ่น เหมาะกับการติดตั้งหลากหลายสถานที่ทั้งในอาคารและกึ่งกลางแจ้ง",
   },
