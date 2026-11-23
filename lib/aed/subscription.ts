@@ -81,10 +81,10 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
     feature: ONLINE_CPR_SEATS_FEATURE,
     values: { "managed-basic": "10 คน", "managed-pro": "30 คน", "managed-elite": "ไม่จำกัด" },
   },
-  {
-    feature: "Pocket mask ติดเครื่อง",
-    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
-  },
+  // "Pocket mask ติดเครื่อง" row removed from the public matrix (23 พ.ย. 2026):
+  // a pocket mask is a medical device outside the AED registration used for the
+  // jiaaed.com ฆพ. application, so the ad pages must not name it. The bots still
+  // mention it in quotes (see tierExtras in ./rental.ts).
   {
     feature: "เปลี่ยนเครื่องเมื่อเสีย (SLA)",
     values: { "managed-basic": "48 ชม.", "managed-pro": "48 ชม.", "managed-elite": "24 ชม." },

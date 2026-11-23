@@ -152,7 +152,7 @@ export default function RentalPage() {
       <div className="market-feature-grid market-rental-extras">
         <a className="market-feature" href={SISTER_SITES.onlineCpr.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_cpr"><b>{SISTER_SITES.onlineCpr.label} ↗</b><p>พนักงานเรียนผ่านมือถือ รับใบประกาศภาคทฤษฎี ทุกแผนรายปีได้สิทธิ์เรียนตามระดับ</p></a>
         <a className="market-feature" href={SISTER_SITES.onlineFirstAid.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_firstaid"><b>{SISTER_SITES.onlineFirstAid.label} ↗</b><p>24 บทเรียนสั้น สถานการณ์จำลอง 40 แบบ ส่งลิงก์ให้ทั้งองค์กรได้เลย</p></a>
-        <a className="market-feature" href={SISTER_SITES.accessories.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_accessories"><b>{SISTER_SITES.accessories.label} ↗</b><p>ตู้ติดผนัง ป้ายจุดติดตั้ง แผ่นและแบตสำรอง AMBU และชุด pocket mask</p></a>
+        <a className="market-feature" href={SISTER_SITES.accessories.url} target="_blank" rel="noopener noreferrer" data-cta="rental_eco_accessories"><b>{SISTER_SITES.accessories.label} ↗</b><p>ตู้ติดผนัง ป้ายจุดติดตั้ง แผ่นและแบตสำรองสำหรับเครื่อง AED</p></a>
       </div>
     </div></section>
 
