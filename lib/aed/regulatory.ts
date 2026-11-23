@@ -183,3 +183,17 @@ export const DEVICE_AD_WARNING = "อ่านคำเตือนในฉล�
 // breathing, older than 1 year; operated by persons trained in its use.
 export const AED_INTENDED_USE =
   "ใช้กับผู้ที่หัวใจหยุดเต้น หมดสติ ไม่หายใจ อายุมากกว่า 1 ปี · ผู้ใช้ควรผ่านการอบรมการใช้เครื่อง";
+
+// From the manufacturer's manual that covers every model on the site
+// (HeartSave Y|YA Instructions for use 24654 EN Rev A, 04/2025 — models Y0/Y2/Y8
+// listed in §5.1): §3.2 Medical contraindication, §4.1/§4.3/§4.4 DANGER notes.
+// Ads must show the device's contraindications/warnings — translate faithfully,
+// don't add or soften.
+export const AED_MANUAL_REF = "คู่มือ HeartSave Y|YA (24654 EN Rev A, 04/2025)";
+export const AED_CONTRAINDICATIONS =
+  "ข้อห้ามใช้: ห้ามใช้กับผู้ที่ยังมีสัญญาณชีพ (รู้สึกตัว หรือหายใจ) และห้ามใช้กับเด็กอายุต่ำกว่า 1 ปี";
+export const AED_WARNINGS =
+  "คำเตือน: ห้ามใช้ใกล้วัสดุไวไฟ ในบรรยากาศที่มีออกซิเจนเข้มข้นหรือก๊าซ/ไอระเหยไวไฟ หรือบริเวณที่เสี่ยงต่อการระเบิด · " +
+  "ห้ามสัมผัสตัวผู้ป่วยขณะเครื่องวิเคราะห์คลื่นไฟฟ้าหัวใจ และเตือนคนรอบข้างไม่ให้สัมผัสผู้ป่วยก่อนช็อก · " +
+  "ห้ามติดแผ่นอิเล็กโทรดทับเครื่องกระตุ้นหัวใจ (pacemaker) ที่ฝังในร่างกาย · " +
+  "ใช้แผ่นอิเล็กโทรดใหม่ ไม่ชำรุด ไม่หมดอายุ กับผู้ป่วยทุกราย และเช็ดหน้าอกให้แห้งก่อนติดแผ่น · ห้ามใช้เครื่องที่ชำรุด";

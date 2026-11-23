@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
-import { AED_INTENDED_USE, DEVICE_AD_WARNING, PRIMEDIC_REGULATORY, jiaaedAdLicenseLine } from "@/lib/aed/regulatory";
+import { AED_CONTRAINDICATIONS, AED_INTENDED_USE, AED_MANUAL_REF, AED_WARNINGS, DEVICE_AD_WARNING, PRIMEDIC_REGULATORY, jiaaedAdLicenseLine } from "@/lib/aed/regulatory";
 import { CookieSettingsLink } from "./CookieSettingsLink";
 
 const links = [
@@ -35,7 +35,7 @@ export function MarketFooter() {
         <div><strong>ติดต่อและข้อมูล</strong><Link href="/quote">ขอใบเสนอราคา ↗</Link><a href={LINE_OA} data-line-cta="market_footer" target="_blank" rel="noopener noreferrer">LINE {LINE_DISPLAY_ID} ↗</a><a href={PHONE_HREF} data-cta="tel_market_footer">{PHONE_DISPLAY}</a><Link href="/articles">บทความ</Link><Link href="/news">ข่าว</Link><Link href="/privacy">นโยบายความเป็นส่วนตัว</Link><CookieSettingsLink className="market-footer-button" /></div>
       </div>
       <div className="market-container market-footer-bottom"><span>© {new Date().getFullYear()} JiaAED · เจี่ยรักษา</span><span>{PRIMEDIC_REGULATORY.published ? `เครื่อง AED HeartSave Y0 / Y2 / Y8 / Y8 GPS · อย. ${PRIMEDIC_REGULATORY.fda} · ${jiaaedAdLicenseLine()}` : PRIMEDIC_REGULATORY.pendingNote}</span></div>
-      <div className="market-container market-footer-warning"><strong>{DEVICE_AD_WARNING}</strong><span>{AED_INTENDED_USE}</span></div>
+      <div className="market-container market-footer-warning"><strong>{DEVICE_AD_WARNING}</strong><span>{AED_INTENDED_USE}</span><span>{AED_CONTRAINDICATIONS}</span><span>{AED_WARNINGS}</span><small>อ้างอิง {AED_MANUAL_REF}</small></div>
     </footer>
   );
 }
