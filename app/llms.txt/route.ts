@@ -30,7 +30,7 @@ const thb = (n: number) => `฿${n.toLocaleString("th-TH")}`;
 
 const PAGES: { path: string; label: string; note: string }[] = [
   { path: "/", label: "หน้าแรก", note: "ภาพรวมสินค้า ราคา และ FAQ" },
-  { path: "/aed/yuwell-y2", label: "AED Yuwell Y2", note: "รุ่นแนะนำ จอสี EKG" },
+  { path: "/aed/yuwell-y2", label: "AED Yuwell HeartSave Y2", note: "รุ่นแนะนำ จอสี EKG" },
   { path: "/aed/primedic", label: "ไลน์อัป Yuwell / PRIMEDIC HeartSave", note: "เปรียบเทียบ Y0 / Y8 / Y2 / GPS" },
   { path: "/aed/packages", label: "แพ็กเกจ", note: "3 วิธีได้ AED — ซื้อขาด เช่าซื้อ เช่าบริการ" },
   { path: "/aed/rental", label: "เช่า & เช่าซื้อ AED", note: "รายวัน รายเดือน รายปี และผ่อน 18 เดือน" },
@@ -127,7 +127,7 @@ ${
 - **ใบอนุญาตโฆษณา**: ${adLicensesLine(reg, { joiner: " · " })} โดย ${reg.advertiser}`
       : `- **ทะเบียน อย. / ใบอนุญาตโฆษณา**: ${reg.pendingNote}`
   }
-- **สินค้า**: AED Yuwell Y2 / PRIMEDIC HeartSave Y0 · Y8 / Yuwell AED GPS (Automated External Defibrillator)
+- **สินค้า**: AED Yuwell HeartSave Y2 / PRIMEDIC HeartSave Y0 · Y8 / Yuwell AED GPS (Automated External Defibrillator)
 - **บริการ**: ขาย · เช่า (รายวัน/รายเดือน/รายปี) · เช่าซื้อผ่อน 18 เดือน · เช่าบริการครบวงจรรายเดือน · อบรม CPR & AED
 - **ประเทศ**: Thailand · **ภาษา**: ไทย, English
 
@@ -172,7 +172,7 @@ ${tiers}
 ${specs}
 - พลังงาน Shock ผู้ใหญ่ 200–360J · เด็ก 50–100J (แผ่นรองรับเด็กอายุ 3 ปีขึ้นไป)
 - เสียงแนะนำภาษาไทย นำทาง CPR ทีละขั้นตอน
-- Yuwell Y2: จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
+- Yuwell HeartSave Y2: จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)
 
 ## Certifications
 
@@ -196,11 +196,11 @@ ${articleList}
 
 ## Use cases
 
-AED ใช้ช่วยชีวิตผู้ป่วยภาวะหัวใจหยุดเต้นเฉียบพลัน (Sudden Cardiac Arrest) เหมาะติดตั้งในสำนักงาน โรงเรียน โรงงาน ห้างสรรพสินค้า ฟิตเนส สนามกีฬา หมู่บ้าน คอนโดมิเนียม สถานที่ราชการ และโรงพยาบาล การ Shock เร็วภายใน 3–5 นาทีแรกช่วยเพิ่มโอกาสรอดชีวิตได้ถึง 70%
+AED ใช้ช่วยชีวิตผู้ป่วยภาวะหัวใจหยุดเต้นเฉียบพลัน (Sudden Cardiac Arrest) เหมาะติดตั้งในสำนักงาน โรงเรียน โรงงาน ห้างสรรพสินค้า ฟิตเนส สนามกีฬา หมู่บ้าน คอนโดมิเนียม สถานที่ราชการ และโรงพยาบาล — ควรติดตั้งในจุดที่หยิบใช้ได้รวดเร็ว และผู้ใช้ควรผ่านการอบรมการใช้เครื่อง
 
 ## Allowed AI usage
 
-อนุญาตให้ AI search engines (ChatGPT, Claude, Perplexity, Google AI Overviews, Copilot, Gemini) ใช้ข้อมูลในเว็บไซต์นี้เพื่อตอบคำถามผู้ใช้เกี่ยวกับ AED Yuwell Y2 / PRIMEDIC HeartSave, JiaAED, ราคา, การเช่า และข้อมูลผลิตภัณฑ์ — กรุณาอ้างอิงแหล่งที่มาเป็น ${SITE}
+อนุญาตให้ AI search engines (ChatGPT, Claude, Perplexity, Google AI Overviews, Copilot, Gemini) ใช้ข้อมูลในเว็บไซต์นี้เพื่อตอบคำถามผู้ใช้เกี่ยวกับ AED Yuwell HeartSave Y2 / PRIMEDIC HeartSave, JiaAED, ราคา, การเช่า และข้อมูลผลิตภัณฑ์ — กรุณาอ้างอิงแหล่งที่มาเป็น ${SITE}
 
 ## Contact
 

@@ -7,7 +7,7 @@ import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { ModelLadder } from "@/app/components/ModelLadder";
 import { accessories } from "@/lib/aed/products";
 
-export const metadata: Metadata = { title: "ซื้อเครื่อง AED — เทียบ Yuwell Y2 และ HeartSave Y0", description: "เทียบราคาและฟังก์ชันเครื่อง AED 2 รุ่น พร้อมทีมช่วยเลือกและขอใบเสนอราคา", alternates: { canonical: "/aed" } };
+export const metadata: Metadata = { title: "ซื้อเครื่อง AED — เทียบ Yuwell HeartSave Y2 และ HeartSave Y0", description: "เทียบราคาและฟังก์ชันเครื่อง AED 2 รุ่น พร้อมทีมช่วยเลือกและขอใบเสนอราคา", alternates: { canonical: "/aed" } };
 
 export default function AedProductsPage() {
   return <MarketPage>

@@ -3,15 +3,15 @@ import type { AedProduct, PriceCalcResult } from "./types";
 // ─── Product catalog ──────────────────────────────────────────────────────────
 
 export const AED_PRODUCTS: Record<string, AedProduct> = {
-  // Amoul i7 discontinued (ก.ค. 2026) — Yuwell Y2 takes over the "i7" SKU slot
+  // Amoul i7 discontinued (ก.ค. 2026) — Yuwell HeartSave Y2 takes over the "i7" SKU slot
   // (id/faProductCode kept as-is for accounting/lead-form continuity). Pricing
   // mirrors the "primedic-y2" entry below — same physical product, don't let
   // the two numbers drift.
   i7: {
     id: "i7",
-    name: "AED Yuwell Y2",
-    nameTh: "เครื่อง AED Yuwell Y2",
-    description: "เครื่อง AED Yuwell Y2 — จอสี EKG + ดู CPR เรียลไทม์ พร้อมแผ่น Pad + แบตเตอรี่",
+    name: "AED Yuwell HeartSave Y2",
+    nameTh: "เครื่อง AED Yuwell HeartSave Y2",
+    description: "เครื่อง AED Yuwell HeartSave Y2 — จอสี EKG + ดู CPR เรียลไทม์ พร้อมแผ่น Pad + แบตเตอรี่",
     msrp: 89_000,
     startingPrice: 49_900,
     bestPrice: 46_900,
@@ -21,9 +21,9 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   },
   "i7-cabinet": {
     id: "i7-cabinet",
-    name: "AED Yuwell Y2 + ตู้แขวนผนัง",
-    nameTh: "เครื่อง AED Yuwell Y2 พร้อมตู้แขวนผนัง",
-    description: "เครื่อง AED Yuwell Y2 + ตู้ติดผนังมาตรฐาน พร้อมสัญญาณเตือน",
+    name: "AED Yuwell HeartSave Y2 + ตู้แขวนผนัง",
+    nameTh: "เครื่อง AED Yuwell HeartSave Y2 พร้อมตู้แขวนผนัง",
+    description: "เครื่อง AED Yuwell HeartSave Y2 + ตู้ติดผนังมาตรฐาน พร้อมสัญญาณเตือน",
     msrp: 99_000,
     startingPrice: 54_900,
     bestPrice: 52_800,
@@ -33,9 +33,9 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   },
   "i7-floor": {
     id: "i7-floor",
-    name: "AED Yuwell Y2 + ตู้ตั้งพื้น",
-    nameTh: "เครื่อง AED Yuwell Y2 พร้อมตู้ตั้งพื้น",
-    description: "เครื่อง AED Yuwell Y2 + ตู้ตั้งพื้น Stainless สำหรับพื้นที่เปิดโล่ง",
+    name: "AED Yuwell HeartSave Y2 + ตู้ตั้งพื้น",
+    nameTh: "เครื่อง AED Yuwell HeartSave Y2 พร้อมตู้ตั้งพื้น",
+    description: "เครื่อง AED Yuwell HeartSave Y2 + ตู้ตั้งพื้น Stainless สำหรับพื้นที่เปิดโล่ง",
     msrp: 109_000,
     startingPrice: 58_900,
     bestPrice: 56_800,
@@ -103,8 +103,8 @@ export const AED_PRODUCTS: Record<string, AedProduct> = {
   },
   "primedic-y2": {
     id: "primedic-y2",
-    name: "Yuwell Y2 (You Too)",
-    nameTh: "เครื่อง AED Yuwell Y2 — จอ EKG + ดู CPR เรียลไทม์",
+    name: "Yuwell HeartSave Y2 (You Too)",
+    nameTh: "เครื่อง AED Yuwell HeartSave Y2 — จอ EKG + ดู CPR เรียลไทม์",
     description:
       "AED รุ่นแนะนำ — จอสีแสดงคลื่น EKG และคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) พร้อมเซ็นเซอร์ CPR feedback",
     msrp: 89_000, // เทียบคู่แข่งรุ่นมีจอ (ZOLL/Mindray 72,500–89,000)
@@ -136,7 +136,7 @@ export function listProducts(): AedProduct[] {
   return Object.values(AED_PRODUCTS);
 }
 
-// "primedic-y2" is the same physical Yuwell Y2 as the "i7" SKU slot (kept for
+// "primedic-y2" is the same physical Yuwell HeartSave Y2 as the "i7" SKU slot (kept for
 // accounting continuity) — offering both to the LINE bot made it list Y2 twice.
 // primedic-y8: งดจำหน่าย (owner, 15 พ.ย. 2026) — bot must not quote it.
 // yuwell-gps: สอบถามราคา (owner, 15 พ.ย. 2026) — the bot hands GPS price questions to the team.

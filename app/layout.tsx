@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
-    "Yuwell Y2",
+    "Yuwell HeartSave Y2",
     "PRIMEDIC HeartSave",
     "PRIMEDIC Y0",
     "PRIMEDIC Y8",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     locale: "th_TH",
     url: SITE_URL,
     siteName: "JiaAED",
-    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell HeartSave Y2 และ PRIMEDIC HeartSave",
     description:
       "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · ขึ้นทะเบียน อย.",
     images: [
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell HeartSave Y2 และ PRIMEDIC HeartSave",
     description:
       "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · ขึ้นทะเบียน อย.",
     images: ["/images/og-cover.png"],

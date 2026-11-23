@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ข่าวและความตระหนักเรื่องหัวใจหยุดเต้น | JiaAED",
     description: "ข่าวภาวะหัวใจหยุดเต้นเฉียบพลัน การกู้ชีพ CPR และเครื่อง AED พร้อมมุมให้ความรู้จาก JiaAED",
-    images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254, alt: "AED Yuwell Y2" }],
+    images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254, alt: "AED Yuwell HeartSave Y2" }],
   },
 };
 
@@ -125,8 +125,8 @@ export default async function NewsPage() {
 
         <div className="max-w-3xl mx-auto mt-10 bg-gray-900 border border-yellow-400/20 rounded-xl p-6 text-center">
           <p className="text-gray-300 mb-4">
-            ทุกวินาทีมีค่าเมื่อหัวใจหยุดเต้น — การมีเครื่อง AED พร้อมใช้ในที่ทำงานหรือสถานที่สาธารณะ
-            ช่วยเพิ่มโอกาสรอดได้
+            ติดตามข่าวและความรู้เรื่อง AED — สนใจติดตั้งเครื่อง AED ในที่ทำงานหรือสถานที่สาธารณะ
+            ปรึกษาทีมงานได้
           </p>
           <Link
             href="/#models"

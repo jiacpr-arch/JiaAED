@@ -85,7 +85,7 @@ export const primedicModels: PrimedicModel[] = [
   },
   {
     // รุ่นเรือธง — ฮาร์ดแวร์เดียวกับ Y8 แต่มีจอสีแสดง EKG + ดูคุณภาพ CPR สด ๆ.
-    // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
+    // ชื่อทางการตลาด "Yuwell HeartSave Y2 (You Too)" ตามที่เจ้าของกำหนด.
     id: "primedic-y2",
     // Registered product name is "HeartSave Y2" (ทะเบียน อย. ใน regulatory.ts รายการที่ 23) —
     // ad pages must name the device as registered (ฆพ. jiaaed.com, 23 พ.ย. 2026).
@@ -134,7 +134,7 @@ export const Y8_ON_REQUEST_NOTE =
 export function y8BotRule(): string {
   const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
   const fmt = (n: number) => `฿${n.toLocaleString("en-US")}`;
-  return `แผ่น CPR feedback ไม่ขายแยก (เจ้าของ 15 พ.ย. 2026) — ขายเป็นแผ่นเปลี่ยนให้ลูกค้าที่มี Y8 อยู่แล้วเท่านั้น ถ้าลูกค้า Y0 อยากได้ feedback ให้แนะนำ Y2 · ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
+  return `แผ่น CPR feedback ไม่ขายแยก (เจ้าของ 15 พ.ย. 2026) — ขายเป็นแผ่นเปลี่ยนให้ลูกค้าที่มี Y8 อยู่แล้วเท่านั้น ถ้าลูกค้า Y0 อยากได้ feedback ให้แนะนำ Y2 · ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell HeartSave Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
 }
 
 // Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
@@ -280,7 +280,7 @@ export const comparisonModels: PrimedicModel[] = (["primedic-y0", "primedic-y8",
 export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | "rent"; title: string; pick: string[]; skip: string[] }[] = [
   {
     id: "primedic-y2",
-    title: "เลือก Yuwell Y2 ⭐ ถ้า…",
+    title: "เลือก Yuwell HeartSave Y2 ⭐ ถ้า…",
     pick: [
       "คนที่จะใช้เครื่องไม่ได้ทำ CPR บ่อย — อยากให้เครื่องบอกว่ากดถูกไหม",
       "โรงพยาบาล ศูนย์ฝึกอบรม หน่วยกู้ชีพ โรงเรียน ฟิตเนส — ต้องการข้อมูล CPR และ EKG บนจอ",
@@ -292,7 +292,7 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | 
     id: "primedic-y0",
     title: "เลือก HeartSave Y0 ถ้า…",
     pick: [
-      "อยากมี AED พร้อมใช้ในราคาประหยัดที่สุด",
+      "อยากมี AED พร้อมใช้ในงบจำกัด",
       "สำนักงาน ร้านค้า คอนโด ที่มีคนผ่านการอบรม CPR",
     ],
     skip: ["แผ่นที่แถมไม่มี CPR feedback (ไม่ขายแยก) — ถ้าอยากได้ เลือก Y2"],

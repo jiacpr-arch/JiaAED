@@ -21,14 +21,14 @@ const price = (id: string) => `฿${primedicModels.find((m) => m.id === id)!.pri
 
 export const metadata: Metadata = {
   title: "เปรียบเทียบเครื่อง AED Y0 / Y8 / Y8 GPS / Y2 — ควรซื้อรุ่นไหน",
-  description: `ทุกรุ่นช็อกหัวใจได้และมีเสียงนำทางภาษาไทย ต่างกันที่ช่วยให้ปั๊มหัวใจถูกได้แค่ไหน — Yuwell Y2 ${price("primedic-y2")} (แผ่น feedback + จอแสดงผลสด) · HeartSave Y0 ${price("primedic-y0")} · Y8 ${Y8_STATUS}`,
+  description: `ทุกรุ่นช็อกหัวใจได้และมีเสียงนำทางภาษาไทย ต่างกันที่ช่วยให้ปั๊มหัวใจถูกได้แค่ไหน — Yuwell HeartSave Y2 ${price("primedic-y2")} (แผ่น feedback + จอแสดงผลสด) · HeartSave Y0 ${price("primedic-y0")} · Y8 ${Y8_STATUS}`,
   alternates: { canonical: "/aed/compare" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
 
 type Cell = string | boolean;
 const rows: { label: string; y0: Cell; y8: Cell; y2: Cell; gps: Cell }[] = [
-  { label: "ตัวเครื่อง", y0: "HeartSave", y8: "HeartSave (เครื่องเดียวกับ Y0)", y2: "Yuwell Y2 (รุ่นมีจอ)", gps: "HeartSave Y8 + โมดูล GPS" },
+  { label: "ตัวเครื่อง", y0: "HeartSave", y8: "HeartSave (เครื่องเดียวกับ Y0)", y2: "Yuwell HeartSave Y2 (รุ่นมีจอ)", gps: "HeartSave Y8 + โมดูล GPS" },
   { label: "ช็อกหัวใจ + เสียงนำทางภาษาไทยทีละขั้น", y0: true, y8: true, y2: true, gps: true },
   { label: "ใช้กับเด็กได้ (ปุ่มโหมดเด็ก)", y0: true, y8: true, y2: true, gps: true },
   { label: "แผ่นที่แถมมา", y0: "แบบธรรมดา", y8: "แบบ CPR feedback", y2: "แบบ CPR feedback", gps: "แบบ CPR feedback" },
@@ -118,7 +118,7 @@ export default function ComparePage() {
                   <th>สิ่งที่เทียบ</th>
                   <th>HeartSave Y0</th>
                   <th style={{ opacity: 0.5 }}>HeartSave Y8 ({Y8_STATUS})</th>
-                  <th>Yuwell Y2 ⭐ แนะนำ</th>
+                  <th>Yuwell HeartSave Y2 ⭐ แนะนำ</th>
                   <th>HeartSave Y8 GPS</th>
                 </tr>
               </thead>
@@ -172,7 +172,7 @@ export default function ComparePage() {
       <section className="market-section">
         <div className="market-container market-split">
           <div className="market-split-photo">
-            <Image src="/images/yuwell-y2-screen.png" alt="Yuwell Y2 — จอสีแนะนำ CPR แบบเรียลไทม์" fill sizes="(max-width: 700px) 100vw, 45vw" style={{ objectFit: "contain", background: "#fff" }} />
+            <Image src="/images/yuwell-y2-screen.png" alt="Yuwell HeartSave Y2 — จอสีแนะนำ CPR แบบเรียลไทม์" fill sizes="(max-width: 700px) 100vw, 45vw" style={{ objectFit: "contain", background: "#fff" }} />
           </div>
           <div>
             <p className="market-eyebrow">WHY Y2</p>
@@ -185,7 +185,7 @@ export default function ComparePage() {
               คนที่ไม่ได้ทำ CPR บ่อยมักกดตื้นหรือเร็วเกินโดยไม่รู้ตัว Y2 แสดงความเร็ว ความลึก และการปล่อยหน้าอกบนจอทันที
               ปรับท่าได้ระหว่างช่วยชีวิต — เพิ่มจาก Y0 ประมาณ ฿10,000 ใช้ 4 ปี ตกวันละไม่ถึง 7 บาท
             </p>
-            <Link className="market-text-link" href="/aed/yuwell-y2">ดูรายละเอียด Yuwell Y2 ↗</Link>
+            <Link className="market-text-link" href="/aed/yuwell-y2">ดูรายละเอียด Yuwell HeartSave Y2 ↗</Link>
           </div>
         </div>
       </section>

@@ -17,10 +17,10 @@ export type ConversionTarget =
   | { id: ConversionTargetId; label: string; kind: "rto"; planId: RentalBillingPlanId };
 
 export const conversionTargets: ConversionTarget[] = [
-  { id: "buy-y2", label: "ซื้อขาด Yuwell Y2", kind: "buy", productId: "primedic-y2" },
+  { id: "buy-y2", label: "ซื้อขาด Yuwell HeartSave Y2", kind: "buy", productId: "primedic-y2" },
   { id: "buy-y0", label: "ซื้อขาด HeartSave Y0", kind: "buy", productId: "primedic-y0" },
-  { id: "rto-y2", label: "เช่าแล้วได้ซื้อ — Yuwell Y2", kind: "rto", planId: "rto-y2" },
-  { id: "rto-gps", label: "เช่าแล้วได้ซื้อ — Yuwell GPS", kind: "rto", planId: "rto-gps" },
+  { id: "rto-y2", label: "เช่าแล้วได้ซื้อ — Yuwell HeartSave Y2", kind: "rto", planId: "rto-y2" },
+  { id: "rto-gps", label: "เช่าแล้วได้ซื้อ — HeartSave Y8 GPS", kind: "rto", planId: "rto-gps" },
   { id: "rto-y0", label: "เช่าแล้วได้ซื้อ — HeartSave Y0 (12 เดือน)", kind: "rto", planId: "rto-y0" },
 ];
 

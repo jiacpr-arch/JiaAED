@@ -45,7 +45,7 @@ function productBlock(): string {
   return `### เครื่อง AED (ราคาเครื่อง)
 ${machines}
 
-### Yuwell Y2 แบบชุดพร้อมตู้ / แท่นตั้งพื้น
+### Yuwell HeartSave Y2 แบบชุดพร้อมตู้ / แท่นตั้งพื้น
 ${bundles}
 
 ### แพ็กเกจ (ซื้อขาด / เช่าซื้อ / เช่าบริการ)
@@ -80,7 +80,7 @@ export const WEB_CHAT_SYSTEM_PROMPT = `คุณคือ "เจี่ย" — 
 
 ${productBlock()}
 
-รุ่นที่แสดงราคาบนเว็บ: Yuwell Y2 (แนะนำ) และ Y0 · ${y8BotRule()}
+รุ่นที่แสดงราคาบนเว็บ: Yuwell HeartSave Y2 (แนะนำ) และ Y0 · ${y8BotRule()}
 
 ## ข้อมูลรับรอง (สำคัญ)
 ${regulatoryBlock}
@@ -131,7 +131,7 @@ ${articles.map((a) => `- ${a.title} — /articles/${a.slug}`).join("\n")}
 - หน้า /quote — ฟอร์ม "ขอใบเสนอราคา" กรอกข้อมูลให้ทีมงานติดต่อกลับ
 - หน้า /aed/compare — เปรียบเทียบ Y0 / Y8 / Y2 ว่าควรซื้อรุ่นไหน (ส่งลิงก์นี้เมื่อลูกค้าลังเลระหว่างรุ่น)
 - หน้า /aed — ดูรุ่นและราคาเปรียบเทียบ Y2 / Y0 / GPS
-- หน้า /aed/yuwell-y2 — รายละเอียดรุ่นแนะนำ Yuwell Y2 + สเปคเต็ม
+- หน้า /aed/yuwell-y2 — รายละเอียดรุ่นแนะนำ Yuwell HeartSave Y2 + สเปคเต็ม
 - หน้า /aed/primedic — ไลน์อัป PRIMEDIC HeartSave และตารางสเปค
 - หน้า /aed/packages — แพ็กเกจซื้อขาด / เช่าซื้อ / เช่าบริการ
 - หน้า /aed/rental — เช่า & เช่าซื้อ
