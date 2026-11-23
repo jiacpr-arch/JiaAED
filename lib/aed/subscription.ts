@@ -45,7 +45,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     threeYearPerMonth: round10(2990 * (1 - THREE_YEAR_DISCOUNT)),
     specialNote: null,
     bestFor: "โรงเรียน · โรงงาน · สำนักงาน",
-    badge: "คุ้มค่าที่สุด",
+    badge: "แนะนำ",
   },
   {
     id: "managed-elite",

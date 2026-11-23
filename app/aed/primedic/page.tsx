@@ -11,7 +11,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { primedicCertifications, primedicModels, Y8_ON_REQUEST_NOTE } from "@/lib/aed/primedic";
-import { survivorReward } from "@/lib/aed/promotion";
+import { SURVIVOR_REWARD_ENABLED, survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -223,9 +223,11 @@ export default function PrimedicPage() {
       </section>
 
       {/* ฿10,000 survivor-reward promotion */}
-      <section className="max-w-6xl mx-auto px-4 py-4">
-        <PromoBanner promo={survivorReward} />
-      </section>
+      {SURVIVOR_REWARD_ENABLED && (
+        <section className="max-w-6xl mx-auto px-4 py-4">
+          <PromoBanner promo={survivorReward} />
+        </section>
+      )}
 
       {/* What each model adds — Y0 → Y8 (งดจำหน่าย) → Y2, with photos */}
       <section className="max-w-6xl mx-auto px-4 py-6">

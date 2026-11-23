@@ -14,7 +14,7 @@ import { PhotoStrip } from "@/app/components/PhotoStrip";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { acquisitionPackages } from "@/lib/aed/packages";
 import { packageFaqCategories } from "@/lib/aed/faqs";
-import { survivorReward } from "@/lib/aed/promotion";
+import { SURVIVOR_REWARD_ENABLED, survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -63,9 +63,11 @@ export default function PackagesPage() {
       </section>
 
       {/* ฿10,000 survivor-reward promotion */}
-      <section className="max-w-6xl mx-auto px-4 py-4">
-        <PromoBanner promo={survivorReward} />
-      </section>
+      {SURVIVOR_REWARD_ENABLED && (
+        <section className="max-w-6xl mx-auto px-4 py-4">
+          <PromoBanner promo={survivorReward} />
+        </section>
+      )}
 
       {/* Rent vs buy */}
       <section className="max-w-6xl mx-auto px-4 py-6">
