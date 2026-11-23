@@ -127,7 +127,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
       "ทีมดูแลแบต / แผ่น / รายงาน + เครื่องสำรองถ้าเสีย",
       "คืนได้เมื่อเลิกใช้",
     ],
-    bestFor: "องค์กรที่ต้องการความพร้อม 100% โดยไม่ต้องดูแลเอง / โครงการระยะสั้น",
+    bestFor: "องค์กรที่ต้องการให้ทีมงานดูแลความพร้อมของเครื่องให้ / โครงการระยะสั้น",
     badge: "เช่า · แนะนำ",
     ctaProductHint: "pkg-care",
     href: "/aed/subscription",
@@ -141,21 +141,21 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     // Owner, 29 ต.ค. 2026: rent-to-own Y8 ships as the GPS unit (Y8 hardware +
     // GPS module), stated openly — the team monitors readiness remotely instead
     // of visiting every 6 months.
-    name: "Safety Start — Yuwell GPS",
+    name: "Safety Start — HeartSave Y8 GPS",
     nameTh: "เช่าแล้วได้ซื้อ",
     tagline: "ผ่อนเบา ๆ แล้วได้เครื่องเป็นของตัวเอง พร้อมเซ็นเซอร์ CPR feedback",
     priceLabel: `${thb(startY8.monthly)}/เดือน`,
     priceNote: rentToOwnNote(startY8),
     deposit: `${thb(startY8.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
     features: [
-      "เซ็นเซอร์ CPR feedback มาตรฐาน — วัดแรง/จังหวะกดหน้าอกเรียลไทม์",
-      "GPS ในตัว — ทีมงานตรวจสอบตำแหน่งและความพร้อมของเครื่องออนไลน์ 24 ชม. รู้ทันทีเมื่อแบต/แผ่นใกล้หมด",
+      "แผ่น CPR feedback — บอกจังหวะและแรงกดหน้าอกด้วยเสียงระหว่างทำ CPR",
+      "ระบบเชื่อมต่อเครือข่าย (GPS 4G) — ทีมงานดูตำแหน่งและสถานะแบต/แผ่นผ่านระบบออนไลน์ตามข้อมูลที่เครื่องรายงาน",
       "ค่างวดรายเดือนต่ำ กระจายภาระลงทุน",
       `รวม${PACKAGE_TRAINING_PERK} (ต่างจังหวัดสอบถาม)`,
       `ครบ ${startY8.months} เดือน เครื่องเป็นของท่านโดยไม่มีค่าใช้จ่ายเพิ่ม`,
     ],
     bestFor: "SME / สำนักงานใหม่ ที่อยากเป็นเจ้าของแต่สภาพคล่องจำกัด",
-    badge: "ยอดนิยม",
+    badge: null,
     ctaProductHint: "primedic-y8",
     href: "/quote",
     image: "/images/yuwell-gps-aed.webp",
@@ -164,9 +164,9 @@ export const acquisitionPackages: AcquisitionPackage[] = [
   {
     id: "pkg-start-y2",
     kind: "rent-to-own",
-    name: "Safety Start — Yuwell Y2",
+    name: "Safety Start — HeartSave Y2",
     nameTh: "เช่าแล้วได้ซื้อ · รุ่นแนะนำ",
-    tagline: "ผ่อนเบา ๆ ได้เครื่องรุ่นท็อป จอ EKG ดู CPR สด ๆ",
+    tagline: "ผ่อนเป็นรายเดือน ได้รุ่นที่มีจอแสดงคุณภาพ CPR",
     priceLabel: `${thb(startY2.monthly)}/เดือน`,
     priceNote: rentToOwnNote(startY2),
     deposit: `${thb(startY2.deposit)} (นับเป็นส่วนหนึ่งของค่าเครื่อง) — ${RENT_TO_OWN_ELIGIBILITY}`,
@@ -191,12 +191,12 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     tagline: "เป็นเจ้าของเครื่องเต็มตัว จบในครั้งเดียว",
     priceLabel: `เงินสด ${thb(premium.cash)}`,
     priceNote:
-      `เงินสด ${thb(premium.cash)} (Yuwell Y0 ไม่รวมตู้) / รวมตู้ ${thb(premium.cashWithCabinet)} · ` +
+      `เงินสด ${thb(premium.cash)} (HeartSave Y0 ไม่รวมตู้) / รวมตู้ ${thb(premium.cashWithCabinet)} · ` +
       `ราคาเครดิต/ราชการ ${thb(premium.credit)} (สำหรับเทอมเครดิตยาว) · ` +
       `อัปเกรดรุ่น GPS ในตัวได้ (${gpsUpgrade}) · ออกใบกำกับภาษีได้`,
     deposit: null,
     features: [
-      "เครื่อง AED Yuwell Y0 เป็นกรรมสิทธิ์ขององค์กร",
+      "เครื่อง AED HeartSave Y0 เป็นกรรมสิทธิ์ขององค์กร",
       `เลือกเพิ่มตู้ติดผนัง / ตู้ตั้งพื้น ได้ (รวมตู้ ${thb(premium.cashWithCabinet)})`,
       `อัปเกรดเป็นรุ่น GPS ในตัว ติดตามตำแหน่ง/สถานะออนไลน์ (${gpsUpgrade})`,
       `รวม${PACKAGE_TRAINING_PERK} โดยทีม BLS Instructor (ต่างจังหวัดสอบถาม)`,
@@ -206,7 +206,7 @@ export const acquisitionPackages: AcquisitionPackage[] = [
     badge: null,
     ctaProductHint: "pkg-premium",
     href: "/quote",
-    image: "/images/aed-floorstand.webp",
-    imageAlt: "ซื้อขาดเครื่อง AED พร้อมตู้ตั้งพื้น",
+    image: "/images/primedic-y-series.png",
+    imageAlt: "เครื่อง AED HeartSave Y0",
   },
 ];

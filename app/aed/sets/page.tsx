@@ -28,7 +28,7 @@ export default function AedSetsPage() {
         eyebrow="READY-TO-USE SETS"
         title="ไม่ได้ขายแค่เครื่อง — ขายความพร้อมช่วยชีวิต."
         description="เครื่อง AED + ตู้ติดผนัง + คนที่ใช้เป็น ในชุดเดียว ราคาถูกกว่าซื้อแยก สั่งซื้อและชำระออนไลน์ได้ทันที"
-        image="/images/jiaaed-lobby-hero.jpg"
+        image="/images/jiaaed-hero-2026.png"
       >
         <MarketButton href="#sets">ดูชุดและราคา</MarketButton>
         <MarketButton href="/quote" secondary>

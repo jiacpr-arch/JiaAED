@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { LINE_OA, LINE_DISPLAY_ID } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
-import { PRIMEDIC_REGULATORY, adLicensesLine } from "@/lib/aed/regulatory";
+import { AED_INTENDED_USE, DEVICE_AD_WARNING, PRIMEDIC_REGULATORY, jiaaedAdLicenseLine } from "@/lib/aed/regulatory";
 import { CookieSettingsLink } from "./CookieSettingsLink";
 
 const links = [
@@ -34,7 +34,8 @@ export function MarketFooter() {
         <div><strong>สำรวจเว็บไซต์</strong><Link href="/aed">ซื้อเครื่อง AED</Link><Link href="/aed/sets">ชุด AED พร้อมใช้</Link><Link href="/aed/packages">แพ็กเกจ AED</Link><Link href="/aed/rental">เช่าและเช่าซื้อ AED</Link><Link href="/aed/gps-rental">เช่า AED GPS 4G</Link><Link href="/aed/subscription">บริการดูแล AED</Link><Link href="/aed/monitoring">ระบบตรวจเครื่องออนไลน์</Link><Link href="/training">อบรม CPR &amp; AED</Link><Link href="/about">เกี่ยวกับเรา</Link><Link href="/docs">เอกสารดาวน์โหลด</Link></div>
         <div><strong>ติดต่อและข้อมูล</strong><Link href="/quote">ขอใบเสนอราคา ↗</Link><a href={LINE_OA} data-line-cta="market_footer" target="_blank" rel="noopener noreferrer">LINE {LINE_DISPLAY_ID} ↗</a><a href={PHONE_HREF} data-cta="tel_market_footer">{PHONE_DISPLAY}</a><Link href="/articles">บทความ</Link><Link href="/news">ข่าว</Link><Link href="/privacy">นโยบายความเป็นส่วนตัว</Link><CookieSettingsLink className="market-footer-button" /></div>
       </div>
-      <div className="market-container market-footer-bottom"><span>© {new Date().getFullYear()} JiaAED · เจี่ยรักษา</span><span>{PRIMEDIC_REGULATORY.published ? `อย. ${PRIMEDIC_REGULATORY.fda} · ${adLicensesLine(PRIMEDIC_REGULATORY, { joiner: " · ", short: true })}` : PRIMEDIC_REGULATORY.pendingNote}</span><span>เครื่องมือแพทย์ โปรดอ่านคำเตือนและศึกษาวิธีใช้</span></div>
+      <div className="market-container market-footer-bottom"><span>© {new Date().getFullYear()} JiaAED · เจี่ยรักษา</span><span>{PRIMEDIC_REGULATORY.published ? `เครื่อง AED HeartSave Y0 / Y2 / Y8 / Y8 GPS · อย. ${PRIMEDIC_REGULATORY.fda} · ${jiaaedAdLicenseLine()}` : PRIMEDIC_REGULATORY.pendingNote}</span></div>
+      <div className="market-container market-footer-warning"><strong>{DEVICE_AD_WARNING}</strong><span>{AED_INTENDED_USE}</span></div>
     </footer>
   );
 }

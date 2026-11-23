@@ -11,7 +11,7 @@ export function CloudDashboardSection() {
       <SectionHeading
         badge="☁️ Cloud Monitoring"
         title="เช่า AED พร้อมระบบ Cloud Dashboard"
-        subtitle="ตรวจสอบสถานะเครื่องได้แบบ Real-time มั่นใจว่าเครื่องพร้อมใช้งานตลอด 24 ชั่วโมง"
+        subtitle="ทีมงานดูผล Self-test และสถานะแบต/แผ่นของทุกเครื่องผ่านระบบออนไลน์ แล้วนัดแก้ไขก่อนถึงวันที่ต้องใช้"
       />
 
       <div className="grid md:grid-cols-2 gap-8 items-center mt-8">

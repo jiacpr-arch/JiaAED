@@ -4,7 +4,6 @@ import { dashboardImage } from "@/lib/aed/gps";
 import Link from "next/link";
 import { SectionHeading } from "@/app/components/SectionHeading";
 import { PackageCard } from "@/app/components/PackageCard";
-import { TrustStats } from "@/app/components/TrustStats";
 import { FaqAccordion } from "@/app/components/FaqAccordion";
 import { RentVsBuyTable } from "@/app/components/RentVsBuyTable";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
@@ -92,7 +91,7 @@ export default function PackagesPage() {
           heightClass="h-44 md:h-56"
           photos={[
             { src: "/images/training-bls-3.jpg", alt: "อบรม CPR และการใช้ AED ถึงองค์กร", caption: "อบรมโดยทีม BLS Instructor สอนถึงที่" },
-            { src: "/images/aed-gps-tracking.png", alt: "ระบบ GPS ติดตามตำแหน่งเครื่อง AED", caption: "GPS ระบุตำแหน่งเครื่องเรียลไทม์" },
+            { src: "/images/yuwell-gps-aed.webp", alt: "เครื่อง AED HeartSave Y8 GPS", caption: "HeartSave Y8 GPS — ส่งตำแหน่งและสถานะเข้าระบบ" },
             { src: dashboardImage, alt: "หน้าจอ PRIMEDIC CLOUD ภาพรวมสถานะเครื่อง AED (เบลอข้อมูลลูกค้าและตำแหน่งแล้ว)", caption: "หน้าจอระบบจริง — ทีมงานเห็นสถานะทุกเครื่อง" },
           ]}
         />
@@ -100,17 +99,10 @@ export default function PackagesPage() {
 
       {/* Equipment details */}
       <section className="max-w-3xl mx-auto px-4 py-6">
-        <SectionHeading title="แพ็กเกจเหล่านี้ใช้เครื่องรุ่นไหน?" subtitle="เช่าและเช่าซื้อใช้ HeartSave Y8 GPS (เครื่องเดียวกับ Y0 + แผ่น CPR feedback + ระบบติดตาม) · เช่าซื้อรุ่นมีจอเลือก Yuwell Y2" />
+        <SectionHeading title="แพ็กเกจเหล่านี้ใช้เครื่องรุ่นไหน?" subtitle="เช่าและเช่าซื้อใช้ HeartSave Y8 GPS (HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย + แผ่น CPR feedback) · เช่าซื้อรุ่นมีจอเลือก HeartSave Y2" />
         <p className="text-center mt-3 text-sm"><Link href="/aed/compare" className="text-yellow-400 hover:text-yellow-300 font-semibold">ดูเปรียบเทียบทุกรุ่นแบบละเอียด →</Link></p>
       </section>
 
-      {/* Trust */}
-      <section className="max-w-6xl mx-auto px-4 py-10">
-        <SectionHeading title="องค์กรชั้นนำที่ไว้วางใจ JIA" />
-        <div className="mt-6">
-          <TrustStats />
-        </div>
-      </section>
 
       {/* Lead form */}
       <section className="max-w-2xl mx-auto px-4 py-6">

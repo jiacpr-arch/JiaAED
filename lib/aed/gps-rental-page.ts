@@ -113,7 +113,7 @@ export const GPS_LIMITS = [
   "ไม่ใช่ระบบ GPS Tracking สดต่อเนื่องตลอดเวลา",
   "ระบบไม่ได้เชื่อมกับศูนย์ 1669 อัตโนมัติ",
 ];
-export const EMERGENCY_REMINDER = "พบคนหมดสติไม่หายใจ: โทร 1669 · เริ่ม CPR · ใช้ AED โดยเร็วที่สุด";
+export const EMERGENCY_REMINDER = "พบคนหมดสติไม่หายใจ: โทร 1669 · เริ่ม CPR · ใช้ AED ทันทีที่หาได้";
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 export type Pkg = { id: string; name: string; price: string; priceNote: string; points: string[]; cta: string; need: QuoteNeed; featured?: boolean };
