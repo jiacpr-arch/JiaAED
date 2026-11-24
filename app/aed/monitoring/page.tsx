@@ -6,7 +6,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { BreadcrumbStructuredData } from "@/app/components/StructuredData";
 import { LINE_DISPLAY_ID, LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
-import { PRIMEDIC_REGULATORY, fdaLine, thaiDate } from "@/lib/aed/regulatory";
+import { AED_INTENDED_USE, DEVICE_AD_WARNING, PRIMEDIC_REGULATORY, fdaLine, jiaaedAdLicenseLine, thaiDate } from "@/lib/aed/regulatory";
 import {
   APP_NAME,
   APP_SCREENSHOTS,
@@ -217,7 +217,7 @@ export default function MonitoringPage() {
             </h2>
             <p className="market-muted mt-4">
               นอกจากทีมงานเห็นสถานะเครื่องหลังบ้าน จุดติดตั้งที่เปิดให้สาธารณะเข้าถึงยังแสดงในแอป {APP_NAME} ของ PRIMEDIC
-              ให้คนที่อยู่ใกล้ค้นหาเครื่อง AED ที่ใกล้ที่สุดและเดินไปถึงเครื่องได้เร็ว
+              ให้คนที่อยู่ใกล้ค้นหาเครื่อง AED ที่อยู่ใกล้และดูเส้นทางไปที่เครื่อง
             </p>
           </div>
           <div className={`mt-8 grid items-start gap-6 ${APP_SCREENSHOTS.length ? "lg:grid-cols-[1fr_1fr]" : ""}`}>
@@ -287,12 +287,13 @@ export default function MonitoringPage() {
         <div className="market-container text-[11px] leading-relaxed text-[var(--m-muted)]">
           {PRIMEDIC_REGULATORY.published ? (
             <p className="m-0">
-              เครื่อง AED Yuwell/PRIMEDIC HeartSave · {fdaLine(PRIMEDIC_REGULATORY)} · นำเข้าโดย {PRIMEDIC_REGULATORY.importer}
+              เครื่อง AED HeartSave Y8 (With networking function) · {fdaLine(PRIMEDIC_REGULATORY)} · นำเข้าโดย {PRIMEDIC_REGULATORY.importer} · ใบอนุญาตโฆษณา {jiaaedAdLicenseLine()}
             </p>
           ) : (
             <p className="m-0">{PRIMEDIC_REGULATORY.pendingNote}</p>
           )}
-          <p className="m-0 mt-1">เครื่องมือแพทย์ โปรดอ่านคำเตือนและศึกษาวิธีใช้ก่อนใช้งาน · บริการดูแลเครื่องโดย บริษัท เจี่ยรักษา จำกัด</p>
+          <p className="m-0 mt-1">{AED_INTENDED_USE}</p>
+          <p className="m-0 mt-1">{DEVICE_AD_WARNING} · บริการดูแลเครื่องโดย บริษัท เจี่ยรักษา จำกัด</p>
         </div>
       </section>
     </MarketPage>

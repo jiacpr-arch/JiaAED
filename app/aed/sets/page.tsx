@@ -7,7 +7,7 @@ import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { bundleCompareAt, bundles } from "@/lib/aed/bundles";
 import { checkoutEnabled } from "@/lib/aed/checkout";
 import { lineOaUrl } from "@/lib/aed/line";
-import { survivorReward } from "@/lib/aed/promotion";
+import { SURVIVOR_REWARD_ENABLED, survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -28,7 +28,7 @@ export default function AedSetsPage() {
         eyebrow="READY-TO-USE SETS"
         title="ไม่ได้ขายแค่เครื่อง — ขายความพร้อมช่วยชีวิต."
         description="เครื่อง AED + ตู้ติดผนัง + คนที่ใช้เป็น ในชุดเดียว ราคาถูกกว่าซื้อแยก สั่งซื้อและชำระออนไลน์ได้ทันที"
-        image="/images/jiaaed-lobby-hero.jpg"
+        image="/images/jiaaed-hero-2026.png"
       >
         <MarketButton href="#sets">ดูชุดและราคา</MarketButton>
         <MarketButton href="/quote" secondary>
@@ -103,9 +103,11 @@ export default function AedSetsPage() {
               ขอใบเสนอราคา ↗
             </Link>
           </p>
-          <p className="market-note">
-            🎉 {survivorReward.title} — {survivorReward.conditionNote}
-          </p>
+          {SURVIVOR_REWARD_ENABLED && (
+            <p className="market-note">
+              🎉 {survivorReward.title} — {survivorReward.conditionNote}
+            </p>
+          )}
         </div>
       </section>
 

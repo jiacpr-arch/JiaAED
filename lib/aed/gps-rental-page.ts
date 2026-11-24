@@ -21,7 +21,7 @@ import {
   THREE_YEAR_DISCOUNT,
 } from "./rental-prices";
 import { subscriptionMatrix, tiersWith } from "./subscription";
-import { survivorReward } from "./promotion";
+import { SURVIVOR_REWARD_ENABLED, survivorReward } from "./promotion";
 
 export const GPS_RENTAL_PATH = "/aed/gps-rental";
 export const PRODUCT_NAME = `Yuwell ${yuwellGpsAed.name} 4G`; // "Yuwell HeartSave Y8 GPS 4G"
@@ -113,7 +113,7 @@ export const GPS_LIMITS = [
   "ไม่ใช่ระบบ GPS Tracking สดต่อเนื่องตลอดเวลา",
   "ระบบไม่ได้เชื่อมกับศูนย์ 1669 อัตโนมัติ",
 ];
-export const EMERGENCY_REMINDER = "พบคนหมดสติไม่หายใจ: โทร 1669 · เริ่ม CPR · ใช้ AED โดยเร็วที่สุด";
+export const EMERGENCY_REMINDER = "พบคนหมดสติไม่หายใจ: โทร 1669 · เริ่ม CPR · ใช้ AED ทันทีที่หาได้";
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 export type Pkg = { id: string; name: string; price: string; priceNote: string; points: string[]; cta: string; need: QuoteNeed; featured?: boolean };
@@ -191,6 +191,7 @@ export const TRAINING_NOTE =
   "ต้องการอบรมเพิ่มหรือแพ็กเกจเครื่องพร้อมอบรม ขอราคาได้";
 
 // ── Survivor programme (existing ./promotion.ts copy; no case study yet) ─────
+export const SURVIVOR_ENABLED = SURVIVOR_REWARD_ENABLED;
 export const SURVIVOR = {
   title: "JIA สนับสนุนผู้ที่ลงมือช่วยชีวิตจริง",
   body: survivorReward.subtitle,

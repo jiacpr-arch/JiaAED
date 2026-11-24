@@ -119,7 +119,7 @@ export const rentalPlans: RentalPlan[] = [
   },
   {
     id: "rent-annual",
-    subtitle: "รายปี STANDARD — คุ้มที่สุด",
+    subtitle: "รายปี STANDARD — แนะนำ",
     name: "แผนรายปี (STANDARD)",
     price: RENTAL_PRICES.annual,
     unit: "/ ปี",
@@ -132,9 +132,9 @@ export const rentalPlans: RentalPlan[] = [
       RENTAL_TRAINING.onSite,
       "เช็กสภาพปีละ 1 ครั้ง + เครื่องสำรองถ้าเสีย",
       "เปลี่ยนแผ่นให้ฟรีหากใช้ช่วยชีวิตจริง",
-      "เครื่อง Yuwell GPS ทีมงานติดตามตำแหน่งและสถานะให้",
+      "เครื่อง HeartSave Y8 GPS ทีมงานติดตามตำแหน่งและสถานะให้",
     ],
-    badge: "คุ้มที่สุด",
+    badge: "แนะนำ",
     image: "/images/primedic-y2-open.jpg",
   },
   {
@@ -263,8 +263,8 @@ function rentToOwnBreakdown(
 }
 
 export const rentToOwnBreakdowns: RentToOwnBreakdown[] = [
-  rentToOwnBreakdown("pkg-start-y8", "yuwell-gps", "Yuwell Y8 GPS", "Y8 GPS"),
-  rentToOwnBreakdown("pkg-start-y2", "primedic-y2", "Yuwell Y2", "Y2"),
+  rentToOwnBreakdown("pkg-start-y8", "yuwell-gps", "HeartSave Y8 GPS", "Y8 GPS"),
+  rentToOwnBreakdown("pkg-start-y2", "primedic-y2", "HeartSave Y2", "Y2"),
 ];
 
 // ─── ตารางเปรียบเทียบ เช่า / เช่าซื้อ / ซื้อขาด ───────────────────────────────
@@ -334,7 +334,7 @@ export const rentalFaqs = [
   },
   {
     question: "เช่ารายเดือนมีขั้นต่ำไหม?",
-    answer: `เช่า 1 เดือนได้ ไม่มีขั้นต่ำ ${thb(RENTAL_PRICES.oneMonth)} · ถ้าใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน แผนยืดหยุ่น (FLEX) ${thb(RENTAL_PRICES.flexMonthly)}/เดือน · ถ้าใช้ครบปี แผนรายปี (STANDARD) ${thb(RENTAL_PRICES.annual)}/ปี คุ้มที่สุด — ${RENTAL_CREDIT_NOTE}`,
+    answer: `เช่า 1 เดือนได้ ไม่มีขั้นต่ำ ${thb(RENTAL_PRICES.oneMonth)} · ถ้าใช้ต่อเนื่อง ${RENTAL_PRICES.flexMinMonths}–11 เดือน แผนยืดหยุ่น (FLEX) ${thb(RENTAL_PRICES.flexMonthly)}/เดือน · ถ้าใช้ครบปี แผนรายปี (STANDARD) ${thb(RENTAL_PRICES.annual)}/ปี ค่าเฉลี่ยต่อเดือนต่ำกว่า — ${RENTAL_CREDIT_NOTE}`,
   },
   {
     question: "ถ้าเครื่องชำรุดหรือสูญหายระหว่างเช่าทำอย่างไร?",

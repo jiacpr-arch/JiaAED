@@ -31,24 +31,24 @@ const Y2_AD_LICENSE = PRIMEDIC_REGULATORY.adLicenses.find((l) => /Y2/.test(l.cov
 const Y2_PRICE = `฿${y2.price.toLocaleString()}`;
 const Y2_WARRANTY_YEARS = y2.warrantyYears;
 
-const LINE_Y2 = lineOaUrl(`สนใจ AED Yuwell Y2 (จอสี EKG) ราคา ${Y2_PRICE} ขอใบเสนอราคาครับ`);
+const LINE_Y2 = lineOaUrl(`สนใจ AED Yuwell HeartSave Y2 (จอสี EKG) ราคา ${Y2_PRICE} ขอใบเสนอราคาครับ`);
 const LINE_Y2_GOV = lineOaUrl(
-  "สนใจ AED Yuwell Y2 สำหรับจัดซื้อหน่วยงาน ขอชุดเอกสารจัดซื้อ (ใบเสนอราคา / สเปกชีต / อย.) ครับ",
+  "สนใจ AED Yuwell HeartSave Y2 สำหรับจัดซื้อหน่วยงาน ขอชุดเอกสารจัดซื้อ (ใบเสนอราคา / สเปกชีต / อย.) ครับ",
 );
-const LINE_Y2_INSTALLMENT = lineOaUrl("สนใจ AED Yuwell Y2 แบบผ่อนชำระ 18 เดือน ขอรายละเอียดครับ");
+const LINE_Y2_INSTALLMENT = lineOaUrl("สนใจ AED Yuwell HeartSave Y2 แบบผ่อนชำระ 18 เดือน ขอรายละเอียดครับ");
 
 export const metadata: Metadata = {
-  title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
+  title: `AED Yuwell HeartSave Y2 ราคา ${Y2_PRICE} — จอสี EKG ตรงสเปกจัดซื้อภาครัฐ`,
   description:
-    `AED Yuwell Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ex VAT) ` +
-    `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · อย. รับรอง · CE / ISO 13485 · ` +
+    `AED Yuwell HeartSave Y2 (You Too) รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ ราคา ${Y2_PRICE} (ex VAT) ` +
+    `หรือผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน · สเปกตรงเอกสารจัดซื้อภาครัฐ · ขึ้นทะเบียน อย. · CE / ISO 13485 · ` +
     `โทร 090-979-1212 หรือ LINE ${LINE_DISPLAY_ID}`,
   alternates: { canonical: "/aed/yuwell-y2" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
   openGraph: {
-    title: `AED Yuwell Y2 ราคา ${Y2_PRICE} — จอสี EKG · ซื้อสดหรือผ่อนได้`,
+    title: `AED Yuwell HeartSave Y2 ราคา ${Y2_PRICE} — จอสี EKG · ซื้อสดหรือผ่อนได้`,
     description:
-      `รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ อย. รับรอง — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
+      `รุ่นแนะนำ จอสี EKG ดูคุณภาพ CPR สด ๆ สเปกตรงเอกสารจัดซื้อภาครัฐ ขึ้นทะเบียน อย. — ผ่อน ฿${y2InstallmentTerms.monthly.toLocaleString()}/เดือน × ${y2InstallmentTerms.months} เดือน`,
     url: "/aed/yuwell-y2",
     images: [{ url: "/images/primedic-y2-open.jpg", width: 1254, height: 1254 }],
     type: "website",
@@ -76,12 +76,12 @@ const govSpecChecklist: { spec: string; evidence: string }[] = [
     evidence: "Self-test อัตโนมัติทุก 24 ชั่วโมง · บันทึกผลได้ถึง 3,650 ครั้ง",
   },
   {
-    spec: "ให้คำแนะนำการปฏิบัติงานตามแนวทางปฏิบัติล่าสุดเป็นเสียงภาษาไทย",
+    spec: "ให้คำแนะนำการปฏิบัติงานเป็นเสียงภาษาไทย",
     evidence: "เสียงนำทางภาษาไทย (เลือกได้ 4 ภาษา: ไทย / อังกฤษ / จีน / เยอรมัน)",
   },
   {
-    spec: "ผ่านมาตรฐานสากล (เช่น CE) และใช้งานตามแนวทาง AHA Guideline 2010/2015 ว่าด้วยกระบวนการช่วยชีวิต (CPR)",
-    evidence: `CE · ISO 13485${PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · อย. ${PRIMEDIC_REGULATORY.fda}` : ""} · ทำงานตาม AHA Guideline 2010/2015`,
+    spec: "มาตรฐาน/ทะเบียนของเครื่อง และแนวทาง CPR ที่เครื่องใช้",
+    evidence: `CE · ISO 13485${PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda ? ` · อย. ${PRIMEDIC_REGULATORY.fda}` : ""} · โปรแกรมเสียงนำ CPR ตาม AHA Guideline 2010/2015 (ตามเอกสารผู้ผลิต)`,
   },
   {
     spec: "หน้าจอ Backlight แสดงผลดิจิตอล ใช้งานง่ายแม้ในที่มืด",
@@ -100,7 +100,7 @@ const keyFeatures: { title: string; desc: string }[] = [
   },
   {
     title: "เสียงนำทางภาษาไทย",
-    desc: "แนะนำขั้นตอนการช่วยชีวิตทีละขั้น (เลือกได้ 4 ภาษา) · ควรผ่านการอบรม CPR และการใช้ AED",
+    desc: "แนะนำทีละขั้นตอน (เลือกได้ 4 ภาษา)",
   },
   {
     title: "วิเคราะห์เร็ว พร้อมช็อกใน ≤ 5 วินาที",
@@ -116,7 +116,7 @@ const keyFeatures: { title: string; desc: string }[] = [
 // เหมือนรูปอื่น เพราะเป็นเอกสารที่ต้องอ่านเลขใบอนุญาตได้ชัด
 const FEATURED_KHOP_FLYER = {
   src: "/images/primedic-y2-flyer-khop.jpg",
-  alt: "Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
+  alt: "Yuwell HeartSave Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569",
   width: 4749,
   height: 5174,
 };
@@ -124,11 +124,11 @@ const FEATURED_KHOP_FLYER = {
 const SPEC_PREVIEW_ROWS = 8;
 
 const gallery: { src: string; alt: string }[] = [
-  { src: "/images/primedic-y2-open.jpg", alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)" },
-  { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
+  { src: "/images/primedic-y2-open.jpg", alt: "Yuwell HeartSave Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)" },
+  { src: "/images/primedic-y2-electrodes.jpg", alt: "Yuwell HeartSave Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง" },
   // Clean photos only: text posters/infographics don't read at tile size.
   // primedic-y2-vital-launch.webp is also out — it bakes in the old ฿59,000.
-  { src: "/images/yuwell-y2-main.jpg", alt: "Yuwell Y2 — ตัวเครื่องเปิดฝาพร้อมใช้งาน" },
+  { src: "/images/yuwell-y2-main.jpg", alt: "Yuwell HeartSave Y2 — ตัวเครื่องเปิดฝาพร้อมใช้งาน" },
 ];
 
 // Y2-only Product JSON-LD — do NOT reuse ProductStructuredData (it emits the
@@ -169,21 +169,21 @@ export default function YuwellY2Landing() {
       <BreadcrumbStructuredData
         items={[
           { name: "หน้าแรก", path: "/" },
-          { name: "AED Yuwell Y2", path: "/aed/yuwell-y2" },
+          { name: "AED Yuwell HeartSave Y2", path: "/aed/yuwell-y2" },
         ]}
       />
 
       <section className="market-product-hero">
         <div className="market-container market-product-grid">
           <div><p className="market-eyebrow">รุ่นแนะนำ · จอสี EKG · You Too</p>
-            <h1>AED Yuwell Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
+            <h1>AED Yuwell HeartSave Y2<br /><em>เครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ</em></h1>
             <p>{y2.keyDiff} — สเปกตรงเอกสารจัดซื้อภาครัฐ พร้อมเอกสารครบ ใบเสนอราคา / สเปกชีต / อย.</p>
             <div className="market-product-price">{wasPrice != null && <span className="market-was">ราคาเดิม <WasPrice amount={wasPrice} /></span>}<strong>{Y2_PRICE}</strong><span>ex VAT</span></div>
             <p>หรือผ่อน {y2Installment.priceLabel} × {y2InstallmentTerms.months} เดือน (ดาวน์ ฿{y2InstallmentTerms.deposit.toLocaleString()}) แล้วเป็นเจ้าของ</p>
             <BuyOnlineButton productId="primedic-y2" className="market-button market-button-primary market-buy" noteClassName="market-buy-note" />
             <div className="market-actions"><MarketButton href={LINE_Y2} lineCta="y2_hero" product="primedic-y2">สอบถาม / ขอใบเสนอราคา</MarketButton><MarketButton href={PHONE_HREF} secondary>โทร {PHONE_DISPLAY}</MarketButton></div>
           </div>
-          <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
+          <div className="market-product-photo"><Image src="/images/primedic-y2-open.jpg" alt="AED Yuwell HeartSave Y2 เปิดฝาแสดงจอสี EKG พร้อมแผ่นอิเล็กโทรด" width={1254} height={1254} priority sizes="(max-width: 700px) 100vw, 50vw" /></div>
         </div>
       </section>
       <div className="market-trust"><div className="market-container market-trust-inner"><span>อย. {PRIMEDIC_REGULATORY.fda}</span><span>CE / ISO 13485</span><span>ออกใบกำกับภาษีได้</span><span>รองรับจัดซื้อภาครัฐ</span></div></div>
@@ -192,7 +192,7 @@ export default function YuwellY2Landing() {
       <section className="bg-gray-50 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance text-center mb-8">
-            ทำไมต้อง <span className="text-red-600">Yuwell Y2</span>
+            ทำไมต้อง <span className="text-red-600">Yuwell HeartSave Y2</span>
           </h2>
           {/* Numbered points instead of emoji icons; two columns even on phones
               so the four reasons fit in roughly one screen. */}
@@ -240,7 +240,7 @@ export default function YuwellY2Landing() {
               สำหรับหน่วยงานราชการ / อปท. / โรงพยาบาล
             </p>
             <h2 className="text-3xl md:text-5xl font-semibold leading-[1.12] tracking-[-0.02em] text-balance">
-              ตรงสเปกจัดซื้อภาครัฐ <span className="text-green-600">ครบทุกข้อ</span>
+              เทียบสเปกจัดซื้อภาครัฐ <span className="text-green-600">ทีละข้อ</span>
             </h2>
             <p className="text-gray-500 text-sm mt-2">
               เทียบกับรายละเอียดคุณลักษณะทั่วไปในเอกสารจัดซื้ออุปกรณ์ช่วยชีวิตขั้นพื้นฐาน (AED)
@@ -256,7 +256,7 @@ export default function YuwellY2Landing() {
                 </span>
                 <div>
                   <p className="font-semibold text-gray-900 text-sm md:text-base">{row.spec}</p>
-                  <p className="text-sm text-gray-500 mt-0.5">Yuwell Y2: {row.evidence}</p>
+                  <p className="text-sm text-gray-500 mt-0.5">Yuwell HeartSave Y2: {row.evidence}</p>
                 </div>
               </div>
             ))}
@@ -326,7 +326,7 @@ export default function YuwellY2Landing() {
             {/* Cash */}
             <div className="bg-white border-2 border-gray-900 rounded-2xl p-6 flex flex-col relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-4 py-1 rounded-full">
-                คุ้มที่สุด
+                จ่ายครั้งเดียว
               </div>
               <h3 className="font-bold text-lg mt-2 mb-1">ซื้อสด</h3>
               {wasPrice != null && (
@@ -447,7 +447,7 @@ export default function YuwellY2Landing() {
         <MiniLeadForm
           variant="y2_mini"
           theme="light"
-          title="📞 ฝากเบอร์ไว้ รับใบเสนอราคา Yuwell Y2"
+          title="📞 ฝากเบอร์ไว้ รับใบเสนอราคา Yuwell HeartSave Y2"
           subtitle="ทีมงานเจี่ยรักษาติดต่อกลับภายใน 24 ชม."
         />
       </section>

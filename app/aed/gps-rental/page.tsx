@@ -5,7 +5,7 @@ import { MarketPage } from "@/app/components/MarketShell";
 import { BreadcrumbStructuredData, FaqStructuredData } from "@/app/components/StructuredData";
 import { LINE_DISPLAY_ID, LINE_OA } from "@/lib/aed/line";
 import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/aed/contact";
-import { PRIMEDIC_REGULATORY, fdaLine, thaiDate } from "@/lib/aed/regulatory";
+import { AED_INTENDED_USE, DEVICE_AD_WARNING, PRIMEDIC_REGULATORY, fdaLine, jiaaedAdLicenseLine, thaiDate } from "@/lib/aed/regulatory";
 import { trainingImages, instructorCredential } from "@/lib/aed/training";
 import {
   CLOUD_DEVICE_SCREENSHOT,
@@ -36,6 +36,7 @@ import {
   RENT_AUDIENCES,
   SERVICE_ITEMS,
   SURVIVOR,
+  SURVIVOR_ENABLED,
   TRAINING_COURSES,
   TRAINING_NOTE,
 } from "@/lib/aed/gps-rental-page";
@@ -45,7 +46,6 @@ import { GpsRentalPageTracker } from "./PageTracker";
 export const revalidate = 3600;
 
 const SNAPSHOT_DATE = thaiDate(CLOUD_SNAPSHOT.date, "long");
-const Y8_AD_LICENSE = PRIMEDIC_REGULATORY.adLicenses.find((l) => /Y8/.test(l.covers));
 
 export const metadata: Metadata = {
   title: `เช่า AED GPS 4G เริ่ม ${PRICE_FROM}/เดือน — พร้อมระบบช่วยดูแลความพร้อมของเครื่อง`,
@@ -307,7 +307,7 @@ export default function GpsRentalPage() {
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {PACKAGES.map((p) => (
               <article key={p.id} className={`flex flex-col rounded-2xl border bg-white p-6 ${p.featured ? "border-[#f59e0b] shadow-lg" : "border-slate-200"}`}>
-                {p.featured && <span className="mb-2 self-start rounded-full bg-[#f59e0b] px-3 py-0.5 text-xs font-extrabold text-[#0b2545]">ยอดนิยม</span>}
+                {p.featured && <span className="mb-2 self-start rounded-full bg-[#f59e0b] px-3 py-0.5 text-xs font-extrabold text-[#0b2545]">แนะนำ</span>}
                 <h3 className="m-0 text-xl font-extrabold text-[#0b2545]">{p.name}</h3>
                 <p className="m-0 mt-3 text-2xl font-extrabold text-[#c2410c]">{p.price}</p>
                 <p className="m-0 text-xs text-slate-500">{p.priceNote}</p>
@@ -362,14 +362,16 @@ export default function GpsRentalPage() {
       </section>
 
       {/* ── 9. Survivor programme ──────────────────────────────────────── */}
-      <section className="bg-[#0f9b8e] py-12 text-white" aria-labelledby="survivor-title">
-        <div className="market-container max-w-4xl">
-          <p className="m-0 text-xs font-extrabold tracking-[0.14em] text-white/80">โครงการ 10,000 บาทเมื่อรอด</p>
-          <h2 id="survivor-title" className="m-0 mt-2 text-[clamp(24px,3vw,36px)] font-extrabold">{SURVIVOR.title}</h2>
-          <p className="m-0 mt-3 text-[15px] leading-relaxed text-white/95">{SURVIVOR.body}</p>
-          <p className="m-0 mt-3 text-xs text-white/80">{SURVIVOR.note}</p>
-        </div>
-      </section>
+      {SURVIVOR_ENABLED && (
+        <section className="bg-[#0f9b8e] py-12 text-white" aria-labelledby="survivor-title">
+          <div className="market-container max-w-4xl">
+            <p className="m-0 text-xs font-extrabold tracking-[0.14em] text-white/80">โครงการ 10,000 บาทเมื่อรอด</p>
+            <h2 id="survivor-title" className="m-0 mt-2 text-[clamp(24px,3vw,36px)] font-extrabold">{SURVIVOR.title}</h2>
+            <p className="m-0 mt-3 text-[15px] leading-relaxed text-white/95">{SURVIVOR.body}</p>
+            <p className="m-0 mt-3 text-xs text-white/80">{SURVIVOR.note}</p>
+          </div>
+        </section>
+      )}
 
       {/* ── 10. Government & enterprise ────────────────────────────────── */}
       <section id="enterprise" className="scroll-mt-4 py-16 text-white" style={{ background: NAVY }} aria-labelledby="enterprise-title">
@@ -419,11 +421,6 @@ export default function GpsRentalPage() {
                   ✓ <a href={PRIMEDIC_REGULATORY.certificateHref} target="_blank" rel="noopener noreferrer" className="underline">เอกสารรับแจ้ง {fdaLine(PRIMEDIC_REGULATORY)}</a>
                 </li>
               )}
-              {Y8_AD_LICENSE?.documentHref && (
-                <li>
-                  ✓ <a href={Y8_AD_LICENSE.documentHref} target="_blank" rel="noopener noreferrer" className="underline">ใบอนุญาตโฆษณา ฆพ.{Y8_AD_LICENSE.number} ({Y8_AD_LICENSE.covers})</a>
-                </li>
-              )}
               <li>✓ <Link href="/aed/rental/terms" className="underline">เงื่อนไขการเช่าและสัญญา</Link> เปิดอ่านได้ก่อนตัดสินใจ</li>
               <li>✓ ผู้ให้บริการ: บริษัท เจี่ยรักษา จำกัด · <Link href="/about" className="underline">เกี่ยวกับเรา</Link></li>
             </ul>
@@ -456,13 +453,14 @@ export default function GpsRentalPage() {
         <div className="market-container text-[11px] leading-relaxed text-slate-500">
           {PRIMEDIC_REGULATORY.published ? (
             <p className="m-0">
-              Automatic External Defibrillator HeartSave Y8 · {fdaLine(PRIMEDIC_REGULATORY)} · นำเข้าโดย {PRIMEDIC_REGULATORY.importer}
-              {Y8_AD_LICENSE && <> · ใบอนุญาตโฆษณา ฆพ.{Y8_AD_LICENSE.number}</>} · โฆษณาโดย {PRIMEDIC_REGULATORY.advertiser}
+              Automatic External Defibrillator HeartSave Y8 (With networking function) · {fdaLine(PRIMEDIC_REGULATORY)} · นำเข้าโดย {PRIMEDIC_REGULATORY.importer}
+              · ใบอนุญาตโฆษณา {jiaaedAdLicenseLine()} · โฆษณาโดย {PRIMEDIC_REGULATORY.advertiser}
             </p>
           ) : (
             <p className="m-0">{PRIMEDIC_REGULATORY.pendingNote}</p>
           )}
-          <p className="m-0 mt-1">เครื่องมือแพทย์ โปรดอ่านคำเตือนและศึกษาวิธีใช้ก่อนใช้งาน · บริการให้เช่าและดูแลเครื่องโดย บริษัท เจี่ยรักษา จำกัด</p>
+          <p className="m-0 mt-1">{AED_INTENDED_USE}</p>
+          <p className="m-0 mt-1">{DEVICE_AD_WARNING} · บริการให้เช่าและดูแลเครื่องโดย บริษัท เจี่ยรักษา จำกัด</p>
         </div>
       </section>
     </MarketPage>

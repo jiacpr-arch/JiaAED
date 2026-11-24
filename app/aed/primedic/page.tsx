@@ -11,7 +11,7 @@ import { MiniLeadForm } from "@/app/components/MiniLeadForm";
 import { PriceViewTracker } from "@/app/components/PriceViewTracker";
 import { PRIMEDIC_REGULATORY, regLine } from "@/lib/aed/regulatory";
 import { primedicCertifications, primedicModels, Y8_ON_REQUEST_NOTE } from "@/lib/aed/primedic";
-import { survivorReward } from "@/lib/aed/promotion";
+import { SURVIVOR_REWARD_ENABLED, survivorReward } from "@/lib/aed/promotion";
 
 export const revalidate = 3600;
 
@@ -29,9 +29,9 @@ const modelPrice = Object.fromEntries(
 ) as Record<(typeof primedicModels)[number]["id"], string>;
 
 export const metadata: Metadata = {
-  title: "AED Yuwell Y2 / PRIMEDIC HeartSave Y0 — เทียบรุ่นและราคา",
+  title: "AED Yuwell HeartSave Y2 / PRIMEDIC HeartSave Y0 — เทียบรุ่นและราคา",
   description:
-    `AED กึ่งอัตโนมัติ เสียงนำทางภาษาไทย — รุ่นแนะนำ Yuwell Y2 (${modelPrice["primedic-y2"]}) แผ่น CPR feedback + จอสีดูคุณภาพ CPR สด ๆ และรุ่นประหยัด Y0 (${modelPrice["primedic-y0"]})`,
+    `AED กึ่งอัตโนมัติ เสียงนำทางภาษาไทย — รุ่นแนะนำ Yuwell HeartSave Y2 (${modelPrice["primedic-y2"]}) แผ่น CPR feedback + จอสีดูคุณภาพ CPR สด ๆ และรุ่นประหยัด Y0 (${modelPrice["primedic-y0"]})`,
   alternates: { canonical: "/aed/primedic" },
   robots: { index: PRIMEDIC_REGULATORY.published, follow: true },
 };
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 export default function PrimedicPage() {
   return (
     <MarketPage>
-      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"Yuwell Y2\nและ HeartSave Y0."} description="Yuwell Y2 จอสีแสดงความเร็ว ความลึก และการคืนตัวของหน้าอกขณะทำ CPR · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"Yuwell HeartSave Y2\nและ HeartSave Y0."} description="Yuwell HeartSave Y2 จอสีแสดงความเร็ว ความลึก และการคืนตัวของหน้าอกขณะทำ CPR · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
       <div className="market-content">
       <ProductStructuredData include="primedic" />
       <BreadcrumbStructuredData
@@ -71,7 +71,7 @@ export default function PrimedicPage() {
               {(
                 [
                   // Y2 ขึ้นก่อน = รุ่นแนะนำ (เจ้าของ 13 พ.ย. 2026). Y8 บอกตรง ๆ ว่าคือ Y0 + แผ่น feedback.
-                  { model: "Yuwell Y2", price: modelPrice["primedic-y2"], diff: "⭐ รุ่นแนะนำ — จอสี EKG เห็นคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
+                  { model: "Yuwell HeartSave Y2", price: modelPrice["primedic-y2"], diff: "⭐ รุ่นแนะนำ — จอสี EKG เห็นคุณภาพ CPR สด ๆ (ความเร็ว/ความลึก/full recoil)", href: "/aed/yuwell-y2" },
                   { model: "Y0", price: modelPrice["primedic-y0"], diff: "รุ่นประหยัด — ช็อก + เสียงนำทางภาษาไทย (ไม่มีแผ่น feedback / จอ)" },
                 ] as { model: string; price: string; diff: string; href?: string }[]
               ).map((m) => (
@@ -107,7 +107,7 @@ export default function PrimedicPage() {
 
         {/* ทำไมต้อง Y2 — ขายด้วยคุณภาพการปั๊ม ไม่ใช่สเปก (เจ้าของ 13 พ.ย. 2026) */}
         <div className="mt-8 rounded-2xl border border-yellow-400/40 bg-yellow-400/5 p-5">
-          <h2 className="text-lg font-extrabold text-white">ทำไมควรเลือก Yuwell Y2</h2>
+          <h2 className="text-lg font-extrabold text-white">ทำไมควรเลือก Yuwell HeartSave Y2</h2>
           <ul className="mt-3 space-y-2 text-sm text-gray-200">
             <li>• เครื่อง AED ช็อกแค่ไม่กี่วินาที — เวลาที่เหลือคือการปั๊มหัวใจ</li>
             <li>• คนที่ไม่ได้ทำ CPR บ่อยมักกดตื้นหรือเร็วเกินโดยไม่รู้ตัว — Y2 แสดงบนจอทันที ปรับท่าได้ระหว่างช่วยชีวิต</li>
@@ -116,7 +116,7 @@ export default function PrimedicPage() {
           </ul>
           <p className="mt-3 text-xs text-gray-400">{Y8_ON_REQUEST_NOTE}</p>
           <Link href="/aed/yuwell-y2" className="mt-4 inline-block text-yellow-400 hover:text-yellow-300 font-semibold">
-            ดูรายละเอียด Yuwell Y2 →
+            ดูรายละเอียด Yuwell HeartSave Y2 →
           </Link>
         </div>
 
@@ -140,7 +140,7 @@ export default function PrimedicPage() {
           <div className="rounded-xl overflow-hidden border-2 border-yellow-400/40 bg-white">
             <Image
               src="/images/primedic-y2-flyer-khop.jpg"
-              alt="Yuwell Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569"
+              alt="Yuwell HeartSave Y2 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569"
               width={4749}
               height={5174}
               className="w-full h-auto"
@@ -165,11 +165,11 @@ export default function PrimedicPage() {
         {/* Product gallery. Keep individual assets separate from the permit links below. */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-2">
           {[
-            { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)", w: 1254, h: 1254 },
-            { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-open.jpg",       alt: "Yuwell HeartSave Y2 — เปิดฝาแสดงจอ EKG พร้อมแผ่นอิเล็กโทรด (รุ่นแนะนำ)", w: 1254, h: 1254 },
+            { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell HeartSave Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่
-            { src: "/images/yuwell-y2-features.webp", alt: "Yuwell Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทั้งผู้ใหญ่และเด็กอายุ 3 ปีขึ้นไป", w: 1536, h: 1024 },
+            { src: "/images/yuwell-y2-features.webp", alt: "Yuwell HeartSave Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทั้งผู้ใหญ่และเด็ก", w: 1536, h: 1024 },
             { src: "/images/primedic-y0-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1957, h: 2142 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">
@@ -223,9 +223,11 @@ export default function PrimedicPage() {
       </section>
 
       {/* ฿10,000 survivor-reward promotion */}
-      <section className="max-w-6xl mx-auto px-4 py-4">
-        <PromoBanner promo={survivorReward} />
-      </section>
+      {SURVIVOR_REWARD_ENABLED && (
+        <section className="max-w-6xl mx-auto px-4 py-4">
+          <PromoBanner promo={survivorReward} />
+        </section>
+      )}
 
       {/* What each model adds — Y0 → Y8 (งดจำหน่าย) → Y2, with photos */}
       <section className="max-w-6xl mx-auto px-4 py-6">

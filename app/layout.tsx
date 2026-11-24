@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     // ~60 chars — longer titles get truncated in Google results
-    default: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขายและให้เช่า · อย. รับรอง",
+    default: "JiaAED — เครื่องกระตุกหัวใจไฟฟ้า AED ขายและให้เช่า · ขึ้นทะเบียน อย.",
     template: "%s · JiaAED",
   },
   description:
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   keywords: [
     "AED",
     "เครื่องกระตุกหัวใจ",
-    "Yuwell Y2",
+    "Yuwell HeartSave Y2",
     "PRIMEDIC HeartSave",
     "PRIMEDIC Y0",
     "PRIMEDIC Y8",
@@ -54,9 +54,9 @@ export const metadata: Metadata = {
     locale: "th_TH",
     url: SITE_URL,
     siteName: "JiaAED",
-    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell HeartSave Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave ให้เลือกหลายรุ่น · เสียงแนะนำภาษาไทย · ขึ้นทะเบียน อย.",
     images: [
       {
         // 1200x630 banner made for link previews — the portrait product shot
@@ -70,9 +70,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "JiaAED — AED Yuwell Y2 และ PRIMEDIC HeartSave",
+    title: "JiaAED — AED Yuwell HeartSave Y2 และ PRIMEDIC HeartSave",
     description:
-      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · อย. รับรอง",
+      "เครื่องกระตุกหัวใจไฟฟ้า Yuwell / PRIMEDIC HeartSave · เสียงไทย · ขึ้นทะเบียน อย.",
     images: ["/images/og-cover.png"],
   },
   robots: { index: true, follow: true },

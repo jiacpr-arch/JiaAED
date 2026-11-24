@@ -24,7 +24,7 @@ const tierTraining = subscriptionTiers
   .map((t) => `${t.name} ${trainingRow.values[t.id]}`)
   .join(" · ");
 // Tiers whose devices include GPS — STANDARD (the annual plan) has none.
-const gpsRow = subscriptionMatrix.find((r) => r.feature === "Yuwell GPS ติดตามตำแหน่ง")!;
+const gpsRow = subscriptionMatrix.find((r) => r.feature === "HeartSave Y8 GPS ติดตามตำแหน่ง")!;
 const gpsTiers = subscriptionTiers
   .filter((t) => gpsRow.values[t.id] !== false)
   .map((t) => t.name)
@@ -32,7 +32,7 @@ const gpsTiers = subscriptionTiers
 
 const reg = PRIMEDIC_REGULATORY;
 
-// Amoul i7 discontinued (ก.ค. 2026) — these FAQs now describe AED Yuwell Y2 /
+// Amoul i7 discontinued (ก.ค. 2026) — these FAQs now describe AED Yuwell HeartSave Y2 /
 // PRIMEDIC HeartSave. Real specs from lib/aed/primedic.ts (primedicSharedSpecs)
 // — never re-typed independently. Two Amoul-only Wi-Fi/SIM/"AED Management
 // Platform" FAQs were removed rather than repointed — Yuwell/PRIMEDIC hardware
@@ -41,14 +41,14 @@ export const faqs: FAQ[] = [
   {
     // Y2 is the flagship, not the entry point — the answer also names the
     // cheaper Y0/Y8 so "how much is an AED" never reads as "from ฿59,999".
-    question: "AED Yuwell Y2 ราคาเท่าไหร่?",
+    question: "AED Yuwell HeartSave Y2 ราคาเท่าไหร่?",
     answer:
-      `Yuwell Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ex VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
+      `Yuwell HeartSave Y2 (รุ่นแนะนำ จอสี EKG) ราคา ${baht(productPrice("i7"))} บาท (ex VAT), ${baht(productPrice("i7-cabinet"))} บาท สำหรับรุ่นพร้อมตู้ติดผนัง, และ ${baht(productPrice("i7-floor"))} บาท สำหรับรุ่นพร้อมแท่นตั้งพื้น — ถ้าต้องการรุ่นที่ราคาเริ่มต้นต่ำกว่า มี PRIMEDIC HeartSave Y0 ${baht(modelPrice("primedic-y0"))} บาท — ${TRAINING_POLICY} — ออกใบกำกับภาษีได้ มีราคาพิเศษสำหรับองค์กร โรงพยาบาล และหน่วยงานภาครัฐ สอบถามได้ทาง LINE ${LINE_OA_ID}`,
   },
   {
     // เจี่ยรักษา is the seller and ฆพ. holder — the importer/registrant is Yuwell
     // Medical (Thailand). Never call เจี่ยรักษา the importer.
-    question: "AED Yuwell Y2 ผ่าน อย. หรือไม่?",
+    question: "AED Yuwell HeartSave Y2 ผ่าน อย. หรือไม่?",
     answer: reg.published
       ? `ผ่านครับ ทะเบียน ${fdaLine(reg)} ครอบคลุมตระกูล HeartSave Y0/Y8/Y2 นำเข้าโดย ${reg.importer} — พร้อมใบอนุญาตโฆษณาเครื่องมือแพทย์ ${adLicensesLine(reg, { short: true })} จัดจำหน่ายโดย ${reg.advertiser}`
       : `เป็นเครื่องมือแพทย์นำเข้าโดย ${reg.importer} — ${reg.pendingNote}`,
@@ -56,7 +56,7 @@ export const faqs: FAQ[] = [
   {
     question: "ใช้งานยากไหม คนไม่เคยใช้กดเป็นไหม?",
     answer:
-      "เครื่องมีเสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ขั้นตอนหลักคือ เปิดเครื่อง → แปะแผ่น electrode → กดปุ่ม Shock ตามคำสั่งเสียง · แนะนำให้ผู้ที่อาจต้องใช้เครื่องผ่านการอบรม CPR และการใช้ AED ก่อน — เรามีบริการอบรมถึงหน่วยงาน",
+      "มีเสียงแนะนำภาษาไทยทีละขั้นตอน พร้อมภาพนิ่งบนหน้าจอ ผู้ใช้ทำตามได้ 3 ขั้นตอน (แนะนำให้ผ่านการอบรม CPR & AED): เปิดเครื่อง → แปะแผ่น electrode → กดปุ่ม Shock ตามคำสั่งเสียง",
   },
   {
     question: "AED ใช้กับเด็กได้ไหม?",
@@ -64,19 +64,19 @@ export const faqs: FAQ[] = [
       "ใช้ได้ทั้งผู้ใหญ่และเด็กครับ (อายุ 3 ปีขึ้นไป) — สลับโหมดด้วยปุ่มเลือกโหมดเด็กที่ตัวเครื่อง โหมดผู้ใหญ่ใช้พลังงานช็อกแบบ escalating 200 → 300 → 360 J และโหมดเด็ก 50 → 70 → 100 J เครื่องวิเคราะห์คลื่นหัวใจและเลือกระดับพลังงานให้อัตโนมัติ",
   },
   {
-    question: "AED Yuwell Y2 ตั้งค่าพลังงาน Shock เองได้ไหม?",
+    question: "AED Yuwell HeartSave Y2 ตั้งค่าพลังงาน Shock เองได้ไหม?",
     answer:
-      "ผู้ใช้ไม่สามารถตั้งค่าพลังงานเองได้ครับ เครื่องใช้ escalating protocol ที่ตั้งค่าไว้แล้วตาม international guidelines (ILCOR/AHA) เริ่มจากระดับต่ำเพื่อลด myocardial damage แล้วเพิ่มเมื่อจำเป็น เป็น standard ที่ AHA รับรอง — จุดเด่นของ Y2 คือจอสี EKG ที่แสดงคุณภาพการทำ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) ให้ผู้ช่วยเหลือปรับท่าปั๊มได้ทันที",
+      "ผู้ใช้ไม่สามารถตั้งค่าพลังงานเองได้ครับ เครื่องใช้ escalating protocol ที่ตั้งค่าไว้แล้วตาม international guidelines (ILCOR/AHA) เริ่มจากพลังงานระดับต่ำแล้วเพิ่มขึ้นตามลำดับ (ผู้ใหญ่ 200→300→360J) — จุดเด่นของ Y2 คือจอสี EKG ที่แสดงคุณภาพการทำ CPR สด ๆ (ความเร็ว/ความลึก/full recoil) ให้ผู้ช่วยเหลือปรับท่าปั๊มได้ทันที",
   },
   {
-    question: "เครื่อง AED Yuwell Y2 ต้องเชื่อมต่ออินเทอร์เน็ตไหม?",
+    question: "เครื่อง AED Yuwell HeartSave Y2 ต้องเชื่อมต่ออินเทอร์เน็ตไหม?",
     answer:
       "ไม่ต้องครับ เครื่องทำงานได้ครบทุกฟังก์ชันโดยไม่ต้องเชื่อมต่อใดๆ ไม่ต้องสมัครบริการหรือเข้า dashboard เพียงเปิดเครื่อง → แปะแผ่น → กด Shock ตามเสียงนำทาง — ข้อมูลการใช้งานบันทึกในตัวเครื่อง (SD card) ดึงออกผ่าน USB ได้เมื่อตรวจสอบ หากต้องการติดตามตำแหน่ง/สถานะเครื่องแบบเรียลไทม์ผ่าน GPS มีรุ่น Yuwell AED (GPS ในตัว) แยกต่างหาก",
   },
   {
     question: "Shock พร้อมในกี่วินาที?",
     answer:
-      "วิเคราะห์คลื่นหัวใจและชาร์จพร้อม Shock ภายใน ≤ 5 วินาทีที่ 200J (≤ 12 วินาทีเมื่อต้องชาร์จเต็ม 360J) ตามข้อมูลผู้ผลิต",
+      "วิเคราะห์คลื่นหัวใจและชาร์จพร้อม Shock ภายใน ≤ 5 วินาทีที่ 200J (≤ 12 วินาทีเมื่อต้องชาร์จเต็ม 360J)",
   },
   {
     question: "แบตเตอรี่อยู่ได้นานแค่ไหน?",
@@ -84,7 +84,7 @@ export const faqs: FAQ[] = [
       `แบตเตอรี่ LiMnO₂ 12V 4.2Ah แบบใช้แล้วทิ้ง (ชาร์จใหม่ไม่ได้) ช็อกได้ ≥ 200 ครั้งที่ 360J พร้อม Self-test อัตโนมัติ (สูงสุด 3,650 ครั้ง) เพื่อให้แน่ใจว่าเครื่องพร้อมใช้งานตลอดเวลา และบันทึกข้อมูลได้ครบ — ECG 10 ชม. · event 2,000 รายการ · เสียง 2 ชม. · CPR data 10 ชม. · อายุการใช้งาน: ${consumableLifetimeText}`,
   },
   {
-    question: "AED Yuwell Y2 กันน้ำกันฝุ่นไหม?",
+    question: "AED Yuwell HeartSave Y2 กันน้ำกันฝุ่นไหม?",
     answer:
       "กันได้ครับ ผ่านมาตรฐาน IP55 กันละอองน้ำและฝุ่น เหมาะกับการติดตั้งหลากหลายสถานที่ทั้งในอาคารและกึ่งกลางแจ้ง",
   },
@@ -119,7 +119,7 @@ export type FaqCategory = {
 export const faqRentToOwnVsRental: FAQ = {
   question: "แพ็กเกจเช่าแล้วได้ซื้อ (Safety Start) ต่างจากการเช่าธรรมดาอย่างไร?",
   answer:
-    'การเช่าธรรมดาจ่ายค่าเช่าไปเรื่อย ๆ และอุปกรณ์ยังเป็นของเรา แต่ "เช่าแล้วได้ซื้อ" เป็นการผ่อนเพื่อเป็นเจ้าของ — เมื่อผ่อนครบตามสัญญา (เช่น 18 เดือน) อุปกรณ์จะเป็นสินทรัพย์ขององค์กรทันทีโดยไม่มีค่าใช้จ่ายเพิ่ม เป็นการกระจายภาระลงทุนแต่ยังได้ความเป็นเจ้าของในที่สุด',
+    'การเช่าธรรมดาจ่ายค่าเช่าไปเรื่อย ๆ และอุปกรณ์ยังเป็นของเรา แต่ "เช่าแล้วได้ซื้อ" เป็นการผ่อนเพื่อเป็นเจ้าของ — เมื่อผ่อนครบตามสัญญา (เช่น 18 เดือน) อุปกรณ์จะเป็นสินทรัพย์ขององค์กรทันทีโดยไม่มีค่าใช้จ่ายเพิ่ม เป็นการกระจายภาระลงทุน และเป็นเจ้าของเครื่องเมื่อผ่อนครบ',
 };
 
 export const faqMidContractCancel: FAQ = {
@@ -147,12 +147,12 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "ทำไมต้องมี GPS คู่กับ AED?",
         answer:
-          "GPS ไม่ได้มีไว้ติดตามตัวเครื่องอย่างเดียว แต่เป็นระบบบริหารความปลอดภัยที่สมบูรณ์ขึ้น — ติดตามตำแหน่งรถพยาบาล ยานพาหนะฉุกเฉิน หรือทีมงานนอกสถานที่ เพื่อส่งความช่วยเหลือได้เร็วขึ้นในวิกฤต และยังใช้บริหารทรัพย์สินขององค์กรได้ด้วย",
+          "เครื่อง HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย ส่งตำแหน่ง ผล Self-test และสถานะแบตเตอรี่/แผ่นอิเล็กโทรดเข้าระบบ PRIMEDIC CLOUD ตามข้อมูลที่เครื่องรายงาน ทีมงานจึงเห็นเครื่องทุกจุดขององค์กรในระบบเดียว และนัดเปลี่ยนแบต/แผ่นก่อนหมดอายุได้ — ไม่ใช่ระบบติดตามสดต่อเนื่อง และไม่ได้เชื่อมกับศูนย์ 1669 อัตโนมัติ",
       },
       {
         question: "จำเป็นต้องฝึกอบรมเพื่อใช้ AED ไหม?",
         answer:
-          `แนะนำอย่างยิ่ง แม้เครื่อง AED จะออกแบบให้ใช้งานง่ายด้วยคำแนะนำเสียง แต่การฝึกอบรมช่วยเพิ่มความมั่นใจ ลดความตื่นตระหนก และสอนเทคนิค CPR ที่จำเป็นควบคู่กับการใช้เครื่อง ซึ่งช่วยเพิ่มโอกาสรอดชีวิตได้อย่างมีนัยสำคัญ — แพ็กซื้อขาด Safety Premium และเช่าซื้อ Safety Start จึงรวมอบรมสอนถึงที่ และแพ็กเช่าบริการ Safety Care มีอบรมทุกระดับ — ${tierTraining}`,
+          `ควรอบรม — ตามเอกสารกำกับเครื่อง ผู้ใช้เครื่องควรผ่านการอบรมการช่วยชีวิตขั้นพื้นฐานและการใช้ AED เครื่องมีเสียงนำทางทีละขั้นตอน และการอบรมช่วยให้ทำ CPR ควบคู่กับการใช้เครื่องได้ถูกต้อง — แพ็กซื้อขาด Safety Premium และเช่าซื้อ Safety Start จึงรวมอบรมสอนถึงที่ และแพ็กเช่าบริการ Safety Care มีอบรมทุกระดับ — ${tierTraining}`,
       },
     ],
   },
@@ -199,7 +199,7 @@ export const packageFaqCategories: FaqCategory[] = [
       {
         question: "มีประกันหรือการรับประกันอะไรบ้าง?",
         answer:
-          `เครื่อง AED ใหม่ทุกเครื่อง${warrantyLine} ส่วนบริการของเราให้การรับประกันความพึงพอใจในบริการติดตั้งและฝึกอบรม รวมถึงมีการรับประกันความเสียหายจากภัยธรรมชาติหรือการโจรกรรมในบางแพ็กเกจ (โปรดดูรายละเอียดในสัญญา)`,
+          `เครื่อง AED ใหม่ทุกเครื่อง${warrantyLine} ส่วนบริการติดตั้ง ฝึกอบรม และความคุ้มครองอื่นในบางแพ็กเกจ เป็นไปตามที่ระบุในสัญญา`,
       },
       faqSwitchPackage,
     ],
@@ -271,12 +271,12 @@ export const subscriptionFaqCategories: FaqCategory[] = [
     ],
   },
   {
-    category: "กฎหมายและมาตรฐานความปลอดภัย",
+    category: "กฎหมายและเอกสารทะเบียน",
     items: [
       {
         question: "เครื่องที่ให้เช่าได้มาตรฐานและถูกต้องตามกฎหมายไหม?",
         answer:
-          "เครื่องที่ให้บริการเป็นเครื่องมือแพทย์ที่ขึ้นทะเบียน อย. และผ่านมาตรฐานสากล พร้อมเอกสารประกอบการจัดซื้อครบถ้วน — ทีมงานให้คำแนะนำการติดตั้งตามแนวทางความปลอดภัยที่เกี่ยวข้อง",
+          `เครื่อง AED HeartSave ที่ให้บริการขึ้นทะเบียน ${fdaLine(PRIMEDIC_REGULATORY, "อย. เลขที่ ")} นำเข้าโดย ${PRIMEDIC_REGULATORY.importer} มีเอกสารทะเบียนและสเปกสำหรับการจัดซื้อ — ทีมงานให้คำแนะนำการเลือกจุดติดตั้ง`,
       },
     ],
   },

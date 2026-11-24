@@ -57,7 +57,7 @@ export function thaiDate(iso: string, style: "short" | "long" = "short"): string
 // (ทะเบียน อย. 68-2-2-2-0005243 · ใบโฆษณา ฆพ.743/2569) จึงถอดสินค้าและการโฆษณา
 // ทั้งหมดออกจากเว็บ **ห้ามนำเลขทะเบียน/ใบโฆษณาชุดนี้กลับมาแสดงบนเว็บอีก** —
 // การแสดงเลขใบโฆษณาของรุ่นที่ถูกสั่งระงับ ยังถือเป็นการโฆษณา
-// รุ่นที่ขายอยู่ปัจจุบันคือ Yuwell Y2 / PRIMEDIC HeartSave ด้านล่าง
+// รุ่นที่ขายอยู่ปัจจุบันคือ Yuwell HeartSave Y2 / PRIMEDIC HeartSave ด้านล่าง
 
 // อย. ครอบคลุมทั้งตระกูล HeartSave Y&YA (Y0/Y8/YA8 + แบต + แผ่น CPR) นำเข้าโดย
 // บ.ยูเวล เมดิคอล (ไทยแลนด์) — ใช้กับทั้ง PRIMEDIC Y0/Y8 และ Yuwell GPS บนเว็บ.
@@ -160,3 +160,40 @@ export const PRIMEDIC_LICENSE_EXPIRIES: LicenseExpiry[] = PRIMEDIC_REGULATORY.pu
       })),
     ]
   : [];
+
+// ─── jiaaed.com advertising licence (ฆพ.) ─────────────────────────────────────
+// ฆพ.2475/2569 and ฆพ.287/2567 above name the medium "เว็บไซต์ www.jia1669.com",
+// so they must not be presented as the licence for jiaaed.com. The jiaaed.com
+// application (ระบบ medeva, 23 พ.ย. 2569) is pending — while this is null the
+// ad pages print a blank slot for the number (the approved ad must carry it).
+// After approval: set the number here, then do NOT change the 6 approved pages'
+// copy without a ฆพ.4 amendment.
+export const JIAAED_AD_LICENSE: string | null = null; // e.g. "1234/2569"
+
+/** "ฆพ.1234/2569", or a blank slot "ฆพ. ……/……" while the licence is pending. */
+export function jiaaedAdLicenseLine(): string {
+  return JIAAED_AD_LICENSE ? `ฆพ.${JIAAED_AD_LICENSE}` : "ฆพ. ……/……";
+}
+
+// Mandatory warning text for medical-device ads (ประกาศ อย. พ.ศ. 2567) — keep the
+// wording exact.
+export const DEVICE_AD_WARNING = "อ่านคำเตือนในฉลากและเอกสารกำกับเครื่องมือแพทย์ก่อนใช้";
+
+// Intended use as registered (65-2-2-2-0013415 เอกสารแนบท้าย): unconscious, not
+// breathing, older than 1 year; operated by persons trained in its use.
+export const AED_INTENDED_USE =
+  "ใช้กับผู้ที่หัวใจหยุดเต้น หมดสติ ไม่หายใจ อายุมากกว่า 1 ปี · ผู้ใช้ควรผ่านการอบรมการใช้เครื่อง";
+
+// From the manufacturer's manual that covers every model on the site
+// (HeartSave Y|YA Instructions for use 24654 EN Rev A, 04/2025 — models Y0/Y2/Y8
+// listed in §5.1): §3.2 Medical contraindication, §4.1/§4.3/§4.4 DANGER notes.
+// Ads must show the device's contraindications/warnings — translate faithfully,
+// don't add or soften.
+export const AED_MANUAL_REF = "คู่มือ HeartSave Y|YA (24654 EN Rev A, 04/2025)";
+export const AED_CONTRAINDICATIONS =
+  "ข้อห้ามใช้: ห้ามใช้กับผู้ที่ยังมีสัญญาณชีพ (รู้สึกตัว หรือหายใจ) และห้ามใช้กับเด็กอายุต่ำกว่า 1 ปี";
+export const AED_WARNINGS =
+  "คำเตือน: ห้ามใช้ใกล้วัสดุไวไฟ ในบรรยากาศที่มีออกซิเจนเข้มข้นหรือก๊าซ/ไอระเหยไวไฟ หรือบริเวณที่เสี่ยงต่อการระเบิด · " +
+  "ห้ามสัมผัสตัวผู้ป่วยขณะเครื่องวิเคราะห์คลื่นไฟฟ้าหัวใจ และเตือนคนรอบข้างไม่ให้สัมผัสผู้ป่วยก่อนช็อก · " +
+  "ห้ามติดแผ่นอิเล็กโทรดทับเครื่องกระตุ้นหัวใจ (pacemaker) ที่ฝังในร่างกาย · " +
+  "ใช้แผ่นอิเล็กโทรดใหม่ ไม่ชำรุด ไม่หมดอายุ กับผู้ป่วยทุกราย และเช็ดหน้าอกให้แห้งก่อนติดแผ่น · ห้ามใช้เครื่องที่ชำรุด";

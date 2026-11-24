@@ -25,6 +25,11 @@ export type Promotion = {
 export const PACKAGE_TRAINING_PERK = "Mini Course CPR & AED 5–7 ท่าน (2 ชม.) สอนถึงที่ในกรุงเทพฯ";
 export const TRAINING_POLICY = `แพ็ก Safety Premium และเช่าซื้อ Safety Start รวม${PACKAGE_TRAINING_PERK} · ซื้อเครื่องเดี่ยวไม่รวมคอร์ส (เพิ่มคอร์สอบรมได้ สอบถามทีมขาย)`;
 
+// Paused 23 พ.ย. 2026 while the jiaaed.com ฆพ. (ad permit) application is under
+// review: a cash reward tied to patient survival is outcome-based ad copy that
+// Thai FDA reviewers are likely to reject. Flip to true to show it again.
+export const SURVIVOR_REWARD_ENABLED = false;
+
 // "รอดแล้วให้ ฿10,000" — the headline trust offer.
 export const survivorReward: Promotion = {
   id: "survivor-10k",

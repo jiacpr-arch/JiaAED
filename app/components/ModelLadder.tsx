@@ -72,11 +72,11 @@ const cards: Card[] = [
   },
   {
     id: "primedic-y2",
-    name: "Yuwell Y2",
+    name: "Yuwell HeartSave Y2",
     sub: "รุ่นจอแสดงผล CPR",
     callout: "⭐ แนะนำ",
     image: "/images/primedic-y2-open.jpg",
-    imageAlt: "เครื่อง AED Yuwell Y2 เปิดฝา แสดงจอสีและแผ่นอิเล็กโทรด",
+    imageAlt: "เครื่อง AED Yuwell HeartSave Y2 เปิดฝา แสดงจอสีและแผ่นอิเล็กโทรด",
     price: price("primedic-y2"),
     yes: [
       "ช็อกหัวใจได้",
@@ -172,7 +172,7 @@ export function ModelLadder() {
             { model: "Y0", base: "เครื่อง HeartSave", parts: ["แผ่นมาตรฐาน"], note: "", best: false },
             { model: "Y8", base: "เครื่อง HeartSave", parts: ["แผ่น CPR feedback"], note: Y8_STATUS, best: false },
             { model: "Y8 GPS", base: "เครื่อง HeartSave", parts: ["แผ่น CPR feedback", "GPS ติดตาม"], note: "", best: false },
-            { model: "Y2 ⭐", base: "เครื่อง Yuwell Y2 (มีจอ)", parts: ["แผ่น CPR feedback"], note: "", best: true },
+            { model: "Y2 ⭐", base: "เครื่อง Yuwell HeartSave Y2 (มีจอ)", parts: ["แผ่น CPR feedback"], note: "", best: true },
           ].map((r) => (
             <div
               key={r.model}

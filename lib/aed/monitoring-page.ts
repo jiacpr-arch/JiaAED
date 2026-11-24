@@ -113,7 +113,7 @@ export const MONITORING_LEAD = { variant: "monitoring", source: "monitoring_form
 // AED. Features below are what the owner's app screenshots show.
 export const APP_NAME = "myAED Finder";
 export const appFeatures: { title: string; desc: string }[] = [
-  { title: "ค้นหาเครื่อง AED ใกล้ที่สุด", desc: "แผนที่แสดงจุดติดตั้ง AED บอกจำนวนเครื่องที่พร้อมใช้ และระยะทางจากตำแหน่งผู้ใช้" },
+  { title: "ค้นหาเครื่อง AED ที่อยู่ใกล้", desc: "แผนที่แสดงจุดติดตั้ง AED บอกจำนวนเครื่องที่พร้อมใช้ และระยะทางจากตำแหน่งผู้ใช้" },
   { title: "นำทางไปที่เครื่อง", desc: "กด Start Navigation เพื่อเปิดเส้นทาง และดู Location Guide ว่าเครื่องติดตั้งอยู่ตรงไหนของอาคาร" },
   { title: "เวลาที่เข้าถึงเครื่องได้", desc: "แสดงเวลาเปิดให้เข้าถึงของแต่ละจุดติดตั้ง" },
   { title: "ปุ่มโทร 1669", desc: "เรียกรถพยาบาลฉุกเฉินได้จากหน้าแรกของแอป" },

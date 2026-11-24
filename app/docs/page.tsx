@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { MarketButton, MarketHero, MarketLead, MarketPage } from "@/app/components/MarketShell";
 import { documents } from "@/lib/aed/documents";
 
-export const metadata: Metadata = { title: "เอกสาร AED สำหรับการจัดซื้อและตรวจสอบ", description: "ดาวน์โหลดสเปก AED Yuwell Y2 และเอกสารทะเบียน อย. สำหรับประกอบการจัดซื้อ", alternates: { canonical: "/docs" } };
+export const metadata: Metadata = { title: "เอกสาร AED สำหรับการจัดซื้อและตรวจสอบ", description: "ดาวน์โหลดสเปก AED Yuwell HeartSave Y2 และเอกสารทะเบียน อย. สำหรับประกอบการจัดซื้อ", alternates: { canonical: "/docs" } };
 
 // The catalog only holds documents for currently sold models (see lib/aed/documents.ts).
 const currentDocuments = documents;

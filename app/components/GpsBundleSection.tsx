@@ -7,8 +7,8 @@ export function GpsBundleSection() {
     <section className="max-w-6xl mx-auto px-4">
       <SectionHeading
         badge="📍 AED + GPS"
-        title="ปกป้องชีวิต พร้อมบริหารทรัพย์สิน"
-        subtitle="GPS ช่วยติดตามตำแหน่งเครื่อง ทีมงานนอกสถานที่ และทรัพย์สินขององค์กร — เพิ่มความปลอดภัยรอบด้าน"
+        title="รู้ตำแหน่งและสถานะเครื่อง AED ทุกจุด"
+        subtitle="HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย (GPS 4G) ส่งตำแหน่งและสถานะเครื่องเข้าระบบตามข้อมูลที่เครื่องรายงาน"
       />
 
       <div className="grid md:grid-cols-2 gap-8 items-center mt-8">

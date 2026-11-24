@@ -5,7 +5,7 @@
 // Owner, 25 ต.ค. 2026: one price ladder instead of a separate ANNUAL plan and a
 // BASIC tier that cost more but included less. STANDARD *is* the annual rental
 // plan (./rental.ts RENTAL_PRICES.annual, billed yearly). Every rental unit is a
-// Yuwell GPS AED (owner: the rental fleet is GPS units only, Y0 isn't rented),
+// HeartSave Y8 GPS AED (owner: the rental fleet is GPS units only, Y0 isn't rented),
 // so tiers differ by service — PRO adds alerts and on-site check/training,
 // ELITE the dashboard, cabinet and a 24-hour swap. The id stays "managed-basic" because it is a
 // stored lead/product id (lead-validation allowlist, existing lead rows).
@@ -45,7 +45,7 @@ export const subscriptionTiers: SubscriptionTier[] = [
     threeYearPerMonth: round10(2990 * (1 - THREE_YEAR_DISCOUNT)),
     specialNote: null,
     bestFor: "โรงเรียน · โรงงาน · สำนักงาน",
-    badge: "คุ้มค่าที่สุด",
+    badge: "แนะนำ",
   },
   {
     id: "managed-elite",
@@ -71,7 +71,7 @@ export type FeatureMatrixRow = {
 
 export const subscriptionMatrix: FeatureMatrixRow[] = [
   {
-    feature: "Yuwell GPS ติดตามตำแหน่ง",
+    feature: "HeartSave Y8 GPS ติดตามตำแหน่ง",
     values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
   },
   // Owner, 25 ต.ค. 2026: lean on what plain-device renters can't offer — the
@@ -81,10 +81,10 @@ export const subscriptionMatrix: FeatureMatrixRow[] = [
     feature: ONLINE_CPR_SEATS_FEATURE,
     values: { "managed-basic": "10 คน", "managed-pro": "30 คน", "managed-elite": "ไม่จำกัด" },
   },
-  {
-    feature: "Pocket mask ติดเครื่อง",
-    values: { "managed-basic": true, "managed-pro": true, "managed-elite": true },
-  },
+  // "Pocket mask ติดเครื่อง" row removed from the public matrix (23 พ.ย. 2026):
+  // a pocket mask is a medical device outside the AED registration used for the
+  // jiaaed.com ฆพ. application, so the ad pages must not name it. The bots still
+  // mention it in quotes (see tierExtras in ./rental.ts).
   {
     feature: "เปลี่ยนเครื่องเมื่อเสีย (SLA)",
     values: { "managed-basic": "48 ชม.", "managed-pro": "48 ชม.", "managed-elite": "24 ชม." },

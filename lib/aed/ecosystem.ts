@@ -12,10 +12,10 @@ export const SISTER_SITES = {
 
 /** "Rent with us" vs a plain device rental. Never names a competitor. */
 export const rentalAdvantages: { item: string; jiaaed: string; plain: string }[] = [
-  { item: "เครื่อง AED พร้อมแผ่นและแบตเตอรี่", jiaaed: "✓ Yuwell GPS", plain: "✓" },
+  { item: "เครื่อง AED พร้อมแผ่นและแบตเตอรี่", jiaaed: "✓ HeartSave Y8 GPS", plain: "✓" },
   { item: "เปลี่ยนแบต/แผ่นตามอายุ + เครื่องสำรอง", jiaaed: "✓ ตลอดสัญญา", plain: "แล้วแต่ผู้ให้เช่า" },
   { item: "พนักงานเรียน CPR & AED ออนไลน์", jiaaed: "✓ 10 คน – ไม่จำกัด", plain: "—" },
   { item: "อบรมภาคปฏิบัติกับครูจริง", jiaaed: "✓ ศูนย์อบรมของเราเอง", plain: "—" },
   { item: "คอร์สปฐมพยาบาลออนไลน์", jiaaed: "✓ ฟรี 24 บทเรียน", plain: "—" },
-  { item: "Pocket mask ติดเครื่อง + ตู้ ป้าย อุปกรณ์เสริม", jiaaed: "✓ มีครบในเครือ", plain: "—" },
+  { item: "ตู้ ป้าย อุปกรณ์เสริม", jiaaed: "✓ มีครบในเครือ", plain: "—" },
 ];

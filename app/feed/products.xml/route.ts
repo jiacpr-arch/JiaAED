@@ -58,9 +58,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>${escape(BRAND)} — AED Yuwell Y2</title>
+    <title>${escape(BRAND)} — AED Yuwell HeartSave Y2</title>
     <link>${SITE}</link>
-    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Yuwell Y2 — อย. รับรอง</description>
+    <description>เครื่องกระตุกหัวใจไฟฟ้า AED Yuwell HeartSave Y2 — ขึ้นทะเบียน อย.</description>
 ${items}
 ${accessoryItems}
   </channel>

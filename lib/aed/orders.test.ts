@@ -58,7 +58,7 @@ describe("orderAlertText", () => {
   it("gives the team everything needed to ship and invoice", () => {
     const t = orderAlertText(orderFromSession(session, "paid"));
     expect(t).toContain("ชำระเงินแล้ว");
-    expect(t).toContain("Yuwell Y2");
+    expect(t).toContain("HeartSave Y2");
     expect(t).toContain("฿53,393");
     expect(t).toContain("PromptPay");
     expect(t).toContain("0105555555555");

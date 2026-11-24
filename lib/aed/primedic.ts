@@ -62,7 +62,7 @@ export const primedicModels: PrimedicModel[] = [
     price: 39_999, // Yuwell OK'd 39,999 for Y0 (owner, 15 พ.ย. 2026)
     shockMode: "semi-auto",
     cprFeedback: "optional",
-    summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — เริ่มต้นคุ้มค่า",
+    summary: "กึ่งอัตโนมัติ (มีปุ่ม Shock) — รุ่นเริ่มต้น",
     keyDiff: "รุ่นประหยัด — แผ่นที่แถมมาเป็นแบบไม่มี CPR feedback",
     bestFor: "งบจำกัด · ร้านค้า/สำนักงานทั่วไปที่อยากมี AED พร้อมใช้",
     image: "/images/primedic-y-series.png",
@@ -76,7 +76,7 @@ export const primedicModels: PrimedicModel[] = [
     price: 45_900,
     shockMode: "semi-auto",
     cprFeedback: "standard",
-    summary: "ตัวเครื่องเดียวกับ Y0 + แผ่น CPR feedback",
+    summary: "กึ่งอัตโนมัติ พร้อมแผ่น CPR feedback",
     keyDiff: "แผ่นวัดแรง/จังหวะกดหน้าอก (เสียงบอก) · เพิ่มอีก ฿4,000 → Y2 เห็นคุณภาพ CPR บนจอสี",
     bestFor: "อยากให้ผู้ช่วยเหลือกดหน้าอกได้ถูกต้อง · โรงเรียน/ฟิตเนส/โรงงาน",
     image: "/images/primedic-y8-open.png",
@@ -85,9 +85,11 @@ export const primedicModels: PrimedicModel[] = [
   },
   {
     // รุ่นเรือธง — ฮาร์ดแวร์เดียวกับ Y8 แต่มีจอสีแสดง EKG + ดูคุณภาพ CPR สด ๆ.
-    // ชื่อทางการตลาด "Yuwell Y2 (You Too)" ตามที่เจ้าของกำหนด.
+    // ชื่อทางการตลาด "Yuwell HeartSave Y2 (You Too)" ตามที่เจ้าของกำหนด.
     id: "primedic-y2",
-    name: "Yuwell Y2",
+    // Registered product name is "HeartSave Y2" (ทะเบียน อย. ใน regulatory.ts รายการที่ 23) —
+    // ad pages must name the device as registered (ฆพ. jiaaed.com, 23 พ.ย. 2026).
+    name: "HeartSave Y2",
     price: 49_900,
     // Sold at ฿59,999 on this site 26 ก.ย.–13 พ.ย. 2026 (commits b077914 → 2dc4783).
     previousPrice: { amount: 59_999, soldFrom: "2026-09-26", soldUntil: "2026-11-13", showUntil: "2027-02-13" },
@@ -95,7 +97,7 @@ export const primedicModels: PrimedicModel[] = [
     cprFeedback: "standard",
     summary: "จอสี EKG + ดูคุณภาพ CPR สด ๆ — รุ่นแนะนำ (You Too)",
     keyDiff: "จอแสดงคุณภาพ CPR เรียลไทม์ — ความเร็ว/ความลึก/การปล่อยสุด (full recoil) + คลื่น EKG",
-    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการติดตามคุณภาพการกดหน้าอก · เห็นบนจอระหว่างทำ CPR",
+    bestFor: "หน่วยกู้ชีพ/คลินิก/องค์กรที่ต้องการดูคุณภาพการกดหน้าอกบนจอขณะทำ CPR",
     image: "/images/primedic-y2-open.jpg",
     badge: "แนะนำ",
     warrantyYears: 4,
@@ -126,13 +128,13 @@ export const listedPrimedicModels: PrimedicModel[] = LISTED_MODEL_IDS.map(
 // it's a decision, not a stock-out.
 export const Y8_STATUS = "งดจำหน่าย";
 export const Y8_ON_REQUEST_NOTE =
-  "Y8 (ตัวเครื่อง Y0 + แผ่น CPR feedback) งดจำหน่ายแล้ว — ถ้าต้องการแผ่น feedback แนะนำ Y2 ที่มีทั้งแผ่น feedback และจอในตัว · ลูกค้าที่มี Y8 อยู่แล้ว ยังได้รับประกันและบริการเหมือนเดิม";
+  "HeartSave Y8 (รุ่นที่มาพร้อมแผ่น CPR feedback) งดจำหน่ายแล้ว — ถ้าต้องการแผ่น feedback มีรุ่น HeartSave Y2 ที่มีทั้งแผ่น feedback และจอแสดงผล · ลูกค้าที่มี Y8 อยู่แล้ว ยังได้รับประกันและบริการตามเงื่อนไขเดิม";
 
 /** How both bots answer a customer who asks for Y8 (owner's script, 15 พ.ย. 2026). */
 export function y8BotRule(): string {
   const y2 = primedicModels.find((m) => m.id === "primedic-y2")!;
   const fmt = (n: number) => `฿${n.toLocaleString("en-US")}`;
-  return `แผ่น CPR feedback ไม่ขายแยก (เจ้าของ 15 พ.ย. 2026) — ขายเป็นแผ่นเปลี่ยนให้ลูกค้าที่มี Y8 อยู่แล้วเท่านั้น ถ้าลูกค้า Y0 อยากได้ feedback ให้แนะนำ Y2 · ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
+  return `แผ่น CPR feedback ไม่ขายแยก (เจ้าของ 15 พ.ย. 2026) — ขายเป็นแผ่นเปลี่ยนให้ลูกค้าที่มี Y8 อยู่แล้วเท่านั้น ถ้าลูกค้า Y0 อยากได้ feedback ให้แนะนำ Y2 · ถ้าลูกค้าถามรุ่น Y8: บอกตรง ๆ ว่า Y8 (ตัวเครื่อง Y0 + แผ่นวัดการกดหน้าอก) งดจำหน่ายแล้ว ห้ามเสนอราคาหรือออกใบเสนอราคา Y8 — แนะนำ Yuwell HeartSave Y2 (${fmt(y2.price)}) ที่มีแผ่นวัดแบบเดียวกัน + จอแสดงความเร็ว/ความลึก/การปล่อยหน้าอกสด ๆ หรือ Y0 ถ้างบจำกัด · ถ้าเป็นลูกค้าที่มี Y8 อยู่แล้ว บอกว่ายังได้รับประกัน แผ่น/แบตเปลี่ยน และบริการเหมือนเดิม · ถ้าหน่วยงานระบุ Y8 ใน TOR ให้ escalate_to_human`;
 }
 
 // Yuwell AED with GPS built in (the red unit; HeartSave Y8 hardware with the
@@ -151,14 +153,14 @@ export const yuwellGpsAed = {
   // Clean photo of the actual red GPS unit (also used by the lineup card). Feeds
   // the Google product JSON-LD (StructuredData) and lineup.ts.
   image: "/images/yuwell-gps-aed.webp",
-  keyDiff: "เครื่อง Y8 (แถมแผ่น CPR feedback) + GPS ติดตามตำแหน่ง/สถานะออนไลน์",
-  bestFor: "องค์กรหลายสาขา · ต้องรู้ว่าเครื่องอยู่ไหนและพร้อมใช้ตลอดเวลา",
+  keyDiff: "HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย (GPS 4G) + แผ่น CPR feedback",
+  bestFor: "องค์กรหลายสาขา · ต้องการให้ทีมงานติดตามตำแหน่งและสถานะเครื่องผ่านระบบออนไลน์",
   description:
-    "เครื่อง AED พร้อมระบบ GPS ในตัว — ติดตามตำแหน่งและสถานะเครื่องแบบเรียลไทม์ เหมาะกับองค์กรหลายสาขา",
+    "เครื่อง AED HeartSave Y8 รุ่นมีระบบเชื่อมต่อเครือข่าย — ส่งตำแหน่งและสถานะเครื่องเข้าระบบออนไลน์ตามข้อมูลที่เครื่องรายงาน เหมาะกับองค์กรหลายสาขา",
   features: [
     "ตัวเครื่อง HeartSave Y8 + แผ่น CPR feedback",
     "GPS ติดตามตำแหน่งในตัวเครื่อง",
-    "เชื่อมระบบแจ้งเตือน/ติดตามสถานะ",
+    "ส่งสถานะเครื่องเข้าระบบ PRIMEDIC CLOUD",
     "เสียงนำทางการกู้ชีพ",
   ],
 };
@@ -278,7 +280,7 @@ export const comparisonModels: PrimedicModel[] = (["primedic-y0", "primedic-y8",
 export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | "rent"; title: string; pick: string[]; skip: string[] }[] = [
   {
     id: "primedic-y2",
-    title: "เลือก Yuwell Y2 ⭐ ถ้า…",
+    title: "เลือก Yuwell HeartSave Y2 ⭐ ถ้า…",
     pick: [
       "คนที่จะใช้เครื่องไม่ได้ทำ CPR บ่อย — อยากให้เครื่องบอกว่ากดถูกไหม",
       "โรงพยาบาล ศูนย์ฝึกอบรม หน่วยกู้ชีพ โรงเรียน ฟิตเนส — ต้องการข้อมูล CPR และ EKG บนจอ",
@@ -290,7 +292,7 @@ export const modelChooser: { id: "primedic-y2" | "primedic-y0" | "yuwell-gps" | 
     id: "primedic-y0",
     title: "เลือก HeartSave Y0 ถ้า…",
     pick: [
-      "อยากมี AED พร้อมใช้ในงบประหยัด",
+      "อยากมี AED พร้อมใช้ในงบจำกัด",
       "สำนักงาน ร้านค้า คอนโด ที่มีคนผ่านการอบรม CPR",
     ],
     skip: ["แผ่นที่แถมไม่มี CPR feedback (ไม่ขายแยก) — ถ้าอยากได้ เลือก Y2"],

@@ -26,7 +26,7 @@ export function StructuredData() {
     description:
       // Distributor, not importer — Yuwell Medical (Thailand) is the registered
       // importer (see lib/aed/regulatory.ts).
-      "ผู้จัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave อย. รับรอง",
+      "ผู้จัดจำหน่ายเครื่องกระตุกหัวใจไฟฟ้า AED Yuwell / PRIMEDIC HeartSave ขึ้นทะเบียน อย.",
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "sales",
@@ -40,7 +40,7 @@ export function StructuredData() {
     identifier: [
       // PRIMEDIC numbers are emitted only once the owner confirms them (published).
       // Amoul i7's own อย./ฆพ. identifier is no longer emitted here — it's
-      // discontinued (Yuwell Y2 replaced it, ก.ค. 2026).
+      // discontinued (Yuwell HeartSave Y2 replaced it, ก.ค. 2026).
       ...(PRIMEDIC_REGULATORY.published && PRIMEDIC_REGULATORY.fda
         ? [
             {
