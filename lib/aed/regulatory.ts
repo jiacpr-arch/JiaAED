@@ -59,15 +59,17 @@ export function thaiDate(iso: string, style: "short" | "long" = "short"): string
 // การแสดงเลขใบโฆษณาของรุ่นที่ถูกสั่งระงับ ยังถือเป็นการโฆษณา
 // รุ่นที่ขายอยู่ปัจจุบันคือ Yuwell HeartSave Y2 / PRIMEDIC HeartSave ด้านล่าง
 
-// อย. ครอบคลุมทั้งตระกูล HeartSave Y&YA (Y0/Y8/YA8 + แบต + แผ่น CPR) นำเข้าโดย
-// บ.ยูเวล เมดิคอล (ไทยแลนด์) — ใช้กับทั้ง PRIMEDIC Y0/Y8 และ Yuwell GPS บนเว็บ.
+// อย. ครอบคลุมทั้งตระกูล HeartSave Y&YA (Y0/YA0/Y2/YA2/Y8/YA8 + แบต + แผ่น CPR +
+// ตู้เก็บ) นำเข้าโดย บ.ยูเวล เมดิคอล (ไทยแลนด์) — ใช้กับทั้ง PRIMEDIC Y0/Y8 และ Yuwell GPS บนเว็บ.
+// ต่ออายุแล้ว: ออก 20 พ.ย. 2569 · ใช้ได้ถึง 31 ธ.ค. 2574 (สแกนใน public/documents/).
+// ใบรับแจ้งไม่ได้ระบุโมดูล GPS/4G — เว็บจึงต้องเรียก GPS ว่าเป็นบริการ ไม่ใช่สรรพคุณเครื่อง.
 //
 // ฆพ. (ใบอนุญาตโฆษณา ออกให้ บ.เจี่ยรักษา จำกัด):
 //   • ฆพ.2475/2569 — HeartSave Y0 + Y2 · ออก 17 ก.ค. 2569 · ใช้ได้ถึง 16 ก.ค. 2572
 //   • ฆพ.287/2567  — HeartSave Y8 · ใช้ได้ถึง 21 ก.พ. 2570 (คนละใบ — ระบุไว้ใน disclaimer)
 // ทั้งสองใบระบุสื่อ "เว็บไซต์ www.jia1669.com" — ดู docs/owner-fill-in-checklist.md
 const PRIMEDIC_FDA = "65-2-2-2-0013415";
-const PRIMEDIC_FDA_VALID_UNTIL = "2026-12-31";
+const PRIMEDIC_FDA_VALID_UNTIL = "2031-12-31";
 const PRIMEDIC_IMPORTER = "บริษัท ยูเวล เมดิคอล (ไทยแลนด์) จำกัด";
 const PRIMEDIC_ADVERTISER = "บริษัท เจี่ยรักษา จำกัด";
 const PRIMEDIC_AD_LICENSES: AdLicense[] = [
@@ -122,7 +124,7 @@ export function regLine(reg: BrandRegulatory): string {
   return reg.pendingNote;
 }
 
-// "อย. 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2569)" — or "" while unpublished, so
+// "อย. 65-2-2-2-0013415 (ใช้ได้ถึง 31 ธ.ค. 2574)" — or "" while unpublished, so
 // callers can drop it into running copy without leaving a dangling number.
 // `prefix` replaces the leading "อย. " (e.g. "ทะเบียนเลขที่ ").
 export function fdaLine(reg: BrandRegulatory, prefix = "อย. "): string {

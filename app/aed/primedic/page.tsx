@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 export default function PrimedicPage() {
   return (
     <MarketPage>
-      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"Yuwell HeartSave Y2\nและ HeartSave Y0."} description="AED ที่บอกได้ว่าคุณปั๊มหัวใจถูกไหม — Yuwell HeartSave Y2 จอสีแสดงความเร็ว ความลึก และการปล่อยหน้าอกสด ๆ ขณะช่วยชีวิต · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
+      <MarketHero eyebrow="✨ ไลน์พรีเมียม" title={"Yuwell HeartSave Y2\nและ HeartSave Y0."} description="Yuwell HeartSave Y2 จอสีแสดงความเร็ว ความลึก และการคืนตัวของหน้าอกขณะทำ CPR · ทุกรุ่นกึ่งอัตโนมัติ เสียงนำทางภาษาไทย"><MarketButton href="/quote" lineCta="inner_hero_quote">ขอใบเสนอราคา</MarketButton><MarketButton href="/aed" secondary>เทียบรุ่นและราคา</MarketButton></MarketHero>
       <div className="market-content">
       <ProductStructuredData include="primedic" />
       <BreadcrumbStructuredData
@@ -169,7 +169,7 @@ export default function PrimedicPage() {
             { src: "/images/primedic-y2-electrodes.jpg",  alt: "Yuwell HeartSave Y2 — แผ่นอิเล็กโทรดในช่องเก็บด้านในฝาเครื่อง", w: 1254, h: 1254 },
             // primedic-y2-vital-launch.webp ถูกถอดออกชั่วคราว — โปสเตอร์ฝังราคาเก่า
             // ฿59,000 (ราคาใหม่ ฿59,999) ใส่กลับเมื่อเจ้าของทำเวอร์ชันราคาใหม่
-            { src: "/images/yuwell-y2-features.webp", alt: "Yuwell HeartSave Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทุกวัย", w: 1536, h: 1024 },
+            { src: "/images/yuwell-y2-features.webp", alt: "Yuwell HeartSave Y2 — สรุปจุดเด่น หน้าจอสี วิเคราะห์และช็อกได้รวดเร็ว ใช้ได้ทั้งผู้ใหญ่และเด็ก", w: 1536, h: 1024 },
             { src: "/images/primedic-y0-flyer-khop.jpg", alt: "PRIMEDIC HeartSave Y0 — ใบปลิวทางการ พร้อมเลขใบอนุญาตโฆษณา ฆพ.2475/2569", w: 1957, h: 2142 },
           ].map((img) => (
             <div key={img.src} className="rounded-xl overflow-hidden border border-gray-800 bg-white">

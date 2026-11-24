@@ -43,9 +43,9 @@ export const documents: DocumentItem[] = [
           href: reg.certificateHref,
           category: "certificate" as const,
           mime: "application/pdf" as const,
-          sizeLabel: "242 KB",
+          sizeLabel: "634 KB",
           language: "th" as const,
-          updatedAt: "2026-07-19",
+          updatedAt: "2026-11-20",
         },
       ]
     : []),
