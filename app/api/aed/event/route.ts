@@ -47,6 +47,8 @@ type Body = {
 
 const ALLOWED_EVENTS = new Set([
   "line_click",
+  "click_call",
+  "click_line",
   "doc_download",
   "cta_click",
   "price_view",
