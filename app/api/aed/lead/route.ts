@@ -267,7 +267,16 @@ export async function POST(req: Request) {
         userAgent,
         eventSourceUrl: pageUrl,
         contentName: productName,
-      }).catch((e) => console.error("[AED] meta capi failed:", e)),
+      }).then(async (result) => {
+        const status = result.sent ? ((result.eventsReceived ?? 0) > 0 ? "accepted" : "unconfirmed") : result.ok ? result.reason : "failed";
+        if (status !== "accepted") console.warn("[AED] meta capi delivery", status);
+        const { error: logError } = await supabase.from("aed_analytics_events").insert({
+          event_name: "meta_capi_delivery",
+          page_url: pageUrl ? pageUrl.split("?")[0].split("#")[0] : null,
+          properties: { lead_id: data.id, status, events_received: result.sent ? result.eventsReceived ?? null : null },
+        });
+        if (logError) console.warn("[AED] meta capi delivery log failed", logError.code);
+      }).catch(() => console.error("[AED] meta capi delivery failed")),
     );
   }
 
