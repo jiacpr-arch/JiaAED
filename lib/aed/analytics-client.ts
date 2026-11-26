@@ -83,8 +83,7 @@ export function trackEvent(
   if (options.beacon && navigator.sendBeacon) {
     try {
       const blob = new Blob([payload], { type: "application/json" });
-      navigator.sendBeacon(url, blob);
-      return;
+      if (navigator.sendBeacon(url, blob)) return;
     } catch {
       // fall through to fetch
     }
@@ -95,8 +94,10 @@ export function trackEvent(
     headers: { "content-type": "application/json" },
     body: payload,
     keepalive: true,
+  }).then((response) => {
+    if (!response.ok) console.warn("[AED analytics] request rejected", name, response.status);
   }).catch(() => {
-    // swallow — analytics should never break the page
+    console.warn("[AED analytics] network failure", name);
   });
 }
 
