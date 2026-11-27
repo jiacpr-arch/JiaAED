@@ -14,6 +14,7 @@ const GRAPH_VERSION = "v21.0";
 export type MetaLeadInput = {
   /** "Lead" (default — sends Lead + CompleteRegistration) or "Contact" for a LINE click. */
   eventName?: "Lead" | "Contact";
+  leadOnly?: boolean;
   eventId: string; // shared with the browser pixel for dedup
   eventTime?: number; // unix seconds; defaults to now
   email?: string | null;
@@ -101,7 +102,7 @@ export async function sendMetaLeadEvent(input: MetaLeadInput): Promise<MetaLeadR
   // whichever an ad set targets, the signal arrives (event_id is per
   // event_name, so pixel dedup still works). A LINE click is a "Contact", not a
   // lead (owner, 22 พ.ย. 2026) — it must not feed Lead-optimised ad sets.
-  const names = input.eventName === "Contact" ? ["Contact"] : ["Lead", "CompleteRegistration"];
+  const names = input.eventName === "Contact" ? ["Contact"] : input.leadOnly ? ["Lead"] : ["Lead", "CompleteRegistration"];
   const payload: Record<string, unknown> = {
     data: names.map((event_name) => ({ event_name, event_id: input.eventId, ...baseEvent })),
     ...(testCode ? { test_event_code: testCode } : {}),

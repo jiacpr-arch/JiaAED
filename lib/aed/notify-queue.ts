@@ -13,11 +13,6 @@ const QUIET_WINDOW_MS = 3 * 60 * 1000;
 // Force-send even if messages are still trickling in, so a steady stream
 // never delays delivery indefinitely.
 const MAX_WAIT_MS = 15 * 60 * 1000;
-// Rows LINE couldn't take for this long (quota exhausted, token missing) are
-// dropped rather than replayed — a month of stale digests arriving at once
-// would only burn the new month's quota.
-const STALE_AFTER_MS = 24 * 60 * 60 * 1000;
-
 type QueueRow = { id: number; text: string; created_at: string };
 
 /**
@@ -106,13 +101,9 @@ export async function flushNotifyQueue(): Promise<{
   const mine = rows.filter((r) => claimedIds.has(r.id));
   if (mine.length === 0) return { flushed: false, count: 0, reason: "empty" };
 
-  const stale = mine.filter((r) => now - new Date(r.created_at).getTime() > STALE_AFTER_MS);
-  if (stale.length) console.error(`[notify-queue] dropping ${stale.length} message(s) older than 24h`);
-  const fresh = mine.filter((r) => !stale.includes(r));
-
   // Send directly — going through notifyAnalyticsDigest here would re-enqueue
   // the combined text and the queue would never drain.
-  const groups = packRows(fresh);
+  const groups = packRows(mine);
   for (let g = 0; g < groups.length; g++) {
     const text = groups[g].map((r) => r.text).join(NOTIFY_BATCH_SEPARATOR);
     if (await pushTextsToOwner(groupMessages(text))) continue;
@@ -137,5 +128,5 @@ export async function flushNotifyQueue(): Promise<{
     );
   }
 
-  return { flushed: true, count: fresh.length, reason: waitingMs >= MAX_WAIT_MS ? "max_wait" : "quiet" };
+  return { flushed: true, count: mine.length, reason: waitingMs >= MAX_WAIT_MS ? "max_wait" : "quiet" };
 }
