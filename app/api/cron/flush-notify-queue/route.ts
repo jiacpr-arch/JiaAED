@@ -1,3 +1,4 @@
+import { deliverRentalLine } from "@/lib/aed/rental-line-outbox";
 import { isCronAuthorized } from "@/lib/aed/cron-auth";
 import { flushNotifyQueue } from "@/lib/aed/notify-queue";
 import { flushCustomerNotify } from "@/lib/aed/customer-notify";
@@ -16,6 +17,10 @@ export async function GET(req: Request) {
 
   // Customer alerts go out on their own, so a failing owner push can't hold
   // them back (and the other way round).
+  const rental = await deliverRentalLine().catch(() => {
+    console.error("[cron/flush-notify-queue] rental LINE delivery failed");
+    return null;
+  });
   const customers = await flushCustomerNotify().catch((err) => {
     console.error("[cron/flush-notify-queue] customer alerts failed:", err);
     return { error: String(err) };
@@ -23,7 +28,7 @@ export async function GET(req: Request) {
 
   try {
     const result = await flushNotifyQueue();
-    return NextResponse.json({ ok: true, ...result, customers });
+    return NextResponse.json({ ok: true, ...result, customers, rental });
   } catch (err) {
     console.error("[cron/flush-notify-queue] failed:", err);
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
